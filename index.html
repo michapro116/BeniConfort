@@ -153,6 +153,95 @@ img{display:block;width:100%;height:100%;object-fit:cover}
  .footer{grid-template-columns:1fr;padding:45px 6%}.footer-bottom{grid-column:auto}
  .cart-fab{right:12px;bottom:12px}
 }
+
+/* ADMIN */
+.admin-open{font-size:15px}
+
+/* V6: destaque principal de contado y crédito */
+.credit-hero{margin:22px 3.5% 0;border-radius:30px;background:#151619;color:#fff;padding:clamp(34px,5vw,62px) clamp(28px,6vw,78px);display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center;overflow:hidden;position:relative}
+.credit-hero:before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(201,255,56,.12);right:-70px;top:-90px}
+.credit-hero .eyebrow{color:#c9ff38;font-size:12px;margin-bottom:14px}
+.credit-hero h2{font-size:clamp(38px,5.5vw,72px);line-height:.92;letter-spacing:-.07em;max-width:720px}
+.credit-hero h2 strong{color:#c9ff38}
+.credit-hero p{font-size:clamp(15px,1.6vw,19px);color:#d6d7db;line-height:1.5;max-width:650px;margin-top:18px}
+.credit-hero-promo{background:#c9ff38;color:#101114;border-radius:24px;padding:28px 30px;font-weight:950;position:relative;z-index:1;box-shadow:0 18px 50px rgba(0,0,0,.22)}
+.credit-hero-promo .big{font-size:clamp(23px,2.8vw,36px);line-height:1.05;letter-spacing:-.04em}
+.credit-hero-promo small{display:block;margin-top:10px;font-size:12px;line-height:1.45;font-weight:800}
+.add-toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#151619;color:#fff;border:2px solid #c9ff38;border-radius:20px;padding:18px 24px;z-index:200;font-weight:900;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.25);transition:.28s ease;max-width:min(92vw,520px)}
+.add-toast.show{opacity:1;transform:translate(-50%,0)}
+.add-toast b{color:#c9ff38;display:block;font-size:17px;margin-bottom:5px}
+@media(max-width:760px){.credit-hero{grid-template-columns:1fr;margin:14px 3%;padding:34px 24px}.credit-hero-promo{padding:22px}.add-toast{bottom:18px}}
+
+.admin-login{max-width:460px}
+.admin-panel{max-width:1100px;width:min(1100px,94vw);max-height:92vh;overflow:auto}
+.admin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:22px}
+.admin-head h2{margin:0 0 8px}
+.admin-toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:18px 0}
+.admin-input{width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;outline:none}
+.admin-toolbar .admin-input{flex:1;min-width:220px}
+.small-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 15px;font-size:11px;font-weight:900;cursor:pointer}
+.file-btn{display:inline-flex;align-items:center}
+.admin-card{display:grid;grid-template-columns:90px 1fr auto;gap:15px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0;background:#fff}
+.admin-thumb{width:90px;height:90px;border-radius:12px;overflow:hidden;background:#f2f2f0}
+.admin-thumb img{width:100%;height:100%;object-fit:cover}
+.admin-meta strong{display:block;font-size:15px;margin-bottom:4px}
+.admin-meta span{display:block;font-size:11px;color:var(--muted);line-height:1.55}
+.admin-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.admin-actions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-size:10px;font-weight:900;cursor:pointer}
+.admin-actions .danger{color:#9a2222}
+.status{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:950}
+.status.available{background:#e8f6eb;color:#1d6a2a}
+.status.reserved{background:#fff2dc;color:#8b5a08}
+.status.sold{background:#f8e5e5;color:#8d2525}
+.admin-editor{margin-top:22px;border-top:1px solid var(--line);padding-top:22px}
+.editor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field label{display:block;font-size:10px;font-weight:950;margin:0 0 6px;text-transform:uppercase;letter-spacing:.08em}
+.field input,.field select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+.field.full{grid-column:1/-1}
+.photo-preview{width:150px;height:150px;border-radius:15px;background:#f2f2f0;overflow:hidden;margin-bottom:8px}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.size-editor{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.size-row{border:1px solid var(--line);border-radius:10px;padding:8px;background:#fafafa}
+.size-row b{display:block;font-size:11px;margin-bottom:5px}
+.size-row input{padding:8px!important}
+.editor-actions{display:flex;gap:10px;margin-top:18px}
+.admin-note{font-size:11px;color:var(--muted);line-height:1.5;padding:12px 0}
+@media(max-width:700px){
+ .admin-head{flex-direction:column}
+ .admin-card{grid-template-columns:64px 1fr}
+ .admin-thumb{width:64px;height:64px}
+ .admin-actions{grid-column:1/-1;justify-content:flex-start}
+ .editor-grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .size-editor{grid-template-columns:repeat(2,1fr)}
+}
+
+.disabled-size{opacity:.38;text-decoration:line-through;cursor:not-allowed!important}
+
+/* CRÉDITO */
+.credit-banner{margin:0 5% 20px;border:1px solid var(--line);border-radius:24px;padding:28px;background:#151619;color:#fff;display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+.credit-banner h2{font-size:clamp(25px,3.4vw,42px);letter-spacing:-.06em;line-height:1}
+.credit-banner p{margin-top:9px;color:#d8d9dd;font-size:13px;line-height:1.5}
+.credit-promo{background:var(--accent);color:var(--ink);border-radius:18px;padding:18px;font-weight:950;font-size:16px;line-height:1.25}
+.credit-promo small{display:block;font-size:11px;font-weight:800;margin-top:6px}
+.product-prices{margin:12px 0 14px;display:grid;gap:5px}
+.product-prices .cash{font-weight:950;font-size:18px}
+.product-prices .credit{font-size:13px;font-weight:850}
+.product-prices .initial{font-size:11px;color:var(--muted);font-weight:750}
+.credit-box{margin-top:18px;padding:16px;border-radius:18px;background:#f7f7f5;border:1px solid var(--line)}
+.credit-box h3{font-size:13px;margin-bottom:10px}
+.purchase-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.purchase-option{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:left;font-weight:900}
+.purchase-option.active{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink) inset}
+.credit-fields{display:none}
+.credit-fields.show{display:block}
+.choice-row{display:flex;flex-wrap:wrap;gap:7px;margin:7px 0 11px}
+.choice{padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:11px;font-weight:850}
+.choice.selected{background:var(--ink);color:#fff;border-color:var(--ink)}
+.credit-result{font-size:12px;line-height:1.55;padding:11px 12px;background:#fff;border-radius:12px;border:1px dashed #cfd0d3}
+.credit-promo-mini{margin-top:8px;font-weight:950}
+@media(max-width:760px){.credit-banner{grid-template-columns:1fr;margin:0 4% 15px;padding:22px}.purchase-options{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -170,7 +259,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   </div>
   <div class="actions">
     <button class="icon search-icon" onclick="focusSearch()" aria-label="Buscar">⌕</button>
-    <button class="icon" onclick="openCart()" aria-label="Carrito">🛒</button>
+    <button class="icon" onclick="openCart()" aria-label="Carrito">🛒</button><button class="icon admin-open" onclick="openAdminLogin()" aria-label="Administración" title="Administración">⚙</button>
     <button class="icon mobile-menu" onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})">☰</button>
   </div>
 </nav>
@@ -185,6 +274,18 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   <div class="hero-photo">
     <img src="https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Tenis deportivos reales">
     <div class="hero-stamp"><div><b>2</b><br>CATEGORÍAS<br>DE CALIDAD</div></div>
+  </div>
+</section>
+
+<section class="credit-hero" aria-label="Compra al contado o a crédito">
+  <div>
+    <div class="eyebrow">COMPRA COMO PREFIERAS</div>
+    <h2>💵 Al contado o 💳 <strong>a crédito</strong></h2>
+    <p>Elige la forma que más te convenga. Puedes llevar tus tenis a crédito <strong>hasta 2 meses de plazo</strong>.</p>
+  </div>
+  <div class="credit-hero-promo">
+    <div class="big">🔥 ¡Paga en 1 mes y te sale al precio de contado!</div>
+    <small>Una opción para pagar tu compra más rápido y aprovechar el mejor precio.</small>
   </div>
 </section>
 
@@ -282,102 +383,244 @@ img{display:block;width:100%;height:100%;object-fit:cover}
       <h2>Carrito</h2>
       <div id="cartItems" style="margin:25px 0"></div>
       <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:950;padding-top:12px">Total <span>Bs <span id="cartTotal">0</span></span></div>
-      <div class="modal-actions"><button class="btn accent" onclick="sendWhatsApp()">Pedir por WhatsApp →</button></div>
+      <div class="modal-actions" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" onclick="continueShopping()">➕ Añadir otro producto</button><button class="btn accent" onclick="sendWhatsApp()">Pedir por WhatsApp →</button></div>
       <p style="font-size:10px;color:#888;margin-top:12px">El pedido se enviará con los modelos y tallas seleccionados. La disponibilidad final se confirma por WhatsApp.</p>
     </div>
   </div>
 </div>
 
+
+<!-- PANEL DE ADMINISTRACIÓN -->
+<div class="modal-bg" id="loginModal">
+  <div class="modal admin-login">
+    <button class="close" onclick="closeLogin()">✕</button>
+    <div class="modal-info">
+      <div class="eyebrow">URBANSTEP · PRIVADO</div>
+      <h2>Administración</h2>
+      <p class="modal-desc">Ingresa la contraseña para administrar tu catálogo.</p>
+      <input class="admin-input" id="adminPassword" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')loginAdmin()">
+      <button class="btn accent" onclick="loginAdmin()">Entrar al panel</button>
+      <p class="admin-hint">Contraseña de prueba: <b>urbanstep123</b>. Cámbiala después.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="adminModal">
+  <div class="modal admin-panel">
+    <button class="close" onclick="closeAdmin()">✕</button>
+    <div class="admin-head">
+      <div>
+        <div class="eyebrow">URBANSTEP · ADMIN</div>
+        <h2>Inventario</h2>
+        <p class="sub">Modo de prueba local: los cambios quedan guardados en este navegador.</p>
+      </div>
+      <button class="btn accent" onclick="newProduct()">＋ Agregar producto</button>
+    </div>
+
+    <div class="admin-toolbar">
+      <input class="admin-input" id="adminSearch" placeholder="Buscar por código, marca o modelo..." oninput="renderAdmin()">
+      <button class="small-btn" onclick="exportInventory()">Exportar inventario</button>
+      <label class="small-btn file-btn">Importar inventario
+        <input type="file" accept=".json" onchange="importInventory(event)" hidden>
+      </label>
+    </div>
+
+    <div id="adminList"></div>
+    <div id="adminEditor"></div>
+  </div>
+</div>
+
+
 <script>
 const WHATSAPP = "59170000000"; // CAMBIA ESTE NÚMERO POR EL DE TU TIENDA.
+const ADMIN_PASSWORD = "urbanstep123"; // CONTRASEÑA DE PRUEBA. CAMBIA ESTA LÍNEA MÁS ADELANTE.
 
-const products = [
- {id:1,name:"Runner Black",brand:"Nike",gender:"Hombre",quality:"Americanos",price:420,old:null,tag:"AMERICANO",sizes:[41,42,43,44,45],img:"https://images.pexels.com/photos/20247841/pexels-photo-20247841.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Tenis americanos de medio uso. El modelo y estado exactos deben confirmarse según el par disponible."},
- {id:2,name:"White Street",brand:"Adidas",gender:"Mujer",quality:"Americanos",price:390,old:450,tag:"SELECCIÓN",sizes:[41,42,43,44],img:"https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Modelo urbano de selección americana. Consulta fotografías del par disponible antes de confirmar."},
- {id:3,name:"Classic Court",brand:"Puma",gender:"Hombre",quality:"Americanos",price:360,old:null,tag:"AMERICANO",sizes:[41,42,43,44,45],img:"https://images.pexels.com/photos/27503505/pexels-photo-27503505.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Tenis americanos de medio uso. La disponibilidad de marcas y modelos cambia según ingreso."},
- {id:4,name:"Urban White",brand:"Selección",gender:"Mujer",quality:"Económicos",price:190,old:220,tag:"MUY BUSCADOS",sizes:[35,36,37,38,39,40,41,42,43,44],img:"https://images.pexels.com/photos/6748330/pexels-photo-6748330.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Tenis económicos de muy buena calidad. Horma chica: revisa la tabla y consulta antes de comprar."},
- {id:5,name:"Street Cream",brand:"Selección",gender:"Mujer",quality:"Económicos",price:180,old:null,tag:"NUEVO",sizes:[35,36,37,38,39,40,41,42,43,44],img:"https://images.pexels.com/photos/20298288/pexels-photo-20298288.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Opción económica con estilo urbano. La foto es demostrativa; reemplázala por la fotografía real del inventario."},
- {id:6,name:"Black Motion",brand:"Selección",gender:"Hombre",quality:"Económicos",price:200,old:null,tag:"PRECIO",sizes:[35,36,37,38,39,40,41,42,43,44],img:"https://images.pexels.com/photos/5413294/pexels-photo-5413294.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Tenis económicos de buena calidad, en horma chica. Consulta disponibilidad del color y talla."},
- {id:7,name:"Everyday Runner",brand:"Selección",gender:"Mujer",quality:"Económicos",price:195,old:230,tag:"OFERTA",sizes:[35,36,37,38,39,40,41,42,43],img:"https://images.pexels.com/photos/20298290/pexels-photo-20298290.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Modelo económico para uso diario. Confirma la talla antes de realizar el pedido."},
- {id:8,name:"Sport Pro",brand:"Selección",gender:"Hombre",quality:"Americanos",price:430,old:null,tag:"AMERICANO",sizes:[41,42,43,44,45],img:"https://images.pexels.com/photos/12279148/pexels-photo-12279148.jpeg?auto=compress&cs=tinysrgb&w=1200",desc:"Par americano de medio uso. La marca, talla y estado exactos se validan con la fotografía real del inventario."}
+const SEED_PRODUCTS = [
+ {id:"AM-0001",name:"Runner Black",brand:"Nike",gender:"Hombre",quality:"Americanos",price:420,old:null,tag:"AMERICANO",size:41,status:"available",img:"https://images.pexels.com/photos/20247841/pexels-photo-20247841.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Par único de tenis americanos. La talla indicada corresponde exactamente a este par."},
+ {id:"AM-0002",name:"Urban White",brand:"Adidas",gender:"Hombre",quality:"Americanos",price:390,old:450,tag:"OFERTA",size:42,status:"available",img:"https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Par único de tenis americanos. La talla indicada corresponde exactamente a este par."},
+ {id:"AM-0003",name:"RS Classic",brand:"Puma",gender:"Mujer",quality:"Americanos",price:350,old:null,tag:"AMERICANO",size:38,status:"available",img:"https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Par único de tenis americanos. La talla indicada corresponde exactamente a este par."},
+ {id:"EC-0001",name:"Runner Urban",brand:"Runner",gender:"Hombre",quality:"Económicos",price:180,old:null,tag:"ECONÓMICO",status:"available",sizesQty:{35:1,36:1,37:2,38:2,39:2,40:1,41:1,42:1,43:0,44:1},img:"https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Tenis económicos de muy buena calidad. Horma chica; revisa las tallas disponibles antes de pedir."},
+ {id:"EC-0002",name:"Sport White",brand:"Urban",gender:"Mujer",quality:"Económicos",price:170,old:200,tag:"OFERTA",status:"available",sizesQty:{35:1,36:0,37:1,38:2,39:1,40:2,41:2,42:1,43:0,44:1},img:"https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Tenis económicos de muy buena calidad. Horma chica; revisa las tallas disponibles antes de pedir."}
 ];
 
-let currentFilter="Todos";
-let cart=[];
-let selectedProduct=null;
-let selectedSize=null;
+let products = loadProducts();
+products = products.map(p=>({...p,cashPrice:Number(p.cashPrice ?? p.price ?? 0),creditPrice:Number(p.creditPrice ?? p.price ?? 0),initial:Number(p.initial ?? 0)}));
+saveProducts();
+let cart = [];
+let selectedProduct = null;
+let selectedSize = null;
+let currentFilter = "Todos";
+let adminUnlocked = false;
+let editingId = null;
 
-function money(n){return "Bs " + n.toLocaleString("es-BO");}
+function loadProducts(){
+  try{
+    const raw=localStorage.getItem("urbanstep_products_v3");
+    return raw?JSON.parse(raw):JSON.parse(JSON.stringify(SEED_PRODUCTS));
+  }catch(e){ return JSON.parse(JSON.stringify(SEED_PRODUCTS)); }
+}
+function saveProducts(){ localStorage.setItem("urbanstep_products_v3", JSON.stringify(products)); }
+
+function money(n){ return "Bs " + Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:0,maximumFractionDigits:2}); }
+
+function availableSizes(p){
+  if(p.quality==="Americanos") return p.status==="sold"?[]:[Number(p.size)];
+  return Object.keys(p.sizesQty||{}).map(Number).filter(s=>Number(p.sizesQty[s])>0 && p.status!=="sold");
+}
+function totalStock(p){
+  if(p.quality==="Americanos") return p.status==="available"||p.status==="reserved"?1:0;
+  return Object.values(p.sizesQty||{}).reduce((a,b)=>a+Number(b||0),0);
+}
+function statusLabel(s){return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";}
 
 function matches(p){
- const q=document.getElementById("search").value.trim().toLowerCase();
- const filterOK=currentFilter==="Todos" || p.gender===currentFilter || p.quality===currentFilter;
- const qOK=!q || [p.name,p.brand,p.gender,p.quality].join(" ").toLowerCase().includes(q);
- return filterOK && qOK;
+  const q=(document.getElementById("search")?.value||"").toLowerCase().trim();
+  const filter=currentFilter;
+  const okFilter=filter==="Todos" ||
+    (filter==="Hombre"&&p.gender==="Hombre") ||
+    (filter==="Mujer"&&p.gender==="Mujer") ||
+    (filter==="Americanos"&&p.quality==="Americanos") ||
+    (filter==="Económicos"&&p.quality==="Económicos");
+  if(!okFilter)return false;
+  if(!q)return true;
+  const sizes=availableSizes(p).join(" ");
+  return [p.id,p.name,p.brand,p.gender,p.quality,sizes].join(" ").toLowerCase().includes(q);
 }
 
 function productCard(p){
+ const sizes=availableSizes(p);
+ const sold=p.status==="sold" || totalStock(p)===0;
  return `<article class="product-card">
-   <div class="product-media" onclick="openProduct(${p.id})">
-     <span class="tag ${p.quality==='Americanos'?'dark':''}">${p.tag}</span>
-     <button class="favorite" onclick="event.stopPropagation();alert('Puedes guardar favoritos en la siguiente versión.')" aria-label="Favorito">♡</button>
-     <img src="${p.img}" alt="${p.name}">
+   <div class="product-media" onclick="openProduct('${p.id}')">
+     <img src="${p.img}" alt="${p.brand} ${p.name}">
+     <span class="tag ${p.quality==="Americanos"?"dark":""}">${p.tag||p.quality.toUpperCase()}</span>
+     ${p.status==="reserved"?'<span class="tag" style="left:auto;right:13px;background:#fff2dc">RESERVADO</span>':""}
+     <button class="favorite" onclick="event.stopPropagation();alert('Favoritos disponibles en la siguiente versión.')">♡</button>
    </div>
    <div class="product-info">
-     <div class="product-brand">${p.brand} · ${p.quality}</div>
+     <div class="brand">${p.brand} · ${p.quality}</div>
      <h3>${p.name}</h3>
-     <div class="meta">${p.gender} · Tallas ${p.sizes[0]}–${p.sizes[p.sizes.length-1]}</div>
-     <div class="price-row"><span class="price">${money(p.price)}</span>${p.old?`<span class="old">${money(p.old)}</span>`:""}</div>
+     <div class="meta">${p.gender} · ${p.quality==="Americanos"?"Talla "+p.size:(sizes.length?"Tallas "+sizes.join(", "):"Sin stock")}</div>
+     <div class="product-prices">
+       <div class="cash">💵 Al contado: ${money(p.cashPrice)}</div>
+       <div class="credit">💳 A crédito: ${money(p.creditPrice)}</div>
+       <div class="initial">Inicial: ${money(p.initial)}</div>
+     </div>
      <div class="card-actions">
-       <button class="details" onclick="openProduct(${p.id})">Ver detalles</button>
-       <button class="add" onclick="quickAdd(${p.id})">Añadir</button>
+       <button class="details" onclick="openProduct('${p.id}')">Ver detalles</button>
+       <button class="add" onclick="quickAdd('${p.id}')" ${sold||p.status==="reserved"?"disabled":""}>${sold?"Agotado":p.status==="reserved"?"Reservado":"Añadir"}</button>
      </div>
    </div>
  </article>`;
 }
-
 function renderFeatured(){
- document.getElementById("featured").innerHTML=products.slice(0,6).map(p=>`<div class="slide">${productCard(p)}</div>`).join("");
+ const list=products.filter(p=>p.status!=="sold"&&totalStock(p)>0).slice(0,6);
+ document.getElementById("featured").innerHTML=list.length?list.map(p=>`<div class="slide">${productCard(p)}</div>`).join(""):"";
 }
-
 function renderProducts(){
  const list=products.filter(matches);
  document.getElementById("productGrid").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty"><h3>No encontramos ese modelo.</h3><p>Prueba con otra búsqueda o cambia el filtro.</p></div>`;
 }
-
 function setFilter(f){
  currentFilter=f;
  document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.filter===f));
  renderProducts();
  document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
 }
-
 function focusSearch(){
  document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
  setTimeout(()=>document.getElementById("search").focus(),450);
+}
+function searchBySize(){
+ const input=prompt("¿Qué talla necesitas? (35 al 45)");
+ if(input===null)return;
+ const s=Number(input);
+ if(!s){alert("Escribe una talla válida.");return;}
+ document.getElementById("search").value=String(s);
+ currentFilter="Todos";
+ document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.filter==="Todos"));
+ renderProducts();
+ document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 function openProduct(id){
  selectedProduct=products.find(p=>p.id===id);
  selectedSize=null;
- const p=selectedProduct;
+ const p=selectedProduct, sizes=availableSizes(p), sold=p.status==="sold"||totalStock(p)===0;
  document.getElementById("modalContent").innerHTML=`
    <div class="modal-photo"><img src="${p.img}" alt="${p.name}"></div>
    <div class="modal-info">
      <div class="eyebrow">${p.quality.toUpperCase()} · ${p.gender.toUpperCase()}</div>
-     <div style="font-size:11px;color:#888;font-weight:800">${p.brand}</div>
+     <div style="font-size:11px;color:#888;font-weight:800">${p.brand} · CÓDIGO ${p.id}</div>
      <h2>${p.name}</h2>
      <p class="modal-desc">${p.desc}</p>
-     <div class="modal-price">${money(p.price)} ${p.old?`<span class="old">${money(p.old)}</span>`:""}</div>
-     <div class="sizes-box">
-       <h3>Selecciona tu talla</h3>
-       <div class="sizes">${p.sizes.map(s=>`<button class="size" onclick="chooseSize(${s},this)">${s}</button>`).join("")}</div>
-       <p class="size-note">${p.quality==="Económicos"?"Horma chica · disponible del 35 al 44 según modelo.":"Americanos · normalmente del 41 al 45 según disponibilidad."}</p>
+     <div class="product-prices">
+       <div class="cash">💵 Al contado: ${money(p.cashPrice)}</div>
+       <div class="credit">💳 A crédito: ${money(p.creditPrice)}</div>
+       <div class="initial">Inicial: ${money(p.initial)}</div>
      </div>
-     <div class="modal-actions"><button class="btn" onclick="addSelected()">Añadir al carrito</button></div>
+     <div class="sizes-box">
+       <h3>${p.quality==="Americanos"?"Talla del par":"Selecciona tu talla"}</h3>
+       <div class="sizes">${Array.from({length:p.quality==="Americanos"?1:10},(_,i)=>p.quality==="Americanos"?Number(p.size):35+i).map(s=>{
+         const ok=sizes.includes(s);
+         return `<button class="size ${ok?"":"disabled-size"}" ${ok?`onclick="chooseSize(${s},this)"`:"disabled"}>${s}</button>`;
+       }).join("")}</div>
+       <p class="size-note">${p.quality==="Económicos"?"Horma chica · las tallas tachadas no tienen existencias.":"Americano · este código corresponde a un único par y una única talla."}</p>
+     </div>
+     <div class="credit-box">
+       <h3>¿Cómo quieres comprar?</h3>
+       <div class="purchase-options">
+         <button class="purchase-option active" id="optCash" onclick="setPurchaseMode('cash')">💵 Al contado<br><span>${money(p.cashPrice)}</span></button>
+         <button class="purchase-option" id="optCredit" onclick="setPurchaseMode('credit')">💳 A crédito<br><span>${money(p.creditPrice)}</span></button>
+       </div>
+       <div class="credit-fields" id="creditFields">
+         <div style="font-size:11px;font-weight:900">Elige cómo quieres pagar el saldo:</div>
+         <div class="choice-row" id="freqChoices">
+           <button class="choice selected" onclick="setCreditFreq('Semanal',this)">Cada semana</button>
+           <button class="choice" onclick="setCreditFreq('Quincenal',this)">Cada 15 días</button>
+           <button class="choice" onclick="setCreditFreq('Mensual',this)">Cada mes</button>
+         </div>
+         <div style="font-size:11px;font-weight:900">¿En cuánto tiempo?</div>
+         <div class="choice-row" id="termChoices"></div>
+         <div class="credit-result" id="creditResult"></div>
+       </div>
+     </div>
+     <div class="modal-actions"><button class="btn" onclick="addSelected()" ${sold||p.status==="reserved"?"disabled":""}>${sold?"Agotado":p.status==="reserved"?"Reservado":"Añadir al carrito"}</button></div>
    </div>`;
  document.getElementById("productModal").classList.add("open");
  document.body.classList.add("no-scroll");
+ purchaseMode='cash'; creditFreq='Semanal'; creditTerm=1; renderCreditTerms(); updateCreditResult();
+}
+let purchaseMode='cash', creditFreq='Semanal', creditTerm=1;
+function setPurchaseMode(mode){
+ purchaseMode=mode;
+ document.getElementById('optCash').classList.toggle('active',mode==='cash');
+ document.getElementById('optCredit').classList.toggle('active',mode==='credit');
+ document.getElementById('creditFields').classList.toggle('show',mode==='credit');
+ if(mode==='credit'){renderCreditTerms();updateCreditResult();}
+}
+function setCreditFreq(freq,el){
+ creditFreq=freq; creditTerm=1;
+ document.querySelectorAll('#freqChoices .choice').forEach(x=>x.classList.remove('selected'));
+ el.classList.add('selected'); renderCreditTerms(); updateCreditResult();
+}
+function renderCreditTerms(){
+ const box=document.getElementById('termChoices'); if(!box)return;
+ let arr=creditFreq==='Semanal'?Array.from({length:6},(_,i)=>i+1):creditFreq==='Quincenal'?Array.from({length:3},(_,i)=>i+1):[1,2];
+ box.innerHTML=arr.map(n=>{const label=creditFreq==='Semanal'?`${n} semana${n>1?'s':''}`:creditFreq==='Quincenal'?`${n} quincena${n>1?'s':''}`:`${n} mes${n>1?'es':''}`;return `<button class="choice ${n===creditTerm?'selected':''}" onclick="setCreditTerm(${n},this)">${label}</button>`}).join('');
+}
+function setCreditTerm(term,el){creditTerm=term;document.querySelectorAll('#termChoices .choice').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');updateCreditResult()}
+function creditCalc(p){
+ const promo=creditFreq==='Mensual'&&creditTerm===1;
+ const total=promo?Number(p.cashPrice):Number(p.creditPrice);
+ const initial=Number(p.initial||0);
+ const balance=Math.max(0,total-initial);
+ return {promo,total,initial,balance,installment:creditTerm?balance/creditTerm:balance};
+}
+function updateCreditResult(){
+ const box=document.getElementById('creditResult'); if(!box||!selectedProduct)return;
+ const c=creditCalc(selectedProduct);
+ box.innerHTML=`Inicial: <b>${money(c.initial)}</b><br>Saldo: <b>${money(c.balance)}</b><br>Cuota: <b>${money(c.installment)}</b> × ${creditTerm}<div class="credit-promo-mini">${c.promo?'🔥 ¡Paga en 1 mes y te sale al precio de contado!':''}</div>`;
 }
 
 function chooseSize(size,el){
@@ -385,56 +628,194 @@ function chooseSize(size,el){
  el.parentElement.querySelectorAll(".size").forEach(x=>x.classList.remove("selected"));
  el.classList.add("selected");
 }
-
 function addSelected(){
  if(!selectedProduct)return;
  if(!selectedSize){alert("Selecciona una talla antes de añadir el producto.");return;}
- cart.push({...selectedProduct,size:selectedSize});
- updateCart();
- closeModal();
+ if(purchaseMode==='credit' && Number(selectedProduct.initial)>Number(selectedProduct.creditPrice) && !(creditFreq==='Mensual'&&creditTerm===1)){alert("La inicial no puede ser mayor que el precio al crédito.");return;}
+ let item={...selectedProduct,size:selectedSize,purchaseMode};
+ if(purchaseMode==='cash'){item.salePrice=Number(selectedProduct.cashPrice);item.purchaseLabel='Contado';}
+ else {const c=creditCalc(selectedProduct);item.salePrice=c.total;item.initialPaid=c.initial;item.balance=c.balance;item.installment=c.installment;item.creditFreq=creditFreq;item.creditTerm=creditTerm;item.purchaseLabel='Crédito';item.promo=c.promo;}
+ cart.push(item);updateCart();closeModal();openCart();
 }
 
 function quickAdd(id){
- const p=products.find(x=>x.id===id);
- if(p.sizes.length===1) cart.push({...p,size:p.sizes[0]});
- else {openProduct(id);return;}
- updateCart();
+ const p=products.find(x=>x.id===id), sizes=availableSizes(p);
+ if(p.status==='reserved'||p.status==='sold'||!sizes.length)return;
+ openProduct(id);
 }
 
 function updateCart(){document.getElementById("cartCount").textContent=cart.length}
-
 function openCart(){
  const box=document.getElementById("cartItems");
  if(!cart.length) box.innerHTML=`<div style="padding:25px 0;color:#777">Tu carrito está vacío.</div>`;
  else box.innerHTML=cart.map((p,i)=>`
    <div class="cart-line">
      <div class="cart-thumb"><img src="${p.img}" alt=""></div>
-     <div class="cart-line-info"><strong>${p.name}</strong><span>${p.brand} · ${p.quality} · Talla ${p.size}</span><span>${money(p.price)}</span></div>
+     <div class="cart-line-info"><strong>${p.name}</strong><span>${p.brand} · ${p.quality} · Código ${p.id} · Talla ${p.size}</span><span>${p.purchaseLabel==='Crédito'?`💳 Crédito · ${creditSummary(p)}`:`💵 Contado · ${money(p.salePrice)}`}</span></div>
      <button class="remove" onclick="removeCart(${i})">Quitar</button>
    </div>`).join("");
- document.getElementById("cartTotal").textContent=cart.reduce((sum,p)=>sum+p.price,0).toLocaleString("es-BO");
- document.getElementById("cartModal").classList.add("open");
- document.body.classList.add("no-scroll");
+ document.getElementById("cartTotal").textContent=cart.reduce((sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),0).toLocaleString("es-BO");
+ document.getElementById("cartModal").classList.add("open"); document.body.classList.add("no-scroll");
 }
-
+function creditSummary(p){return `${money(p.salePrice)} · Inicial ${money(p.initialPaid)} · ${p.creditFreq} ${p.creditTerm} · ${money(p.installment)} por cuota`;}
 function removeCart(i){cart.splice(i,1);updateCart();openCart()}
-
 function closeModal(){document.getElementById("productModal").classList.remove("open");document.body.classList.remove("no-scroll")}
 function closeCart(){document.getElementById("cartModal").classList.remove("open");document.body.classList.remove("no-scroll")}
+function continueShopping(){ closeCart(); document.getElementById("catalogo")?.scrollIntoView({behavior:"smooth",block:"start"}); }
 
 function sendWhatsApp(){
  if(!cart.length){alert("Tu carrito está vacío.");return;}
- const lines=cart.map(p=>`• ${p.name} | ${p.quality} | Talla ${p.size} | ${money(p.price)}`).join("\n");
- const total=cart.reduce((sum,p)=>sum+p.price,0);
+ const lines=cart.map(p=>{
+   const link=p.link?`\n  🔗 ${p.link}`:"";
+   if(p.purchaseLabel==='Crédito'){
+     return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}\n  💳 Crédito: ${money(p.salePrice)} | Inicial: ${money(p.initialPaid)} | ${p.creditFreq}: ${p.creditTerm} | Cuota: ${money(p.installment)}${p.promo?'\n  🔥 Promoción: paga en 1 mes y te sale al precio de contado.':''}${link}`;
+   }
+   return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}\n  💵 Contado: ${money(p.salePrice)}${link}`;
+ }).join("\n\n");
+ const total=cart.reduce((sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),0);
  const msg=`Hola, UrbanStep. Quiero consultar por este pedido:\n\n${lines}\n\nTotal referencial: ${money(total)}\n\n¿Me confirman disponibilidad?`;
  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank");
 }
 
+/* ADMIN */
+function openAdminLogin(){document.getElementById("loginModal").classList.add("open");document.body.classList.add("no-scroll");setTimeout(()=>document.getElementById("adminPassword").focus(),100)}
+function closeLogin(){document.getElementById("loginModal").classList.remove("open");document.body.classList.remove("no-scroll")}
+function loginAdmin(){
+ const p=document.getElementById("adminPassword").value;
+ if(p!==ADMIN_PASSWORD){alert("Contraseña incorrecta.");return;}
+ adminUnlocked=true; document.getElementById("adminPassword").value=""; closeLogin(); openAdmin();
+}
+function openAdmin(){if(!adminUnlocked)return;document.getElementById("adminModal").classList.add("open");document.body.classList.add("no-scroll");renderAdmin()}
+function closeAdmin(){document.getElementById("adminModal").classList.remove("open");document.body.classList.remove("no-scroll");editingId=null;document.getElementById("adminEditor").innerHTML=""}
+
+function renderAdmin(){
+ const q=(document.getElementById("adminSearch")?.value||"").toLowerCase().trim();
+ const list=products.filter(p=>!q||[p.id,p.name,p.brand,p.quality,p.gender].join(" ").toLowerCase().includes(q));
+ document.getElementById("adminList").innerHTML=list.map(p=>`
+ <div class="admin-card">
+   <div class="admin-thumb"><img src="${p.img}" alt=""></div>
+   <div class="admin-meta">
+     <strong>${p.id} · ${p.brand} ${p.name}</strong>
+     <span>${p.quality} · ${p.gender} · ${p.quality==="Americanos"?"Talla "+p.size:"Stock: "+Object.entries(p.sizesQty||{}).filter(([s,n])=>Number(n)>0).map(([s,n])=>s+":"+n).join(" · ")}</span>
+     <span>Contado ${money(p.cashPrice)} · Crédito ${money(p.creditPrice)} · Inicial ${money(p.initial)} · <span class="status ${p.status}">${statusLabel(p.status)}</span></span>
+   </div>
+   <div class="admin-actions">
+     <button onclick="editProduct('${p.id}')">Editar</button>
+     <button class="danger" onclick="deleteProduct('${p.id}')">Eliminar</button>
+   </div>
+ </div>`).join("") || `<div class="admin-note">No hay productos que coincidan.</div>`;
+}
+
+function newProduct(){
+ editingId=null;
+ showEditor({id:"",name:"",brand:"",gender:"Hombre",quality:"Americanos",price:0,cashPrice:0,creditPrice:0,initial:0,old:null,tag:"",size:41,status:"available",img:"",desc:"",link:""});
+}
+function editProduct(id){const p=products.find(x=>x.id===id);if(p)showEditor(JSON.parse(JSON.stringify(p)));}
+function showEditor(p){
+ const isEco=p.quality==="Económicos";
+ document.getElementById("adminEditor").innerHTML=`
+ <div class="admin-editor">
+  <div class="eyebrow">${p.id?"EDITAR PRODUCTO":"NUEVO PRODUCTO"}</div>
+  <div class="editor-grid">
+   <div class="field full">
+    <label>Fotografía</label>
+    <div class="photo-preview" id="photoPreview">${p.img?`<img src="${p.img}" alt="">`:""}</div>
+    <input type="file" id="photoFile" accept="image/*" onchange="previewPhoto(event)">
+   </div>
+   <div class="field"><label>Código</label><input id="eId" value="${p.id}" placeholder="Automático al guardar" ${p.id?"readonly":""}></div>
+   <div class="field"><label>Tipo</label><select id="eQuality" onchange="toggleSizeEditor()"><option ${!isEco?"selected":""}>Americanos</option><option ${isEco?"selected":""}>Económicos</option></select></div>
+   <div class="field"><label>Marca</label><input id="eBrand" value="${p.brand||""}"></div>
+   <div class="field"><label>Modelo</label><input id="eName" value="${p.name||""}"></div>
+   <div class="field"><label>Para</label><select id="eGender"><option ${p.gender==="Hombre"?"selected":""}>Hombre</option><option ${p.gender==="Mujer"?"selected":""}>Mujer</option></select></div>
+   <div class="field"><label>Precio al contado</label><input id="eCashPrice" type="number" min="0" value="${p.cashPrice ?? p.price ?? 0}"></div>
+   <div class="field"><label>Precio al crédito</label><input id="eCreditPrice" type="number" min="0" value="${p.creditPrice ?? p.price ?? 0}"></div>
+   <div class="field"><label>Inicial</label><input id="eInitial" type="number" min="0" value="${p.initial ?? 0}"></div>
+   <div class="field"><label>Precio de oferta (opcional)</label><input id="eOld" type="number" min="0" value="${p.old||""}" placeholder="Precio anterior"></div>
+   <div class="field"><label>Estado</label><select id="eStatus"><option value="available" ${p.status==="available"?"selected":""}>Disponible</option><option value="reserved" ${p.status==="reserved"?"selected":""}>Reservado</option><option value="sold" ${p.status==="sold"?"selected":""}>Vendido</option></select></div>
+   <div class="field ${isEco?"":"full"}" id="singleSizeField" style="${isEco?"display:none":""}"><label>Talla del par</label><input id="eSize" type="number" min="35" max="45" value="${p.size||41}"></div>
+   <div class="field full"><label>Link del catálogo de WhatsApp (opcional)</label><input id="eLink" type="url" value="${(p.link||"").replace(/"/g,"&quot;")}" placeholder="Pega aquí el link exacto de este producto en tu catálogo de WhatsApp"></div>
+   <div class="field full"><label>Descripción</label><input id="eDesc" value="${(p.desc||"").replace(/"/g,"&quot;")}"></div>
+   <div class="field full" id="ecoSizesField" style="${isEco?"":"display:none"}">
+     <label>Cantidad por talla (económicos)</label>
+     <div class="size-editor">${Array.from({length:10},(_,i)=>35+i).map(s=>`<div class="size-row"><b>Talla ${s}</b><input id="qty${s}" type="number" min="0" value="${Number((p.sizesQty||{})[s]||0)}"></div>`).join("")}</div>
+     <div class="admin-note">Coloca cuántos pares tienes de cada talla. Si pones 0, esa talla aparecerá tachada para el cliente.</div>
+   </div>
+  </div>
+  <div class="editor-actions"><button class="btn accent" onclick="saveEditor()">Guardar producto</button><button class="small-btn" onclick="cancelEditor()">Cancelar</button></div>
+ </div>`;
+}
+function toggleSizeEditor(){
+ const eco=document.getElementById("eQuality").value==="Económicos";
+ document.getElementById("ecoSizesField").style.display=eco?"block":"none";
+ document.getElementById("singleSizeField").style.display=eco?"none":"block";
+}
+function previewPhoto(e){
+ const file=e.target.files[0]; if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>document.getElementById("photoPreview").innerHTML=`<img src="${reader.result}" alt="">`;
+ reader.readAsDataURL(file);
+}
+function nextCode(prefix){
+ let n=1;
+ while(products.some(p=>p.id===`${prefix}-${String(n).padStart(4,"0")}`))n++;
+ return `${prefix}-${String(n).padStart(4,"0")}`;
+}
+function saveEditor(){
+ const quality=document.getElementById("eQuality").value;
+ const existing=editingId?products.find(p=>p.id===editingId):null;
+ const id=existing?.id || document.getElementById("eId").value.trim() || nextCode(quality==="Americanos"?"AM":"EC");
+ const preview=document.querySelector("#photoPreview img");
+ const file=document.getElementById("photoFile").files[0];
+ const finish=(img)=>{
+   const p={
+    id,name:document.getElementById("eName").value.trim(),brand:document.getElementById("eBrand").value.trim(),
+    gender:document.getElementById("eGender").value,quality,cashPrice:Number(document.getElementById("eCashPrice").value||0),creditPrice:Number(document.getElementById("eCreditPrice").value||0),initial:Number(document.getElementById("eInitial").value||0),price:Number(document.getElementById("eCashPrice").value||0),
+    old:Number(document.getElementById("eOld").value||0)||null,tag:quality==="Americanos"?"AMERICANO":"ECONÓMICO",
+    status:document.getElementById("eStatus").value,img:img||existing?.img||"https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&cs=tinysrgb&w=900",
+    desc:document.getElementById("eDesc").value.trim(),
+    link:document.getElementById("eLink").value.trim()
+   };
+   if(quality==="Americanos") p.size=Number(document.getElementById("eSize").value||41);
+   else {p.sizesQty={};for(let s=35;s<=44;s++)p.sizesQty[s]=Number(document.getElementById("qty"+s).value||0);}
+   const idx=products.findIndex(x=>x.id===id);
+   if(idx>=0)products[idx]=p;else products.push(p);
+   saveProducts(); editingId=null; document.getElementById("adminEditor").innerHTML=""; renderAdmin(); renderFeatured(); renderProducts();
+   alert("Producto guardado correctamente.");
+ };
+ if(file){
+   const reader=new FileReader(); reader.onload=()=>finish(reader.result); reader.readAsDataURL(file);
+ }else finish(preview?.src||null);
+}
+function cancelEditor(){editingId=null;document.getElementById("adminEditor").innerHTML=""}
+function deleteProduct(id){
+ const p=products.find(x=>x.id===id);
+ if(!p)return;
+ if(!confirm(`¿Eliminar ${p.id} · ${p.name}?`))return;
+ products=products.filter(x=>x.id!==id);saveProducts();renderAdmin();renderFeatured();renderProducts();
+}
+function exportInventory(){
+ const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="urbanstep-inventario.json";a.click();URL.revokeObjectURL(a.href);
+}
+function importInventory(e){
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const data=JSON.parse(reader.result);
+   if(!Array.isArray(data))throw new Error();
+   products=data;saveProducts();renderAdmin();renderFeatured();renderProducts();alert("Inventario importado correctamente.");
+  }catch(err){alert("El archivo no tiene un inventario válido.");}
+ };
+ reader.readAsText(file);
+}
+
 document.getElementById("productModal").addEventListener("click",e=>{if(e.target.id==="productModal")closeModal()});
 document.getElementById("cartModal").addEventListener("click",e=>{if(e.target.id==="cartModal")closeCart()});
-renderFeatured();
-renderProducts();
-updateCart();
+document.getElementById("loginModal").addEventListener("click",e=>{if(e.target.id==="loginModal")closeLogin()});
+document.getElementById("adminModal").addEventListener("click",e=>{if(e.target.id==="adminModal")closeAdmin()});
+renderFeatured(); renderProducts(); updateCart();
 </script>
+
 </body>
 </html>
