@@ -446,9 +446,40 @@ const SEED_PRODUCTS = [
  {id:"EC-0002",name:"Sport White",brand:"Urban",gender:"Mujer",quality:"Económicos",price:170,old:200,tag:"OFERTA",status:"available",sizesQty:{35:1,36:0,37:1,38:2,39:1,40:2,41:2,42:1,43:0,44:1},img:"https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Tenis económicos de muy buena calidad. Horma chica; revisa las tallas disponibles antes de pedir."}
 ];
 
-let products = loadProducts();
-products = products.map(p=>({...p,cashPrice:Number(p.cashPrice ?? p.price ?? 0),creditPrice:Number(p.creditPrice ?? p.price ?? 0),initial:Number(p.initial ?? 0)}));
-saveProducts();
+let products = [];
+
+async function loadProductsFromSupabase(){
+  const { data, error } = await supabaseClient
+    .from("productos")
+    .select("*");
+
+  if(error){
+    console.error("Error cargando productos:", error);
+    return [];
+  }
+
+  return data.map(p => ({
+    ...p,
+    cashPrice: Number(p.precio_efectivo ?? p.price ?? 0),
+    creditPrice: Number(p.precio_credito ?? p.price ?? 0),
+    initial: Number(p.initial_payment ?? 0),
+    name: p.nombre ?? "",
+    brand: p.marca ?? p.brand ?? "",
+    gender: p.género ?? "",
+    type: p.tipo ?? "",
+    image: p.image_url ?? "",
+    status: p.estado ?? p.status ?? "",
+    size: p.tamaño ?? p.size ?? "",
+    description: p.description ?? "",
+    stock: Number(p.stock ?? 0),
+    whatsappLink: p.WhatsApp_link ?? ""
+  }));
+}
+
+async function initProducts(){
+  products = await loadProductsFromSupabase();
+  renderCatalog();
+}
 let cart = [];
 let selectedProduct = null;
 let selectedSize = null;
@@ -817,7 +848,11 @@ document.getElementById("productModal").addEventListener("click",e=>{if(e.target
 document.getElementById("cartModal").addEventListener("click",e=>{if(e.target.id==="cartModal")closeCart()});
 document.getElementById("loginModal").addEventListener("click",e=>{if(e.target.id==="loginModal")closeLogin()});
 document.getElementById("adminModal").addEventListener("click",e=>{if(e.target.id==="adminModal")closeAdmin()});
-renderFeatured(); renderProducts(); updateCart();
+initProducts().then(()=>{
+  renderFeatured();
+  renderProducts();
+  updateCart();
+});
 </script>
 
 </body>
