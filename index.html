@@ -504,7 +504,13 @@ function availableSizes(p){
   return Object.keys(p.sizesQty||{}).map(Number).filter(s=>Number(p.sizesQty[s])>0 && p.status!=="sold");
 }
 function totalStock(p){
-  if(p.quality==="Americanos") return p.status==="available"||p.status==="reserved"?1:0;
+  if(p.quality==="Americano" || p.quality==="Americanos"){
+    if(p.status==="activo" || p.status==="available" || p.status==="reserved"){
+      return Number(p.stock ?? 1);
+    }
+    return 0;
+  }
+
   return Object.values(p.sizesQty||{}).reduce((a,b)=>a+Number(b||0),0);
 }
 function statusLabel(s){return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";}
