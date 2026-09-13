@@ -467,12 +467,14 @@ async function loadProductsFromSupabase(){
     brand: p.marca ?? p.brand ?? "",
     gender: p.género ?? "",
     type: p.tipo ?? "",
-    image: p.image_url ?? "",
-    status: p.estado ?? p.status ?? "",
-    size: p.tamaño ?? p.size ?? "",
-    description: p.description ?? "",
-    stock: Number(p.stock ?? 0),
-    whatsappLink: p.WhatsApp_link ?? ""
+    img: p.image_url ?? "",
+status: (p.estado ?? p.status ?? "").toLowerCase(),
+size: p.size ?? "",
+description: p.description ?? "",
+stock: Number(p.stock ?? 0),
+whatsappLink: p.whatsapp_link ?? p.WhatsApp_link ?? "",
+quality: p.tipo ?? "",
+tag: p.promoción ?? ""
   }));
 }
 
