@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeniConfort | Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f6f8;color:#151515}
+header{background:#111;color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+main{max-width:1200px;margin:25px auto;padding:0 16px}.box{background:white;border:1px solid #ddd;border-radius:15px;padding:20px;margin-bottom:20px}
+h1,h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}label{display:block;font-weight:bold;font-size:13px;margin:4px 0 6px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px}textarea{min-height:90px}
+button{padding:10px 15px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}.primary{background:#111;color:#fff}.gray{background:#e9e9e9}.red{background:#b42318;color:white}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.msg{padding:11px;border-radius:8px;margin-bottom:15px}.ok{background:#e8f7eb;color:#176b2c}.err{background:#ffeded;color:#9b1c1c}
+.toolbar{display:flex;gap:10px;margin-bottom:15px}.toolbar input{flex:1}
+table{width:100%;border-collapse:collapse;min-width:850px}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}.table{overflow:auto}
+.thumb{width:55px;height:55px;object-fit:cover;border-radius:7px}.hidden{display:none!important}.note{font-size:12px;color:#666}
+.sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;background:#f7f7f7;padding:12px;border-radius:8px}.sizes input{padding:8px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.sizes{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header><div><h2>BeniConfort — Administración</h2><small>Gestión de productos</small></div><button id="logout" class="gray hidden" onclick="logout()">Salir</button></header>
+
+<div id="login" style="max-width:430px;margin:70px auto;padding:16px">
+<div class="box"><h2>🔐 Acceso administrativo</h2><label>Contraseña</label><input id="pass" type="password"><div class="actions"><button class="primary" onclick="login()">Entrar</button></div><div id="loginMsg"></div></div>
+</div>
+
+<main id="app" class="hidden">
+<div id="msg"></div>
+
+<section class="box">
+<h2 id="title">➕ Agregar producto</h2>
+<div class="grid">
+<div><label>Código</label><input id="code" placeholder="TEN-001"></div>
+<div><label>Nombre / modelo</label><input id="name"></div>
+<div><label>Tipo</label><select id="type" onchange="toggleSizes()"><option value="Americano">Americano</option><option value="Económico">Económico</option></select></div>
+<div><label>Marca</label><input id="brand"></div>
+<div><label>Género</label><select id="gender"><option>Unisex</option><option>Hombre</option><option>Mujer</option></select></div>
+<div><label>Estado</label><select id="status"><option value="Activo">Disponible</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option></select></div>
+<div><label>Precio contado (Bs)</label><input id="cash" type="number" min="0"></div>
+<div><label>Precio crédito (Bs)</label><input id="credit" type="number" min="0"></div>
+<div><label>Inicial (Bs)</label><input id="initial" type="number" min="0"></div>
+<div><label>Promoción</label><input id="promo"></div>
+<div class="full"><label>URL de imagen</label><input id="image" placeholder="https://..."><div class="note">En esta primera versión se usa un enlace de imagen.</div></div>
+<div id="american" class="full"><label>Talla</label><input id="size" placeholder="40"></div>
+<div id="economic" class="full hidden"><label>Tallas y cantidades</label><div id="sizes" class="sizes"></div></div>
+<div><label>Stock</label><input id="stock" type="number" min="0" value="1"></div>
+<div><label>Color</label><input id="color"></div>
+<div class="full"><label>Descripción</label><textarea id="description"></textarea></div>
+<div class="full"><label>Enlace WhatsApp / catálogo</label><input id="wa"></div>
+</div>
+<div class="actions"><button class="primary" onclick="save()">💾 Guardar producto</button><button class="gray" onclick="clearForm()">Limpiar</button></div>
+</section>
+
+<section class="box">
+<div class="toolbar"><input id="search" placeholder="🔎 Buscar..." oninput="render()"><button class="gray" onclick="load()">🔄 Actualizar</button></div>
+<div class="table"><table><thead><tr><th>Foto</th><th>Código</th><th>Producto</th><th>Tipo</th><th>Tallas</th><th>Contado</th><th>Crédito</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+</main>
+
+<script>
+const SUPABASE_URL="https://lydlyusuanvjjoavbocr.supabase.co";
+const SUPABASE_KEY="sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const ADMIN_PASSWORD="urbanstep123";
+let products=[],editing=null;
+const SIZE_LIST=[35,36,37,38,39,40,41,42,43,44,45];
+
+function msg(t,err=false){let e=document.getElementById("msg");e.className="msg "+(err?"err":"ok");e.textContent=t}
+function money(n){return "Bs "+Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:0,maximumFractionDigits:2})}
+function esc(v){return String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[x]))}
+
+function login(){
+ if(document.getElementById("pass").value!==ADMIN_PASSWORD){document.getElementById("loginMsg").innerHTML='<div class="msg err">Contraseña incorrecta.</div>';return}
+ sessionStorage.setItem("beni_admin","1");showApp()
+}
+function showApp(){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");document.getElementById("logout").classList.remove("hidden");load()}
+function logout(){sessionStorage.removeItem("beni_admin");location.reload()}
+
+function toggleSizes(){
+ let eco=document.getElementById("type").value==="Económico";
+ document.getElementById("american").classList.toggle("hidden",eco);
+ document.getElementById("economic").classList.toggle("hidden",!eco);
+}
+
+function initSizes(){document.getElementById("sizes").innerHTML=SIZE_LIST.map(s=>'<div><label>'+s+'</label><input type="number" min="0" value="0" data-size="'+s+'"></div>').join("")}
+
+async function load(){
+ const {data,error}=await db.from("productos").select("*").order("id",{ascending:false});
+ if(error){msg("Error al cargar: "+error.message,true);return}
+ products=data||[];render()
+}
+
+function render(){
+ let q=document.getElementById("search").value.toLowerCase().trim();
+ let list=products.filter(p=>!q||[p.code,p.nombre,p.marca,p.tipo,p.género,p.size,p.color,p.estado].join(" ").toLowerCase().includes(q));
+ document.getElementById("rows").innerHTML=list.length?list.map(p=>{
+   let sizes=p.tipo==="Económico"&&p.tamaños?Object.entries(p.tamaños).filter(x=>Number(x[1])>0).map(x=>x[0]+"("+x[1]+")").join(", "):(p.size||"—");
+   let st=p.estado==="Vendido"?"Vendido":p.estado==="Reservado"?"Reservado":"Disponible";
+   return '<tr><td>'+(p.image_url?'<img class="thumb" src="'+esc(p.image_url)+'">':"—")+'</td>'+
+   '<td>'+esc(p.code||p.id)+'</td><td><b>'+esc(p.nombre)+'</b><br>'+esc(p.marca||"")+'</td>'+
+   '<td>'+esc(p.tipo||"")+'</td><td>'+esc(sizes)+'</td><td>'+money(p.precio_efectivo)+'</td>'+
+   '<td>'+money(p.precio_crédito??p.precio_credito??p.price)+'</td><td>'+st+'</td>'+
+   '<td><button class="gray" onclick="edit('+p.id+')">Editar</button> <button class="red" onclick="removeProduct('+p.id+')">Eliminar</button></td></tr>'
+ }).join(""):'<tr><td colspan="9">No hay productos.</td></tr>'
+}
+
+function clearForm(){
+ editing=null;document.getElementById("title").textContent="➕ Agregar producto";
+ ["code","name","brand","cash","credit","initial","promo","image","size","color","description","wa"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("type").value="Americano";document.getElementById("gender").value="Unisex";document.getElementById("status").value="Activo";document.getElementById("stock").value=1;
+ document.querySelectorAll("#sizes input").forEach(x=>x.value=0);toggleSizes()
+}
+
+function edit(id){
+ let p=products.find(x=>Number(x.id)===Number(id));if(!p)return;
+ editing=p.id;document.getElementById("title").textContent="✏️ Editar producto";
+ document.getElementById("code").value=p.code||"";document.getElementById("name").value=p.nombre||"";document.getElementById("type").value=p.tipo==="Económicos"?"Económico":(p.tipo||"Americano");
+ document.getElementById("brand").value=p.marca||"";document.getElementById("gender").value=p.género||"Unisex";document.getElementById("status").value=p.estado||"Activo";
+ document.getElementById("cash").value=p.precio_efectivo??"";document.getElementById("credit").value=p.precio_crédito??p.precio_credito??"";document.getElementById("initial").value=p.initial_payment??"";
+ document.getElementById("promo").value=p.promoción||"";document.getElementById("image").value=p.image_url||"";document.getElementById("size").value=p.size||"";document.getElementById("stock").value=p.stock??1;
+ document.getElementById("color").value=p.color||"";document.getElementById("description").value=p.description||"";document.getElementById("wa").value=p.whatsapp_link||"";
+ document.querySelectorAll("#sizes input").forEach(x=>x.value=Number((p.tamaños||{})[x.dataset.size]||0));toggleSizes();window.scrollTo({top:0,behavior:"smooth"})
+}
+
+function getSizes(){let o={};document.querySelectorAll("#sizes input").forEach(x=>{if(Number(x.value)>0)o[x.dataset.size]=Number(x.value)});return o}
+
+async function save(){
+ let type=document.getElementById("type").value;
+ let size=document.getElementById("size").value.trim();
+ let sizes=getSizes();
+ let stock=Number(document.getElementById("stock").value||0);
+ if(type==="Económico")stock=Object.values(sizes).reduce((a,b)=>a+Number(b),0);
+ if(!document.getElementById("name").value.trim()){msg("Escribe el nombre o modelo.",true);return}
+ if(type==="Americano"&&!size){msg("Escribe la talla.",true);return}
+ let payload={
+   code:document.getElementById("code").value.trim()||null,
+   nombre:document.getElementById("name").value.trim(),tipo:type,marca:document.getElementById("brand").value.trim(),
+   "género":document.getElementById("gender").value,image_url:document.getElementById("image").value.trim()||null,
+   precio_efectivo:Number(document.getElementById("cash").value||0),"precio_crédito":Number(document.getElementById("credit").value||0),
+   initial_payment:Number(document.getElementById("initial").value||0),"promoción":document.getElementById("promo").value.trim()||null,
+   estado:document.getElementById("status").value,tamaños:sizes,description:document.getElementById("description").value.trim()||null,
+   price:Number(document.getElementById("cash").value||0),stock:stock,category:"Tenis",size:size||null,
+   brand:document.getElementById("brand").value.trim()||null,color:document.getElementById("color").value.trim()||null,
+   status:document.getElementById("status").value,whatsapp_link:document.getElementById("wa").value.trim()||null
+ };
+ let r=editing?await db.from("productos").update(payload).eq("id",editing):await db.from("productos").insert(payload);
+ if(r.error){msg("No se pudo guardar: "+r.error.message,true);return}
+ msg(editing?"Producto actualizado correctamente.":"Producto guardado correctamente.");clearForm();load()
+}
+
+async function removeProduct(id){
+ let p=products.find(x=>Number(x.id)===Number(id));if(!p)return;
+ if(!confirm('¿Eliminar "'+(p.nombre||"producto")+'"?'))return;
+ let {error}=await db.from("productos").delete().eq("id",id);
+ if(error){msg("No se pudo eliminar: "+error.message,true);return}
+ msg("Producto eliminado correctamente.");load()
+}
+
+initSizes();toggleSizes();
+document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+if(sessionStorage.getItem("beni_admin")==="1")showApp();
+</script>
+</body>
+</html>
