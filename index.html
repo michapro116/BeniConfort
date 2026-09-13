@@ -70,6 +70,20 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .carousel{display:flex;gap:17px;overflow-x:auto;scroll-snap-type:x mandatory;padding:3px 2px 20px;scrollbar-width:none}
 .carousel::-webkit-scrollbar{display:none}
 .slide{min-width:min(330px,78vw);scroll-snap-align:start}
+
+/* CORRECCIÓN 2: MISMO TAMAÑO DE IMAGEN EN DESTACADOS */
+#featured .product-media{
+  aspect-ratio:1/1.08;
+  height:auto;
+}
+
+#featured .product-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+
 .product-card{background:#fff}
 .product-media{aspect-ratio:1/1.08;border-radius:20px;background:#f2f2f0;overflow:hidden;position:relative;cursor:pointer}
 .product-media img{transition:.45s}
@@ -546,13 +560,14 @@ function statusLabel(s){
   return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";
 }
 
+/* CORRECCIÓN 3: UNISEX APARECE EN HOMBRE Y MUJER */
 function matches(p){
   const q=(document.getElementById("search")?.value||"").toLowerCase().trim();
   const filter=currentFilter;
 
   const okFilter=filter==="Todos" ||
-    (filter==="Hombre"&&p.gender==="Hombre") ||
-    (filter==="Mujer"&&p.gender==="Mujer") ||
+    (filter==="Hombre"&&(p.gender==="Hombre"||p.gender==="Unisex")) ||
+    (filter==="Mujer"&&(p.gender==="Mujer"||p.gender==="Unisex")) ||
     (filter==="Americanos"&&p.quality==="Americanos") ||
     (filter==="Económicos"&&p.quality==="Económicos");
 
@@ -909,7 +924,11 @@ function addSelected(){
 
   updateCart();
   closeModal();
-  openCart();
+
+  /* CORRECCIÓN 1: abrir el carrito después de cerrar el modal */
+  setTimeout(()=>{
+    openCart();
+  },50);
 }
 
 function quickAdd(id){
