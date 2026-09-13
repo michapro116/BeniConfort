@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="UrbanStep — tenis para hombre y mujer. Modelos americanos de marca y tenis económicos de excelente calidad.">
-<title>UrbanStep | Tenis para hombre y mujer</title>
+<meta name="description" content="BeniConfort — tenis para hombre y mujer. Modelos americanos de marca y tenis económicos de excelente calidad.">
+<title>BeniConfort | Tenis para hombre y mujer</title>
 <style>
 :root{
   --ink:#101114;--muted:#6d7078;--line:#e7e8eb;--paper:#fff;--soft:#f5f5f3;
@@ -243,13 +243,14 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 @media(max-width:760px){.credit-banner{grid-template-columns:1fr;margin:0 4% 15px;padding:22px}.purchase-options{grid-template-columns:1fr}}
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 <body>
 
 <div class="topline">VENTA DE TENIS · HOMBRE Y MUJER · CONSULTA TALLAS Y DISPONIBILIDAD</div>
 
 <nav class="nav">
-  <a class="logo" href="#">URBANSTEP<span></span></a>
+  <a class="logo" href="#">BENICONFORT<span></span></a>
   <div class="navlinks">
     <a href="#catalogo">Tienda</a>
     <a href="#americanos">Americanos</a>
@@ -259,14 +260,15 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   </div>
   <div class="actions">
     <button class="icon search-icon" onclick="focusSearch()" aria-label="Buscar">⌕</button>
-    <button class="icon" onclick="openCart()" aria-label="Carrito">🛒</button><button class="icon admin-open" onclick="openAdminLogin()" aria-label="Administración" title="Administración">⚙</button>
+    <button class="icon" onclick="openCart()" aria-label="Carrito">🛒</button>
+    <button class="icon admin-open" onclick="openAdminLogin()" aria-label="Administración" title="Administración">⚙</button>
     <button class="icon mobile-menu" onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})">☰</button>
   </div>
 </nav>
 
 <section class="hero">
   <div class="hero-copy">
-    <div class="eyebrow">URBANSTEP · SELECCIÓN DE TENIS</div>
+    <div class="eyebrow">BENICONFORT · SELECCIÓN DE TENIS</div>
     <h1>Tu próximo par empieza <em>aquí.</em></h1>
     <p>Tenis para hombre y mujer, seleccionados para distintos estilos y presupuestos. Desde pares americanos de marca hasta opciones económicas de excelente calidad.</p>
     <a class="btn" href="#catalogo">Ver colección <span>→</span></a>
@@ -357,13 +359,13 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
 <footer class="footer" id="contacto">
   <div>
-    <div class="big">URBANSTEP<span style="color:#c9ff38">.</span></div>
+    <div class="big">BENICONFORT<span style="color:#c9ff38">.</span></div>
     <p>Tenis para hombre y mujer.<br>Americanos de marca y opciones económicas de excelente calidad.</p>
   </div>
   <div><h3>TIENDA</h3><p><a href="#catalogo">Catálogo</a><br><a href="#americanos">Americanos</a><br><a href="#economicos">Económicos</a><br><a href="#tallas">Tallas</a></p></div>
   <div><h3>ATENCIÓN</h3><p>Disponibilidad<br>Consultas de talla<br>Pedidos por WhatsApp<br>Envíos</p></div>
   <div><h3>SÍGUENOS</h3><p>WhatsApp<br>Instagram<br>Facebook</p></div>
-  <div class="footer-bottom">© 2026 UrbanStep · Catálogo demostrativo. Reemplaza las fotografías y datos de ejemplo por tu inventario real antes de publicar.</div>
+  <div class="footer-bottom">© 2026 BeniConfort · Catálogo demostrativo. Reemplaza las fotografías y datos de ejemplo por tu inventario real antes de publicar.</div>
 </footer>
 
 <button class="cart-fab" onclick="openCart()">🛒 Carrito <b id="cartCount">0</b></button>
@@ -389,13 +391,12 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   </div>
 </div>
 
-
 <!-- PANEL DE ADMINISTRACIÓN -->
 <div class="modal-bg" id="loginModal">
   <div class="modal admin-login">
     <button class="close" onclick="closeLogin()">✕</button>
     <div class="modal-info">
-      <div class="eyebrow">URBANSTEP · PRIVADO</div>
+      <div class="eyebrow">BENICONFORT · PRIVADO</div>
       <h2>Administración</h2>
       <p class="modal-desc">Ingresa la contraseña para administrar tu catálogo.</p>
       <input class="admin-input" id="adminPassword" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')loginAdmin()">
@@ -410,7 +411,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
     <button class="close" onclick="closeAdmin()">✕</button>
     <div class="admin-head">
       <div>
-        <div class="eyebrow">URBANSTEP · ADMIN</div>
+        <div class="eyebrow">BENICONFORT · ADMIN</div>
         <h2>Inventario</h2>
         <p class="sub">Modo de prueba local: los cambios quedan guardados en este navegador.</p>
       </div>
@@ -430,12 +431,11 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   </div>
 </div>
 
-
 <script>
 const WHATSAPP = "59173913409"; // CAMBIA ESTE NÚMERO POR EL DE TU TIENDA.
-  const SUPABASE_URL = "https://lydlyusuanvjjoavbocr.supabase.co";
+const SUPABASE_URL = "https://lydlyusuanvjjoavbocr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_PASSWORD = "urbanstep123"; // CONTRASEÑA DE PRUEBA. CAMBIA ESTA LÍNEA MÁS ADELANTE.
 
 const SEED_PRODUCTS = [
@@ -462,14 +462,17 @@ async function loadProductsFromSupabase(){
     const rawQuality = String(p.tipo ?? "").trim();
     const quality = rawQuality.toLowerCase().startsWith("americano") ? "Americanos" :
                     rawQuality.toLowerCase().startsWith("econ") ? "Económicos" : rawQuality;
+
     const rawStatus = String(p.estado ?? p.status ?? "").trim().toLowerCase();
     const status = rawStatus === "activo" ? "available" :
                    rawStatus === "disponible" ? "available" :
                    rawStatus === "reservado" ? "reserved" :
                    rawStatus === "vendido" ? "sold" : rawStatus;
+
     let sizesQty = {};
     if (p.tamaños && typeof p.tamaños === "object" && !Array.isArray(p.tamaños)) sizesQty = p.tamaños;
     else if (p.sizesQty && typeof p.sizesQty === "object") sizesQty = p.sizesQty;
+
     return {
       ...p,
       id: String(p.id),
@@ -498,6 +501,7 @@ async function loadProductsFromSupabase(){
 async function initProducts(){
   products = await loadProductsFromSupabase();
 }
+
 let cart = [];
 let selectedProduct = null;
 let selectedSize = null;
@@ -509,16 +513,24 @@ function loadProducts(){
   try{
     const raw=localStorage.getItem("urbanstep_products_v3");
     return raw?JSON.parse(raw):JSON.parse(JSON.stringify(SEED_PRODUCTS));
-  }catch(e){ return JSON.parse(JSON.stringify(SEED_PRODUCTS)); }
+  }catch(e){
+    return JSON.parse(JSON.stringify(SEED_PRODUCTS));
+  }
 }
-function saveProducts(){ localStorage.setItem("urbanstep_products_v3", JSON.stringify(products)); }
 
-function money(n){ return "Bs " + Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:0,maximumFractionDigits:2}); }
+function saveProducts(){
+  localStorage.setItem("urbanstep_products_v3", JSON.stringify(products));
+}
+
+function money(n){
+  return "Bs " + Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:0,maximumFractionDigits:2});
+}
 
 function availableSizes(p){
   if(p.quality==="Americanos") return (p.status==="sold" || !p.size)?[]:[Number(p.size)];
   return Object.keys(p.sizesQty||{}).map(Number).filter(s=>Number(p.sizesQty[s])>0 && p.status!=="sold");
 }
+
 function totalStock(p){
   if(p.quality==="Americano" || p.quality==="Americanos"){
     if(p.status==="activo" || p.status==="available" || p.status==="reserved"){
@@ -529,41 +541,55 @@ function totalStock(p){
 
   return Object.values(p.sizesQty||{}).reduce((a,b)=>a+Number(b||0),0);
 }
-function statusLabel(s){return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";}
+
+function statusLabel(s){
+  return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";
+}
 
 function matches(p){
   const q=(document.getElementById("search")?.value||"").toLowerCase().trim();
   const filter=currentFilter;
+
   const okFilter=filter==="Todos" ||
     (filter==="Hombre"&&p.gender==="Hombre") ||
     (filter==="Mujer"&&p.gender==="Mujer") ||
     (filter==="Americanos"&&p.quality==="Americanos") ||
     (filter==="Económicos"&&p.quality==="Económicos");
+
   if(!okFilter)return false;
   if(!q)return true;
+
   const sizes=availableSizes(p).join(" ");
-  return [p.id,p.name,p.brand,p.gender,p.quality,sizes].join(" ").toLowerCase().includes(q);
+
+  return [p.id,p.name,p.brand,p.gender,p.quality,sizes]
+    .join(" ")
+    .toLowerCase()
+    .includes(q);
 }
 
 function productCard(p){
- const sizes=availableSizes(p);
- const sold=p.status==="sold" || totalStock(p)===0;
- return `<article class="product-card">
+  const sizes=availableSizes(p);
+  const sold=p.status==="sold" || totalStock(p)===0;
+
+  return `<article class="product-card">
    <div class="product-media" onclick="openProduct('${p.id}')">
      <img src="${p.img}" alt="${p.brand} ${p.name}">
      <span class="tag ${p.quality==="Americanos"?"dark":""}">${p.tag||p.quality.toUpperCase()}</span>
      ${p.status==="reserved"?'<span class="tag" style="left:auto;right:13px;background:#fff2dc">RESERVADO</span>':""}
      <button class="favorite" onclick="event.stopPropagation();alert('Favoritos disponibles en la siguiente versión.')">♡</button>
    </div>
+
    <div class="product-info">
      <div class="brand">${p.brand} · ${p.quality}</div>
      <h3>${p.name}</h3>
      <div class="meta">${p.gender} · ${p.quality==="Americanos"?"Talla "+p.size:(sizes.length?"Tallas "+sizes.join(", "):"Sin stock")}</div>
+
      <div class="product-prices">
        <div class="cash">💵 Al contado: ${money(p.cashPrice)}</div>
        <div class="credit">💳 A crédito: ${money(p.creditPrice)}</div>
        <div class="initial">Inicial: ${money(p.initial)}</div>
      </div>
+
      <div class="card-actions">
        <button class="details" onclick="openProduct('${p.id}')">Ver detalles</button>
        <button class="add" onclick="quickAdd('${p.id}')" ${sold||p.status==="reserved"?"disabled":""}>${sold?"Agotado":p.status==="reserved"?"Reservado":"Añadir"}</button>
@@ -571,316 +597,945 @@ function productCard(p){
    </div>
  </article>`;
 }
+
 function renderFeatured(){
- const list=products.filter(p=>p.status!=="sold"&&totalStock(p)>0).slice(0,6);
- document.getElementById("featured").innerHTML=list.length?list.map(p=>`<div class="slide">${productCard(p)}</div>`).join(""):"";
+  const list=products.filter(p=>p.status!=="sold"&&totalStock(p)>0).slice(0,6);
+
+  document.getElementById("featured").innerHTML=
+    list.length
+      ?list.map(p=>`<div class="slide">${productCard(p)}</div>`).join("")
+      :"";
 }
+
 function renderProducts(){
- const list=products.filter(matches);
- document.getElementById("productGrid").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty"><h3>No encontramos ese modelo.</h3><p>Prueba con otra búsqueda o cambia el filtro.</p></div>`;
+  const list=products.filter(matches);
+
+  document.getElementById("productGrid").innerHTML=
+    list.length
+      ?list.map(productCard).join("")
+      :`<div class="empty"><h3>No encontramos ese modelo.</h3><p>Prueba con otra búsqueda o cambia el filtro.</p></div>`;
 }
+
 function setFilter(f){
- currentFilter=f;
- document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.filter===f));
- renderProducts();
- document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
+  currentFilter=f;
+
+  document.querySelectorAll(".filter")
+    .forEach(b=>b.classList.toggle("active",b.dataset.filter===f));
+
+  renderProducts();
+
+  document.getElementById("catalogo")
+    .scrollIntoView({behavior:"smooth",block:"start"});
 }
+
 function focusSearch(){
- document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
- setTimeout(()=>document.getElementById("search").focus(),450);
+  document.getElementById("catalogo")
+    .scrollIntoView({behavior:"smooth",block:"start"});
+
+  setTimeout(()=>document.getElementById("search").focus(),450);
 }
+
 function searchBySize(){
- const input=prompt("¿Qué talla necesitas? (35 al 45)");
- if(input===null)return;
- const s=Number(input);
- if(!s){alert("Escribe una talla válida.");return;}
- document.getElementById("search").value=String(s);
- currentFilter="Todos";
- document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.filter==="Todos"));
- renderProducts();
- document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
+  const input=prompt("¿Qué talla necesitas? (35 al 45)");
+
+  if(input===null)return;
+
+  const s=Number(input);
+
+  if(!s){
+    alert("Escribe una talla válida.");
+    return;
+  }
+
+  document.getElementById("search").value=String(s);
+  currentFilter="Todos";
+
+  document.querySelectorAll(".filter")
+    .forEach(b=>b.classList.toggle("active",b.dataset.filter==="Todos"));
+
+  renderProducts();
+
+  document.getElementById("catalogo")
+    .scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 function openProduct(id){
- selectedProduct=products.find(p=>String(p.id)===String(id));
- if(!selectedProduct){ alert("No se pudo abrir este producto."); return; }
- selectedSize=null;
- const p=selectedProduct, sizes=availableSizes(p), sold=p.status==="sold"||totalStock(p)===0;
- document.getElementById("modalContent").innerHTML=`
+  selectedProduct=products.find(p=>String(p.id)===String(id));
+
+  if(!selectedProduct){
+    alert("No se pudo abrir este producto.");
+    return;
+  }
+
+  selectedSize=null;
+
+  const p=selectedProduct;
+  const sizes=availableSizes(p);
+  const sold=p.status==="sold"||totalStock(p)===0;
+
+  document.getElementById("modalContent").innerHTML=`
    <div class="modal-photo"><img src="${p.img}" alt="${p.name}"></div>
+
    <div class="modal-info">
      <div class="eyebrow">${p.quality.toUpperCase()} · ${p.gender.toUpperCase()}</div>
      <div style="font-size:11px;color:#888;font-weight:800">${p.brand} · CÓDIGO ${p.id}</div>
      <h2>${p.name}</h2>
      <p class="modal-desc">${p.desc}</p>
+
      <div class="product-prices">
        <div class="cash">💵 Al contado: ${money(p.cashPrice)}</div>
        <div class="credit">💳 A crédito: ${money(p.creditPrice)}</div>
        <div class="initial">Inicial: ${money(p.initial)}</div>
      </div>
+
      <div class="sizes-box">
        <h3>${p.quality==="Americanos"?"Talla del par":"Selecciona tu talla"}</h3>
-       <div class="sizes">${Array.from({length:p.quality==="Americanos"?1:10},(_,i)=>p.quality==="Americanos"?Number(p.size):35+i).map(s=>{
-         const ok=sizes.includes(s);
-         return `<button class="size ${ok?"":"disabled-size"}" ${ok?`onclick="chooseSize(${s},this)"`:"disabled"}>${s}</button>`;
-       }).join("")}</div>
-       <p class="size-note">${p.quality==="Económicos"?"Horma chica · las tallas tachadas no tienen existencias.":"Americano · este código corresponde a un único par y una única talla."}</p>
+
+       <div class="sizes">
+         ${Array.from(
+           {length:p.quality==="Americanos"?1:10},
+           (_,i)=>p.quality==="Americanos"?Number(p.size):35+i
+         ).map(s=>{
+           const ok=sizes.includes(s);
+
+           return `<button class="size ${ok?"":"disabled-size"}"
+             ${ok?`onclick="chooseSize(${s},this)"`:"disabled"}>${s}</button>`;
+         }).join("")}
+       </div>
+
+       <p class="size-note">
+         ${p.quality==="Económicos"
+           ?"Horma chica · las tallas tachadas no tienen existencias."
+           :"Americano · este código corresponde a un único par y una única talla."}
+       </p>
      </div>
+
      <div class="credit-box">
        <h3>¿Cómo quieres comprar?</h3>
+
        <div class="purchase-options">
-         <button class="purchase-option active" id="optCash" onclick="setPurchaseMode('cash')">💵 Al contado<br><span>${money(p.cashPrice)}</span></button>
-         <button class="purchase-option" id="optCredit" onclick="setPurchaseMode('credit')">💳 A crédito<br><span>${money(p.creditPrice)}</span></button>
+         <button class="purchase-option active" id="optCash" onclick="setPurchaseMode('cash')">
+           💵 Al contado<br><span>${money(p.cashPrice)}</span>
+         </button>
+
+         <button class="purchase-option" id="optCredit" onclick="setPurchaseMode('credit')">
+           💳 A crédito<br><span>${money(p.creditPrice)}</span>
+         </button>
        </div>
+
        <div class="credit-fields" id="creditFields">
          <div style="font-size:11px;font-weight:900">Elige cómo quieres pagar el saldo:</div>
+
          <div class="choice-row" id="freqChoices">
            <button class="choice selected" onclick="setCreditFreq('Semanal',this)">Cada semana</button>
            <button class="choice" onclick="setCreditFreq('Quincenal',this)">Cada 15 días</button>
            <button class="choice" onclick="setCreditFreq('Mensual',this)">Cada mes</button>
          </div>
+
          <div style="font-size:11px;font-weight:900">¿En cuánto tiempo?</div>
+
          <div class="choice-row" id="termChoices"></div>
+
          <div class="credit-result" id="creditResult"></div>
        </div>
      </div>
-     <div class="modal-actions"><button class="btn" onclick="addSelected()" ${sold||p.status==="reserved"?"disabled":""}>${sold?"Agotado":p.status==="reserved"?"Reservado":"Añadir al carrito"}</button></div>
+
+     <div class="modal-actions">
+       <button class="btn" onclick="addSelected()" ${sold||p.status==="reserved"?"disabled":""}>
+         ${sold?"Agotado":p.status==="reserved"?"Reservado":"Añadir al carrito"}
+       </button>
+     </div>
    </div>`;
- document.getElementById("productModal").classList.add("open");
- document.body.classList.add("no-scroll");
- purchaseMode='cash'; creditFreq='Semanal'; creditTerm=1; renderCreditTerms(); updateCreditResult();
+
+  document.getElementById("productModal").classList.add("open");
+  document.body.classList.add("no-scroll");
+
+  purchaseMode='cash';
+  creditFreq='Semanal';
+  creditTerm=1;
+
+  renderCreditTerms();
+  updateCreditResult();
 }
+
 let purchaseMode='cash', creditFreq='Semanal', creditTerm=1;
+
 function setPurchaseMode(mode){
- purchaseMode=mode;
- document.getElementById('optCash').classList.toggle('active',mode==='cash');
- document.getElementById('optCredit').classList.toggle('active',mode==='credit');
- document.getElementById('creditFields').classList.toggle('show',mode==='credit');
- if(mode==='credit'){renderCreditTerms();updateCreditResult();}
+  purchaseMode=mode;
+
+  document.getElementById('optCash')
+    .classList.toggle('active',mode==='cash');
+
+  document.getElementById('optCredit')
+    .classList.toggle('active',mode==='credit');
+
+  document.getElementById('creditFields')
+    .classList.toggle('show',mode==='credit');
+
+  if(mode==='credit'){
+    renderCreditTerms();
+    updateCreditResult();
+  }
 }
+
 function setCreditFreq(freq,el){
- creditFreq=freq; creditTerm=1;
- document.querySelectorAll('#freqChoices .choice').forEach(x=>x.classList.remove('selected'));
- el.classList.add('selected'); renderCreditTerms(); updateCreditResult();
+  creditFreq=freq;
+  creditTerm=1;
+
+  document.querySelectorAll('#freqChoices .choice')
+    .forEach(x=>x.classList.remove('selected'));
+
+  el.classList.add('selected');
+
+  renderCreditTerms();
+  updateCreditResult();
 }
+
 function renderCreditTerms(){
- const box=document.getElementById('termChoices'); if(!box)return;
- let arr=creditFreq==='Semanal'?Array.from({length:6},(_,i)=>i+1):creditFreq==='Quincenal'?Array.from({length:3},(_,i)=>i+1):[1,2];
- box.innerHTML=arr.map(n=>{const label=creditFreq==='Semanal'?`${n} semana${n>1?'s':''}`:creditFreq==='Quincenal'?`${n} quincena${n>1?'s':''}`:`${n} mes${n>1?'es':''}`;return `<button class="choice ${n===creditTerm?'selected':''}" onclick="setCreditTerm(${n},this)">${label}</button>`}).join('');
+  const box=document.getElementById('termChoices');
+
+  if(!box)return;
+
+  let arr=
+    creditFreq==='Semanal'
+      ?Array.from({length:6},(_,i)=>i+1)
+      :creditFreq==='Quincenal'
+        ?Array.from({length:3},(_,i)=>i+1)
+        :[1,2];
+
+  box.innerHTML=arr.map(n=>{
+    const label=
+      creditFreq==='Semanal'
+        ?`${n} semana${n>1?'s':''}`
+        :creditFreq==='Quincenal'
+          ?`${n} quincena${n>1?'s':''}`
+          :`${n} mes${n>1?'es':''}`;
+
+    return `<button class="choice ${n===creditTerm?'selected':''}" onclick="setCreditTerm(${n},this)">${label}</button>`;
+  }).join('');
 }
-function setCreditTerm(term,el){creditTerm=term;document.querySelectorAll('#termChoices .choice').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');updateCreditResult()}
+
+function setCreditTerm(term,el){
+  creditTerm=term;
+
+  document.querySelectorAll('#termChoices .choice')
+    .forEach(x=>x.classList.remove('selected'));
+
+  el.classList.add('selected');
+
+  updateCreditResult();
+}
+
 function creditCalc(p){
- const promo=creditFreq==='Mensual'&&creditTerm===1;
- const total=promo?Number(p.cashPrice):Number(p.creditPrice);
- const initial=Number(p.initial||0);
- const balance=Math.max(0,total-initial);
- return {promo,total,initial,balance,installment:creditTerm?balance/creditTerm:balance};
+  const promo=creditFreq==='Mensual'&&creditTerm===1;
+  const total=promo?Number(p.cashPrice):Number(p.creditPrice);
+  const initial=Number(p.initial||0);
+  const balance=Math.max(0,total-initial);
+
+  return {
+    promo,
+    total,
+    initial,
+    balance,
+    installment:creditTerm?balance/creditTerm:balance
+  };
 }
+
 function updateCreditResult(){
- const box=document.getElementById('creditResult'); if(!box||!selectedProduct)return;
- const c=creditCalc(selectedProduct);
- box.innerHTML=`Inicial: <b>${money(c.initial)}</b><br>Saldo: <b>${money(c.balance)}</b><br>Cuota: <b>${money(c.installment)}</b> × ${creditTerm}<div class="credit-promo-mini">${c.promo?'🔥 ¡Paga en 1 mes y te sale al precio de contado!':''}</div>`;
+  const box=document.getElementById('creditResult');
+
+  if(!box||!selectedProduct)return;
+
+  const c=creditCalc(selectedProduct);
+
+  box.innerHTML=`
+    Inicial: <b>${money(c.initial)}</b><br>
+    Saldo: <b>${money(c.balance)}</b><br>
+    Cuota: <b>${money(c.installment)}</b> × ${creditTerm}
+    <div class="credit-promo-mini">
+      ${c.promo?'🔥 ¡Paga en 1 mes y te sale al precio de contado!':''}
+    </div>`;
 }
 
 function chooseSize(size,el){
- selectedSize=size;
- el.parentElement.querySelectorAll(".size").forEach(x=>x.classList.remove("selected"));
- el.classList.add("selected");
+  selectedSize=size;
+
+  el.parentElement.querySelectorAll(".size")
+    .forEach(x=>x.classList.remove("selected"));
+
+  el.classList.add("selected");
 }
+
 function addSelected(){
- if(!selectedProduct)return;
- if(!selectedSize){alert("Selecciona una talla antes de añadir el producto.");return;}
- if(purchaseMode==='credit' && Number(selectedProduct.initial)>Number(selectedProduct.creditPrice) && !(creditFreq==='Mensual'&&creditTerm===1)){alert("La inicial no puede ser mayor que el precio al crédito.");return;}
- let item={...selectedProduct,size:selectedSize,purchaseMode};
- if(purchaseMode==='cash'){item.salePrice=Number(selectedProduct.cashPrice);item.purchaseLabel='Contado';}
- else {const c=creditCalc(selectedProduct);item.salePrice=c.total;item.initialPaid=c.initial;item.balance=c.balance;item.installment=c.installment;item.creditFreq=creditFreq;item.creditTerm=creditTerm;item.purchaseLabel='Crédito';item.promo=c.promo;}
- cart.push(item);updateCart();closeModal();openCart();
+  if(!selectedProduct)return;
+
+  if(!selectedSize){
+    alert("Selecciona una talla antes de añadir el producto.");
+    return;
+  }
+
+  if(
+    purchaseMode==='credit' &&
+    Number(selectedProduct.initial)>Number(selectedProduct.creditPrice) &&
+    !(creditFreq==='Mensual'&&creditTerm===1)
+  ){
+    alert("La inicial no puede ser mayor que el precio al crédito.");
+    return;
+  }
+
+  let item={
+    ...selectedProduct,
+    size:selectedSize,
+    purchaseMode
+  };
+
+  if(purchaseMode==='cash'){
+    item.salePrice=Number(selectedProduct.cashPrice);
+    item.purchaseLabel='Contado';
+  }else{
+    const c=creditCalc(selectedProduct);
+
+    item.salePrice=c.total;
+    item.initialPaid=c.initial;
+    item.balance=c.balance;
+    item.installment=c.installment;
+    item.creditFreq=creditFreq;
+    item.creditTerm=creditTerm;
+    item.purchaseLabel='Crédito';
+    item.promo=c.promo;
+  }
+
+  cart.push(item);
+
+  updateCart();
+  closeModal();
+  openCart();
 }
 
 function quickAdd(id){
- const p=products.find(x=>String(x.id)===String(id));
- if(!p)return;
- const sizes=availableSizes(p);
- if(p.status==='reserved'||p.status==='sold'||!sizes.length)return;
- openProduct(id);
+  const p=products.find(x=>String(x.id)===String(id));
+
+  if(!p)return;
+
+  const sizes=availableSizes(p);
+
+  if(p.status==='reserved'||p.status==='sold'||!sizes.length)return;
+
+  openProduct(id);
 }
 
-function updateCart(){document.getElementById("cartCount").textContent=cart.length}
-function openCart(){
- const box=document.getElementById("cartItems");
- if(!cart.length) box.innerHTML=`<div style="padding:25px 0;color:#777">Tu carrito está vacío.</div>`;
- else box.innerHTML=cart.map((p,i)=>`
-   <div class="cart-line">
-     <div class="cart-thumb"><img src="${p.img}" alt=""></div>
-     <div class="cart-line-info"><strong>${p.name}</strong><span>${p.brand} · ${p.quality} · Código ${p.id} · Talla ${p.size}</span><span>${p.purchaseLabel==='Crédito'?`💳 Crédito · ${creditSummary(p)}`:`💵 Contado · ${money(p.salePrice)}`}</span></div>
-     <button class="remove" onclick="removeCart(${i})">Quitar</button>
-   </div>`).join("");
- document.getElementById("cartTotal").textContent=cart.reduce((sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),0).toLocaleString("es-BO");
- document.getElementById("cartModal").classList.add("open"); document.body.classList.add("no-scroll");
+function updateCart(){
+  document.getElementById("cartCount").textContent=cart.length;
 }
-function creditSummary(p){return `${money(p.salePrice)} · Inicial ${money(p.initialPaid)} · ${p.creditFreq} ${p.creditTerm} · ${money(p.installment)} por cuota`;}
-function removeCart(i){cart.splice(i,1);updateCart();openCart()}
-function closeModal(){document.getElementById("productModal").classList.remove("open");document.body.classList.remove("no-scroll")}
-function closeCart(){document.getElementById("cartModal").classList.remove("open");document.body.classList.remove("no-scroll")}
-function continueShopping(){ closeCart(); document.getElementById("catalogo")?.scrollIntoView({behavior:"smooth",block:"start"}); }
+
+function openCart(){
+  const box=document.getElementById("cartItems");
+
+  if(!cart.length){
+    box.innerHTML=`<div style="padding:25px 0;color:#777">Tu carrito está vacío.</div>`;
+  }else{
+    box.innerHTML=cart.map((p,i)=>`
+      <div class="cart-line">
+        <div class="cart-thumb"><img src="${p.img}" alt=""></div>
+
+        <div class="cart-line-info">
+          <strong>${p.name}</strong>
+          <span>${p.brand} · ${p.quality} · Código ${p.id} · Talla ${p.size}</span>
+          <span>
+            ${p.purchaseLabel==='Crédito'
+              ?`💳 Crédito · ${creditSummary(p)}`
+              :`💵 Contado · ${money(p.salePrice)}`}
+          </span>
+        </div>
+
+        <button class="remove" onclick="removeCart(${i})">Quitar</button>
+      </div>
+    `).join("");
+  }
+
+  document.getElementById("cartTotal").textContent=
+    cart.reduce(
+      (sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),
+      0
+    ).toLocaleString("es-BO");
+
+  document.getElementById("cartModal").classList.add("open");
+  document.body.classList.add("no-scroll");
+}
+
+function creditSummary(p){
+  return `${money(p.salePrice)} · Inicial ${money(p.initialPaid)} · ${p.creditFreq} ${p.creditTerm} · ${money(p.installment)} por cuota`;
+}
+
+function removeCart(i){
+  cart.splice(i,1);
+  updateCart();
+  openCart();
+}
+
+function closeModal(){
+  document.getElementById("productModal").classList.remove("open");
+  document.body.classList.remove("no-scroll");
+}
+
+function closeCart(){
+  document.getElementById("cartModal").classList.remove("open");
+  document.body.classList.remove("no-scroll");
+}
+
+function continueShopping(){
+  closeCart();
+
+  document.getElementById("catalogo")
+    ?.scrollIntoView({behavior:"smooth",block:"start"});
+}
 
 function sendWhatsApp(){
- if(!cart.length){alert("Tu carrito está vacío.");return;}
- const lines=cart.map(p=>{
-   const link=p.link?`\n  🔗 ${p.link}`:"";
-   if(p.purchaseLabel==='Crédito'){
-     return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}\n  💳 Crédito: ${money(p.salePrice)} | Inicial: ${money(p.initialPaid)} | ${p.creditFreq}: ${p.creditTerm} | Cuota: ${money(p.installment)}${p.promo?'\n  🔥 Promoción: paga en 1 mes y te sale al precio de contado.':''}${link}`;
-   }
-   return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}\n  💵 Contado: ${money(p.salePrice)}${link}`;
- }).join("\n\n");
- const total=cart.reduce((sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),0);
- const msg=`Hola, UrbanStep. Quiero consultar por este pedido:\n\n${lines}\n\nTotal referencial: ${money(total)}\n\n¿Me confirman disponibilidad?`;
- window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank");
+  if(!cart.length){
+    alert("Tu carrito está vacío.");
+    return;
+  }
+
+  const lines=cart.map(p=>{
+    const link=p.link?`\n  🔗 ${p.link}`:"";
+
+    if(p.purchaseLabel==='Crédito'){
+      return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}
+  💳 Crédito: ${money(p.salePrice)} | Inicial: ${money(p.initialPaid)} | ${p.creditFreq}: ${p.creditTerm} | Cuota: ${money(p.installment)}${p.promo?'\n  🔥 Promoción: paga en 1 mes y te sale al precio de contado.':''}${link}`;
+    }
+
+    return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}
+  💵 Contado: ${money(p.salePrice)}${link}`;
+  }).join("\n\n");
+
+  const total=cart.reduce(
+    (sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),
+    0
+  );
+
+  const msg=`Hola, BeniConfort. Quiero consultar por este pedido:\n\n${lines}\n\nTotal referencial: ${money(total)}\n\n¿Me confirman disponibilidad?`;
+
+  window.open(
+    `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,
+    "_blank"
+  );
 }
 
 /* ADMIN */
-function openAdminLogin(){document.getElementById("loginModal").classList.add("open");document.body.classList.add("no-scroll");setTimeout(()=>document.getElementById("adminPassword").focus(),100)}
-function closeLogin(){document.getElementById("loginModal").classList.remove("open");document.body.classList.remove("no-scroll")}
-function loginAdmin(){
- const p=document.getElementById("adminPassword").value;
- if(p!==ADMIN_PASSWORD){alert("Contraseña incorrecta.");return;}
- adminUnlocked=true; document.getElementById("adminPassword").value=""; closeLogin(); openAdmin();
+
+function openAdminLogin(){
+  document.getElementById("loginModal").classList.add("open");
+  document.body.classList.add("no-scroll");
+
+  setTimeout(
+    ()=>document.getElementById("adminPassword").focus(),
+    100
+  );
 }
-function openAdmin(){if(!adminUnlocked)return;document.getElementById("adminModal").classList.add("open");document.body.classList.add("no-scroll");renderAdmin()}
-function closeAdmin(){document.getElementById("adminModal").classList.remove("open");document.body.classList.remove("no-scroll");editingId=null;document.getElementById("adminEditor").innerHTML=""}
+
+function closeLogin(){
+  document.getElementById("loginModal").classList.remove("open");
+  document.body.classList.remove("no-scroll");
+}
+
+function loginAdmin(){
+  const p=document.getElementById("adminPassword").value;
+
+  if(p!==ADMIN_PASSWORD){
+    alert("Contraseña incorrecta.");
+    return;
+  }
+
+  adminUnlocked=true;
+  document.getElementById("adminPassword").value="";
+  closeLogin();
+  openAdmin();
+}
+
+function openAdmin(){
+  if(!adminUnlocked)return;
+
+  document.getElementById("adminModal").classList.add("open");
+  document.body.classList.add("no-scroll");
+  renderAdmin();
+}
+
+function closeAdmin(){
+  document.getElementById("adminModal").classList.remove("open");
+  document.body.classList.remove("no-scroll");
+  editingId=null;
+  document.getElementById("adminEditor").innerHTML="";
+}
 
 function renderAdmin(){
- const q=(document.getElementById("adminSearch")?.value||"").toLowerCase().trim();
- const list=products.filter(p=>!q||[p.id,p.name,p.brand,p.quality,p.gender].join(" ").toLowerCase().includes(q));
- document.getElementById("adminList").innerHTML=list.map(p=>`
- <div class="admin-card">
-   <div class="admin-thumb"><img src="${p.img}" alt=""></div>
-   <div class="admin-meta">
-     <strong>${p.id} · ${p.brand} ${p.name}</strong>
-     <span>${p.quality} · ${p.gender} · ${p.quality==="Americanos"?"Talla "+p.size:"Stock: "+Object.entries(p.sizesQty||{}).filter(([s,n])=>Number(n)>0).map(([s,n])=>s+":"+n).join(" · ")}</span>
-     <span>Contado ${money(p.cashPrice)} · Crédito ${money(p.creditPrice)} · Inicial ${money(p.initial)} · <span class="status ${p.status}">${statusLabel(p.status)}</span></span>
-   </div>
-   <div class="admin-actions">
-     <button onclick="editProduct('${p.id}')">Editar</button>
-     <button class="danger" onclick="deleteProduct('${p.id}')">Eliminar</button>
-   </div>
- </div>`).join("") || `<div class="admin-note">No hay productos que coincidan.</div>`;
+  const q=(document.getElementById("adminSearch")?.value||"")
+    .toLowerCase()
+    .trim();
+
+  const list=products.filter(
+    p=>!q||[p.id,p.name,p.brand,p.quality,p.gender]
+      .join(" ")
+      .toLowerCase()
+      .includes(q)
+  );
+
+  document.getElementById("adminList").innerHTML=
+    list.map(p=>`
+      <div class="admin-card">
+        <div class="admin-thumb">
+          <img src="${p.img}" alt="">
+        </div>
+
+        <div class="admin-meta">
+          <strong>${p.id} · ${p.brand} ${p.name}</strong>
+
+          <span>
+            ${p.quality} · ${p.gender} ·
+            ${p.quality==="Americanos"
+              ?"Talla "+p.size
+              :"Stock: "+
+                Object.entries(p.sizesQty||{})
+                .filter(([s,n])=>Number(n)>0)
+                .map(([s,n])=>s+":"+n)
+                .join(" · ")}
+          </span>
+
+          <span>
+            Contado ${money(p.cashPrice)} ·
+            Crédito ${money(p.creditPrice)} ·
+            Inicial ${money(p.initial)} ·
+            <span class="status ${p.status}">
+              ${statusLabel(p.status)}
+            </span>
+          </span>
+        </div>
+
+        <div class="admin-actions">
+          <button onclick="editProduct('${p.id}')">Editar</button>
+          <button class="danger" onclick="deleteProduct('${p.id}')">Eliminar</button>
+        </div>
+      </div>
+    `).join("")
+    ||
+    `<div class="admin-note">No hay productos que coincidan.</div>`;
 }
 
 function newProduct(){
- editingId=null;
- showEditor({id:"",name:"",brand:"",gender:"Hombre",quality:"Americanos",price:0,cashPrice:0,creditPrice:0,initial:0,old:null,tag:"",size:41,status:"available",img:"",desc:"",link:""});
-}
-function editProduct(id){const p=products.find(x=>String(x.id)===String(id));if(p)showEditor(JSON.parse(JSON.stringify(p)));}
-function showEditor(p){
- const isEco=p.quality==="Económicos";
- document.getElementById("adminEditor").innerHTML=`
- <div class="admin-editor">
-  <div class="eyebrow">${p.id?"EDITAR PRODUCTO":"NUEVO PRODUCTO"}</div>
-  <div class="editor-grid">
-   <div class="field full">
-    <label>Fotografía</label>
-    <div class="photo-preview" id="photoPreview">${p.img?`<img src="${p.img}" alt="">`:""}</div>
-    <input type="file" id="photoFile" accept="image/*" onchange="previewPhoto(event)">
-   </div>
-   <div class="field"><label>Código</label><input id="eId" value="${p.id}" placeholder="Automático al guardar" ${p.id?"readonly":""}></div>
-   <div class="field"><label>Tipo</label><select id="eQuality" onchange="toggleSizeEditor()"><option ${!isEco?"selected":""}>Americanos</option><option ${isEco?"selected":""}>Económicos</option></select></div>
-   <div class="field"><label>Marca</label><input id="eBrand" value="${p.brand||""}"></div>
-   <div class="field"><label>Modelo</label><input id="eName" value="${p.name||""}"></div>
-   <div class="field"><label>Para</label><select id="eGender"><option ${p.gender==="Hombre"?"selected":""}>Hombre</option><option ${p.gender==="Mujer"?"selected":""}>Mujer</option></select></div>
-   <div class="field"><label>Precio al contado</label><input id="eCashPrice" type="number" min="0" value="${p.cashPrice ?? p.price ?? 0}"></div>
-   <div class="field"><label>Precio al crédito</label><input id="eCreditPrice" type="number" min="0" value="${p.creditPrice ?? p.price ?? 0}"></div>
-   <div class="field"><label>Inicial</label><input id="eInitial" type="number" min="0" value="${p.initial ?? 0}"></div>
-   <div class="field"><label>Precio de oferta (opcional)</label><input id="eOld" type="number" min="0" value="${p.old||""}" placeholder="Precio anterior"></div>
-   <div class="field"><label>Estado</label><select id="eStatus"><option value="available" ${p.status==="available"?"selected":""}>Disponible</option><option value="reserved" ${p.status==="reserved"?"selected":""}>Reservado</option><option value="sold" ${p.status==="sold"?"selected":""}>Vendido</option></select></div>
-   <div class="field ${isEco?"":"full"}" id="singleSizeField" style="${isEco?"display:none":""}"><label>Talla del par</label><input id="eSize" type="number" min="35" max="45" value="${p.size||41}"></div>
-   <div class="field full"><label>Link del catálogo de WhatsApp (opcional)</label><input id="eLink" type="url" value="${(p.link||"").replace(/"/g,"&quot;")}" placeholder="Pega aquí el link exacto de este producto en tu catálogo de WhatsApp"></div>
-   <div class="field full"><label>Descripción</label><input id="eDesc" value="${(p.desc||"").replace(/"/g,"&quot;")}"></div>
-   <div class="field full" id="ecoSizesField" style="${isEco?"":"display:none"}">
-     <label>Cantidad por talla (económicos)</label>
-     <div class="size-editor">${Array.from({length:10},(_,i)=>35+i).map(s=>`<div class="size-row"><b>Talla ${s}</b><input id="qty${s}" type="number" min="0" value="${Number((p.sizesQty||{})[s]||0)}"></div>`).join("")}</div>
-     <div class="admin-note">Coloca cuántos pares tienes de cada talla. Si pones 0, esa talla aparecerá tachada para el cliente.</div>
-   </div>
-  </div>
-  <div class="editor-actions"><button class="btn accent" onclick="saveEditor()">Guardar producto</button><button class="small-btn" onclick="cancelEditor()">Cancelar</button></div>
- </div>`;
-}
-function toggleSizeEditor(){
- const eco=document.getElementById("eQuality").value==="Económicos";
- document.getElementById("ecoSizesField").style.display=eco?"block":"none";
- document.getElementById("singleSizeField").style.display=eco?"none":"block";
-}
-function previewPhoto(e){
- const file=e.target.files[0]; if(!file)return;
- const reader=new FileReader();
- reader.onload=()=>document.getElementById("photoPreview").innerHTML=`<img src="${reader.result}" alt="">`;
- reader.readAsDataURL(file);
-}
-function nextCode(prefix){
- let n=1;
- while(products.some(p=>p.id===`${prefix}-${String(n).padStart(4,"0")}`))n++;
- return `${prefix}-${String(n).padStart(4,"0")}`;
-}
-function saveEditor(){
- const quality=document.getElementById("eQuality").value;
- const existing=editingId?products.find(p=>String(p.id)===String(editingId)):null;
- const id=existing?.id || document.getElementById("eId").value.trim() || nextCode(quality==="Americanos"?"AM":"EC");
- const preview=document.querySelector("#photoPreview img");
- const file=document.getElementById("photoFile").files[0];
- const finish=(img)=>{
-   const p={
-    id,name:document.getElementById("eName").value.trim(),brand:document.getElementById("eBrand").value.trim(),
-    gender:document.getElementById("eGender").value,quality,cashPrice:Number(document.getElementById("eCashPrice").value||0),creditPrice:Number(document.getElementById("eCreditPrice").value||0),initial:Number(document.getElementById("eInitial").value||0),price:Number(document.getElementById("eCashPrice").value||0),
-    old:Number(document.getElementById("eOld").value||0)||null,tag:quality==="Americanos"?"AMERICANO":"ECONÓMICO",
-    status:document.getElementById("eStatus").value,img:img||existing?.img||"https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&cs=tinysrgb&w=900",
-    desc:document.getElementById("eDesc").value.trim(),
-    link:document.getElementById("eLink").value.trim()
-   };
-   if(quality==="Americanos") p.size=Number(document.getElementById("eSize").value||41);
-   else {p.sizesQty={};for(let s=35;s<=44;s++)p.sizesQty[s]=Number(document.getElementById("qty"+s).value||0);}
-   const idx=products.findIndex(x=>String(x.id)===String(id));
-   if(idx>=0)products[idx]=p;else products.push(p);
-   saveProducts(); editingId=null; document.getElementById("adminEditor").innerHTML=""; renderAdmin(); renderFeatured(); renderProducts();
-   alert("Producto guardado correctamente.");
- };
- if(file){
-   const reader=new FileReader(); reader.onload=()=>finish(reader.result); reader.readAsDataURL(file);
- }else finish(preview?.src||null);
-}
-function cancelEditor(){editingId=null;document.getElementById("adminEditor").innerHTML=""}
-function deleteProduct(id){
- const p=products.find(x=>String(x.id)===String(id));
- if(!p)return;
- if(!confirm(`¿Eliminar ${p.id} · ${p.name}?`))return;
- products=products.filter(x=>x.id!==id);saveProducts();renderAdmin();renderFeatured();renderProducts();
-}
-function exportInventory(){
- const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="urbanstep-inventario.json";a.click();URL.revokeObjectURL(a.href);
-}
-function importInventory(e){
- const file=e.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=()=>{
-  try{
-   const data=JSON.parse(reader.result);
-   if(!Array.isArray(data))throw new Error();
-   products=data;saveProducts();renderAdmin();renderFeatured();renderProducts();alert("Inventario importado correctamente.");
-  }catch(err){alert("El archivo no tiene un inventario válido.");}
- };
- reader.readAsText(file);
+  editingId=null;
+
+  showEditor({
+    id:"",
+    name:"",
+    brand:"",
+    gender:"Hombre",
+    quality:"Americanos",
+    price:0,
+    cashPrice:0,
+    creditPrice:0,
+    initial:0,
+    old:null,
+    tag:"",
+    size:41,
+    status:"available",
+    img:"",
+    desc:"",
+    link:""
+  });
 }
 
-document.getElementById("productModal").addEventListener("click",e=>{if(e.target.id==="productModal")closeModal()});
-document.getElementById("cartModal").addEventListener("click",e=>{if(e.target.id==="cartModal")closeCart()});
-document.getElementById("loginModal").addEventListener("click",e=>{if(e.target.id==="loginModal")closeLogin()});
-document.getElementById("adminModal").addEventListener("click",e=>{if(e.target.id==="adminModal")closeAdmin()});
+function editProduct(id){
+  const p=products.find(x=>String(x.id)===String(id));
+
+  if(p)showEditor(JSON.parse(JSON.stringify(p)));
+}
+
+function showEditor(p){
+  const isEco=p.quality==="Económicos";
+
+  document.getElementById("adminEditor").innerHTML=`
+    <div class="admin-editor">
+
+      <div class="eyebrow">
+        ${p.id?"EDITAR PRODUCTO":"NUEVO PRODUCTO"}
+      </div>
+
+      <div class="editor-grid">
+
+        <div class="field full">
+          <label>Fotografía</label>
+
+          <div class="photo-preview" id="photoPreview">
+            ${p.img?`<img src="${p.img}" alt="">`:""}
+          </div>
+
+          <input type="file" id="photoFile" accept="image/*" onchange="previewPhoto(event)">
+        </div>
+
+        <div class="field">
+          <label>Código</label>
+          <input id="eId" value="${p.id}" placeholder="Automático al guardar" ${p.id?"readonly":""}>
+        </div>
+
+        <div class="field">
+          <label>Tipo</label>
+          <select id="eQuality" onchange="toggleSizeEditor()">
+            <option ${!isEco?"selected":""}>Americanos</option>
+            <option ${isEco?"selected":""}>Económicos</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Marca</label>
+          <input id="eBrand" value="${p.brand||""}">
+        </div>
+
+        <div class="field">
+          <label>Modelo</label>
+          <input id="eName" value="${p.name||""}">
+        </div>
+
+        <div class="field">
+          <label>Para</label>
+          <select id="eGender">
+            <option ${p.gender==="Hombre"?"selected":""}>Hombre</option>
+            <option ${p.gender==="Mujer"?"selected":""}>Mujer</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Precio al contado</label>
+          <input id="eCashPrice" type="number" min="0" value="${p.cashPrice ?? p.price ?? 0}">
+        </div>
+
+        <div class="field">
+          <label>Precio al crédito</label>
+          <input id="eCreditPrice" type="number" min="0" value="${p.creditPrice ?? p.price ?? 0}">
+        </div>
+
+        <div class="field">
+          <label>Inicial</label>
+          <input id="eInitial" type="number" min="0" value="${p.initial ?? 0}">
+        </div>
+
+        <div class="field">
+          <label>Precio de oferta (opcional)</label>
+          <input id="eOld" type="number" min="0" value="${p.old||""}" placeholder="Precio anterior">
+        </div>
+
+        <div class="field">
+          <label>Estado</label>
+
+          <select id="eStatus">
+            <option value="available" ${p.status==="available"?"selected":""}>Disponible</option>
+            <option value="reserved" ${p.status==="reserved"?"selected":""}>Reservado</option>
+            <option value="sold" ${p.status==="sold"?"selected":""}>Vendido</option>
+          </select>
+        </div>
+
+        <div class="field ${isEco?"":"full"}"
+             id="singleSizeField"
+             style="${isEco?"display:none":""}">
+          <label>Talla del par</label>
+          <input id="eSize" type="number" min="35" max="45" value="${p.size||41}">
+        </div>
+
+        <div class="field full">
+          <label>Link del catálogo de WhatsApp (opcional)</label>
+
+          <input
+            id="eLink"
+            type="url"
+            value="${(p.link||"").replace(/"/g,"&quot;")}"
+            placeholder="Pega aquí el link exacto de este producto en tu catálogo de WhatsApp">
+        </div>
+
+        <div class="field full">
+          <label>Descripción</label>
+
+          <input
+            id="eDesc"
+            value="${(p.desc||"").replace(/"/g,"&quot;")}">
+        </div>
+
+        <div class="field full"
+             id="ecoSizesField"
+             style="${isEco?"":"display:none"}">
+
+          <label>Cantidad por talla (económicos)</label>
+
+          <div class="size-editor">
+            ${Array.from({length:10},(_,i)=>35+i)
+              .map(s=>`
+                <div class="size-row">
+                  <b>Talla ${s}</b>
+                  <input
+                    id="qty${s}"
+                    type="number"
+                    min="0"
+                    value="${Number((p.sizesQty||{})[s]||0)}">
+                </div>
+              `).join("")}
+          </div>
+
+          <div class="admin-note">
+            Coloca cuántos pares tienes de cada talla.
+            Si pones 0, esa talla aparecerá tachada para el cliente.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="editor-actions">
+        <button class="btn accent" onclick="saveEditor()">Guardar producto</button>
+        <button class="small-btn" onclick="cancelEditor()">Cancelar</button>
+      </div>
+
+    </div>`;
+}
+
+function toggleSizeEditor(){
+  const eco=document.getElementById("eQuality").value==="Económicos";
+
+  document.getElementById("ecoSizesField").style.display=
+    eco?"block":"none";
+
+  document.getElementById("singleSizeField").style.display=
+    eco?"none":"block";
+}
+
+function previewPhoto(e){
+  const file=e.target.files[0];
+
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    document.getElementById("photoPreview").innerHTML=
+      `<img src="${reader.result}" alt="">`;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function nextCode(prefix){
+  let n=1;
+
+  while(
+    products.some(
+      p=>p.id===`${prefix}-${String(n).padStart(4,"0")}`
+    )
+  )n++;
+
+  return `${prefix}-${String(n).padStart(4,"0")}`;
+}
+
+function saveEditor(){
+  const quality=document.getElementById("eQuality").value;
+
+  const existing=editingId
+    ?products.find(p=>String(p.id)===String(editingId))
+    :null;
+
+  const id=
+    existing?.id ||
+    document.getElementById("eId").value.trim() ||
+    nextCode(quality==="Americanos"?"AM":"EC");
+
+  const preview=document.querySelector("#photoPreview img");
+  const file=document.getElementById("photoFile").files[0];
+
+  const finish=(img)=>{
+    const p={
+      id,
+
+      name:document.getElementById("eName").value.trim(),
+
+      brand:document.getElementById("eBrand").value.trim(),
+
+      gender:document.getElementById("eGender").value,
+
+      quality,
+
+      cashPrice:Number(
+        document.getElementById("eCashPrice").value||0
+      ),
+
+      creditPrice:Number(
+        document.getElementById("eCreditPrice").value||0
+      ),
+
+      initial:Number(
+        document.getElementById("eInitial").value||0
+      ),
+
+      price:Number(
+        document.getElementById("eCashPrice").value||0
+      ),
+
+      old:Number(
+        document.getElementById("eOld").value||0
+      )||null,
+
+      tag:quality==="Americanos"
+        ?"AMERICANO"
+        :"ECONÓMICO",
+
+      status:document.getElementById("eStatus").value,
+
+      img:
+        img||
+        existing?.img||
+        "https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&cs=tinysrgb&w=900",
+
+      desc:document.getElementById("eDesc").value.trim(),
+
+      link:document.getElementById("eLink").value.trim()
+    };
+
+    if(quality==="Americanos"){
+      p.size=Number(
+        document.getElementById("eSize").value||41
+      );
+    }else{
+      p.sizesQty={};
+
+      for(let s=35;s<=44;s++){
+        p.sizesQty[s]=Number(
+          document.getElementById("qty"+s).value||0
+        );
+      }
+    }
+
+    const idx=products.findIndex(
+      x=>String(x.id)===String(id)
+    );
+
+    if(idx>=0)products[idx]=p;
+    else products.push(p);
+
+    saveProducts();
+
+    editingId=null;
+
+    document.getElementById("adminEditor").innerHTML="";
+
+    renderAdmin();
+    renderFeatured();
+    renderProducts();
+
+    alert("Producto guardado correctamente.");
+  };
+
+  if(file){
+    const reader=new FileReader();
+
+    reader.onload=()=>{
+      finish(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  }else{
+    finish(preview?.src||null);
+  }
+}
+
+function cancelEditor(){
+  editingId=null;
+  document.getElementById("adminEditor").innerHTML="";
+}
+
+function deleteProduct(id){
+  const p=products.find(
+    x=>String(x.id)===String(id)
+  );
+
+  if(!p)return;
+
+  if(!confirm(`¿Eliminar ${p.id} · ${p.name}?`))return;
+
+  products=products.filter(
+    x=>x.id!==id
+  );
+
+  saveProducts();
+
+  renderAdmin();
+  renderFeatured();
+  renderProducts();
+}
+
+function exportInventory(){
+  const blob=new Blob(
+    [JSON.stringify(products,null,2)],
+    {type:"application/json"}
+  );
+
+  const a=document.createElement("a");
+
+  a.href=URL.createObjectURL(blob);
+  a.download="beniconfort-inventario.json";
+  a.click();
+
+  URL.revokeObjectURL(a.href);
+}
+
+function importInventory(e){
+  const file=e.target.files[0];
+
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+
+      if(!Array.isArray(data))throw new Error();
+
+      products=data;
+
+      saveProducts();
+
+      renderAdmin();
+      renderFeatured();
+      renderProducts();
+
+      alert("Inventario importado correctamente.");
+    }catch(err){
+      alert("El archivo no tiene un inventario válido.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+document.getElementById("productModal")
+  .addEventListener("click",e=>{
+    if(e.target.id==="productModal")closeModal();
+  });
+
+document.getElementById("cartModal")
+  .addEventListener("click",e=>{
+    if(e.target.id==="cartModal")closeCart();
+  });
+
+document.getElementById("loginModal")
+  .addEventListener("click",e=>{
+    if(e.target.id==="loginModal")closeLogin();
+  });
+
+document.getElementById("adminModal")
+  .addEventListener("click",e=>{
+    if(e.target.id==="adminModal")closeAdmin();
+  });
+
 initProducts().then(()=>{
   renderFeatured();
   renderProducts();
   updateCart();
 }).catch(err=>{
-  console.error("Error inicializando productos:", err);
+  console.error("Error inicializando productos:",err);
   renderFeatured();
   renderProducts();
   updateCart();
