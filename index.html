@@ -71,7 +71,6 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .carousel::-webkit-scrollbar{display:none}
 .slide{min-width:min(330px,78vw);scroll-snap-align:start}
 
-/* CORRECCIÓN 2: MISMO TAMAÑO DE IMAGEN EN DESTACADOS */
 #featured .product-media{
   aspect-ratio:1/1.08;
   height:auto;
@@ -168,10 +167,8 @@ img{display:block;width:100%;height:100%;object-fit:cover}
  .cart-fab{right:12px;bottom:12px}
 }
 
-/* ADMIN */
 .admin-open{font-size:15px}
 
-/* V6: destaque principal de contado y crédito */
 .credit-hero{margin:22px 3.5% 0;border-radius:30px;background:#151619;color:#fff;padding:clamp(34px,5vw,62px) clamp(28px,6vw,78px);display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center;overflow:hidden;position:relative}
 .credit-hero:before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(201,255,56,.12);right:-70px;top:-90px}
 .credit-hero .eyebrow{color:#c9ff38;font-size:12px;margin-bottom:14px}
@@ -232,7 +229,6 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
 .disabled-size{opacity:.38;text-decoration:line-through;cursor:not-allowed!important}
 
-/* CRÉDITO */
 .credit-banner{margin:0 5% 20px;border:1px solid var(--line);border-radius:24px;padding:28px;background:#151619;color:#fff;display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
 .credit-banner h2{font-size:clamp(25px,3.4vw,42px);letter-spacing:-.06em;line-height:1}
 .credit-banner p{margin-top:9px;color:#d8d9dd;font-size:13px;line-height:1.5}
@@ -405,7 +401,6 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   </div>
 </div>
 
-<!-- PANEL DE ADMINISTRACIÓN -->
 <div class="modal-bg" id="loginModal">
   <div class="modal admin-login">
     <button class="close" onclick="closeLogin()">✕</button>
@@ -446,11 +441,11 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 </div>
 
 <script>
-const WHATSAPP = "59173913409"; // CAMBIA ESTE NÚMERO POR EL DE TU TIENDA.
+const WHATSAPP = "59173913409";
 const SUPABASE_URL = "https://lydlyusuanvjjoavbocr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ADMIN_PASSWORD = "urbanstep123"; // CONTRASEÑA DE PRUEBA. CAMBIA ESTA LÍNEA MÁS ADELANTE.
+const ADMIN_PASSWORD = "urbanstep123";
 
 const SEED_PRODUCTS = [
  {id:"AM-0001",name:"Runner Black",brand:"Nike",gender:"Hombre",quality:"Americanos",price:420,old:null,tag:"AMERICANO",size:41,status:"available",img:"https://images.pexels.com/photos/20247841/pexels-photo-20247841.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Par único de tenis americanos. La talla indicada corresponde exactamente a este par."},
@@ -560,7 +555,6 @@ function statusLabel(s){
   return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";
 }
 
-/* CORRECCIÓN 3: UNISEX APARECE EN HOMBRE Y MUJER */
 function matches(p){
   const q=(document.getElementById("search")?.value||"").toLowerCase().trim();
   const filter=currentFilter;
@@ -925,7 +919,6 @@ function addSelected(){
   updateCart();
   closeModal();
 
-  /* CORRECCIÓN 1: abrir el carrito después de cerrar el modal */
   setTimeout(()=>{
     openCart();
   },50);
@@ -962,8 +955,8 @@ function openCart(){
           <span>${p.brand} · ${p.quality} · Código ${p.id} · Talla ${p.size}</span>
           <span>
             ${p.purchaseLabel==='Crédito'
-              ?`💳 Crédito · ${creditSummary(p)}`
-              :`💵 Contado · ${money(p.salePrice)}`}
+              ?`Crédito · ${creditSummary(p)}`
+              :`Contado · ${money(p.salePrice)}`}
           </span>
         </div>
 
@@ -983,7 +976,14 @@ function openCart(){
 }
 
 function creditSummary(p){
-  return `${money(p.salePrice)} · Inicial ${money(p.initialPaid)} · ${p.creditFreq} ${p.creditTerm} · ${money(p.installment)} por cuota`;
+  const unit=
+    p.creditFreq==='Semanal'
+      ?`${p.creditTerm} semana${p.creditTerm>1?'s':''}`
+      :p.creditFreq==='Quincenal'
+        ?`${p.creditTerm} quincena${p.creditTerm>1?'s':''}`
+        :`${p.creditTerm} mes${p.creditTerm>1?'es':''}`;
+
+  return `${money(p.salePrice)} · Inicial ${money(p.initialPaid)} · Plan: ${unit} · Cuota ${money(p.installment)}`;
 }
 
 function removeCart(i){
@@ -1009,22 +1009,49 @@ function continueShopping(){
     ?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+
+/* =========================
+   WHATSAPP
+   ========================= */
+
 function sendWhatsApp(){
+
   if(!cart.length){
     alert("Tu carrito está vacío.");
     return;
   }
 
   const lines=cart.map(p=>{
-    const link=p.link?`\n  🔗 ${p.link}`:"";
+
+    /*
+      AHORA USAMOS LA IMAGEN DE SUPABASE.
+      p.img corresponde a image_url.
+    */
+
+    const imageLink=p.img
+      ?`\n  Imagen: ${p.img}`
+      :"";
 
     if(p.purchaseLabel==='Crédito'){
+
+      const plan=
+        p.creditFreq==='Semanal'
+          ?`${p.creditTerm} semana${p.creditTerm>1?'s':''}`
+          :p.creditFreq==='Quincenal'
+            ?`${p.creditTerm} quincena${p.creditTerm>1?'s':''}`
+            :`${p.creditTerm} mes${p.creditTerm>1?'es':''}`;
+
       return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}
-  💳 Crédito: ${money(p.salePrice)} | Inicial: ${money(p.initialPaid)} | ${p.creditFreq}: ${p.creditTerm} | Cuota: ${money(p.installment)}${p.promo?'\n  🔥 Promoción: paga en 1 mes y te sale al precio de contado.':''}${link}`;
+  Crédito: ${money(p.salePrice)}
+  Inicial: ${money(p.initialPaid)}
+  Plan: ${plan}
+  Cuota: ${money(p.installment)}${p.promo?'\n  Promoción: paga en 1 mes y te sale al precio de contado.':''}${imageLink}`;
+
     }
 
     return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}
-  💵 Contado: ${money(p.salePrice)}${link}`;
+  Contado: ${money(p.salePrice)}${imageLink}`;
+
   }).join("\n\n");
 
   const total=cart.reduce(
@@ -1039,6 +1066,7 @@ function sendWhatsApp(){
     "_blank"
   );
 }
+
 
 /* ADMIN */
 
