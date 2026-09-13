@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="UrbanStep — tenis para hombre y mujer. Modelos americanos de marca y tenis económicos de excelente calidad.">
-<title>UrbanStep | Tenis para hombre y mujer</title>
+<meta name="description" content="BeniConfort — tenis para hombre y mujer. Modelos americanos de marca y tenis económicos de excelente calidad.">
+<title>BeniConfort | Tenis para hombre y mujer</title>
 <style>
 :root{
   --ink:#101114;--muted:#6d7078;--line:#e7e8eb;--paper:#fff;--soft:#f5f5f3;
@@ -249,7 +249,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 <div class="topline">VENTA DE TENIS · HOMBRE Y MUJER · CONSULTA TALLAS Y DISPONIBILIDAD</div>
 
 <nav class="nav">
-  <a class="logo" href="#">URBANSTEP<span></span></a>
+  <a class="logo" href="#">BENICONFORT<span></span></a>
   <div class="navlinks">
     <a href="#catalogo">Tienda</a>
     <a href="#americanos">Americanos</a>
@@ -266,7 +266,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
 <section class="hero">
   <div class="hero-copy">
-    <div class="eyebrow">URBANSTEP · SELECCIÓN DE TENIS</div>
+    <div class="eyebrow">BENICONFORT · SELECCIÓN DE TENIS</div>
     <h1>Tu próximo par empieza <em>aquí.</em></h1>
     <p>Tenis para hombre y mujer, seleccionados para distintos estilos y presupuestos. Desde pares americanos de marca hasta opciones económicas de excelente calidad.</p>
     <a class="btn" href="#catalogo">Ver colección <span>→</span></a>
@@ -357,13 +357,13 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
 <footer class="footer" id="contacto">
   <div>
-    <div class="big">URBANSTEP<span style="color:#c9ff38">.</span></div>
+    <div class="big">BENICONFORT<span style="color:#c9ff38">.</span></div>
     <p>Tenis para hombre y mujer.<br>Americanos de marca y opciones económicas de excelente calidad.</p>
   </div>
   <div><h3>TIENDA</h3><p><a href="#catalogo">Catálogo</a><br><a href="#americanos">Americanos</a><br><a href="#economicos">Económicos</a><br><a href="#tallas">Tallas</a></p></div>
   <div><h3>ATENCIÓN</h3><p>Disponibilidad<br>Consultas de talla<br>Pedidos por WhatsApp<br>Envíos</p></div>
   <div><h3>SÍGUENOS</h3><p>WhatsApp<br>Instagram<br>Facebook</p></div>
-  <div class="footer-bottom">© 2026 UrbanStep · Catálogo demostrativo. Reemplaza las fotografías y datos de ejemplo por tu inventario real antes de publicar.</div>
+  <div class="footer-bottom">© 2026 BeniConfort · Catálogo demostrativo. Reemplaza las fotografías y datos de ejemplo por tu inventario real antes de publicar.</div>
 </footer>
 
 <button class="cart-fab" onclick="openCart()">🛒 Carrito <b id="cartCount">0</b></button>
@@ -395,12 +395,12 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   <div class="modal admin-login">
     <button class="close" onclick="closeLogin()">✕</button>
     <div class="modal-info">
-      <div class="eyebrow">URBANSTEP · PRIVADO</div>
+      <div class="eyebrow">BENICONFORT · PRIVADO</div>
       <h2>Administración</h2>
       <p class="modal-desc">Ingresa la contraseña para administrar tu catálogo.</p>
       <input class="admin-input" id="adminPassword" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')loginAdmin()">
       <button class="btn accent" onclick="loginAdmin()">Entrar al panel</button>
-      <p class="admin-hint">Contraseña de prueba: <b>urbanstep123</b>. Cámbiala después.</p>
+      <p class="admin-hint">Contraseña de prueba: <b>beniconfort123</b>. Cámbiala después.</p>
     </div>
   </div>
 </div>
@@ -410,7 +410,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
     <button class="close" onclick="closeAdmin()">✕</button>
     <div class="admin-head">
       <div>
-        <div class="eyebrow">URBANSTEP · ADMIN</div>
+        <div class="eyebrow">BENICONFORT · ADMIN</div>
         <h2>Inventario</h2>
         <p class="sub">Modo de prueba local: los cambios quedan guardados en este navegador.</p>
       </div>
@@ -436,7 +436,7 @@ const WHATSAPP = "59173913409"; // CAMBIA ESTE NÚMERO POR EL DE TU TIENDA.
   const SUPABASE_URL = "https://lydlyusuanvjjoavbocr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ADMIN_PASSWORD = "urbanstep123"; // CONTRASEÑA DE PRUEBA. CAMBIA ESTA LÍNEA MÁS ADELANTE.
+const ADMIN_PASSWORD = "beniconfort123"; // CONTRASEÑA DE PRUEBA. CAMBIA ESTA LÍNEA MÁS ADELANTE.
 
 const SEED_PRODUCTS = [
  {id:"AM-0001",name:"Runner Black",brand:"Nike",gender:"Hombre",quality:"Americanos",price:420,old:null,tag:"AMERICANO",size:41,status:"available",img:"https://images.pexels.com/photos/20247841/pexels-photo-20247841.jpeg?auto=compress&cs=tinysrgb&w=900",desc:"Par único de tenis americanos. La talla indicada corresponde exactamente a este par."},
@@ -448,40 +448,84 @@ const SEED_PRODUCTS = [
 
 let products = [];
 
+function normalizeQuality(value){
+  const v=String(value ?? "").trim().toLowerCase();
+  if(v==="americano" || v==="americanos" || v==="american") return "Americanos";
+  if(v==="económico" || v==="economico" || v==="económicos" || v==="economicos") return "Económicos";
+  return String(value ?? "").trim();
+}
+
+function normalizeStatus(value){
+  const v=String(value ?? "").trim().toLowerCase();
+  if(v==="activo" || v==="active" || v==="available" || v==="disponible") return "available";
+  if(v==="reservado" || v==="reserved") return "reserved";
+  if(v==="vendido" || v==="sold") return "sold";
+  return "available";
+}
+
+function normalizeSizesQty(raw){
+  if(raw && typeof raw === "string"){
+    try{ raw=JSON.parse(raw); }catch(e){ raw=null; }
+  }
+  if(Array.isArray(raw)){
+    const out={};
+    raw.forEach(item=>{
+      if(item && item.size!=null) out[item.size]=Number(item.stock ?? item.quantity ?? 0);
+    });
+    return out;
+  }
+  if(raw && typeof raw === "object") return {...raw};
+  return {};
+}
+
 async function loadProductsFromSupabase(){
   const { data, error } = await supabaseClient
     .from("productos")
-    .select("*");
+    .select("*")
+    .order("id", { ascending:false });
 
   if(error){
     console.error("Error cargando productos:", error);
     return [];
   }
 
-  return data.map(p => ({
-    ...p,
-    cashPrice: Number(p.precio_efectivo ?? p.price ?? 0),
-    creditPrice: Number(p.precio_credito ?? p.price ?? 0),
-    initial: Number(p.initial_payment ?? 0),
-    name: p.nombre ?? "",
-    brand: p.marca ?? p.brand ?? "",
-    gender: p.género ?? "",
-    type: p.tipo ?? "",
-    img: p.image_url ?? "",
-status: (p.estado ?? p.status ?? "").toLowerCase(),
-size: p.size ?? "",
-description: p.description ?? "",
-stock: Number(p.stock ?? 0),
-whatsappLink: p.whatsapp_link ?? p.WhatsApp_link ?? "",
-quality: p.tipo ?? "",
-tag: p.promoción ?? ""
-  }));
+  return (data || []).map(p => {
+    const quality=normalizeQuality(p.tipo ?? p.category);
+    const status=normalizeStatus(p.estado ?? p.status);
+    const sizesQty=normalizeSizesQty(p.tamaños ?? p.sizesQty);
+
+    return {
+      ...p,
+      cashPrice:Number(p.precio_efectivo ?? p.price ?? 0),
+      creditPrice:Number(p["precio_crédito"] ?? p.precio_credito ?? p.price ?? 0),
+      initial:Number(p.initial_payment ?? 0),
+      name:p.nombre ?? p.name ?? "",
+      brand:p.marca ?? p.brand ?? "",
+      gender:p.género ?? p.gender ?? "Unisex",
+      quality,
+      type:p.tipo ?? "",
+      img:p.image_url ?? p.img ?? "",
+      status,
+      size:Number(p.size ?? 0) || 0,
+      sizesQty,
+      stock:Number(p.stock ?? 0),
+      tag:p.promoción ?? p.tag ?? "",
+      desc:p.description ?? p.desc ?? "",
+      description:p.description ?? p.desc ?? "",
+      link:p.whatsapp_link ?? p.WhatsApp_link ?? p.link ?? "",
+      whatsappLink:p.whatsapp_link ?? p.WhatsApp_link ?? p.link ?? "",
+      old:Number(p.old ?? 0) || null
+    };
+  });
 }
 
 async function initProducts(){
   products = await loadProductsFromSupabase();
-  renderCatalog();
+  renderFeatured();
+  renderProducts();
+  renderAdmin();
 }
+
 let cart = [];
 let selectedProduct = null;
 let selectedSize = null;
@@ -491,29 +535,33 @@ let editingId = null;
 
 function loadProducts(){
   try{
-    const raw=localStorage.getItem("urbanstep_products_v3");
-    return raw?JSON.parse(raw):JSON.parse(JSON.stringify(SEED_PRODUCTS));
-  }catch(e){ return JSON.parse(JSON.stringify(SEED_PRODUCTS)); }
+    const raw=localStorage.getItem("beniconfort_products_v3");
+    return raw?JSON.parse(raw):[];
+  }catch(e){ return []; }
 }
-function saveProducts(){ localStorage.setItem("urbanstep_products_v3", JSON.stringify(products)); }
+function saveProducts(){ localStorage.setItem("beniconfort_products_v3", JSON.stringify(products)); }
 
 function money(n){ return "Bs " + Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:0,maximumFractionDigits:2}); }
 
 function availableSizes(p){
-  if(p.quality==="Americanos") return p.status==="sold"?[]:[Number(p.size)];
-  return Object.keys(p.sizesQty||{}).map(Number).filter(s=>Number(p.sizesQty[s])>0 && p.status!=="sold");
+  if(p.quality==="Americanos"){
+    return p.status==="sold" || !p.size ? [] : [Number(p.size)];
+  }
+  return Object.keys(p.sizesQty||{})
+    .map(Number)
+    .filter(s=>Number(p.sizesQty[s])>0 && p.status!=="sold");
 }
 function totalStock(p){
-  if(p.quality==="Americano" || p.quality==="Americanos"){
-    if(p.status==="activo" || p.status==="available" || p.status==="reserved"){
-      return Number(p.stock ?? 1);
-    }
-    return 0;
+  if(p.status==="sold") return 0;
+  if(p.quality==="Americanos"){
+    return Number(p.stock ?? 1) > 0 ? Number(p.stock ?? 1) : 0;
   }
-
-  return Object.values(p.sizesQty||{}).reduce((a,b)=>a+Number(b||0),0);
+  const bySizes=Object.values(p.sizesQty||{}).reduce((a,b)=>a+Number(b||0),0);
+  return bySizes>0 ? bySizes : Number(p.stock ?? 0);
 }
-function statusLabel(s){return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";}
+function statusLabel(s){
+  return s==="available"?"Disponible":s==="reserved"?"Reservado":"Vendido";
+}
 
 function matches(p){
   const q=(document.getElementById("search")?.value||"").toLowerCase().trim();
@@ -715,7 +763,7 @@ function sendWhatsApp(){
    return `• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}\n  💵 Contado: ${money(p.salePrice)}${link}`;
  }).join("\n\n");
  const total=cart.reduce((sum,p)=>sum+Number(p.salePrice ?? p.cashPrice ?? p.price),0);
- const msg=`Hola, UrbanStep. Quiero consultar por este pedido:\n\n${lines}\n\nTotal referencial: ${money(total)}\n\n¿Me confirman disponibilidad?`;
+ const msg=`Hola, BeniConfort. Quiero consultar por este pedido:\n\n${lines}\n\nTotal referencial: ${money(total)}\n\n¿Me confirman disponibilidad?`;
  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank");
 }
 
@@ -837,7 +885,7 @@ function deleteProduct(id){
 }
 function exportInventory(){
  const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="urbanstep-inventario.json";a.click();URL.revokeObjectURL(a.href);
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="beniconfort-inventario.json";a.click();URL.revokeObjectURL(a.href);
 }
 function importInventory(e){
  const file=e.target.files[0];if(!file)return;
@@ -857,8 +905,6 @@ document.getElementById("cartModal").addEventListener("click",e=>{if(e.target.id
 document.getElementById("loginModal").addEventListener("click",e=>{if(e.target.id==="loginModal")closeLogin()});
 document.getElementById("adminModal").addEventListener("click",e=>{if(e.target.id==="adminModal")closeAdmin()});
 initProducts().then(()=>{
-  renderFeatured();
-  renderProducts();
   updateCart();
 });
 </script>
