@@ -2201,7 +2201,8 @@ function renderFeatured(){
       .filter(
         p =>
           p.status !== "sold" &&
-          totalStock(p) > 0
+          totalStock(p) > 0 &&
+          Number(p.tag || 0) > 0
       )
       .slice(0,6);
 
