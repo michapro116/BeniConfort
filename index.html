@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -2986,6 +2985,32 @@ function addSelected(){
     return;
   }
 
+  // No permitir agregar más unidades de las que realmente existen.
+  const stockDisponible =
+    selectedProduct.quality === "Americanos"
+      ? Number(selectedProduct.stock ?? 1)
+      : Number(
+          (selectedProduct.sizesQty || {})[selectedSize] || 0
+        );
+
+  const unidadesEnCarrito =
+    cart.filter(
+      item =>
+        String(item.id) === String(selectedProduct.id) &&
+        Number(item.size) === Number(selectedSize)
+    ).length;
+
+  if(unidadesEnCarrito >= stockDisponible){
+
+    alert(
+      stockDisponible > 0
+        ? `Solo hay ${stockDisponible} unidad${stockDisponible === 1 ? "" : "es"} disponible${stockDisponible === 1 ? "" : "s"} para la talla ${selectedSize}.`
+        : "Esta talla ya no tiene existencias."
+    );
+
+    return;
+  }
+
   let item = {
 
     ...selectedProduct,
@@ -3464,4 +3489,3 @@ initProducts()
 
 </body>
 </html>
-```
