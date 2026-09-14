@@ -980,7 +980,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
 .purchase-options{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(3,1fr);
   gap:9px;
   margin-bottom:12px
 }
@@ -2567,6 +2567,24 @@ function openProduct(id){
         </span>
       </button>
 
+      ${
+        Number(p.tag || 0) > 0
+          ? `
+            <button
+              class="purchase-option"
+              id="optPromo"
+              onclick="setPurchaseMode('promo')"
+            >
+              🔥 Con promoción
+              <br>
+              <span>
+                ${money(Number(p.tag))}
+              </span>
+            </button>
+          `
+          : ""
+      }
+
     </div>
 
     <div
@@ -2694,6 +2712,16 @@ function setPurchaseMode(mode){
       "active",
       mode === "credit"
     );
+
+  const optPromo =
+    document.getElementById("optPromo");
+
+  if(optPromo){
+    optPromo.classList.toggle(
+      "active",
+      mode === "promo"
+    );
+  }
 
   document
     .getElementById("creditFields")
@@ -2967,6 +2995,16 @@ function addSelected(){
   };
 
   if(
+    purchaseMode === "promo"
+  ){
+
+    item.salePrice =
+      Number(selectedProduct.tag);
+
+    item.purchaseLabel =
+      "Promoción";
+
+  }else if(
     purchaseMode === "cash"
   ){
 
@@ -3116,6 +3154,10 @@ function openCart(){
           ?
             `Crédito · ${creditSummary(p)}`
           :
+        p.purchaseLabel === "Promoción"
+          ?
+            `🔥 Promoción · ${money(p.salePrice)}`
+          :
             `Contado · ${money(p.salePrice)}`
       }
 
@@ -3260,6 +3302,22 @@ function sendWhatsApp(){
             p.img
               ? `\n  Imagen: ${p.img}`
               : "";
+
+          if(
+            p.purchaseLabel === "Promoción"
+          ){
+
+            return `
+• ${p.name} | Código ${p.id} | ${p.quality} | Talla ${p.size}
+
+  🔥 Promoción: ${money(p.salePrice)}
+
+  Precio normal al contado: ${money(p.cashPrice)}
+
+  Precio normal al crédito: ${money(p.creditPrice)}${imageLink}
+`;
+
+          }
 
           if(
             p.purchaseLabel === "Crédito"
