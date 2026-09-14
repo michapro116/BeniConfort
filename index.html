@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -397,6 +396,38 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   font-weight:950;
   letter-spacing:.04em;
   z-index:2
+}
+
+.promo-badge{
+  position:absolute;
+  top:12px;
+  left:12px;
+  z-index:3;
+  min-width:128px;
+  padding:10px 13px 9px;
+  border-radius:15px;
+  background:#fff;
+  border:2px solid #e53935;
+  box-shadow:0 8px 24px rgba(0,0,0,.16);
+  text-align:center;
+  line-height:1.05
+}
+
+.promo-badge span{
+  display:block;
+  color:#e53935;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.04em
+}
+
+.promo-badge strong{
+  display:block;
+  margin-top:5px;
+  color:#e53935;
+  font-size:24px;
+  font-weight:950;
+  letter-spacing:-.04em
 }
 
 .tag.dark{
@@ -2061,7 +2092,7 @@ function matches(p){
 
 }
 
-function productCard(p){
+function productCard(p, featured = false){
 
   const sizes =
     availableSizes(p);
@@ -2084,11 +2115,22 @@ function productCard(p){
       alt="${p.brand} ${p.name}"
     >
 
-    <span
-      class="tag ${p.quality === "Americanos" ? "dark" : ""}"
-    >
-      ${p.tag || p.quality.toUpperCase()}
-    </span>
+    ${
+      featured && Number(p.tag || 0) > 0
+        ? `
+          <span class="promo-badge">
+            <span>🔥 PROMOCIÓN</span>
+            <strong>Bs ${Number(p.tag).toFixed(0)}</strong>
+          </span>
+        `
+        : `
+          <span
+            class="tag ${p.quality === "Americanos" ? "dark" : ""}"
+          >
+            ${p.tag || p.quality.toUpperCase()}
+          </span>
+        `
+    }
 
     ${
       p.status === "reserved"
@@ -2201,8 +2243,7 @@ function renderFeatured(){
       .filter(
         p =>
           p.status !== "sold" &&
-          totalStock(p) > 0 &&
-          Number(p.tag || 0) > 0
+          totalStock(p) > 0
       )
       .slice(0,6);
 
@@ -2214,7 +2255,7 @@ function renderFeatured(){
         list
           .map(
             p =>
-              `<div class="slide">${productCard(p)}</div>`
+              `<div class="slide">${productCard(p, true)}</div>`
           )
           .join("")
       :
@@ -3363,4 +3404,3 @@ initProducts()
 
 </body>
 </html>
-```
