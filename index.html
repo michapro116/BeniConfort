@@ -179,6 +179,101 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .btn.light{background:#fff;color:var(--ink)}
 .btn.accent{background:var(--accent);color:var(--ink)}
 
+.hero-size-note{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  max-width:560px;
+  margin:0 0 28px;
+  padding:15px 17px;
+  border:1px solid rgba(16,17,20,.10);
+  border-left:4px solid var(--accent);
+  border-radius:16px;
+  background:rgba(255,255,255,.72);
+  box-shadow:0 10px 30px rgba(16,17,20,.06);
+}
+
+.hero-size-note .note-icon{
+  flex:none;
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:var(--accent);
+  color:var(--ink);
+  font-size:14px;
+  font-weight:950;
+}
+
+.hero-size-note strong{
+  display:block;
+  font-size:12px;
+  line-height:1.35;
+  margin-bottom:3px;
+}
+
+.hero-size-note span{
+  display:block;
+  color:#5f6269;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.hero-catalog-btn{
+  background:var(--accent);
+  color:var(--ink);
+  box-shadow:0 10px 24px rgba(201,255,56,.22);
+}
+
+.hero-catalog-btn:hover{
+  box-shadow:0 14px 30px rgba(201,255,56,.30);
+}
+
+.size-search-guide{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:0 0 10px;
+  padding:13px 16px;
+  border:1px solid rgba(16,17,20,.10);
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 8px 24px rgba(16,17,20,.05);
+}
+
+.size-search-guide .guide-icon{
+  flex:none;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:var(--ink);
+  color:var(--accent);
+  font-size:14px;
+  font-weight:950;
+}
+
+.size-search-guide strong{
+  display:block;
+  font-size:13px;
+  font-weight:950;
+  margin-bottom:2px;
+}
+
+.size-search-guide span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+
+.product-size-highlight{
+  color:#5d7f00;
+  font-weight:950;
+}
+
 .hero-photo{
   position:relative;
   overflow:hidden
@@ -1226,12 +1321,22 @@ img{display:block;width:100%;height:100%;object-fit:cover}
     </h1>
 
     <p>
-      Tenis para hombre y mujer, seleccionados para distintos estilos y presupuestos.
-      Desde pares americanos de marca hasta opciones económicas de excelente calidad.
+      Encuentra tu próximo par de forma sencilla. En BeniConfort, las tallas que ves
+      en este catálogo están adaptadas a una referencia de <strong>horma normal</strong>,
+      para que puedas buscar directamente según tu talla habitual, tanto en tenis
+      americanos como en tenis económicos.
     </p>
 
-    <a class="btn" href="#catalogo">
-      Ver colección <span>→</span>
+    <div class="hero-size-note">
+      <div class="note-icon">↕</div>
+      <div>
+        <strong>Compra por tu talla habitual</strong>
+        <span>Hemos adaptado la referencia de tallas del catálogo a horma normal para facilitar tu elección y evitar confusiones.</span>
+      </div>
+    </div>
+
+    <a class="btn hero-catalog-btn" href="#catalogo">
+      Ver catálogo <span>→</span>
     </a>
 
   </div>
@@ -1459,7 +1564,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
       </h2>
 
       <p class="sub">
-        Filtra por género o categoría y revisa las tallas disponibles.
+        Filtra por género o categoría, revisa las tallas disponibles y encuentra el par ideal para ti.
       </p>
 
     </div>
@@ -1510,6 +1615,14 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
   </div>
 
+  <div class="size-search-guide">
+    <div class="guide-icon">↕</div>
+    <div>
+      <strong>¿Qué talla buscas?</strong>
+      <span>Ingresa tu talla para encontrar más rápido los pares disponibles. También puedes buscar por modelo, marca o precio.</span>
+    </div>
+  </div>
+
   <label class="searchbar">
 
     <span>⌕</span>
@@ -1517,7 +1630,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
     <input
       id="search"
       type="search"
-      placeholder="Buscar por modelo o marca..."
+      placeholder="Buscar por talla, modelo, marca o precio..."
       oninput="renderProducts()"
     >
 
@@ -2084,7 +2197,11 @@ function matches(p){
     p.brand,
     p.gender,
     p.quality,
-    sizes
+    sizes,
+    p.cashPrice,
+    p.creditPrice,
+    p.initial,
+    p.tag
   ]
   .join(" ")
   .toLowerCase()
@@ -2168,11 +2285,11 @@ function productCard(p, featured = false){
       ${p.gender} ·
       ${
         p.quality === "Americanos"
-          ? "Talla " + p.size
+          ? `<span class="product-size-highlight">Talla ${p.size}</span>`
           :
         (
           sizes.length
-            ? "Tallas " + sizes.join(", ")
+            ? `<span class="product-size-highlight">Tallas ${sizes.join(", ")}</span>`
             : "Sin stock"
         )
       }
