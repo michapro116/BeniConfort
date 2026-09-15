@@ -180,45 +180,13 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .btn.accent{background:var(--accent);color:var(--ink)}
 
 .hero-size-note{
-  display:flex;
-  align-items:flex-start;
-  gap:12px;
-  max-width:560px;
-  margin:0 0 28px;
-  padding:15px 17px;
-  border:1px solid rgba(16,17,20,.10);
-  border-left:4px solid var(--accent);
-  border-radius:16px;
-  background:rgba(255,255,255,.72);
-  box-shadow:0 10px 30px rgba(16,17,20,.06);
+  display:flex;align-items:center;gap:14px;max-width:600px;margin:0 0 28px;padding:18px 20px;
+  border:2px solid var(--ink);border-left:7px solid var(--accent);border-radius:18px;
+  background:var(--accent);color:var(--ink);box-shadow:0 12px 30px rgba(16,17,20,.14);
 }
-
-.hero-size-note .note-icon{
-  flex:none;
-  width:30px;
-  height:30px;
-  display:grid;
-  place-items:center;
-  border-radius:9px;
-  background:var(--accent);
-  color:var(--ink);
-  font-size:14px;
-  font-weight:950;
-}
-
-.hero-size-note strong{
-  display:block;
-  font-size:12px;
-  line-height:1.35;
-  margin-bottom:3px;
-}
-
-.hero-size-note span{
-  display:block;
-  color:#5f6269;
-  font-size:11px;
-  line-height:1.55;
-}
+.hero-size-note .note-icon{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:11px;background:var(--ink);color:var(--accent);font-size:18px;font-weight:950}
+.hero-size-note strong{display:block;font-size:16px;line-height:1.3;margin:0;font-weight:950}
+.hero-size-note span{display:none}
 
 .hero-catalog-btn{
   background:var(--accent);
@@ -968,6 +936,14 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   font-weight:800
 }
 
+.size-alert{width:min(92vw,430px);background:#fff;border-radius:24px;padding:30px 24px 24px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.28);border:2px solid #e53935;animation:sizeAlertIn .22s ease-out}
+.size-alert-icon{width:58px;height:58px;margin:0 auto 12px;display:grid;place-items:center;border-radius:50%;background:#ffe8e8;font-size:27px}
+.size-alert-label{color:#e53935;font-size:14px;font-weight:950;letter-spacing:.12em;margin-bottom:7px}
+.size-alert h2{font-size:25px;line-height:1.1;letter-spacing:-.04em;margin-bottom:10px}
+.size-alert p{color:#666970;font-size:14px;line-height:1.5;margin-bottom:22px}
+.size-alert-btn{width:100%;padding:14px 20px;font-size:13px}
+@keyframes sizeAlertIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
 .add-toast{
   position:fixed;
   left:50%;
@@ -1178,6 +1154,9 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   .credit-hero-promo{padding:22px}
 
   .add-toast{bottom:18px}
+  .hero-size-note{padding:16px;gap:11px}
+  .hero-size-note .note-icon{width:36px;height:36px;font-size:16px}
+  .hero-size-note strong{font-size:14px}
 
   .credit-banner{
     grid-template-columns:1fr;
@@ -1326,17 +1305,13 @@ img{display:block;width:100%;height:100%;object-fit:cover}
     </h1>
 
     <p>
-      Encuentra tu próximo par de forma sencilla. En BeniConfort, las tallas que ves
-      en este catálogo están adaptadas a una referencia de <strong>horma normal</strong>,
-      para que puedas buscar directamente según tu talla habitual, tanto en tenis
-      americanos como en tenis económicos.
+      Encuentra tu próximo par de forma sencilla.
     </p>
 
     <div class="hero-size-note">
-      <div class="note-icon">↕</div>
+      <div class="note-icon">📏</div>
       <div>
-        <strong>Compra por tu talla habitual</strong>
-        <span>Hemos adaptado la referencia de tallas del catálogo a horma normal para facilitar tu elección y evitar confusiones.</span>
+        <strong>IMPORTANTE: Las tallas están adaptadas a HORMA NORMAL.</strong>
       </div>
     </div>
 
@@ -1781,6 +1756,16 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
   </div>
 
+</div>
+
+<div class="modal-bg" id="sizeAlertModal" aria-hidden="true">
+  <div class="size-alert" role="alertdialog" aria-modal="true" aria-labelledby="sizeAlertTitle">
+    <div class="size-alert-icon">⚠️</div>
+    <div class="size-alert-label">ALERTA</div>
+    <h2 id="sizeAlertTitle">Olvidaste elegir tu talla</h2>
+    <p>Antes de agregar el producto al carrito, selecciona tu talla.</p>
+    <button class="btn accent size-alert-btn" onclick="closeSizeAlert()">ENTENDIDO</button>
+  </div>
 </div>
 
 <div
@@ -3082,6 +3067,17 @@ function chooseSize(size,el){
 
 }
 
+function openSizeAlert(){
+  const modal=document.getElementById("sizeAlertModal");
+  if(!modal) return;
+  modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.classList.add("no-scroll");
+}
+function closeSizeAlert(){
+  const modal=document.getElementById("sizeAlertModal");
+  if(!modal) return;
+  modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.classList.remove("no-scroll");
+}
+
 function addSelected(){
 
   if(!selectedProduct)
@@ -3089,9 +3085,7 @@ function addSelected(){
 
   if(!selectedSize){
 
-    alert(
-      "Selecciona una talla antes de añadir el producto."
-    );
+    openSizeAlert();
 
     return;
   }
