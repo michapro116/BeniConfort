@@ -230,40 +230,45 @@ img{display:block;width:100%;height:100%;object-fit:cover}
   box-shadow:0 14px 30px rgba(201,255,56,.30);
 }
 
-.size-search-guide{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:0 0 10px;
-  padding:13px 16px;
-  border:1px solid rgba(16,17,20,.10);
-  border-radius:16px;
+.size-filter-guide{
+  margin:0 0 18px;
+  padding:16px;
+  border:1px solid rgba(16,17,20,.12);
+  border-radius:18px;
   background:#fff;
-  box-shadow:0 8px 24px rgba(16,17,20,.05);
+  box-shadow:0 10px 28px rgba(16,17,20,.06);
 }
 
-.size-search-guide .guide-icon{
-  flex:none;
-  width:34px;
-  height:34px;
-  display:grid;
-  place-items:center;
-  border-radius:10px;
-  background:var(--ink);
-  color:var(--accent);
+.size-filter-guide label{
+  display:block;
+  margin-bottom:9px;
+  font-size:15px;
+  font-weight:950;
+  color:var(--ink);
+}
+
+.size-filter-guide select{
+  width:100%;
+  appearance:auto;
+  border:1px solid #d8d8d8;
+  border-radius:13px;
+  padding:13px 14px;
+  background:#fff;
+  color:var(--ink);
   font-size:14px;
-  font-weight:950;
+  font-weight:850;
+  outline:none;
+  cursor:pointer;
 }
 
-.size-search-guide strong{
-  display:block;
-  font-size:13px;
-  font-weight:950;
-  margin-bottom:2px;
+.size-filter-guide select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(201,255,56,.22);
 }
 
-.size-search-guide span{
+.size-filter-guide .size-filter-note{
   display:block;
+  margin-top:8px;
   color:var(--muted);
   font-size:11px;
   line-height:1.45;
@@ -1615,12 +1620,12 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 
   </div>
 
-  <div class="size-search-guide">
-    <div class="guide-icon">↕</div>
-    <div>
-      <strong>¿Qué talla buscas?</strong>
-      <span>Ingresa tu talla para encontrar más rápido los pares disponibles. También puedes buscar por modelo, marca o precio.</span>
-    </div>
+  <div class="size-filter-guide">
+    <label for="sizeFilter">Antes de continuar, por favor elige tu talla.</label>
+    <select id="sizeFilter" onchange="setSizeFilter(this.value)">
+      <option value="">Elige tu talla por favor</option>
+    </select>
+    <span class="size-filter-note">Selecciona una talla para mostrar únicamente los pares disponibles en esa medida.</span>
   </div>
 
   <label class="searchbar">
@@ -1630,7 +1635,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
     <input
       id="search"
       type="search"
-      placeholder="Buscar por talla, modelo, marca o precio..."
+      placeholder="Buscar por modelo, marca o precio..."
       oninput="renderProducts()"
     >
 
@@ -2050,6 +2055,8 @@ async function initProducts(){
   products =
     await loadProductsFromSupabase();
 
+  renderSizeFilter();
+
 }
 
 let cart = [];
@@ -2152,6 +2159,9 @@ function matches(p){
   const filter =
     currentFilter;
 
+  const selectedSizeFilter =
+    Number(document.getElementById("sizeFilter")?.value || 0);
+
   const okFilter =
     filter === "Todos" ||
 
@@ -2184,12 +2194,14 @@ function matches(p){
   if(!okFilter)
     return false;
 
+  if(
+    selectedSizeFilter &&
+    !availableSizes(p).includes(selectedSizeFilter)
+  )
+    return false;
+
   if(!q)
     return true;
-
-  const sizes =
-    availableSizes(p)
-      .join(" ");
 
   return [
     p.id,
@@ -2197,7 +2209,6 @@ function matches(p){
     p.brand,
     p.gender,
     p.quality,
-    sizes,
     p.cashPrice,
     p.creditPrice,
     p.initial,
@@ -2406,6 +2417,49 @@ function renderProducts(){
 
 }
 
+function renderSizeFilter(){
+
+  const select =
+    document.getElementById("sizeFilter");
+
+  if(!select)
+    return;
+
+  const previous =
+    select.value;
+
+  const sizes =
+    [...new Set(
+      products
+        .flatMap(p => availableSizes(p))
+        .filter(s => Number.isFinite(s) && s > 0)
+    )]
+    .sort((a,b) => a - b);
+
+  select.innerHTML =
+    `<option value="">Elige tu talla por favor</option>` +
+    sizes
+      .map(s => `<option value="${s}">Talla ${s}</option>`)
+      .join("");
+
+  if(sizes.includes(Number(previous)))
+    select.value = previous;
+
+}
+
+function setSizeFilter(value){
+
+  renderProducts();
+
+  document
+    .getElementById("catalogo")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+}
+
 function setFilter(f){
 
   currentFilter = f;
@@ -2452,52 +2506,9 @@ function focusSearch(){
 
 function searchBySize(){
 
-  const input =
-    prompt(
-      "¿Qué talla necesitas? (35 al 45)"
-    );
-
-  if(input === null)
-    return;
-
-  const s =
-    Number(input);
-
-  if(!s){
-
-    alert(
-      "Escribe una talla válida."
-    );
-
-    return;
-  }
-
-  document.getElementById(
-    "search"
-  ).value =
-    String(s);
-
-  currentFilter =
-    "Todos";
-
   document
-    .querySelectorAll(".filter")
-    .forEach(
-      b =>
-        b.classList.toggle(
-          "active",
-          b.dataset.filter === "Todos"
-        )
-    );
-
-  renderProducts();
-
-  document
-    .getElementById("catalogo")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+    .getElementById("sizeFilter")
+    ?.focus();
 
 }
 
