@@ -28,7 +28,7 @@ const today=()=>new Date().toLocaleDateString('en-CA'),money=n=>'Bs '+Number(n||
 function notice(t,e=false){document.getElementById('msg').innerHTML='<div class="msg '+(e?'err':'ok')+'">'+esc(t)+'</div>';setTimeout(()=>document.getElementById('msg').innerHTML='',4500)}
 function closeModal(){document.getElementById('modal').classList.add('hidden')}function openModal(h){document.getElementById('modalbox').innerHTML=h;document.getElementById('modal').classList.remove('hidden')}
 function view(v){['cobros','venta','clientes','no','estado','resumen'].forEach(x=>{document.getElementById('v-'+x).classList.toggle('hidden',x!==v);document.getElementById('n-'+x).classList.toggle('active',x===v)});if(v==='cobros')renderCollections();if(v==='clientes')renderClients();if(v==='no')renderNo();if(v==='estado')renderEstado();if(v==='resumen')renderSummary()}
-async function load(){document.getElementById('today').textContent='Hoy: '+new Date().toLocaleDateString('es-BO',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});document.getElementById('sdate').value ||= today();document.getElementById('first').value ||= today();setInstallments();try{let [c,p,s,i,pa,co]=await Promise.all([db.from('clientes').select('*').order('codigo'),db.from('productos').select('*').order('created_at',{ascending:false}),db.from('ventas').select('*').order('fecha_venta',{ascending:false}),db.from('cuotas').select('*').order('fecha_vencimiento'),db.from('pagos').select('*').order('fecha_pago',{ascending:false}),db.from('compromisos').select('*').order('fecha_compromiso')]);let rs=[c,p,s,i,pa,co];for(let r of rs)if(r.error)throw r.error;clients=c.data||[];products=p.data||[];sales=s.data||[];installments=i.data||[];payments=pa.data||[];commitments=co.data||[];filterClients();showSelectedProduct();renderProducts();renderCollections();renderClients();renderNo();renderEstado();renderSummary()}catch(e){notice('No se pudo cargar. Ejecuta supabase_dashboard.sql en Supabase. Detalle: '+e.message,true)}}
+async function load(){document.getElementById('today').textContent='Hoy: '+new Date().toLocaleDateString('es-BO',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});document.getElementById('sdate').value ||= today();document.getElementById('first').value ||= today();setInstallments();try{let [c,p,s,i,pa,co]=await Promise.all([db.from('clientes').select('*').order('codigo'),db.from('productos').select('*').order('created_at',{ascending:false}),db.from('ventas').select('*').order('fecha_venta',{ascending:false}),db.from('cuotas').select('*').order('fecha_vencimiento'),db.from('pagos').select('*').order('fecha_pago',{ascending:false}),db.from('compromisos').select('*').order('fecha_compromiso')]);let rs=[c,p,s,i,pa,co];for(let r of rs)if(r.error)throw r.error;clients=c.data||[];products=p.data||[];sales=s.data||[];installments=i.data||[];payments=pa.data||[];commitments=co.data||[];filterClients();showSelectedProduct();renderProducts();renderCollections();renderClients();renderNo();renderEstado();renderSummary()}catch(e){notice('No se pudo cargar el dashboard. Detalle: '+e.message,true)}}
 function filterClients(){let q=(document.getElementById('cs').value||'').toLowerCase(),a=clients.filter(c=>`${c.codigo} ${c.nombre} ${c.whatsapp||''}`.toLowerCase().includes(q));document.getElementById('clist').innerHTML=a.slice(0,40).map(c=>`<div class="client-item" onclick="selectClient('${c.id}')"><b>${esc(c.codigo)} · ${esc(c.nombre)}</b><br><span class="muted">${esc(c.whatsapp||'')} · ${esc(c.direccion||'')}</span></div>`).join('')||'<div style="padding:10px" class="muted">Sin resultados.</div>'}
 function selectClient(id){selectedClient=clients.find(c=>String(c.id)===String(id));document.getElementById('csel').value=selectedClient?selectedClient.codigo+' · '+selectedClient.nombre:'';document.getElementById('clist').innerHTML=''}
 function available(p){let productState=String(p.estado||p.status||'Activo').toLowerCase();let alreadySold=sales.some(s=>String(s.producto_id)===String(p.id)&&s.estado!=='Cancelada');return productState!=='vendido'&&!alreadySold}
@@ -239,7 +239,60 @@ function renderEstado(){
      <div class="muted" style="margin-top:10px">Solo aparecen clientes con deuda activa. Al pagar todo, desaparecerán automáticamente. Doble clic para abrir el detalle.</div>`;
 }
 
-async function retireClient(id){
+async function renderSummary(){
+  let activeSales=sales.filter(s=>{
+    if(s.estado==='Cancelada') return false;
+    let c=clients.find(x=>String(x.id)===String(s.cliente_id));
+    if(!c || c.no_cobrable || c.cartera_activa===false) return false;
+    return Math.max(0,Number(s.precio_venta||0)-paidSale(s.id))>0;
+  });
+
+  let total=activeSales.reduce((a,s)=>a+Number(s.precio_venta||0),0);
+  let initial=activeSales.reduce((a,s)=>a+Number(s.inicial||0),0);
+  let installmentPaid=activeSales.reduce((a,s)=>{
+    return a + payments
+      .filter(p=>String(p.venta_id)===String(s.id) && !p.anulado && p.metodo!=='Inicial')
+      .reduce((z,p)=>z+Number(p.monto||0),0);
+  },0);
+  let totalPaid=activeSales.reduce((a,s)=>a+paidSale(s.id),0);
+  let debt=activeSales.reduce((a,s)=>a+Math.max(0,Number(s.precio_venta||0)-paidSale(s.id)),0);
+  let clientsWithDebt=new Set(activeSales.map(s=>String(s.cliente_id))).size;
+  let pendingInstallments=activeSales.reduce((n,s)=>n+installments.filter(q=>String(q.venta_id)===String(s.id)&&Math.max(0,Number(q.monto)-paidQ(q.id))>0).length,0);
+
+  document.getElementById('kpis').innerHTML=
+    `<div class="kpi">Ventas con saldo<strong>${activeSales.length}</strong></div>`+
+    `<div class="kpi">Valor de venta<strong>${money(total)}</strong></div>`+
+    `<div class="kpi">Iniciales<strong>${money(initial)}</strong></div>`+
+    `<div class="kpi">Cuotas pagadas<strong>${money(installmentPaid)}</strong></div>`+
+    `<div class="kpi">Total pagado<strong>${money(totalPaid)}</strong></div>`+
+    `<div class="kpi">Deuda actual<strong>${money(debt)}</strong></div>`;
+
+  document.getElementById('summaryTable').innerHTML=
+    `<table><thead><tr><th>Venta</th><th>Cliente</th><th>Producto</th><th>Fecha</th><th>Valor venta</th><th>Inicial</th><th>Cuotas pagadas</th><th>Total pagado</th><th>Deuda</th><th>Cuotas restantes</th></tr></thead><tbody>`+
+    (activeSales.length ? activeSales.map(s=>{
+      let c=clients.find(x=>String(x.id)===String(s.cliente_id))||{};
+      let paid=paidSale(s.id);
+      let installmentPaidSale=payments
+        .filter(p=>String(p.venta_id)===String(s.id)&&!p.anulado&&p.metodo!=='Inicial')
+        .reduce((a,p)=>a+Number(p.monto||0),0);
+      let d=Math.max(0,Number(s.precio_venta||0)-paid);
+      let q=installments.filter(x=>String(x.venta_id)===String(s.id)&&Math.max(0,Number(x.monto)-paidQ(x.id))>0);
+      return `<tr ondblclick="clientDetail('${s.cliente_id}')" style="cursor:pointer" title="Doble clic para ver detalle del cliente">`+
+        `<td><b>${esc(s.codigo_venta||'')}</b></td>`+
+        `<td><b>${esc(c.codigo||'')}</b><br>${esc(c.nombre||'')}</td>`+
+        `<td>${esc(s.producto_codigo||'')}<br>${esc(s.producto_nombre||'')}</td>`+
+        `<td>${dateFmt(s.fecha_venta)}</td>`+
+        `<td>${money(s.precio_venta)}</td>`+
+        `<td>${money(s.inicial)}</td>`+
+        `<td>${money(installmentPaidSale)}</td>`+
+        `<td>${money(paid)}</td>`+
+        `<td><b>${money(d)}</b></td>`+
+        `<td>${q.length}</td></tr>`;
+    }).join('') : `<tr><td colspan="10" class="muted">No hay ventas con deuda activa.</td></tr>`)+
+    `</tbody></table><div class="muted" style="margin-top:10px">Solo aparecen ventas con deuda activa de clientes que siguen en cartera. Al pagar todo, desaparecen automáticamente del Resumen. Clientes no cobrables o retirados de cartera no se muestran aquí.</div>`;
+}
+
+function retireClient(id){
   let c=clients.find(x=>String(x.id)===String(id)); if(!c)return;
   if(!confirm(`¿Retirar a ${c.codigo} · ${c.nombre} de la cartera activa?\n\nEl cliente, sus ventas y pagos NO se borrarán. Solo dejará de aparecer en Estado, Resumen y Cobros de hoy.`))return;
   let r=await db.from('clientes').update({cartera_activa:false}).eq('id',id);
