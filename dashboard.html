@@ -44,9 +44,70 @@ function addPeriod(d,n,f){let x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n*
 async function registerSale(){calculateSale();if(!calculated)return;try{if(!available(selectedProduct))throw Error('El producto ya está vendido.');let code='V-'+Date.now(),sale={codigo_venta:code,cliente_id:selectedClient.id,producto_id:selectedProduct.id,producto_codigo:selectedProduct.code,producto_nombre:selectedProduct.nombre,fecha_venta:document.getElementById('sdate').value,precio_venta:calculated.amount,modalidad:calculated.mode==='credito'?calculated.frequency:'Contado',inicial:calculated.initial,estado:'Activa'};let r=await db.from('ventas').insert(sale).select().single();if(r.error)throw r.error;let saleId=r.data.id;if(calculated.mode==='credito'){let rows=Array.from({length:calculated.n},(_,i)=>({venta_id:saleId,numero:i+1,fecha_vencimiento:addPeriod(calculated.first,i,calculated.frequency),monto:Math.round((calculated.balance/calculated.n)*100)/100,estado:'Pendiente'}));let q=await db.from('cuotas').insert(rows);if(q.error)throw q.error}if(calculated.initial>0){let p=await db.from('pagos').insert({venta_id:saleId,cuota_id:null,monto:calculated.initial,fecha_pago:document.getElementById('sdate').value,metodo:'Inicial',anulado:false});if(p.error)throw p.error}notice('Venta registrada correctamente. Código: '+code+'\n\nEl Dashboard NO modifica el producto en Supabase. Si quieres que aparezca como Vendido en la tienda, cámbialo manualmente desde admin.html.');await load();resetSale();view('cobros')}catch(e){notice('No se pudo registrar la venta: '+e.message,true)}}
 function resetSale(){selectedClient=null;selectedProduct=null;calculated=null;document.getElementById('cs').value='';document.getElementById('csel').value='';document.getElementById('ps').value='';document.getElementById('initial').value='';filterClients();showSelectedProduct();renderProducts();calc()}
 function paidQ(qid){return payments.filter(p=>String(p.cuota_id)===String(qid)&&!p.anulado).reduce((a,p)=>a+Number(p.monto||0),0)}function paidSale(sid){return payments.filter(p=>String(p.venta_id)===String(sid)&&!p.anulado).reduce((a,p)=>a+Number(p.monto||0),0)}function currentCommit(sid){return commitments.filter(c=>String(c.venta_id)===String(sid)&&c.activo).sort((a,b)=>String(b.fecha_compromiso).localeCompare(String(a.fecha_compromiso)))[0]}
-function rowsForToday(){let out=[];for(let q of installments){let s=sales.find(x=>String(x.id)===String(q.venta_id));if(!s||s.estado==='Cancelada')continue;let c=clients.find(x=>String(x.id)===String(s.cliente_id));if(!c||c.no_cobrable||c.cartera_activa===false)continue;let rem=Number(q.monto)-paidQ(q.id);if(rem<=0)continue;let com=currentCommit(s.id),st;if(com?.fecha_compromiso===today())st='commit';else if(com?.fecha_compromiso&&com.fecha_compromiso>today())continue;else if(q.fecha_vencimiento<today())st='overdue';else if(q.fecha_vencimiento===today())st='due';else continue;out.push({q,s,c,rem,st,com})}return out}
-function collections(){let a=rowsForToday(),groups=[['overdue','🔴 Vencidos','rborder','bred','Vencido'],['commit','🟡 Compromisos de hoy','yborder','byellow','Compromiso hoy'],['due','🔵 Vence hoy','bborder','bblue','Vence hoy']];return groups.map(g=>{let x=a.filter(r=>r.st===g[0]);return `<div class="box"><div class="row"><h2>${g[1]}</h2><span class="badge ${g[3]}">${x.length}</span></div><div class="cards">${x.map(r=>person(r,g)).join('')||'<div class="muted">Nadie en este grupo.</div>'}</div></div>`}).join('')}
-function person(r,g){let n=(r.c.whatsapp||'').replace(/\D/g,'');if(n.startsWith('591'))n=n.slice(3);let wa='https://wa.me/591'+n+'?text='+encodeURIComponent(`Hola ${r.c.nombre}, te escribo de BeniConfort por tu cuota de ${r.s.producto_nombre}. El monto pendiente es ${money(r.rem)}. ¿Podrías indicarme cuándo podrías realizar el pago?`);return `<div class="person ${g[2]}"><div class="row"><b>${esc(r.c.codigo)} · ${esc(r.c.nombre)}</b><span class="badge ${g[3]}">${g[4]}</span></div><div class="amount">${money(r.rem)}</div><div>${esc(r.s.producto_nombre)} · cuota ${r.q.numero}/${installments.filter(x=>String(x.venta_id)===String(r.s.id)).length}</div><div class="muted">Vencimiento original: ${dateFmt(r.q.fecha_vencimiento)}</div><div class="muted">${esc(r.c.direccion||'')} ${r.c.observacion?'· '+esc(r.c.observacion):''}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${r.s.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${r.s.id}')">📅 Compromiso</button></div></div>`}
+function rowsForToday(){
+  let out=[];
+  for(let q of installments){
+    let s=sales.find(x=>String(x.id)===String(q.venta_id));
+    if(!s||s.estado==='Cancelada')continue;
+    let c=clients.find(x=>String(x.id)===String(s.cliente_id));
+    if(!c||c.no_cobrable||c.cartera_activa===false)continue;
+    let rem=Number(q.monto)-paidQ(q.id);
+    if(rem<=0)continue;
+    let com=currentCommit(s.id),st;
+    if(com?.fecha_compromiso===today())st='commit';
+    else if(com?.fecha_compromiso&&com.fecha_compromiso>today())continue;
+    else if(q.fecha_vencimiento<today())st='overdue';
+    else if(q.fecha_vencimiento===today())st='due';
+    else continue;
+    out.push({q,s,c,rem,st,com});
+  }
+  return out;
+}
+function collectionClientRows(){
+  let raw=rowsForToday(), by={};
+  for(let r of raw){
+    let id=String(r.c.id);
+    if(!by[id])by[id]={c:r.c,rows:[],statuses:new Set()};
+    by[id].rows.push(r); by[id].statuses.add(r.st);
+  }
+  return Object.values(by).map(x=>{
+    let rows=x.rows;
+    let overdue=rows.filter(r=>r.st==='overdue');
+    let commit=rows.filter(r=>r.st==='commit');
+    let due=rows.filter(r=>r.st==='due');
+    let st=overdue.length?'overdue':commit.length?'commit':'due';
+    let relevant=st==='overdue'?overdue:st==='commit'?commit:due;
+    let amount=relevant.reduce((a,r)=>a+r.rem,0);
+    let oldest=overdue.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
+    let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
+    let products=[...new Set(relevant.map(r=>r.s.producto_nombre).filter(Boolean))];
+    return {c:x.c,rows,overdue,commit,due,st,relevant,amount,days,products};
+  }).sort((a,b)=>String(a.c.codigo).localeCompare(String(b.c.codigo),undefined,{numeric:true}));
+}
+function collections(){
+  let a=collectionClientRows(),groups=[['overdue','🔴 Vencidos','rborder','bred','Vencido'],['commit','🟡 Compromisos de hoy','yborder','byellow','Compromiso hoy'],['due','🔵 Vence hoy','bborder','bblue','Vence hoy']];
+  return groups.map(g=>{
+    let x=a.filter(r=>r.st===g[0]);
+    return `<div class="box"><div class="row"><h2>${g[1]}</h2><span class="badge ${g[3]}">${x.length}</span></div><div class="cards">${x.map(r=>person(r,g)).join('')||'<div class="muted">Nadie en este grupo.</div>'}</div></div>`;
+  }).join('');
+}
+function person(r,g){
+  let n=(r.c.whatsapp||'').replace(/\D/g,''); if(n.startsWith('591'))n=n.slice(3);
+  let product=r.products.length===1?r.products[0]:(r.products.length>1?'varios productos':'tu compra');
+  let waMsg;
+  if(r.st==='due'){
+    waMsg=`Buenos días, ${r.c.nombre} 😊\n\nLe escribimos de BeniConfort para recordarle que hoy corresponde su cuota de ${money(r.amount)} por su compra de ${product}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }else if(r.st==='commit'){
+    waMsg=`Buenos días, ${r.c.nombre} 😊\n\nLe escribimos de BeniConfort para recordarle que hoy corresponde su compromiso de pago de ${money(r.amount)} por su compra de ${product}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }else{
+    let count=r.overdue.length;
+    waMsg=`Buenas tardes, ${r.c.nombre} 😊\n\nLe escribimos de BeniConfort. Actualmente tiene ${count} ${count===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(r.amount)}. La cuota más antigua registra ${r.days} ${r.days===1?'día':'días'} de retraso.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }
+  let wa='https://wa.me/591'+n+'?text='+encodeURIComponent(waMsg);
+  let dueLabel=r.st==='overdue'?`${r.overdue.length} ${r.overdue.length===1?'cuota vencida':'cuotas vencidas'}`:r.st==='commit'?`${r.commit.length} ${r.commit.length===1?'compromiso de hoy':'compromisos de hoy'}`:`${r.due.length} ${r.due.length===1?'cuota vence hoy':'cuotas vencen hoy'}`;
+  let productText=r.products.length===1?r.products[0]:(r.products.length>1?'Varios productos':'Compra');
+  return `<div class="person ${g[2]}"><div class="row"><b>${esc(r.c.codigo)} · ${esc(r.c.nombre)}</b><span class="badge ${g[3]}">${g[4]}</span></div><div class="amount">${money(r.amount)}</div><div>${esc(productText)} · ${dueLabel}</div>${r.st==='overdue'?`<div class="muted">Cuota más antigua: ${r.days} ${r.days===1?'día':'días'} de retraso</div>`:''}<div class="muted">${esc(r.c.direccion||'')} ${r.c.observacion?'· '+esc(r.c.observacion):''}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">📅 Compromiso</button><button class="red" onclick="toggleNo('${r.c.id}',true)">🚫 No cobrable</button></div></div>`;
+}
 function renderCollections(){let a=rowsForToday();document.getElementById('attention').textContent=a.length+' persona(s) requieren atención';document.getElementById('collections').innerHTML=collections()}
 function paymentModal(sid){let s=sales.find(x=>String(x.id)===String(sid));if(!s)return;let c=clients.find(x=>String(x.id)===String(s.cliente_id)),hist=payments.filter(p=>String(p.venta_id)===String(sid));openModal(`<h2>💰 Registrar pago</h2><p><b>${esc(c.nombre)}</b> · ${esc(s.producto_nombre)}</p><div class="grid"><div><label>Monto</label><input id="pamt" type="number" min="0.01" step="0.01"></div><div><label>Fecha</label><input id="pdate" type="date" value="${today()}"></div><div><label>Forma de pago</label><select id="pmethod"><option>Efectivo</option><option>QR</option><option>Transferencia</option><option>Otro</option></select></div><div><label>Nota</label><input id="pnote"></div></div><p class="muted">El pago se aplica a las cuotas más antiguas pendientes. Los pagos parciales quedan como saldo pendiente.</p><div class="actions"><button class="green" onclick="savePayment('${sid}')">Guardar pago</button><button class="soft" onclick="closeModal()">Cancelar</button></div><hr><h3>Historial</h3>${hist.map(p=>`<div class="row" style="padding:8px 0;border-bottom:1px solid #eee"><span>${dateFmt(p.fecha_pago)} · ${esc(p.metodo)} ${p.anulado?'<b class="dangerText">· ANULADO</b>':''}</span><b>${money(p.monto)}</b>${!p.anulado?`<button class="red" onclick="annulPayment('${p.id}')">Anular</button>`:''}</div>`).join('')||'<span class="muted">Sin pagos.</span>'}`)}
 async function savePayment(sid){let amt=Number(document.getElementById('pamt').value),date=document.getElementById('pdate').value;if(!(amt>0)||!date)return notice('Ingresa monto y fecha.',true);let qs=installments.filter(q=>String(q.venta_id)===String(sid)).sort((a,b)=>a.numero-b.numero),left=amt;try{for(let q of qs){if(left<=0)break;let rem=Math.max(0,Number(q.monto)-paidQ(q.id));if(!rem)continue;let use=Math.min(left,rem),r=await db.from('pagos').insert({venta_id:sid,cuota_id:q.id,monto:use,fecha_pago:date,metodo:document.getElementById('pmethod').value,anulado:false});if(r.error)throw r.error;left-=use}if(left>0){let r=await db.from('pagos').insert({venta_id:sid,cuota_id:null,monto:left,fecha_pago:date,metodo:document.getElementById('pmethod').value,anulado:false});if(r.error)throw r.error}closeModal();await load();notice('Pago registrado correctamente.')}catch(e){notice('No se pudo registrar: '+e.message,true)}}
@@ -58,67 +119,9 @@ function clientModal(c=null){openModal(`<h2>${c?'✏️ Editar':'➕ Nuevo'} cli
 async function saveClient(id){let name=document.getElementById('cname').value.trim();if(!name)return notice('El nombre es obligatorio.',true);let data={codigo:document.getElementById('ccode').value,nombre:name,whatsapp:phone(document.getElementById('cphone').value),direccion:document.getElementById('caddr').value.trim()||null,observacion:document.getElementById('cobs').value.trim()||null};try{let r=id?await db.from('clientes').update(data).eq('id',id):await db.from('clientes').insert(data);if(r.error)throw r.error;closeModal();await load();notice('Cliente guardado correctamente.')}catch(e){notice('No se pudo guardar: '+e.message,true)}}
 function renderClients(){let q=(document.getElementById('csearch')?.value||'').toLowerCase(),a=clients.filter(c=>`${c.codigo} ${c.nombre} ${c.whatsapp||''}`.toLowerCase().includes(q));document.getElementById('clientTable').innerHTML=`<table><thead><tr><th>Código</th><th>Cliente</th><th>WhatsApp</th><th>Dirección</th><th>Estado</th><th></th></tr></thead><tbody>${a.map(c=>`<tr><td><b>${esc(c.codigo)}</b></td><td>${esc(c.nombre)}</td><td>+591 ${esc(c.whatsapp||'')}</td><td>${esc(c.direccion||'')}<br><span class="muted">${esc(c.observacion||'')}</span></td><td>${c.no_cobrable?'<span class="badge bred">No cobrable</span>':c.cartera_activa===false?'<span class="badge byellow">Fuera de cartera</span>':'<span class="badge bgreen">Normal</span>'}</td><td><button class="soft" onclick="clientModal(clients.find(x=>x.id==='${c.id}'))">Editar</button> ${c.no_cobrable?`<button class="green" onclick="toggleNo('${c.id}',false)">Reactivar</button>`:c.cartera_activa===false?`<button class="green" onclick="reactivatePortfolio('${c.id}')">Volver a cartera</button>`:`<button class="red" onclick="toggleNo('${c.id}',true)">No cobrable</button>`}</td></tr>`).join('')}</tbody></table>`}
 async function toggleNo(id,v){let r=await db.from('clientes').update({no_cobrable:v,cartera_activa:v?false:true}).eq('id',id);if(r.error)return notice(r.error.message,true);await load();notice(v?'Cliente marcado como no cobrable.':'Cliente reactivado.')}
-function renderNo(){let a=clients.filter(c=>c.no_cobrable);document.getElementById('noTable').innerHTML=a.length?`<table><thead><tr><th>Código</th><th>Cliente</th><th>Celular</th><th>Dirección</th><th></th></tr></thead><tbody>${a.map(c=>`<tr><td>${esc(c.codigo)}</td><td>${esc(c.nombre)}</td><td>+591 ${esc(c.whatsapp||'')}</td><td>${esc(c.direccion||'')}</td><td><button class="green" onclick="toggleNo('${c.id}',false)">Reactivar</button></td></tr>`).join('')}</tbody></table>`:'<span class="muted">No hay clientes no cobrables.</span>'}
-function renderSummary(){
-  let activeSales=sales.filter(s=>{let c=clients.find(x=>String(x.id)===String(s.cliente_id));return s.estado!=='Cancelada' && c && !c.no_cobrable && c.cartera_activa!==false && Number(s.precio_venta||0)>paidSale(s.id);});
-  let total=activeSales.reduce((a,s)=>a+Number(s.precio_venta||0),0);
-  let installmentPaid=activeSales.reduce((a,s)=>a+payments.filter(p=>String(p.venta_id)===String(s.id)&&!p.anulado&&p.cuota_id).reduce((z,p)=>z+Number(p.monto||0),0),0);
-  let totalPaid=activeSales.reduce((a,s)=>a+paidSale(s.id),0);
-  let debt=Math.max(0,total-totalPaid);
-  let clientsWithDebt=[...new Set(activeSales.map(s=>String(s.cliente_id)))].length;
-
-  document.getElementById('kpis').innerHTML=
-    `<div class="kpi">Ventas con saldo<strong>${activeSales.length}</strong></div>
-     <div class="kpi">Valor de esas ventas<strong>${money(total)}</strong></div>
-     <div class="kpi">Cuotas pagadas<strong>${money(installmentPaid)}</strong></div>
-     <div class="kpi">Total pagado + inicial<strong>${money(totalPaid)}</strong></div>
-     <div class="kpi">Deuda activa<strong>${money(debt)}</strong></div>
-     <div class="kpi">Clientes con deuda<strong>${clientsWithDebt}</strong></div>`;
-
-  document.getElementById('summaryTable').innerHTML=
-    `<table><thead><tr><th>Venta</th><th>Cliente</th><th>Producto</th><th>Fecha</th><th>Venta</th><th>Cuotas pagadas</th><th>Total pagado</th><th>Deuda</th><th>Cuotas restantes</th></tr></thead>
-     <tbody>${
-       activeSales.map(s=>{
-         let totalP=paidSale(s.id);
-         let instP=payments.filter(p=>String(p.venta_id)===String(s.id)&&!p.anulado&&p.cuota_id).reduce((a,p)=>a+Number(p.monto||0),0);
-         let d=Math.max(0,Number(s.precio_venta)-totalP);
-         let q=installments.filter(x=>String(x.venta_id)===String(s.id)&&paidQ(x.id)<Number(x.monto));
-         let c=clients.find(x=>String(x.id)===String(s.cliente_id));
-         return `<tr>
-           <td>${esc(s.codigo_venta)}</td>
-           <td ondblclick="clientDetail('${s.cliente_id}')" style="cursor:pointer" title="Doble clic para ver estado"><b>${esc(c?.codigo||'')}</b><br>${esc(c?.nombre||'')}</td>
-           <td>${esc(s.producto_codigo||'')}<br>${esc(s.producto_nombre||'')}</td>
-           <td>${dateFmt(s.fecha_venta)}</td>
-           <td>${money(s.precio_venta)}</td>
-           <td>${money(instP)}</td>
-           <td>${money(totalP)}</td>
-           <td>${money(d)}</td>
-           <td>${q.length}</td>
-         </tr>`
-       }).join('')
-     }</tbody></table>
-     <div class="muted" style="margin-top:10px">Solo se muestran ventas con deuda activa. Doble clic en el cliente para abrir el detalle.</div>`;
-}
-function stateForClient(c){
-  let cs=sales.filter(s=>s.estado!=='Cancelada'&&String(s.cliente_id)===String(c.id));
-  let rows=[];
-  for(let sale of cs){
-    for(let q of installments.filter(x=>String(x.venta_id)===String(sale.id))){
-      let rem=Math.max(0,Number(q.monto)-paidQ(q.id));
-      if(rem>0)rows.push({q,sale,rem,commit:currentCommit(sale.id)});
-    }
-  }
-  let debt=cs.reduce((a,s)=>a+Math.max(0,Number(s.precio_venta||0)-paidSale(s.id)),0);
-  if(debt<=0 || c.no_cobrable || c.cartera_activa===false)
-    return {label:'Sin deuda activa',cls:'bgreen',key:'none',rows:[],sales:[]};
-
-  let overdue=rows.some(r=>r.q.fecha_vencimiento<today()&&!r.commit);
-  let commitToday=rows.some(r=>r.commit?.fecha_compromiso===today());
-  let due=rows.some(r=>r.q.fecha_vencimiento===today()&&!r.commit);
-  if(overdue)return {label:'Vencido',cls:'bred',key:'overdue',rows,sales:cs};
-  if(commitToday)return {label:'Compromiso hoy',cls:'byellow',key:'commit',rows,sales:cs};
-  if(due)return {label:'Vence hoy',cls:'bblue',key:'due',rows,sales:cs};
-  return {label:'Pendiente',cls:'byellow',key:'pending',rows,sales:cs};
+function renderNo(){
+  let a=clients.filter(c=>c.no_cobrable).sort((x,y)=>String(x.codigo).localeCompare(String(y.codigo),undefined,{numeric:true}));
+  document.getElementById('noTable').innerHTML=a.length?`<table><thead><tr><th>Código</th><th>Cliente</th><th>Celular</th><th>Dirección</th><th></th></tr></thead><tbody>${a.map(c=>`<tr ondblclick="clientDetail('${c.id}')" style="cursor:pointer" title="Doble clic para ver detalle"><td>${esc(c.codigo)}</td><td><b>${esc(c.nombre)}</b><br><span class="muted">Doble clic para ver detalle</span></td><td>+591 ${esc(c.whatsapp||'')}</td><td>${esc(c.direccion||'')}</td><td><button class="green" onclick="toggleNo('${c.id}',false)">Reactivar</button></td></tr>`).join('')}</tbody></table><div class="muted" style="margin-top:10px">Doble clic en un cliente para consultar su historial, pagos y deuda.</div>`:'<span class="muted">No hay clientes no cobrables.</span>';
 }
 
 function clientDetail(id){
@@ -143,7 +146,7 @@ function clientDetail(id){
   }).join('')||'<div class="muted">Este cliente todavía no tiene ventas.</div>';
 
   let waNum=(c.whatsapp||'').replace(/\D/g,''); if(waNum.startsWith('591'))waNum=waNum.slice(3);
-  let waMsg=`Hola ${c.nombre}, te escribo de BeniConfort por tu cuenta. Actualmente tienes un saldo pendiente de ${money(debt)}. ¿Podrías indicarme cuándo podrías realizar el pago?`;
+  let waMsg=`Hola ${c.nombre} 😊\n\nLe escribimos de BeniConfort. Actualmente tiene un saldo pendiente de ${money(debt)}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
   let wa='https://wa.me/591'+waNum+'?text='+encodeURIComponent(waMsg);
 
   let retireButton=debt>0 && c.cartera_activa!==false
@@ -157,9 +160,10 @@ function clientDetail(id){
       <div><b>Dirección</b><br>${esc(c.direccion||'—')}</div>
       <div><b>Referencia</b><br>${esc(c.observacion||'—')}</div>
     </div>
-    <div class="summary"><b>Resumen de cuenta</b><br>Ventas: ${allSales.length} · Total vendido: ${money(total)} · Total pagado: ${money(paid)} · Deuda: ${money(debt)} · Cuotas pendientes: ${st.rows.length}</div>
+    <div class="summary"><b>Resumen de cuenta</b><br>Ventas: ${allSales.length} · Total vendido: ${money(total)} · Total pagado: ${money(paid)} · Deuda: ${money(debt)} · Cuotas pendientes: ${allSales.reduce((n,s)=>n+installments.filter(q=>String(q.venta_id)===String(s.id)&&Number(q.monto)-paidQ(q.id)>0).length,0)}</div>
     <div class="actions">
       ${debt>0?`<button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${st.sales[0]?.id||allSales[0]?.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${st.sales[0]?.id||allSales[0]?.id}')">📅 Compromiso</button>`:''}
+      ${c.no_cobrable?`<button class="green" onclick="toggleNo('${c.id}',false)">🔄 Volver a cartera</button>`:''}
       ${retireButton}
       <button class="soft" onclick="closeModal()">Cerrar</button>
     </div><hr><h3>📅 Plan de pagos</h3>${salesHtml}`);
