@@ -108,7 +108,11 @@ function person(r,g){
   let productText=r.products.length===1?r.products[0]:(r.products.length>1?'Varios productos':'Compra');
   return `<div class="person ${g[2]}"><div class="row"><b>${esc(r.c.codigo)} · ${esc(r.c.nombre)}</b><span class="badge ${g[3]}">${g[4]}</span></div><div class="amount">${money(r.amount)}</div><div>${esc(productText)} · ${dueLabel}</div>${r.st==='overdue'?`<div class="muted">Cuota más antigua: ${r.days} ${r.days===1?'día':'días'} de retraso</div>`:''}<div class="muted">${esc(r.c.direccion||'')} ${r.c.observacion?'· '+esc(r.c.observacion):''}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">📅 Compromiso</button><button class="red" onclick="toggleNo('${r.c.id}',true)">🚫 No cobrable</button></div></div>`;
 }
-function renderCollections(){let a=rowsForToday();document.getElementById('attention').textContent=a.length+' persona(s) requieren atención';document.getElementById('collections').innerHTML=collections()}
+function renderCollections(){
+  let a=collectionClientRows();
+  document.getElementById('attention').textContent=a.length+' cliente(s) requieren atención';
+  document.getElementById('collections').innerHTML=collections();
+}
 function paymentModal(sid){let s=sales.find(x=>String(x.id)===String(sid));if(!s)return;let c=clients.find(x=>String(x.id)===String(s.cliente_id)),hist=payments.filter(p=>String(p.venta_id)===String(sid));openModal(`<h2>💰 Registrar pago</h2><p><b>${esc(c.nombre)}</b> · ${esc(s.producto_nombre)}</p><div class="grid"><div><label>Monto</label><input id="pamt" type="number" min="0.01" step="0.01"></div><div><label>Fecha</label><input id="pdate" type="date" value="${today()}"></div><div><label>Forma de pago</label><select id="pmethod"><option>Efectivo</option><option>QR</option><option>Transferencia</option><option>Otro</option></select></div><div><label>Nota</label><input id="pnote"></div></div><p class="muted">El pago se aplica a las cuotas más antiguas pendientes. Los pagos parciales quedan como saldo pendiente.</p><div class="actions"><button class="green" onclick="savePayment('${sid}')">Guardar pago</button><button class="soft" onclick="closeModal()">Cancelar</button></div><hr><h3>Historial</h3>${hist.map(p=>`<div class="row" style="padding:8px 0;border-bottom:1px solid #eee"><span>${dateFmt(p.fecha_pago)} · ${esc(p.metodo)} ${p.anulado?'<b class="dangerText">· ANULADO</b>':''}</span><b>${money(p.monto)}</b>${!p.anulado?`<button class="red" onclick="annulPayment('${p.id}')">Anular</button>`:''}</div>`).join('')||'<span class="muted">Sin pagos.</span>'}`)}
 async function savePayment(sid){let amt=Number(document.getElementById('pamt').value),date=document.getElementById('pdate').value;if(!(amt>0)||!date)return notice('Ingresa monto y fecha.',true);let qs=installments.filter(q=>String(q.venta_id)===String(sid)).sort((a,b)=>a.numero-b.numero),left=amt;try{for(let q of qs){if(left<=0)break;let rem=Math.max(0,Number(q.monto)-paidQ(q.id));if(!rem)continue;let use=Math.min(left,rem),r=await db.from('pagos').insert({venta_id:sid,cuota_id:q.id,monto:use,fecha_pago:date,metodo:document.getElementById('pmethod').value,anulado:false});if(r.error)throw r.error;left-=use}if(left>0){let r=await db.from('pagos').insert({venta_id:sid,cuota_id:null,monto:left,fecha_pago:date,metodo:document.getElementById('pmethod').value,anulado:false});if(r.error)throw r.error}closeModal();await load();notice('Pago registrado correctamente.')}catch(e){notice('No se pudo registrar: '+e.message,true)}}
 async function annulPayment(id){if(!confirm('¿Anular este pago? El historial se conservará.'))return;let r=await db.from('pagos').update({anulado:true,fecha_anulacion:new Date().toISOString()}).eq('id',id);if(r.error)return notice(r.error.message,true);closeModal();await load();notice('Pago anulado correctamente.')}
@@ -122,6 +126,31 @@ async function toggleNo(id,v){let r=await db.from('clientes').update({no_cobrabl
 function renderNo(){
   let a=clients.filter(c=>c.no_cobrable).sort((x,y)=>String(x.codigo).localeCompare(String(y.codigo),undefined,{numeric:true}));
   document.getElementById('noTable').innerHTML=a.length?`<table><thead><tr><th>Código</th><th>Cliente</th><th>Celular</th><th>Dirección</th><th></th></tr></thead><tbody>${a.map(c=>`<tr ondblclick="clientDetail('${c.id}')" style="cursor:pointer" title="Doble clic para ver detalle"><td>${esc(c.codigo)}</td><td><b>${esc(c.nombre)}</b><br><span class="muted">Doble clic para ver detalle</span></td><td>+591 ${esc(c.whatsapp||'')}</td><td>${esc(c.direccion||'')}</td><td><button class="green" onclick="toggleNo('${c.id}',false)">Reactivar</button></td></tr>`).join('')}</tbody></table><div class="muted" style="margin-top:10px">Doble clic en un cliente para consultar su historial, pagos y deuda.</div>`:'<span class="muted">No hay clientes no cobrables.</span>';
+}
+
+
+function stateForClient(c){
+  let activeSales=sales.filter(s=>s.estado!=='Cancelada'&&String(s.cliente_id)===String(c.id));
+  let rows=[];
+  let saleIds=[];
+  for(let s of activeSales){
+    let qs=installments.filter(q=>String(q.venta_id)===String(s.id));
+    let pending=qs.filter(q=>Math.max(0,Number(q.monto)-paidQ(q.id))>0);
+    if(pending.length){
+      saleIds.push(s.id);
+      pending.forEach(q=>rows.push({q,s,rem:Math.max(0,Number(q.monto)-paidQ(q.id))}));
+    }
+  }
+  let salesActive=activeSales.filter(s=>saleIds.some(id=>String(id)===String(s.id)));
+  if(!salesActive.length) return {sales:[],rows:[],label:'Sin deuda activa',cls:'bgreen'};
+  let overdue=rows.filter(r=>r.q.fecha_vencimiento<today());
+  let due=rows.filter(r=>r.q.fecha_vencimiento===today());
+  let commits=rows.filter(r=>currentCommit(r.s.id)?.fecha_compromiso===today());
+  let label='Pendiente',cls='byellow';
+  if(overdue.length){label='Vencido';cls='bred'}
+  else if(commits.length){label='Compromiso hoy';cls='byellow'}
+  else if(due.length){label='Vence hoy';cls='bblue'}
+  return {sales:salesActive,rows,label,cls};
 }
 
 function clientDetail(id){
@@ -146,10 +175,23 @@ function clientDetail(id){
   }).join('')||'<div class="muted">Este cliente todavía no tiene ventas.</div>';
 
   let waNum=(c.whatsapp||'').replace(/\D/g,''); if(waNum.startsWith('591'))waNum=waNum.slice(3);
-  let waMsg=`Hola ${c.nombre} 😊\n\nLe escribimos de BeniConfort. Actualmente tiene un saldo pendiente de ${money(debt)}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  let pendingRows=allSales.flatMap(s=>installments.filter(q=>String(q.venta_id)===String(s.id)&&Number(q.monto)-paidQ(q.id)>0).map(q=>({q,s,rem:Number(q.monto)-paidQ(q.id)})));
+  let oldest=pendingRows.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
+  let overdueRows=pendingRows.filter(r=>r.q.fecha_vencimiento<today());
+  let waMsg;
+  if(overdueRows.length){
+    let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
+    waMsg=`Buenas tardes, ${c.nombre} 😊\n\nLe escribimos de BeniConfort. Actualmente tiene ${overdueRows.length} ${overdueRows.length===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(overdueRows.reduce((a,r)=>a+r.rem,0))}. La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }else if(pendingRows.some(r=>r.q.fecha_vencimiento===today())){
+    let due=pendingRows.filter(r=>r.q.fecha_vencimiento===today());
+    let product=[...new Set(due.map(r=>r.s.producto_nombre).filter(Boolean))];
+    waMsg=`Buenos días, ${c.nombre} 😊\n\nLe escribimos de BeniConfort para recordarle que hoy corresponde su cuota de ${money(due.reduce((a,r)=>a+r.rem,0))} por su compra de ${product.length===1?product[0]:'su compra'}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }else{
+    waMsg=`Hola, ${c.nombre} 😊\n\nLe escribimos de BeniConfort para recordarle que tiene un saldo pendiente de ${money(debt)}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }
   let wa='https://wa.me/591'+waNum+'?text='+encodeURIComponent(waMsg);
 
-  let retireButton=debt>0 && c.cartera_activa!==false
+  let retireButton=debt>0 && c.cartera_activa!==false && !c.no_cobrable
     ? `<button class="red" onclick="retireClient('${c.id}')">🚪 Retirar de cartera</button>`
     : '';
 
