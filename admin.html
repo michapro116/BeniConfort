@@ -4,39 +4,175 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BeniConfort | Admin</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f5f6f8;color:#151515}
-header{background:#111;color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
-main{max-width:1200px;margin:25px auto;padding:0 16px}
-.box{background:white;border:1px solid #ddd;border-radius:15px;padding:20px;margin-bottom:20px}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f6f8;
+  color:#151515
+}
+
+header{
+  background:#111;
+  color:white;
+  padding:18px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+
+main{
+  max-width:1200px;
+  margin:25px auto;
+  padding:0 16px
+}
+
+.box{
+  background:white;
+  border:1px solid #ddd;
+  border-radius:15px;
+  padding:20px;
+  margin-bottom:20px
+}
+
 h1,h2{margin-top:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+
 .full{grid-column:1/-1}
-label{display:block;font-weight:bold;font-size:13px;margin:4px 0 6px}
-input,select,textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px}
+
+label{
+  display:block;
+  font-weight:bold;
+  font-size:13px;
+  margin:4px 0 6px
+}
+
+input,select,textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccc;
+  border-radius:8px
+}
+
 textarea{min-height:90px}
-button{padding:10px 15px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
-.primary{background:#111;color:#fff}
-.gray{background:#e9e9e9}
-.red{background:#b42318;color:white}
-.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-.msg{padding:11px;border-radius:8px;margin-bottom:15px}
-.ok{background:#e8f7eb;color:#176b2c}
-.err{background:#ffeded;color:#9b1c1c}
-.toolbar{display:flex;gap:10px;margin-bottom:15px}
+
+button{
+  padding:10px 15px;
+  border:0;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.primary{
+  background:#111;
+  color:#fff
+}
+
+.gray{
+  background:#e9e9e9
+}
+
+.red{
+  background:#b42318;
+  color:white
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap
+}
+
+.msg{
+  padding:11px;
+  border-radius:8px;
+  margin-bottom:15px
+}
+
+.ok{
+  background:#e8f7eb;
+  color:#176b2c
+}
+
+.err{
+  background:#ffeded;
+  color:#9b1c1c
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px
+}
+
 .toolbar input{flex:1}
-table{width:100%;border-collapse:collapse;min-width:850px}
-th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  font-size:13px
+}
+
 .table{overflow:auto}
-.thumb{width:55px;height:55px;object-fit:cover;border-radius:7px}
+
+.thumb{
+  width:55px;
+  height:55px;
+  object-fit:cover;
+  border-radius:7px
+}
+
 .hidden{display:none!important}
-.note{font-size:12px;color:#666;margin-top:6px}
-.current-image{margin-top:10px;display:flex;align-items:center;gap:10px}
-.current-image img{width:80px;height:80px;object-fit:cover;border-radius:10px;border:1px solid #ddd}
-.sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;background:#f7f7f7;padding:12px;border-radius:8px}
+
+.note{
+  font-size:12px;
+  color:#666;
+  margin-top:6px
+}
+
+.current-image{
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.current-image img{
+  width:80px;
+  height:80px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #ddd
+}
+
+.sizes{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
+  background:#f7f7f7;
+  padding:12px;
+  border-radius:8px
+}
+
 .sizes input{padding:8px}
 
 @media(max-width:700px){
@@ -50,30 +186,61 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
 <body>
 
 <header>
+
   <div>
     <h2>BeniConfort — Administración</h2>
     <small>Gestión de productos</small>
   </div>
-  <button id="logout" class="gray hidden" onclick="logout()">Salir</button>
+
+  <button
+    id="logout"
+    class="gray hidden"
+    onclick="logout()"
+  >
+    Salir
+  </button>
+
 </header>
 
-<div id="login" style="max-width:430px;margin:70px auto;padding:16px">
+
+<div
+  id="login"
+  style="max-width:430px;margin:70px auto;padding:16px"
+>
+
   <div class="box">
+
     <h2>🔐 Acceso administrativo</h2>
+
     <label>Contraseña</label>
-    <input id="pass" type="password">
+
+    <input
+      id="pass"
+      type="password"
+    >
 
     <div class="actions">
-      <button class="primary" onclick="login()">Entrar</button>
+
+      <button
+        class="primary"
+        onclick="login()"
+      >
+        Entrar
+      </button>
+
     </div>
 
     <div id="loginMsg"></div>
+
   </div>
+
 </div>
+
 
 <main id="app" class="hidden">
 
 <div id="msg"></div>
+
 
 <section class="box">
 
@@ -81,68 +248,149 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
 
 <div class="grid">
 
+
 <div>
+
   <label>Código</label>
-  <input id="code" placeholder="TEN-001">
+
+  <input
+    id="code"
+    placeholder="TEN-001"
+  >
+
 </div>
 
+
 <div>
+
   <label>Nombre / modelo</label>
+
   <input id="name">
+
 </div>
 
+
 <div>
+
   <label>Tipo</label>
-  <select id="type" onchange="toggleSizes()">
-    <option value="Americano">Americano</option>
-    <option value="Económico">Económico</option>
+
+  <select
+    id="type"
+    onchange="toggleSizes()"
+  >
+
+    <option value="Americano">
+      Americano
+    </option>
+
+    <option value="Económico">
+      Económico
+    </option>
+
   </select>
+
 </div>
 
+
 <div>
+
   <label>Marca</label>
+
   <input id="brand">
+
 </div>
 
+
 <div>
+
   <label>Género</label>
+
   <select id="gender">
+
     <option>Unisex</option>
+
     <option>Hombre</option>
+
     <option>Mujer</option>
+
   </select>
+
 </div>
 
+
 <div>
+
   <label>Estado</label>
+
   <select id="status">
-    <option value="Activo">Disponible</option>
-    <option value="Reservado">Reservado</option>
-    <option value="Vendido">Vendido</option>
+
+    <option value="Activo">
+      Disponible
+    </option>
+
+    <option value="Reservado">
+      Reservado
+    </option>
+
+    <option value="Vendido">
+      Vendido
+    </option>
+
   </select>
+
 </div>
 
+
 <div>
+
   <label>Precio contado (Bs)</label>
-  <input id="cash" type="number" min="0">
+
+  <input
+    id="cash"
+    type="number"
+    min="0"
+  >
+
 </div>
 
+
 <div>
+
   <label>Precio crédito (Bs)</label>
-  <input id="credit" type="number" min="0">
+
+  <input
+    id="credit"
+    type="number"
+    min="0"
+  >
+
 </div>
 
+
 <div>
+
   <label>Inicial (Bs)</label>
-  <input id="initial" type="number" min="0">
+
+  <input
+    id="initial"
+    type="number"
+    min="0"
+  >
+
 </div>
+
 
 <div>
+
   <label>Promoción</label>
+
   <input id="promo">
+
 </div>
 
-<!-- NUEVO SISTEMA DE IMAGEN -->
+
+<!-- SISTEMA DE IMAGEN R2 -->
+
 <div class="full">
 
   <label>Foto del producto</label>
@@ -158,45 +406,104 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
     Selecciona una foto. Se subirá automáticamente al guardar.
   </div>
 
-  <div id="currentImage" class="current-image hidden"></div>
+  <div
+    id="currentImage"
+    class="current-image hidden"
+  ></div>
 
 </div>
 
-<div id="american" class="full">
+
+<div
+  id="american"
+  class="full"
+>
+
   <label>Talla</label>
-  <input id="size" placeholder="40">
+
+  <input
+    id="size"
+    placeholder="40"
+  >
+
 </div>
 
-<div id="economic" class="full hidden">
+
+<div
+  id="economic"
+  class="full hidden"
+>
+
   <label>Tallas y cantidades</label>
-  <div id="sizes" class="sizes"></div>
+
+  <div
+    id="sizes"
+    class="sizes"
+  ></div>
+
 </div>
 
+
 <div>
+
   <label>Stock</label>
-  <input id="stock" type="number" min="0" value="1">
+
+  <input
+    id="stock"
+    type="number"
+    min="0"
+    value="1"
+  >
+
 </div>
+
 
 <div>
+
   <label>Color</label>
+
   <input id="color">
+
 </div>
 
+
 <div class="full">
+
   <label>Descripción</label>
+
   <textarea id="description"></textarea>
+
 </div>
+
 
 <div class="full">
+
   <label>Enlace WhatsApp / catálogo</label>
+
   <input id="wa">
-</div>
 
 </div>
+
+
+</div>
+
 
 <div class="actions">
-  <button class="primary" onclick="save()">💾 Guardar producto</button>
-  <button class="gray" onclick="clearForm()">Limpiar</button>
+
+  <button
+    class="primary"
+    onclick="save()"
+  >
+    💾 Guardar producto
+  </button>
+
+  <button
+    class="gray"
+    onclick="clearForm()"
+  >
+    Limpiar
+  </button>
+
 </div>
 
 </section>
@@ -205,16 +512,31 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
 <section class="box">
 
 <div class="toolbar">
-  <input id="search" placeholder="🔎 Buscar..." oninput="render()">
-  <button class="gray" onclick="load()">🔄 Actualizar</button>
+
+  <input
+    id="search"
+    placeholder="🔎 Buscar..."
+    oninput="render()"
+  >
+
+  <button
+    class="gray"
+    onclick="load()"
+  >
+    🔄 Actualizar
+  </button>
+
 </div>
+
 
 <div class="table">
 
 <table>
 
 <thead>
+
 <tr>
+
   <th>Foto</th>
   <th>Código</th>
   <th>Producto</th>
@@ -224,7 +546,9 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
   <th>Crédito</th>
   <th>Estado</th>
   <th>Acciones</th>
+
 </tr>
+
 </thead>
 
 <tbody id="rows"></tbody>
@@ -240,36 +564,79 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
 
 <script>
 
-const SUPABASE_URL="https://lydlyusuanvjjoavbocr.supabase.co";
+const SUPABASE_URL =
+  "https://lydlyusuanvjjoavbocr.supabase.co";
 
-const SUPABASE_KEY="sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+const SUPABASE_KEY =
+  "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
 
-const db=window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const db =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-const ADMIN_PASSWORD="urbanstep123";
 
-const STORAGE_BUCKET="product-images";
+const ADMIN_PASSWORD =
+  "urbanstep123";
+
+
+const STORAGE_BUCKET =
+  "product-images";
+
+
+/*
+  DOMINIO PÚBLICO DE LAS IMÁGENES R2
+*/
+
+const R2_DOMAIN =
+  "https://imagenes.beniconfort.shop/";
+
+
+/*
+  WORKER DE BENICONFORT
+*/
+
+const WORKER_UPLOAD_URL =
+  "https://beniconfort-image-upload.michael-justiniano1995.workers.dev/upload";
+
+
+const WORKER_DELETE_URL =
+  "https://beniconfort-image-upload.michael-justiniano1995.workers.dev/delete";
+
 
 let products=[];
+
 let editing=null;
+
 let currentImageUrl="";
 
-const SIZE_LIST=[34,35,36,37,38,39,40,41,42,43,44,45];
 
+const SIZE_LIST=[
+  34,35,36,37,38,39,40,41,42,43,44,45
+];
+
+
+/* =========================
+   MENSAJES
+   ========================= */
 
 function msg(t,err=false){
 
-  let e=document.getElementById("msg");
+  let e=
+    document.getElementById("msg");
 
-  e.className="msg "+(err?"err":"ok");
+  e.className=
+    "msg "+(err?"err":"ok");
 
   e.textContent=t;
 
 }
 
+
+/* =========================
+   DINERO
+   ========================= */
 
 function money(n){
 
@@ -283,6 +650,10 @@ function money(n){
 
 }
 
+
+/* =========================
+   ESCAPAR HTML
+   ========================= */
 
 function esc(v){
 
@@ -300,62 +671,102 @@ function esc(v){
 }
 
 
+/* =========================
+   LOGIN
+   ========================= */
+
 function login(){
 
   if(
-    document.getElementById("pass").value!==ADMIN_PASSWORD
+    document.getElementById("pass").value !==
+    ADMIN_PASSWORD
   ){
 
     document.getElementById("loginMsg").innerHTML=
       '<div class="msg err">Contraseña incorrecta.</div>';
 
     return;
+
   }
 
-  sessionStorage.setItem("beni_admin","1");
+  sessionStorage.setItem(
+    "beni_admin",
+    "1"
+  );
 
   showApp();
 
 }
 
 
+/* =========================
+   MOSTRAR APP
+   ========================= */
+
 function showApp(){
 
-  document.getElementById("login").classList.add("hidden");
+  document
+    .getElementById("login")
+    .classList.add("hidden");
 
-  document.getElementById("app").classList.remove("hidden");
+  document
+    .getElementById("app")
+    .classList.remove("hidden");
 
-  document.getElementById("logout").classList.remove("hidden");
+  document
+    .getElementById("logout")
+    .classList.remove("hidden");
 
   load();
 
 }
 
 
+/* =========================
+   CERRAR SESIÓN
+   ========================= */
+
 function logout(){
 
-  sessionStorage.removeItem("beni_admin");
+  sessionStorage.removeItem(
+    "beni_admin"
+  );
 
   location.reload();
 
 }
 
 
+/* =========================
+   TALLAS
+   ========================= */
+
 function toggleSizes(){
 
   let eco=
-    document.getElementById("type").value==="Económico";
+    document.getElementById("type").value===
+    "Económico";
 
   document
     .getElementById("american")
-    .classList.toggle("hidden",eco);
+    .classList.toggle(
+      "hidden",
+      eco
+    );
 
   document
     .getElementById("economic")
-    .classList.toggle("hidden",!eco);
+    .classList.toggle(
+      "hidden",
+      !eco
+    );
 
 }
 
+
+/* =========================
+   INICIALIZAR TALLAS
+   ========================= */
 
 function initSizes(){
 
@@ -363,10 +774,10 @@ function initSizes(){
 
     SIZE_LIST.map(
       s=>
-      '<div>'+
-        '<label>'+s+'</label>'+
-        '<input type="number" min="0" value="0" data-size="'+s+'">'+
-      '</div>'
+        '<div>'+
+          '<label>'+s+'</label>'+
+          '<input type="number" min="0" value="0" data-size="'+s+'">'+
+        '</div>'
     ).join("");
 
 }
@@ -379,42 +790,61 @@ function initSizes(){
 function previewImage(){
 
   const file=
-    document.getElementById("imageFile").files[0];
+    document
+      .getElementById("imageFile")
+      .files[0];
 
   const box=
     document.getElementById("currentImage");
+
 
   if(!file){
 
     if(currentImageUrl){
 
       box.innerHTML=
-        '<img src="'+esc(currentImageUrl)+'">'+
+        '<img src="'+
+        esc(currentImageUrl)+
+        '">'+
         '<span>Imagen actual</span>';
 
-      box.classList.remove("hidden");
+      box.classList.remove(
+        "hidden"
+      );
 
     }else{
 
       box.innerHTML="";
-      box.classList.add("hidden");
+
+      box.classList.add(
+        "hidden"
+      );
 
     }
 
     return;
+
   }
 
-  const reader=new FileReader();
+
+  const reader=
+    new FileReader();
+
 
   reader.onload=function(e){
 
     box.innerHTML=
-      '<img src="'+e.target.result+'">'+
+      '<img src="'+
+      e.target.result+
+      '">'+
       '<span>Nueva imagen seleccionada</span>';
 
-    box.classList.remove("hidden");
+    box.classList.remove(
+      "hidden"
+    );
 
   };
+
 
   reader.readAsDataURL(file);
 
@@ -422,57 +852,99 @@ function previewImage(){
 
 
 /* =========================
-   SUBIR IMAGEN A SUPABASE
+   SUBIR IMAGEN A R2
    ========================= */
 
 async function uploadImage(){
 
   const file =
-    document.getElementById("imageFile").files[0];
+    document
+      .getElementById("imageFile")
+      .files[0];
 
-  // Si no se seleccionó una imagen:
-  // en edición conserva la imagen actual.
+
+  /*
+    Si no se seleccionó una imagen,
+    en edición conserva la imagen actual.
+  */
+
   if(!file){
+
     return currentImageUrl || null;
+
   }
 
-  // Verificar que sea una imagen
+
+  /*
+    Verificar que sea una imagen.
+  */
+
   if(!file.type.startsWith("image/")){
+
     throw new Error(
       "El archivo seleccionado no es una imagen."
     );
+
   }
 
-  // Worker de BeniConfort
-  const WORKER_URL =
-    "https://beniconfort-image-upload.michael-justiniano1995.workers.dev/upload";
 
-  // FormData permite enviar el archivo como multipart/form-data.
-  // IMPORTANTE: no ponemos manualmente Content-Type,
-  // porque el navegador debe generar el boundary.
-  const formData = new FormData();
+  /*
+    Crear FormData.
+  */
 
-  formData.append("file", file);
+  const formData =
+    new FormData();
+
+
+  formData.append(
+    "file",
+    file
+  );
+
+
+  /*
+    Enviar imagen al Worker.
+  */
 
   const response =
-    await fetch(WORKER_URL, {
-      method: "POST",
-      body: formData
-    });
+    await fetch(
+      WORKER_UPLOAD_URL,
+      {
+        method:"POST",
+        body:formData
+      }
+    );
 
-  // Intentar leer la respuesta del Worker
+
+  /*
+    Leer respuesta.
+  */
+
   let result;
 
+
   try{
-    result = await response.json();
+
+    result=
+      await response.json();
+
   }catch(e){
+
     throw new Error(
       "El Worker respondió con un formato inesperado."
     );
+
   }
 
-  // Si el Worker devolvió error
-  if(!response.ok || !result.success){
+
+  /*
+    Verificar errores.
+  */
+
+  if(
+    !response.ok ||
+    !result.success
+  ){
 
     throw new Error(
       result.error ||
@@ -482,7 +954,11 @@ async function uploadImage(){
 
   }
 
-  // Verificar que recibimos la URL pública
+
+  /*
+    Verificar URL pública.
+  */
+
   if(!result.url){
 
     throw new Error(
@@ -491,11 +967,152 @@ async function uploadImage(){
 
   }
 
-  // Esta será la URL que se guardará en Supabase
+
   return result.url;
 
 }
 
+
+/* =========================
+   ELIMINAR IMAGEN DE R2
+   ========================= */
+
+async function deleteR2Image(imageUrl){
+
+  /*
+    Si no hay imagen, no hay nada
+    que eliminar.
+  */
+
+  if(!imageUrl){
+
+    return true;
+
+  }
+
+
+  /*
+    IMPORTANTE:
+
+    Solo eliminamos imágenes cuyo dominio
+    sea nuestro R2.
+
+    Esto evita tocar imágenes antiguas
+    almacenadas en Supabase.
+  */
+
+  if(
+    !imageUrl.startsWith(R2_DOMAIN)
+  ){
+
+    return true;
+
+  }
+
+
+  try{
+
+    /*
+      Obtener la ruta/key del objeto R2.
+
+      Ejemplo:
+
+      https://imagenes.beniconfort.shop/
+      productos/foto.jpg
+
+      se convierte en:
+
+      productos/foto.jpg
+    */
+
+    const key =
+      decodeURIComponent(
+        new URL(imageUrl)
+          .pathname
+          .substring(1)
+      );
+
+
+    if(!key){
+
+      return true;
+
+    }
+
+
+    /*
+      Enviar DELETE al Worker.
+    */
+
+    const response =
+      await fetch(
+        WORKER_DELETE_URL+
+        "?key="+
+        encodeURIComponent(key),
+        {
+          method:"DELETE"
+        }
+      );
+
+
+    /*
+      Leer respuesta.
+    */
+
+    let result;
+
+
+    try{
+
+      result=
+        await response.json();
+
+    }catch(e){
+
+      throw new Error(
+        "El Worker respondió con un formato inesperado."
+      );
+
+    }
+
+
+    /*
+      Verificar resultado.
+    */
+
+    if(
+      !response.ok ||
+      !result.success
+    ){
+
+      throw new Error(
+        result.error ||
+        result.details ||
+        "No se pudo eliminar la imagen de R2."
+      );
+
+    }
+
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Error eliminando imagen de R2:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================
+   CARGAR PRODUCTOS
+   ========================= */
 
 async function load(){
 
@@ -504,25 +1121,39 @@ async function load(){
     await db
       .from("productos")
       .select("*")
-      .order("id",{ascending:false});
+      .order(
+        "id",
+        {
+          ascending:false
+        }
+      );
 
 
   if(error){
 
     msg(
-      "Error al cargar: "+error.message,
+      "Error al cargar: "+
+      error.message,
       true
     );
 
     return;
+
   }
 
-  products=data||[];
+
+  products=
+    data||[];
+
 
   render();
 
 }
 
+
+/* =========================
+   MOSTRAR PRODUCTOS
+   ========================= */
 
 function render(){
 
@@ -535,22 +1166,23 @@ function render(){
 
 
   let list=
+
     products.filter(
       p=>
-      !q ||
-      [
-        p.code,
-        p.nombre,
-        p.marca,
-        p.tipo,
-        p.género,
-        p.size,
-        p.color,
-        p.estado
-      ]
-      .join(" ")
-      .toLowerCase()
-      .includes(q)
+        !q ||
+        [
+          p.code,
+          p.nombre,
+          p.marca,
+          p.tipo,
+          p.género,
+          p.size,
+          p.color,
+          p.estado
+        ]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
     );
 
 
@@ -566,7 +1198,9 @@ function render(){
 
         Object
           .entries(p.tamaños)
-          .filter(x=>Number(x[1])>0)
+          .filter(
+            x=>Number(x[1])>0
+          )
           .map(
             x=>x[0]+"("+x[1]+")"
           )
@@ -600,7 +1234,9 @@ function render(){
       '</td>'+
 
       '<td>'+
-        '<b>'+esc(p.nombre)+'</b><br>'+
+        '<b>'+
+        esc(p.nombre)+
+        '</b><br>'+
         esc(p.marca||"")+
       '</td>'+
 
@@ -644,11 +1280,16 @@ function render(){
 }
 
 
+/* =========================
+   LIMPIAR FORMULARIO
+   ========================= */
+
 function clearForm(){
 
   editing=null;
 
   currentImageUrl="";
+
 
   document.getElementById("title").textContent=
     "➕ Agregar producto";
@@ -673,34 +1314,51 @@ function clearForm(){
   );
 
 
-  document.getElementById("imageFile").value="";
+  document
+    .getElementById("imageFile")
+    .value="";
 
-  document.getElementById("currentImage").innerHTML="";
 
-  document.getElementById("currentImage").classList.add("hidden");
+  document
+    .getElementById("currentImage")
+    .innerHTML="";
+
+
+  document
+    .getElementById("currentImage")
+    .classList.add("hidden");
 
 
   document.getElementById("type").value=
     "Americano";
 
+
   document.getElementById("gender").value=
     "Unisex";
 
+
   document.getElementById("status").value=
     "Activo";
+
 
   document.getElementById("stock").value=1;
 
 
   document
     .querySelectorAll("#sizes input")
-    .forEach(x=>x.value=0);
+    .forEach(
+      x=>x.value=0
+    );
 
 
   toggleSizes();
 
 }
 
+
+/* =========================
+   EDITAR PRODUCTO
+   ========================= */
 
 function edit(id){
 
@@ -715,7 +1373,8 @@ function edit(id){
 
   editing=p.id;
 
-  currentImageUrl=p.image_url||"";
+  currentImageUrl=
+    p.image_url||"";
 
 
   document.getElementById("title").textContent=
@@ -724,6 +1383,7 @@ function edit(id){
 
   document.getElementById("code").value=
     p.code||"";
+
 
   document.getElementById("name").value=
     p.nombre||"";
@@ -771,16 +1431,22 @@ function edit(id){
   if(currentImageUrl){
 
     document.getElementById("currentImage").innerHTML=
-      '<img src="'+esc(currentImageUrl)+'">'+
+      '<img src="'+
+      esc(currentImageUrl)+
+      '">'+
       '<span>Imagen actual</span>';
 
-    document.getElementById("currentImage").classList.remove("hidden");
+    document
+      .getElementById("currentImage")
+      .classList.remove("hidden");
 
   }else{
 
     document.getElementById("currentImage").innerHTML="";
 
-    document.getElementById("currentImage").classList.add("hidden");
+    document
+      .getElementById("currentImage")
+      .classList.add("hidden");
 
   }
 
@@ -811,7 +1477,9 @@ function edit(id){
       x=>
         x.value=
           Number(
-            (p.tamaños||{})[x.dataset.size]||0
+            (p.tamaños||{})[
+              x.dataset.size
+            ]||0
           )
     );
 
@@ -827,18 +1495,28 @@ function edit(id){
 }
 
 
+/* =========================
+   OBTENER TALLAS
+   ========================= */
+
 function getSizes(){
 
   let o={};
+
 
   document
     .querySelectorAll("#sizes input")
     .forEach(
       x=>{
+
         if(Number(x.value)>0)
-          o[x.dataset.size]=Number(x.value);
+
+          o[x.dataset.size]=
+            Number(x.value);
+
       }
     );
+
 
   return o;
 
@@ -852,16 +1530,27 @@ function getSizes(){
 async function save(){
 
   let type=
-    document.getElementById("type").value;
+    document
+      .getElementById("type")
+      .value;
+
 
   let size=
-    document.getElementById("size").value.trim();
+    document
+      .getElementById("size")
+      .value
+      .trim();
 
-  let sizes=getSizes();
+
+  let sizes=
+    getSizes();
+
 
   let stock=
     Number(
-      document.getElementById("stock").value||0
+      document
+        .getElementById("stock")
+        .value||0
     );
 
 
@@ -889,10 +1578,14 @@ async function save(){
     );
 
     return;
+
   }
 
 
-  if(type==="Americano"&&!size){
+  if(
+    type==="Americano" &&
+    !size
+  ){
 
     msg(
       "Escribe la talla.",
@@ -900,6 +1593,7 @@ async function save(){
     );
 
     return;
+
   }
 
 
@@ -918,9 +1612,31 @@ async function save(){
   try{
 
     /*
-      Primero subimos la imagen.
-      Si estamos editando y no elegimos
-      una nueva, conserva la anterior.
+      Guardamos la imagen anterior.
+    */
+
+    let oldImageUrl=
+      editing
+        ? currentImageUrl
+        : "";
+
+
+    /*
+      Detectamos si el usuario seleccionó
+      una imagen nueva.
+    */
+
+    let newImageSelected=
+      !!document
+        .getElementById("imageFile")
+        .files[0];
+
+
+    /*
+      Primero subimos la nueva imagen.
+
+      Si no hay una nueva imagen,
+      uploadImage() conserva la actual.
     */
 
     let imageUrl=
@@ -958,17 +1674,23 @@ async function save(){
 
       precio_efectivo:
         Number(
-          document.getElementById("cash").value||0
+          document
+            .getElementById("cash")
+            .value||0
         ),
 
       "precio_crédito":
         Number(
-          document.getElementById("credit").value||0
+          document
+            .getElementById("credit")
+            .value||0
         ),
 
       initial_payment:
         Number(
-          document.getElementById("initial").value||0
+          document
+            .getElementById("initial")
+            .value||0
         ),
 
       "promoción":
@@ -992,14 +1714,22 @@ async function save(){
 
       price:
         Number(
-          document.getElementById("cash").value||0
+          document
+            .getElementById("cash")
+            .value||0
         ),
 
       stock:stock,
 
       category:"Tenis",
 
-      size:size || (type==="Económico" ? "Varios" : null),
+      size:
+        size ||
+        (
+          type==="Económico"
+            ?"Varios"
+            :null
+        ),
 
       brand:
         document
@@ -1027,7 +1757,12 @@ async function save(){
     };
 
 
+    /*
+      Guardar en Supabase.
+    */
+
     let r=
+
       editing?
 
       await db
@@ -1049,14 +1784,63 @@ async function save(){
     }
 
 
-    msg(
-      editing?
-        "Producto actualizado correctamente.":
-        "Producto guardado correctamente."
-    );
+    /*
+      Si estamos editando y seleccionamos
+      una imagen nueva, ahora que Supabase
+      ya guardó correctamente eliminamos
+      la imagen anterior.
+
+      deleteR2Image() se ejecuta UNA SOLA VEZ.
+    */
+
+    let oldImageDeleted=true;
+
+
+    if(
+      editing &&
+      newImageSelected &&
+      oldImageUrl &&
+      oldImageUrl!==imageUrl
+    ){
+
+      oldImageDeleted=
+        await deleteR2Image(
+          oldImageUrl
+        );
+
+    }
+
+
+    /*
+      Mensaje final.
+    */
+
+    if(
+      editing &&
+      newImageSelected &&
+      oldImageUrl &&
+      oldImageUrl!==imageUrl &&
+      !oldImageDeleted
+    ){
+
+      msg(
+        "Producto actualizado, pero no se pudo eliminar la imagen anterior de R2.",
+        true
+      );
+
+    }else{
+
+      msg(
+        editing
+          ?"Producto actualizado correctamente."
+          :"Producto guardado correctamente."
+      );
+
+    }
 
 
     clearForm();
+
 
     await load();
 
@@ -1105,6 +1889,20 @@ async function removeProduct(id){
   )return;
 
 
+  /*
+    Guardamos la URL de la imagen
+    antes de eliminar el producto.
+  */
+
+  const imageUrl=
+    p.image_url||"";
+
+
+  /*
+    Primero eliminamos el producto
+    de Supabase.
+  */
+
   let {error}=
     await db
       .from("productos")
@@ -1125,12 +1923,36 @@ async function removeProduct(id){
   }
 
 
-  msg(
-    "Producto eliminado correctamente."
-  );
+  /*
+    Después eliminamos la imagen de R2.
+
+    Si la imagen es antigua de Supabase,
+    deleteR2Image() no hará nada.
+  */
+
+  const imageDeleted=
+    await deleteR2Image(
+      imageUrl
+    );
 
 
-  load();
+  if(!imageDeleted){
+
+    msg(
+      "Producto eliminado, pero la imagen quedó en R2 y no pudo eliminarse.",
+      true
+    );
+
+  }else{
+
+    msg(
+      "Producto e imagen eliminados correctamente."
+    );
+
+  }
+
+
+  await load();
 
 }
 
@@ -1142,6 +1964,7 @@ async function removeProduct(id){
 initSizes();
 
 toggleSizes();
+
 
 document
   .getElementById("pass")
@@ -1156,11 +1979,13 @@ document
 
 if(
   sessionStorage.getItem("beni_admin")==="1"
-)
+){
+
   showApp();
+
+}
 
 </script>
 
 </body>
 </html>
-```
