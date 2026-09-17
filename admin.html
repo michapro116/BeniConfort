@@ -1,12 +1,14 @@
-\<!doctype html>
-\<html lang="es">
-\<head>
-\<meta charset="utf-8">
-\<meta name="viewport" content="width=device-width,initial-scale=1">
-\<title>BeniConfort | Admin\</title>
-\<script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)">\</script>
-\<style>
-\*{box-sizing:border-box}
+```html
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeniConfort | Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f5f6f8;color:#151515}
 header{background:#111;color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
 main{max-width:1200px;margin:25px auto;padding:0 16px}
@@ -37,756 +39,1129 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
 .current-image img{width:80px;height:80px;object-fit:cover;border-radius:10px;border:1px solid #ddd}
 .sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;background:#f7f7f7;padding:12px;border-radius:8px}
 .sizes input{padding:8px}
+
 @media(max-width:700px){
-&#x20; .grid{grid-template-columns:1fr}
-&#x20; .full{grid-column:auto}
-&#x20; .sizes{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .sizes{grid-template-columns:repeat(3,1fr)}
 }
-\</style>
-\</head>
-\<body>
-\<header>
-&#x20; \<div>
-&#x20;   \<h2>BeniConfort — Administración\</h2>
-&#x20;   \<small>Gestión de productos\</small>
-&#x20; \</div>
-&#x20; \<button id="logout" class="gray hidden" onclick="logout()">Salir\</button>
-\</header>
-\<div id="login" style="max-width:430px;margin:70px auto;padding:16px">
-&#x20; \<div class="box">
-&#x20;   \<h2>🔐 Acceso administrativo\</h2>
-&#x20;   \<label>Contraseña\</label>
-&#x20;   \<input id="pass" type="password">
-&#x20;   \<div class="actions">
-&#x20;     \<button class="primary" onclick="login()">Entrar\</button>
-&#x20;   \</div>
-&#x20;   \<div id="loginMsg">\</div>
-&#x20; \</div>
-\</div>
-\<main id="app" class="hidden">
-\<div id="msg">\</div>
-\<section class="box">
-\<h2 id="title">➕ Agregar producto\</h2>
-\<div class="grid">
-\<div>
-&#x20; \<label>Código\</label>
-&#x20; \<input id="code" placeholder="TEN-001">
-\</div>
-\<div>
-&#x20; \<label>Nombre / modelo\</label>
-&#x20; \<input id="name">
-\</div>
-\<div>
-&#x20; \<label>Tipo\</label>
-&#x20; \<select id="type" onchange="toggleSizes()">
-&#x20;   \<option value="Americano">Americano\</option>
-&#x20;   \<option value="Económico">Económico\</option>
-&#x20; \</select>
-\</div>
-\<div>
-&#x20; \<label>Marca\</label>
-&#x20; \<input id="brand">
-\</div>
-\<div>
-&#x20; \<label>Género\</label>
-&#x20; \<select id="gender">
-&#x20;   \<option>Unisex\</option>
-&#x20;   \<option>Hombre\</option>
-&#x20;   \<option>Mujer\</option>
-&#x20; \</select>
-\</div>
-\<div>
-&#x20; \<label>Estado\</label>
-&#x20; \<select id="status">
-&#x20;   \<option value="Activo">Disponible\</option>
-&#x20;   \<option value="Reservado">Reservado\</option>
-&#x20;   \<option value="Vendido">Vendido\</option>
-&#x20; \</select>
-\</div>
-\<div>
-&#x20; \<label>Precio contado (Bs)\</label>
-&#x20; \<input id="cash" type="number" min="0">
-\</div>
-\<div>
-&#x20; \<label>Precio crédito (Bs)\</label>
-&#x20; \<input id="credit" type="number" min="0">
-\</div>
-\<div>
-&#x20; \<label>Inicial (Bs)\</label>
-&#x20; \<input id="initial" type="number" min="0">
-\</div>
-\<div>
-&#x20; \<label>Promoción\</label>
-&#x20; \<input id="promo">
-\</div>
-\<!-- NUEVO SISTEMA DE IMAGEN -->
-\<div class="full">
-&#x20; \<label>Foto del producto\</label>
-&#x20; \<input
-&#x20;   id="imageFile"
-&#x20;   type="file"
-&#x20;   accept="image/\*"
-&#x20;   onchange="previewImage()"
-&#x20; \>
-&#x20; \<div class="note">
-&#x20;   Selecciona una foto. Se subirá automáticamente a Supabase al guardar.
-&#x20; \</div>
-&#x20; \<div id="currentImage" class="current-image hidden">\</div>
-\</div>
-\<div id="american" class="full">
-&#x20; \<label>Talla\</label>
-&#x20; \<input id="size" placeholder="40">
-\</div>
-\<div id="economic" class="full hidden">
-&#x20; \<label>Tallas y cantidades\</label>
-&#x20; \<div id="sizes" class="sizes">\</div>
-\</div>
-\<div>
-&#x20; \<label>Stock\</label>
-&#x20; \<input id="stock" type="number" min="0" value="1">
-\</div>
-\<div>
-&#x20; \<label>Color\</label>
-&#x20; \<input id="color">
-\</div>
-\<div class="full">
-&#x20; \<label>Descripción\</label>
-&#x20; \<textarea id="description">\</textarea>
-\</div>
-\<div class="full">
-&#x20; \<label>Enlace WhatsApp / catálogo\</label>
-&#x20; \<input id="wa">
-\</div>
-\</div>
-\<div class="actions">
-&#x20; \<button class="primary" onclick="save()">💾 Guardar producto\</button>
-&#x20; \<button class="gray" onclick="clearForm()">Limpiar\</button>
-\</div>
-\</section>
-\<section class="box">
-\<div class="toolbar">
-&#x20; \<input id="search" placeholder="🔎 Buscar..." oninput="render()">
-&#x20; \<button class="gray" onclick="load()">🔄 Actualizar\</button>
-\</div>
-\<div class="table">
-\<table>
-\<thead>
-\<tr>
-&#x20; \<th>Foto\</th>
-&#x20; \<th>Código\</th>
-&#x20; \<th>Producto\</th>
-&#x20; \<th>Tipo\</th>
-&#x20; \<th>Tallas\</th>
-&#x20; \<th>Contado\</th>
-&#x20; \<th>Crédito\</th>
-&#x20; \<th>Estado\</th>
-&#x20; \<th>Acciones\</th>
-\</tr>
-\</thead>
-\<tbody id="rows">\</tbody>
-\</table>
-\</div>
-\</section>
-\</main>
-\<script>
-const SUPABASE\_URL="[https://lydlyusuanvjjoavbocr.supabase.co](https://lydlyusuanvjjoavbocr.supabase.co)";
-const SUPABASE\_KEY="sb\_publishable\_CO9yXE5Kj0dpqebMA2\_d7Q\_DpQKkQpq";
-const db=window\.supabase.createClient(
-&#x20; SUPABASE\_URL,
-&#x20; SUPABASE\_KEY
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h2>BeniConfort — Administración</h2>
+    <small>Gestión de productos</small>
+  </div>
+  <button id="logout" class="gray hidden" onclick="logout()">Salir</button>
+</header>
+
+<div id="login" style="max-width:430px;margin:70px auto;padding:16px">
+  <div class="box">
+    <h2>🔐 Acceso administrativo</h2>
+    <label>Contraseña</label>
+    <input id="pass" type="password">
+
+    <div class="actions">
+      <button class="primary" onclick="login()">Entrar</button>
+    </div>
+
+    <div id="loginMsg"></div>
+  </div>
+</div>
+
+<main id="app" class="hidden">
+
+<div id="msg"></div>
+
+<section class="box">
+
+<h2 id="title">➕ Agregar producto</h2>
+
+<div class="grid">
+
+<div>
+  <label>Código</label>
+  <input id="code" placeholder="TEN-001">
+</div>
+
+<div>
+  <label>Nombre / modelo</label>
+  <input id="name">
+</div>
+
+<div>
+  <label>Tipo</label>
+  <select id="type" onchange="toggleSizes()">
+    <option value="Americano">Americano</option>
+    <option value="Económico">Económico</option>
+  </select>
+</div>
+
+<div>
+  <label>Marca</label>
+  <input id="brand">
+</div>
+
+<div>
+  <label>Género</label>
+  <select id="gender">
+    <option>Unisex</option>
+    <option>Hombre</option>
+    <option>Mujer</option>
+  </select>
+</div>
+
+<div>
+  <label>Estado</label>
+  <select id="status">
+    <option value="Activo">Disponible</option>
+    <option value="Reservado">Reservado</option>
+    <option value="Vendido">Vendido</option>
+  </select>
+</div>
+
+<div>
+  <label>Precio contado (Bs)</label>
+  <input id="cash" type="number" min="0">
+</div>
+
+<div>
+  <label>Precio crédito (Bs)</label>
+  <input id="credit" type="number" min="0">
+</div>
+
+<div>
+  <label>Inicial (Bs)</label>
+  <input id="initial" type="number" min="0">
+</div>
+
+<div>
+  <label>Promoción</label>
+  <input id="promo">
+</div>
+
+<!-- NUEVO SISTEMA DE IMAGEN -->
+<div class="full">
+
+  <label>Foto del producto</label>
+
+  <input
+    id="imageFile"
+    type="file"
+    accept="image/*"
+    onchange="previewImage()"
+  >
+
+  <div class="note">
+    Selecciona una foto. Se subirá automáticamente al guardar.
+  </div>
+
+  <div id="currentImage" class="current-image hidden"></div>
+
+</div>
+
+<div id="american" class="full">
+  <label>Talla</label>
+  <input id="size" placeholder="40">
+</div>
+
+<div id="economic" class="full hidden">
+  <label>Tallas y cantidades</label>
+  <div id="sizes" class="sizes"></div>
+</div>
+
+<div>
+  <label>Stock</label>
+  <input id="stock" type="number" min="0" value="1">
+</div>
+
+<div>
+  <label>Color</label>
+  <input id="color">
+</div>
+
+<div class="full">
+  <label>Descripción</label>
+  <textarea id="description"></textarea>
+</div>
+
+<div class="full">
+  <label>Enlace WhatsApp / catálogo</label>
+  <input id="wa">
+</div>
+
+</div>
+
+<div class="actions">
+  <button class="primary" onclick="save()">💾 Guardar producto</button>
+  <button class="gray" onclick="clearForm()">Limpiar</button>
+</div>
+
+</section>
+
+
+<section class="box">
+
+<div class="toolbar">
+  <input id="search" placeholder="🔎 Buscar..." oninput="render()">
+  <button class="gray" onclick="load()">🔄 Actualizar</button>
+</div>
+
+<div class="table">
+
+<table>
+
+<thead>
+<tr>
+  <th>Foto</th>
+  <th>Código</th>
+  <th>Producto</th>
+  <th>Tipo</th>
+  <th>Tallas</th>
+  <th>Contado</th>
+  <th>Crédito</th>
+  <th>Estado</th>
+  <th>Acciones</th>
+</tr>
+</thead>
+
+<tbody id="rows"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL="https://lydlyusuanvjjoavbocr.supabase.co";
+
+const SUPABASE_KEY="sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+
+const db=window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
-const ADMIN\_PASSWORD="urbanstep123";
-const STORAGE\_BUCKET="product-images";
+
+const ADMIN_PASSWORD="urbanstep123";
+
+const STORAGE_BUCKET="product-images";
+
 let products=[];
 let editing=null;
 let currentImageUrl="";
-const SIZE\_LIST=[34,35,36,37,38,39,40,41,42,43,44,45];
+
+const SIZE_LIST=[34,35,36,37,38,39,40,41,42,43,44,45];
+
+
 function msg(t,err=false){
-&#x20; let e=document.getElementById("msg");
-&#x20; e.className="msg "+(err?"err":"ok");
-&#x20; e.textContent=t;
+
+  let e=document.getElementById("msg");
+
+  e.className="msg "+(err?"err":"ok");
+
+  e.textContent=t;
+
 }
+
+
 function money(n){
-&#x20; return "Bs "+Number(n||0).toLocaleString(
-&#x20;   "es-BO",
-&#x20;   {
-&#x20;     minimumFractionDigits:0,
-&#x20;     maximumFractionDigits:2
-&#x20;   }
-&#x20; );
+
+  return "Bs "+Number(n||0).toLocaleString(
+    "es-BO",
+    {
+      minimumFractionDigits:0,
+      maximumFractionDigits:2
+    }
+  );
+
 }
+
+
 function esc(v){
-&#x20; return String(v??"").replace(
-&#x20;   /[&<>"']/g,
-&#x20;   x=>({
-&#x20;     "&":"&",
-&#x20;     "<":"<",
-&#x20;     ">":">",
-&#x20;     '"':""",
-&#x20;     "'":"'"
-&#x20;   }[x])
-&#x20; );
+
+  return String(v??"").replace(
+    /[&<>"']/g,
+    x=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[x])
+  );
+
 }
+
+
 function login(){
-&#x20; if(
-&#x20;   document.getElementById("pass").value!==ADMIN\_PASSWORD
-&#x20; ){
-&#x20;   document.getElementById("loginMsg").innerHTML=
-&#x20;     '\<div class="msg err">Contraseña incorrecta.\</div>';
-&#x20;   return;
-&#x20; }
-&#x20; sessionStorage.setItem("beni\_admin","1");
-&#x20; showApp();
+
+  if(
+    document.getElementById("pass").value!==ADMIN_PASSWORD
+  ){
+
+    document.getElementById("loginMsg").innerHTML=
+      '<div class="msg err">Contraseña incorrecta.</div>';
+
+    return;
+  }
+
+  sessionStorage.setItem("beni_admin","1");
+
+  showApp();
+
 }
+
+
 function showApp(){
-&#x20; document.getElementById("login").classList.add("hidden");
-&#x20; document.getElementById("app").classList.remove("hidden");
-&#x20; document.getElementById("logout").classList.remove("hidden");
-&#x20; load();
+
+  document.getElementById("login").classList.add("hidden");
+
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("logout").classList.remove("hidden");
+
+  load();
+
 }
+
+
 function logout(){
-&#x20; sessionStorage.removeItem("beni\_admin");
-&#x20; location.reload();
+
+  sessionStorage.removeItem("beni_admin");
+
+  location.reload();
+
 }
+
+
 function toggleSizes(){
-&#x20; let eco=
-&#x20;   document.getElementById("type").value==="Económico";
-&#x20; document
-&#x20;   .getElementById("american")
-&#x20;   .classList.toggle("hidden",eco);
-&#x20; document
-&#x20;   .getElementById("economic")
-&#x20;   .classList.toggle("hidden",!eco);
+
+  let eco=
+    document.getElementById("type").value==="Económico";
+
+  document
+    .getElementById("american")
+    .classList.toggle("hidden",eco);
+
+  document
+    .getElementById("economic")
+    .classList.toggle("hidden",!eco);
+
 }
+
+
 function initSizes(){
-&#x20; document.getElementById("sizes").innerHTML=
-&#x20;   SIZE\_LIST.map(
-&#x20;     s=>
-&#x20;     '\<div>'+
-&#x20;       '\<label>'+s+'\</label>'+
-&#x20;       '\<input type="number" min="0" value="0" data-size="'+s+'">'+
-&#x20;     '\</div>'
-&#x20;   ).join("");
+
+  document.getElementById("sizes").innerHTML=
+
+    SIZE_LIST.map(
+      s=>
+      '<div>'+
+        '<label>'+s+'</label>'+
+        '<input type="number" min="0" value="0" data-size="'+s+'">'+
+      '</div>'
+    ).join("");
+
 }
-/\* =========================
-&#x20;  PREVISUALIZAR IMAGEN
-&#x20;  \========================= \*/
+
+
+/* =========================
+   PREVISUALIZAR IMAGEN
+   ========================= */
+
 function previewImage(){
-&#x20; const file=
-&#x20;   document.getElementById("imageFile").files[0];
-&#x20; const box=
-&#x20;   document.getElementById("currentImage");
-&#x20; if(!file){
-&#x20;   if(currentImageUrl){
-&#x20;     box.innerHTML=
-&#x20;       '\<img src="'+esc(currentImageUrl)+'">'+
-&#x20;       '\<span>Imagen actual\</span>';
-&#x20;     box.classList.remove("hidden");
-&#x20;   }else{
-&#x20;     box.innerHTML="";
-&#x20;     box.classList.add("hidden");
-&#x20;   }
-&#x20;   return;
-&#x20; }
-&#x20; const reader=new FileReader();
-&#x20; reader.onload=function(e){
-&#x20;   box.innerHTML=
-&#x20;     '\<img src="'+e.target.result+'">'+
-&#x20;     '\<span>Nueva imagen seleccionada\</span>';
-&#x20;   box.classList.remove("hidden");
-&#x20; };
-&#x20; reader.readAsDataURL(file);
+
+  const file=
+    document.getElementById("imageFile").files[0];
+
+  const box=
+    document.getElementById("currentImage");
+
+  if(!file){
+
+    if(currentImageUrl){
+
+      box.innerHTML=
+        '<img src="'+esc(currentImageUrl)+'">'+
+        '<span>Imagen actual</span>';
+
+      box.classList.remove("hidden");
+
+    }else{
+
+      box.innerHTML="";
+      box.classList.add("hidden");
+
+    }
+
+    return;
+  }
+
+  const reader=new FileReader();
+
+  reader.onload=function(e){
+
+    box.innerHTML=
+      '<img src="'+e.target.result+'">'+
+      '<span>Nueva imagen seleccionada</span>';
+
+    box.classList.remove("hidden");
+
+  };
+
+  reader.readAsDataURL(file);
+
 }
-/\* =========================
-&#x20;  SUBIR IMAGEN A SUPABASE
-&#x20;  \========================= \*/
+
+
+/* =========================
+   SUBIR IMAGEN A SUPABASE
+   ========================= */
+
 async function uploadImage(){
-&#x20; const file=
-&#x20;   document.getElementById("imageFile").files[0];
-&#x20; if(!file){
-&#x20;   return currentImageUrl || null;
-&#x20; }
-&#x20; if(!file.type.startsWith("image/")){
-&#x20;   throw new Error("El archivo seleccionado no es una imagen.");
-&#x20; }
-&#x20; /\*
-&#x20;   Creamos un nombre único para evitar
-&#x20;   que una imagen reemplace accidentalmente
-&#x20;   otra imagen.
-&#x20; \*/
-&#x20; const extension=
-&#x20;   file.name.split(".").pop().toLowerCase();
-&#x20; const fileName=
-&#x20;   "producto-"+Date.now()+"-"+Math.random().toString(36).substring(2,8)+"."+extension;
-&#x20; const filePath=fileName;
-&#x20; const {error:uploadError}=
-&#x20;   await db.storage
-&#x20;     .from(STORAGE\_BUCKET)
-&#x20;     .upload(
-&#x20;       filePath,
-&#x20;       file,
-&#x20;       {
-&#x20;         cacheControl:"3600",
-&#x20;         upsert:false
-&#x20;       }
-&#x20;     );
-&#x20; if(uploadError){
-&#x20;   throw new Error(
-&#x20;     "No se pudo subir la imagen: "+
-&#x20;     uploadError.message
-&#x20;   );
-&#x20; }
-&#x20; const {data}=
-&#x20;   db.storage
-&#x20;     .from(STORAGE\_BUCKET)
-&#x20;     .getPublicUrl(filePath);
-&#x20; if(!data || !data.publicUrl){
-&#x20;   throw new Error(
-&#x20;     "La imagen se subió, pero no se pudo obtener su URL."
-&#x20;   );
-&#x20; }
-&#x20; return data.publicUrl;
+
+  const file =
+    document.getElementById("imageFile").files[0];
+
+  // Si no se seleccionó una imagen:
+  // en edición conserva la imagen actual.
+  if(!file){
+    return currentImageUrl || null;
+  }
+
+  // Verificar que sea una imagen
+  if(!file.type.startsWith("image/")){
+    throw new Error(
+      "El archivo seleccionado no es una imagen."
+    );
+  }
+
+  // Worker de BeniConfort
+  const WORKER_URL =
+    "https://beniconfort-image-upload.michael-justiniano1995.workers.dev/upload";
+
+  // FormData permite enviar el archivo como multipart/form-data.
+  // IMPORTANTE: no ponemos manualmente Content-Type,
+  // porque el navegador debe generar el boundary.
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const response =
+    await fetch(WORKER_URL, {
+      method: "POST",
+      body: formData
+    });
+
+  // Intentar leer la respuesta del Worker
+  let result;
+
+  try{
+    result = await response.json();
+  }catch(e){
+    throw new Error(
+      "El Worker respondió con un formato inesperado."
+    );
+  }
+
+  // Si el Worker devolvió error
+  if(!response.ok || !result.success){
+
+    throw new Error(
+      result.error ||
+      result.details ||
+      "No se pudo subir la imagen al servidor."
+    );
+
+  }
+
+  // Verificar que recibimos la URL pública
+  if(!result.url){
+
+    throw new Error(
+      "La imagen se subió, pero el Worker no devolvió una URL."
+    );
+
+  }
+
+  // Esta será la URL que se guardará en Supabase
+  return result.url;
+
 }
+
+
 async function load(){
-&#x20; const {data,error}=
-&#x20;   await db
-&#x20;     .from("productos")
-&#x20;     .select("\*")
-&#x20;     .order("id",{ascending:false});
-&#x20; if(error){
-&#x20;   msg(
-&#x20;     "Error al cargar: "+error.message,
-&#x20;     true
-&#x20;   );
-&#x20;   return;
-&#x20; }
-&#x20; products=data||[];
-&#x20; render();
+
+  const {data,error}=
+
+    await db
+      .from("productos")
+      .select("*")
+      .order("id",{ascending:false});
+
+
+  if(error){
+
+    msg(
+      "Error al cargar: "+error.message,
+      true
+    );
+
+    return;
+  }
+
+  products=data||[];
+
+  render();
+
 }
+
+
 function render(){
-&#x20; let q=
-&#x20;   document
-&#x20;     .getElementById("search")
-&#x20;     .value
-&#x20;     .toLowerCase()
-&#x20;     .trim();
-&#x20; let list=
-&#x20;   products.filter(
-&#x20;     p=>
-&#x20;     !q ||
-&#x20;     [
-&#x20;       p.code,
-&#x20;       p.nombre,
-&#x20;       p.marca,
-&#x20;       p.tipo,
-&#x20;       p.género,
-&#x20;       p.size,
-&#x20;       p.color,
-&#x20;       p.estado
-&#x20;     ]
-&#x20;     .join(" ")
-&#x20;     .toLowerCase()
-&#x20;     .includes(q)
-&#x20;   );
-&#x20; document.getElementById("rows").innerHTML=
-&#x20;   list.length?
-&#x20;   list.map(p=>{
-&#x20;     let sizes=
-&#x20;       p.tipo==="Económico" &&
-&#x20;       p.tamaños?
-&#x20;       Object
-&#x20;         .entries(p.tamaños)
-&#x20;         .filter(x=>Number(x[1])>0)
-&#x20;         .map(
-&#x20;           x=>x[0]+"("+x[1]+")"
-&#x20;         )
-&#x20;         .join(", "):
-&#x20;       (p.size||"—");
-&#x20;     let st=
-&#x20;       p.estado==="Vendido"
-&#x20;         ?"Vendido":
-&#x20;       p.estado==="Reservado"
-&#x20;         ?"Reservado":
-&#x20;       "Disponible";
-&#x20;     return '\<tr>'+
-&#x20;     '\<td>'+
-&#x20;       (
-&#x20;         p.image\_url?
-&#x20;         '\<img class="thumb" src="'+
-&#x20;         esc(p.image\_url)+
-&#x20;         '">':
-&#x20;         "—"
-&#x20;       )+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       esc(p.code||p.id)+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       '\<b>'+esc(p.nombre)+'\</b>\<br>'+
-&#x20;       esc(p.marca||"")+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       esc(p.tipo||"")+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       esc(sizes)+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       money(p.precio\_efectivo)+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       money(
-&#x20;         p.precio\_crédito??
-&#x20;         p.precio\_credito??
-&#x20;         p.price
-&#x20;       )+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       st+
-&#x20;     '\</td>'+
-&#x20;     '\<td>'+
-&#x20;       '\<button class="gray" onclick="edit('+p.id+')">Editar\</button> '+
-&#x20;       '\<button class="red" onclick="removeProduct('+p.id+')">Eliminar\</button>'+
-&#x20;     '\</td>'+
-&#x20;     '\</tr>';
-&#x20;   }).join("")
-&#x20;   :
-&#x20;   '\<tr>\<td colspan="9">No hay productos.\</td>\</tr>';
+
+  let q=
+    document
+      .getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+
+  let list=
+    products.filter(
+      p=>
+      !q ||
+      [
+        p.code,
+        p.nombre,
+        p.marca,
+        p.tipo,
+        p.género,
+        p.size,
+        p.color,
+        p.estado
+      ]
+      .join(" ")
+      .toLowerCase()
+      .includes(q)
+    );
+
+
+  document.getElementById("rows").innerHTML=
+
+    list.length?
+
+    list.map(p=>{
+
+      let sizes=
+        p.tipo==="Económico" &&
+        p.tamaños?
+
+        Object
+          .entries(p.tamaños)
+          .filter(x=>Number(x[1])>0)
+          .map(
+            x=>x[0]+"("+x[1]+")"
+          )
+          .join(", "):
+
+        (p.size||"—");
+
+
+      let st=
+        p.estado==="Vendido"
+          ?"Vendido":
+        p.estado==="Reservado"
+          ?"Reservado":
+        "Disponible";
+
+
+      return '<tr>'+
+
+      '<td>'+
+        (
+          p.image_url?
+          '<img class="thumb" src="'+
+          esc(p.image_url)+
+          '">':
+          "—"
+        )+
+      '</td>'+
+
+      '<td>'+
+        esc(p.code||p.id)+
+      '</td>'+
+
+      '<td>'+
+        '<b>'+esc(p.nombre)+'</b><br>'+
+        esc(p.marca||"")+
+      '</td>'+
+
+      '<td>'+
+        esc(p.tipo||"")+
+      '</td>'+
+
+      '<td>'+
+        esc(sizes)+
+      '</td>'+
+
+      '<td>'+
+        money(p.precio_efectivo)+
+      '</td>'+
+
+      '<td>'+
+        money(
+          p.precio_crédito??
+          p.precio_credito??
+          p.price
+        )+
+      '</td>'+
+
+      '<td>'+
+        st+
+      '</td>'+
+
+      '<td>'+
+        '<button class="gray" onclick="edit('+p.id+')">Editar</button> '+
+        '<button class="red" onclick="removeProduct('+p.id+')">Eliminar</button>'+
+      '</td>'+
+
+      '</tr>';
+
+    }).join("")
+
+    :
+
+    '<tr><td colspan="9">No hay productos.</td></tr>';
+
 }
+
+
 function clearForm(){
-&#x20; editing=null;
-&#x20; currentImageUrl="";
-&#x20; document.getElementById("title").textContent=
-&#x20;   "➕ Agregar producto";
-&#x20; [
-&#x20;   "code",
-&#x20;   "name",
-&#x20;   "brand",
-&#x20;   "cash",
-&#x20;   "credit",
-&#x20;   "initial",
-&#x20;   "promo",
-&#x20;   "size",
-&#x20;   "color",
-&#x20;   "description",
-&#x20;   "wa"
-&#x20; ]
-&#x20; .forEach(
-&#x20;   id=>
-&#x20;     document.getElementById(id).value=""
-&#x20; );
-&#x20; document.getElementById("imageFile").value="";
-&#x20; document.getElementById("currentImage").innerHTML="";
-&#x20; document.getElementById("currentImage").classList.add("hidden");
-&#x20; document.getElementById("type").value=
-&#x20;   "Americano";
-&#x20; document.getElementById("gender").value=
-&#x20;   "Unisex";
-&#x20; document.getElementById("status").value=
-&#x20;   "Activo";
-&#x20; document.getElementById("stock").value=1;
-&#x20; document
-&#x20;   .querySelectorAll("#sizes input")
-&#x20;   .forEach(x=>x.value=0);
-&#x20; toggleSizes();
+
+  editing=null;
+
+  currentImageUrl="";
+
+  document.getElementById("title").textContent=
+    "➕ Agregar producto";
+
+
+  [
+    "code",
+    "name",
+    "brand",
+    "cash",
+    "credit",
+    "initial",
+    "promo",
+    "size",
+    "color",
+    "description",
+    "wa"
+  ]
+  .forEach(
+    id=>
+      document.getElementById(id).value=""
+  );
+
+
+  document.getElementById("imageFile").value="";
+
+  document.getElementById("currentImage").innerHTML="";
+
+  document.getElementById("currentImage").classList.add("hidden");
+
+
+  document.getElementById("type").value=
+    "Americano";
+
+  document.getElementById("gender").value=
+    "Unisex";
+
+  document.getElementById("status").value=
+    "Activo";
+
+  document.getElementById("stock").value=1;
+
+
+  document
+    .querySelectorAll("#sizes input")
+    .forEach(x=>x.value=0);
+
+
+  toggleSizes();
+
 }
+
+
 function edit(id){
-&#x20; let p=
-&#x20;   products.find(
-&#x20;     x=>Number(x.id)===Number(id)
-&#x20;   );
-&#x20; if(!p)return;
-&#x20; editing=p.id;
-&#x20; currentImageUrl=p.image\_url||"";
-&#x20; document.getElementById("title").textContent=
-&#x20;   "✏️ Editar producto";
-&#x20; document.getElementById("code").value=
-&#x20;   p.code||"";
-&#x20; document.getElementById("name").value=
-&#x20;   p.nombre||"";
-&#x20; document.getElementById("type").value=
-&#x20;   p.tipo==="Económicos"
-&#x20;     ?"Económico":
-&#x20;   (p.tipo||"Americano");
-&#x20; document.getElementById("brand").value=
-&#x20;   p.marca||"";
-&#x20; document.getElementById("gender").value=
-&#x20;   p.género||"Unisex";
-&#x20; document.getElementById("status").value=
-&#x20;   p.estado||"Activo";
-&#x20; document.getElementById("cash").value=
-&#x20;   p.precio\_efectivo??"";
-&#x20; document.getElementById("credit").value=
-&#x20;   p.precio\_crédito??
-&#x20;   p.precio\_credito??
-&#x20;   "";
-&#x20; document.getElementById("initial").value=
-&#x20;   p.initial\_payment??"";
-&#x20; document.getElementById("promo").value=
-&#x20;   p.promoción||"";
-&#x20; document.getElementById("imageFile").value="";
-&#x20; if(currentImageUrl){
-&#x20;   document.getElementById("currentImage").innerHTML=
-&#x20;     '\<img src="'+esc(currentImageUrl)+'">'+
-&#x20;     '\<span>Imagen actual\</span>';
-&#x20;   document.getElementById("currentImage").classList.remove("hidden");
-&#x20; }else{
-&#x20;   document.getElementById("currentImage").innerHTML="";
-&#x20;   document.getElementById("currentImage").classList.add("hidden");
-&#x20; }
-&#x20; document.getElementById("size").value=
-&#x20;   p.size||"";
-&#x20; document.getElementById("stock").value=
-&#x20;   p.stock??1;
-&#x20; document.getElementById("color").value=
-&#x20;   p.color||"";
-&#x20; document.getElementById("description").value=
-&#x20;   p.description||"";
-&#x20; document.getElementById("wa").value=
-&#x20;   p.whatsapp\_link||"";
-&#x20; document
-&#x20;   .querySelectorAll("#sizes input")
-&#x20;   .forEach(
-&#x20;     x=>
-&#x20;       x.value=
-&#x20;         Number(
-&#x20;           (p.tamaños||{})[x.dataset.size]||0
-&#x20;         )
-&#x20;   );
-&#x20; toggleSizes();
-&#x20; window\.scrollTo({
-&#x20;   top:0,
-&#x20;   behavior:"smooth"
-&#x20; });
+
+  let p=
+    products.find(
+      x=>Number(x.id)===Number(id)
+    );
+
+
+  if(!p)return;
+
+
+  editing=p.id;
+
+  currentImageUrl=p.image_url||"";
+
+
+  document.getElementById("title").textContent=
+    "✏️ Editar producto";
+
+
+  document.getElementById("code").value=
+    p.code||"";
+
+  document.getElementById("name").value=
+    p.nombre||"";
+
+
+  document.getElementById("type").value=
+    p.tipo==="Económicos"
+      ?"Económico":
+    (p.tipo||"Americano");
+
+
+  document.getElementById("brand").value=
+    p.marca||"";
+
+
+  document.getElementById("gender").value=
+    p.género||"Unisex";
+
+
+  document.getElementById("status").value=
+    p.estado||"Activo";
+
+
+  document.getElementById("cash").value=
+    p.precio_efectivo??"";
+
+
+  document.getElementById("credit").value=
+    p.precio_crédito??
+    p.precio_credito??
+    "";
+
+
+  document.getElementById("initial").value=
+    p.initial_payment??"";
+
+
+  document.getElementById("promo").value=
+    p.promoción||"";
+
+
+  document.getElementById("imageFile").value="";
+
+
+  if(currentImageUrl){
+
+    document.getElementById("currentImage").innerHTML=
+      '<img src="'+esc(currentImageUrl)+'">'+
+      '<span>Imagen actual</span>';
+
+    document.getElementById("currentImage").classList.remove("hidden");
+
+  }else{
+
+    document.getElementById("currentImage").innerHTML="";
+
+    document.getElementById("currentImage").classList.add("hidden");
+
+  }
+
+
+  document.getElementById("size").value=
+    p.size||"";
+
+
+  document.getElementById("stock").value=
+    p.stock??1;
+
+
+  document.getElementById("color").value=
+    p.color||"";
+
+
+  document.getElementById("description").value=
+    p.description||"";
+
+
+  document.getElementById("wa").value=
+    p.whatsapp_link||"";
+
+
+  document
+    .querySelectorAll("#sizes input")
+    .forEach(
+      x=>
+        x.value=
+          Number(
+            (p.tamaños||{})[x.dataset.size]||0
+          )
+    );
+
+
+  toggleSizes();
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
 }
+
+
 function getSizes(){
-&#x20; let o={};
-&#x20; document
-&#x20;   .querySelectorAll("#sizes input")
-&#x20;   .forEach(
-&#x20;     x=>{
-&#x20;       if(Number(x.value)>0)
-&#x20;         o[x.dataset.size]=Number(x.value);
-&#x20;     }
-&#x20;   );
-&#x20; return o;
+
+  let o={};
+
+  document
+    .querySelectorAll("#sizes input")
+    .forEach(
+      x=>{
+        if(Number(x.value)>0)
+          o[x.dataset.size]=Number(x.value);
+      }
+    );
+
+  return o;
+
 }
-/\* =========================
-&#x20;  GUARDAR PRODUCTO
-&#x20;  \========================= \*/
+
+
+/* =========================
+   GUARDAR PRODUCTO
+   ========================= */
+
 async function save(){
-&#x20; let type=
-&#x20;   document.getElementById("type").value;
-&#x20; let size=
-&#x20;   document.getElementById("size").value.trim();
-&#x20; let sizes=getSizes();
-&#x20; let stock=
-&#x20;   Number(
-&#x20;     document.getElementById("stock").value||0
-&#x20;   );
-&#x20; if(type==="Económico")
-&#x20;   stock=
-&#x20;     Object
-&#x20;       .values(sizes)
-&#x20;       .reduce(
-&#x20;         (a,b)=>a+Number(b),
-&#x20;         0
-&#x20;       );
-&#x20; if(
-&#x20;   !document
-&#x20;     .getElementById("name")
-&#x20;     .value
-&#x20;     .trim()
-&#x20; ){
-&#x20;   msg(
-&#x20;     "Escribe el nombre o modelo.",
-&#x20;     true
-&#x20;   );
-&#x20;   return;
-&#x20; }
-&#x20; if(type==="Americano"&&!size){
-&#x20;   msg(
-&#x20;     "Escribe la talla.",
-&#x20;     true
-&#x20;   );
-&#x20;   return;
-&#x20; }
-&#x20; const saveButton=
-&#x20;   document.querySelector(
-&#x20;     'button[onclick="save()"]'
-&#x20;   );
-&#x20; saveButton.disabled=true;
-&#x20; saveButton.textContent=
-&#x20;   "⏳ Guardando...";
-&#x20; try{
-&#x20;   /\*
-&#x20;     Primero subimos la imagen.
-&#x20;     Si estamos editando y no elegimos
-&#x20;     una nueva, conserva la anterior.
-&#x20;   \*/
-&#x20;   let imageUrl=
-&#x20;     await uploadImage();
-&#x20;   let payload={
-&#x20;     code:
-&#x20;       document
-&#x20;         .getElementById("code")
-&#x20;         .value
-&#x20;         .trim()||null,
-&#x20;     nombre:
-&#x20;       document
-&#x20;         .getElementById("name")
-&#x20;         .value
-&#x20;         .trim(),
-&#x20;     tipo:type,
-&#x20;     marca:
-&#x20;       document
-&#x20;         .getElementById("brand")
-&#x20;         .value
-&#x20;         .trim(),
-&#x20;     "género":
-&#x20;       document
-&#x20;         .getElementById("gender")
-&#x20;         .value,
-&#x20;     image\_url:imageUrl,
-&#x20;     precio\_efectivo:
-&#x20;       Number(
-&#x20;         document.getElementById("cash").value||0
-&#x20;       ),
-&#x20;     "precio\_crédito":
-&#x20;       Number(
-&#x20;         document.getElementById("credit").value||0
-&#x20;       ),
-&#x20;     initial\_payment:
-&#x20;       Number(
-&#x20;         document.getElementById("initial").value||0
-&#x20;       ),
-&#x20;     "promoción":
-&#x20;       document
-&#x20;         .getElementById("promo")
-&#x20;         .value
-&#x20;         .trim()||null,
-&#x20;     estado:
-&#x20;       document
-&#x20;         .getElementById("status")
-&#x20;         .value,
-&#x20;     tamaños:sizes,
-&#x20;     description:
-&#x20;       document
-&#x20;         .getElementById("description")
-&#x20;         .value
-&#x20;         .trim()||null,
-&#x20;     price:
-&#x20;       Number(
-&#x20;         document.getElementById("cash").value||0
-&#x20;       ),
-&#x20;     stock:stock,
-&#x20;     category:"Tenis",
-&#x20;     size:size || (type==="Económico" ? "Varios" : null),
-&#x20;     brand:
-&#x20;       document
-&#x20;         .getElementById("brand")
-&#x20;         .value
-&#x20;         .trim()||null,
-&#x20;     color:
-&#x20;       document
-&#x20;         .getElementById("color")
-&#x20;         .value
-&#x20;         .trim()||null,
-&#x20;     status:
-&#x20;       document
-&#x20;         .getElementById("status")
-&#x20;         .value,
-&#x20;     whatsapp\_link:
-&#x20;       document
-&#x20;         .getElementById("wa")
-&#x20;         .value
-&#x20;         .trim()||null
-&#x20;   };
-&#x20;   let r=
-&#x20;     editing?
-&#x20;     await db
-&#x20;       .from("productos")
-&#x20;       .update(payload)
-&#x20;       .eq("id",editing):
-&#x20;     await db
-&#x20;       .from("productos")
-&#x20;       .insert(payload);
-&#x20;   if(r.error){
-&#x20;     throw new Error(
-&#x20;       r.error.message
-&#x20;     );
-&#x20;   }
-&#x20;   msg(
-&#x20;     editing?
-&#x20;       "Producto actualizado correctamente.":
-&#x20;       "Producto guardado correctamente."
-&#x20;   );
-&#x20;   clearForm();
-&#x20;   await load();
-&#x20; }catch(error){
-&#x20;   msg(
-&#x20;     "No se pudo guardar: "+
-&#x20;     error.message,
-&#x20;     true
-&#x20;   );
-&#x20; }finally{
-&#x20;   saveButton.disabled=false;
-&#x20;   saveButton.textContent=
-&#x20;     "💾 Guardar producto";
-&#x20; }
+
+  let type=
+    document.getElementById("type").value;
+
+  let size=
+    document.getElementById("size").value.trim();
+
+  let sizes=getSizes();
+
+  let stock=
+    Number(
+      document.getElementById("stock").value||0
+    );
+
+
+  if(type==="Económico")
+
+    stock=
+      Object
+        .values(sizes)
+        .reduce(
+          (a,b)=>a+Number(b),
+          0
+        );
+
+
+  if(
+    !document
+      .getElementById("name")
+      .value
+      .trim()
+  ){
+
+    msg(
+      "Escribe el nombre o modelo.",
+      true
+    );
+
+    return;
+  }
+
+
+  if(type==="Americano"&&!size){
+
+    msg(
+      "Escribe la talla.",
+      true
+    );
+
+    return;
+  }
+
+
+  const saveButton=
+    document.querySelector(
+      'button[onclick="save()"]'
+    );
+
+
+  saveButton.disabled=true;
+
+  saveButton.textContent=
+    "⏳ Guardando...";
+
+
+  try{
+
+    /*
+      Primero subimos la imagen.
+      Si estamos editando y no elegimos
+      una nueva, conserva la anterior.
+    */
+
+    let imageUrl=
+      await uploadImage();
+
+
+    let payload={
+
+      code:
+        document
+          .getElementById("code")
+          .value
+          .trim()||null,
+
+      nombre:
+        document
+          .getElementById("name")
+          .value
+          .trim(),
+
+      tipo:type,
+
+      marca:
+        document
+          .getElementById("brand")
+          .value
+          .trim(),
+
+      "género":
+        document
+          .getElementById("gender")
+          .value,
+
+      image_url:imageUrl,
+
+      precio_efectivo:
+        Number(
+          document.getElementById("cash").value||0
+        ),
+
+      "precio_crédito":
+        Number(
+          document.getElementById("credit").value||0
+        ),
+
+      initial_payment:
+        Number(
+          document.getElementById("initial").value||0
+        ),
+
+      "promoción":
+        document
+          .getElementById("promo")
+          .value
+          .trim()||null,
+
+      estado:
+        document
+          .getElementById("status")
+          .value,
+
+      tamaños:sizes,
+
+      description:
+        document
+          .getElementById("description")
+          .value
+          .trim()||null,
+
+      price:
+        Number(
+          document.getElementById("cash").value||0
+        ),
+
+      stock:stock,
+
+      category:"Tenis",
+
+      size:size || (type==="Económico" ? "Varios" : null),
+
+      brand:
+        document
+          .getElementById("brand")
+          .value
+          .trim()||null,
+
+      color:
+        document
+          .getElementById("color")
+          .value
+          .trim()||null,
+
+      status:
+        document
+          .getElementById("status")
+          .value,
+
+      whatsapp_link:
+        document
+          .getElementById("wa")
+          .value
+          .trim()||null
+
+    };
+
+
+    let r=
+      editing?
+
+      await db
+        .from("productos")
+        .update(payload)
+        .eq("id",editing):
+
+      await db
+        .from("productos")
+        .insert(payload);
+
+
+    if(r.error){
+
+      throw new Error(
+        r.error.message
+      );
+
+    }
+
+
+    msg(
+      editing?
+        "Producto actualizado correctamente.":
+        "Producto guardado correctamente."
+    );
+
+
+    clearForm();
+
+    await load();
+
+
+  }catch(error){
+
+    msg(
+      "No se pudo guardar: "+
+      error.message,
+      true
+    );
+
+  }finally{
+
+    saveButton.disabled=false;
+
+    saveButton.textContent=
+      "💾 Guardar producto";
+
+  }
+
 }
-/\* =========================
-&#x20;  ELIMINAR PRODUCTO
-&#x20;  \========================= \*/
+
+
+/* =========================
+   ELIMINAR PRODUCTO
+   ========================= */
+
 async function removeProduct(id){
-&#x20; let p=
-&#x20;   products.find(
-&#x20;     x=>Number(x.id)===Number(id)
-&#x20;   );
-&#x20; if(!p)return;
-&#x20; if(
-&#x20;   !confirm(
-&#x20;     '¿Eliminar "'+
-&#x20;     (p.nombre||"producto")+
-&#x20;     '"?'
-&#x20;   )
-&#x20; )return;
-&#x20; let {error}=
-&#x20;   await db
-&#x20;     .from("productos")
-&#x20;     .delete()
-&#x20;     .eq("id",id);
-&#x20; if(error){
-&#x20;   msg(
-&#x20;     "No se pudo eliminar: "+
-&#x20;     error.message,
-&#x20;     true
-&#x20;   );
-&#x20;   return;
-&#x20; }
-&#x20; msg(
-&#x20;   "Producto eliminado correctamente."
-&#x20; );
-&#x20; load();
+
+  let p=
+    products.find(
+      x=>Number(x.id)===Number(id)
+    );
+
+
+  if(!p)return;
+
+
+  if(
+    !confirm(
+      '¿Eliminar "'+
+      (p.nombre||"producto")+
+      '"?'
+    )
+  )return;
+
+
+  let {error}=
+    await db
+      .from("productos")
+      .delete()
+      .eq("id",id);
+
+
+  if(error){
+
+    msg(
+      "No se pudo eliminar: "+
+      error.message,
+      true
+    );
+
+    return;
+
+  }
+
+
+  msg(
+    "Producto eliminado correctamente."
+  );
+
+
+  load();
+
 }
-/\* =========================
-&#x20;  INICIO
-&#x20;  \========================= \*/
+
+
+/* =========================
+   INICIO
+   ========================= */
+
 initSizes();
+
 toggleSizes();
+
 document
-&#x20; .getElementById("pass")
-&#x20; .addEventListener(
-&#x20;   "keydown",
-&#x20;   e=>{
-&#x20;     if(e.key==="Enter")
-&#x20;       login();
-&#x20;   }
-&#x20; );
+  .getElementById("pass")
+  .addEventListener(
+    "keydown",
+    e=>{
+      if(e.key==="Enter")
+        login();
+    }
+  );
+
+
 if(
-&#x20; sessionStorage.getItem("beni\_admin")==="1"
+  sessionStorage.getItem("beni_admin")==="1"
 )
-&#x20; showApp();
-\</script>
-\</body>
-\</html>
+  showApp();
+
+</script>
+
+</body>
+</html>
+```
