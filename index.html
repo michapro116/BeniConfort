@@ -3074,7 +3074,7 @@ function creditCalc(p){
 function formatInstallments(amounts){
 
   if(!amounts || !amounts.length)
-    return `Cuota: <b>${money(0)}</b>`;
+    return `Cuota: ${money(0)}`;
 
   const groups=[];
 
@@ -3089,8 +3089,8 @@ function formatInstallments(amounts){
 
   const text=groups.map(g=>
     g.count===1
-      ? `1 cuota de <b>${money(g.amount)}</b>`
-      : `${g.count} cuotas de <b>${money(g.amount)}</b>`
+      ? `1 cuota de ${money(g.amount)}`
+      : `${g.count} cuotas de ${money(g.amount)}`
   ).join(' + ');
 
   return `Cuotas: ${text}`;
