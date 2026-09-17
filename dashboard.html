@@ -14,12 +14,12 @@
     @media(max-width:850px){aside{width:65px;padding:8px}aside .txt{display:none}nav button{text-align:center;padding:12px 3px}main{padding:12px}.grid,.grid3{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
 </style></head><body>
 <header><div class="brand">BeniConfort<small>Ventas · Cobros · Clientes</small></div><button class="soft" onclick="location.href='admin.html'">⚙️ <span class="txt">Productos</span></button></header>
-<div class="layout"><aside><nav><button id="n-cobros" class="active" onclick="view('cobros')">💰 <span class="txt">Cobros de hoy</span></button><button id="n-venta" onclick="view('venta')">🛒 <span class="txt">Nueva venta</span></button><button id="n-clientes" onclick="view('clientes')">👥 <span class="txt">Clientes</span></button><button id="n-no" onclick="view('no')">🚫 <span class="txt">No cobrables</span></button><button id="n-estado" onclick="view('estado')">📋 <span class="txt">Estado</span></button><button id="n-resumen" onclick="view('resumen')">📊 <span class="txt">Resumen</span></button></nav></aside><main><div id="msg"></div>
+<div class="layout"><aside><nav><button id="n-cobros" class="active" onclick="view('cobros')">💰 <span class="txt">Cobros de hoy</span></button><button id="n-venta" onclick="view('venta')">🛒 <span class="txt">Nueva venta</span></button><button id="n-clientes" onclick="view('clientes')">👥 <span class="txt">Clientes</span></button><button id="n-no" onclick="view('no')">🚫 <span class="txt">No cobrables</span></button><button id="n-estado" onclick="view('estado')">📋 <span class="txt">Estado</span></button><button id="n-resumen" onclick="view('resumen')">📊 <span class="txt">Resumen</span></button><button id="n-historial" onclick="view('historial')">🗂️ <span class="txt">Historial</span></button></nav></aside><main><div id="msg"></div>
 <section id="v-cobros"><div class="row"><div><h1>💰 Cobros de hoy</h1><div class="muted" id="today"></div></div><button class="primary" onclick="load()">↻ Actualizar</button></div><div class="box"><b id="attention">Cargando...</b></div><div id="collections"></div></section>
 <section id="v-venta" class="hidden"><h1>🛒 Nueva venta</h1><div class="box"><h3 class="sectionTitle">1. Cliente</h3><div class="grid"><div><label>Buscar cliente</label><input id="cs" oninput="filterClients()" placeholder="Código, nombre o celular"></div><div><label>Cliente seleccionado</label><input id="csel" readonly placeholder="Selecciona un cliente"></div></div><div id="clist" class="client-list" style="margin-top:10px"></div></div><div class="box"><h3 class="sectionTitle">2. Producto</h3><div id="productPickerHint" class="muted" style="margin-bottom:8px">Busca y haz <b>doble clic</b> sobre el producto para verlo grande y confirmar la elección.</div><input id="ps" oninput="renderProducts()" placeholder="Código, modelo, marca..."><div id="selectedProductBox" class="hidden" style="margin-top:11px"></div><div id="pgrid" class="products" style="margin-top:11px"></div></div><div class="box"><h3 class="sectionTitle">3. Condición</h3><div class="grid"><div><label>Forma</label><select id="mode" onchange="calc()"><option value="contado">Contado</option><option value="credito">Crédito</option></select></div><div><label>Fecha de venta</label><input id="sdate" type="date"></div></div><div id="credit" class="grid hidden" style="margin-top:12px"><div><label>Inicial (Bs)</label><input id="initial" type="number" min="0" step="0.01" oninput="calc()"></div><div><label>Modalidad</label><select id="freq" onchange="setInstallments();calc()"><option>Semanal</option><option>Quincenal</option><option>Mensual</option></select></div><div><label>Número de cuotas</label><select id="ninst" onchange="calc()"></select></div><div><label>Primera cuota</label><input id="first" type="date" onchange="calc()"></div></div><div id="scalc" class="summary">Selecciona un producto.</div><div class="actions"><button class="primary" onclick="calculateSale()">CALCULAR</button><button class="green" onclick="registerSale()">REGISTRAR VENTA</button><button class="soft" onclick="resetSale()">Limpiar</button></div></div></section>
 <section id="v-clientes" class="hidden"><div class="print-title"><h1>BeniConfort — Lista de clientes</h1><p>Lista de contactos</p></div><div class="row"><div><h1>👥 Clientes</h1><div class="muted">Código automático 001, 002, 003...</div></div><div class="actions"><button class="primary" onclick="clientModal()">➕ Nuevo cliente</button><button class="soft" onclick="printClients()">🖨️ Imprimir / Guardar PDF</button></div></div><div class="box"><input id="csearch" oninput="renderClients()" placeholder="Buscar cliente..."></div><div class="box" id="clientTable"></div></section>
 <section id="v-no" class="hidden"><h1>🚫 Clientes no cobrables</h1><div class="box" id="noTable"></div></section>
-<section id="v-estado" class="hidden"><div class="row"><div><h1>📋 Estado</h1><div class="muted">Estado detallado de cada cliente y sus cuotas. Doble clic en un cliente para ver todo.</div></div><button class="primary" onclick="renderEstado()">↻ Actualizar</button></div><div class="box"><input id="estadoSearch" oninput="renderEstado()" placeholder="Buscar por código, nombre o celular..."></div><div class="box" id="estadoTable"></div></section><section id="v-resumen" class="hidden"><div class="row"><div><h1>📊 Resumen</h1><div class="muted">Solo lectura y calculado desde ventas y pagos.</div></div><button class="primary" onclick="renderSummary()">↻ Actualizar</button></div><div id="kpis" class="grid3"></div><div class="box" id="summaryTable"></div></section>
+<section id="v-estado" class="hidden"><div class="row"><div><h1>📋 Estado</h1><div class="muted">Estado detallado de cada cliente y sus cuotas. Doble clic en un cliente para ver todo.</div></div><button class="primary" onclick="renderEstado()">↻ Actualizar</button></div><div class="box"><input id="estadoSearch" oninput="renderEstado()" placeholder="Buscar por código, nombre o celular..."></div><div class="box" id="estadoTable"></div></section><section id="v-resumen" class="hidden"><div class="row"><div><h1>📊 Resumen</h1><div class="muted">Solo lectura y calculado desde ventas y pagos.</div></div><button class="primary" onclick="renderSummary()">↻ Actualizar</button></div><div id="kpis" class="grid3"></div><div class="box" id="summaryTable"></div></section><section id="v-historial" class="hidden"><div class="row"><div><h1>🗂️ Historial</h1><div class="muted">Ventas totalmente pagadas y clientes retirados de cartera. Los datos permanecen en Supabase hasta que decidas eliminarlos.</div></div><button class="primary" onclick="renderHistory()">↻ Actualizar</button></div><div class="box"><input id="historySearch" oninput="renderHistory()" placeholder="Buscar por código, nombre o celular..."></div><div class="box" id="historyTable"></div></section>
 </main></div><div id="modal" class="modal hidden"><div id="modalbox" class="modalbox"></div></div>
 <script>
 const SUPABASE_URL='https://lydlyusuanvjjoavbocr.supabase.co',SUPABASE_KEY='sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq',db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -27,8 +27,8 @@ let clients=[],products=[],sales=[],installments=[],payments=[],commitments=[],s
 const today=()=>new Date().toLocaleDateString('en-CA'),money=n=>'Bs '+Number(n||0).toLocaleString('es-BO',{minimumFractionDigits:2,maximumFractionDigits:2}),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])),dateFmt=d=>d?new Date(d+'T00:00:00').toLocaleDateString('es-BO'):'';
 function notice(t,e=false){document.getElementById('msg').innerHTML='<div class="msg '+(e?'err':'ok')+'">'+esc(t)+'</div>';setTimeout(()=>document.getElementById('msg').innerHTML='',4500)}
 function closeModal(){document.getElementById('modal').classList.add('hidden')}function openModal(h){document.getElementById('modalbox').innerHTML=h;document.getElementById('modal').classList.remove('hidden')}
-function view(v){['cobros','venta','clientes','no','estado','resumen'].forEach(x=>{document.getElementById('v-'+x).classList.toggle('hidden',x!==v);document.getElementById('n-'+x).classList.toggle('active',x===v)});if(v==='cobros')renderCollections();if(v==='clientes')renderClients();if(v==='no')renderNo();if(v==='estado')renderEstado();if(v==='resumen')renderSummary()}
-async function load(){document.getElementById('today').textContent='Hoy: '+new Date().toLocaleDateString('es-BO',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});document.getElementById('sdate').value ||= today();document.getElementById('first').value ||= today();setInstallments();try{let [c,p,s,i,pa,co]=await Promise.all([db.from('clientes').select('*').order('codigo'),db.from('productos').select('*').order('created_at',{ascending:false}),db.from('ventas').select('*').order('fecha_venta',{ascending:false}),db.from('cuotas').select('*').order('fecha_vencimiento'),db.from('pagos').select('*').order('fecha_pago',{ascending:false}),db.from('compromisos').select('*').order('fecha_compromiso')]);let rs=[c,p,s,i,pa,co];for(let r of rs)if(r.error)throw r.error;clients=c.data||[];products=p.data||[];sales=s.data||[];installments=i.data||[];payments=pa.data||[];commitments=co.data||[];filterClients();showSelectedProduct();renderProducts();renderCollections();renderClients();renderNo();renderEstado();renderSummary()}catch(e){notice('No se pudo cargar. Ejecuta supabase_dashboard.sql en Supabase. Detalle: '+e.message,true)}}
+function view(v){['cobros','venta','clientes','no','estado','resumen','historial'].forEach(x=>{document.getElementById('v-'+x).classList.toggle('hidden',x!==v);document.getElementById('n-'+x).classList.toggle('active',x===v)});if(v==='cobros')renderCollections();if(v==='clientes')renderClients();if(v==='no')renderNo();if(v==='estado')renderEstado();if(v==='resumen')renderSummary();if(v==='historial')renderHistory()}
+async function load(){document.getElementById('today').textContent='Hoy: '+new Date().toLocaleDateString('es-BO',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});document.getElementById('sdate').value ||= today();document.getElementById('first').value ||= today();setInstallments();try{let [c,p,s,i,pa,co]=await Promise.all([db.from('clientes').select('*').order('codigo'),db.from('productos').select('*').order('created_at',{ascending:false}),db.from('ventas').select('*').order('fecha_venta',{ascending:false}),db.from('cuotas').select('*').order('fecha_vencimiento'),db.from('pagos').select('*').order('fecha_pago',{ascending:false}),db.from('compromisos').select('*').order('fecha_compromiso')]);let rs=[c,p,s,i,pa,co];for(let r of rs)if(r.error)throw r.error;clients=c.data||[];products=p.data||[];sales=s.data||[];installments=i.data||[];payments=pa.data||[];commitments=co.data||[];filterClients();showSelectedProduct();renderProducts();renderCollections();renderClients();renderNo();renderEstado();renderSummary();renderHistory()}catch(e){notice('No se pudo cargar. Ejecuta supabase_dashboard.sql en Supabase. Detalle: '+e.message,true)}}
 function filterClients(){let q=(document.getElementById('cs').value||'').toLowerCase(),a=clients.filter(c=>`${c.codigo} ${c.nombre} ${c.whatsapp||''}`.toLowerCase().includes(q));document.getElementById('clist').innerHTML=a.slice(0,40).map(c=>`<div class="client-item" onclick="selectClient('${c.id}')"><b>${esc(c.codigo)} · ${esc(c.nombre)}</b><br><span class="muted">${esc(c.whatsapp||'')} · ${esc(c.direccion||'')}</span></div>`).join('')||'<div style="padding:10px" class="muted">Sin resultados.</div>'}
 function selectClient(id){selectedClient=clients.find(c=>String(c.id)===String(id));document.getElementById('csel').value=selectedClient?selectedClient.codigo+' · '+selectedClient.nombre:'';document.getElementById('clist').innerHTML=''}
 function available(p){let productState=String(p.estado||p.status||'Activo').toLowerCase();let alreadySold=sales.some(s=>String(s.producto_id)===String(p.id)&&s.estado!=='Cancelada');return productState!=='vendido'&&!alreadySold}
@@ -155,7 +155,19 @@ async function saveCommit(sid){
 function nextCode(){let n=clients.map(c=>parseInt(String(c.codigo||'').replace(/\D/g,''),10)).filter(Number.isFinite);return String((n.length?Math.max(...n):0)+1).padStart(3,'0')}function phone(v){let n=String(v||'').replace(/\D/g,'');return n.startsWith('591')?n.slice(3):n}
 function clientModal(c=null){openModal(`<h2>${c?'✏️ Editar':'➕ Nuevo'} cliente</h2><div class="grid"><div><label>Código</label><input id="ccode" readonly value="${esc(c?.codigo||nextCode())}"></div><div><label>Nombre completo</label><input id="cname" value="${esc(c?.nombre||'')}"></div><div><label>WhatsApp / celular</label><div style="display:flex"><span style="padding:11px;background:#eee;border:1px solid #d0d5dd;border-right:0;border-radius:9px 0 0 9px">+591</span><input id="cphone" style="border-radius:0 9px 9px 0" value="${esc(phone(c?.whatsapp))}" placeholder="71234567"></div></div><div><label>Dirección</label><input id="caddr" value="${esc(c?.direccion||'')}"></div><div style="grid-column:1/-1"><label>Observación / referencia</label><textarea id="cobs">${esc(c?.observacion||'')}</textarea></div></div><div class="actions"><button class="green" onclick="saveClient('${c?.id||''}')">Guardar cliente</button><button class="soft" onclick="closeModal()">Cancelar</button></div>`)}
 async function saveClient(id){let name=document.getElementById('cname').value.trim();if(!name)return notice('El nombre es obligatorio.',true);let data={codigo:document.getElementById('ccode').value,nombre:name,whatsapp:phone(document.getElementById('cphone').value),direccion:document.getElementById('caddr').value.trim()||null,observacion:document.getElementById('cobs').value.trim()||null};try{let r=id?await db.from('clientes').update(data).eq('id',id):await db.from('clientes').insert(data);if(r.error)throw r.error;closeModal();await load();notice('Cliente guardado correctamente.')}catch(e){notice('No se pudo guardar: '+e.message,true)}}
-function renderClients(){let q=(document.getElementById('csearch')?.value||'').toLowerCase(),a=clients.filter(c=>`${c.codigo} ${c.nombre} ${c.whatsapp||''}`.toLowerCase().includes(q));document.getElementById('clientTable').innerHTML=`<table><thead><tr><th>Código</th><th>Cliente</th><th>WhatsApp</th><th>Dirección</th><th>Estado</th><th></th></tr></thead><tbody>${a.map(c=>`<tr><td><b>${esc(c.codigo)}</b></td><td>${esc(c.nombre)}</td><td>+591 ${esc(c.whatsapp||'')}</td><td>${esc(c.direccion||'')}<br><span class="muted">${esc(c.observacion||'')}</span></td><td>${c.no_cobrable?'<span class="badge bred">No cobrable</span>':c.cartera_activa===false?'<span class="badge byellow">Fuera de cartera</span>':'<span class="badge bgreen">Normal</span>'}</td><td><button class="soft" onclick="clientModal(clients.find(x=>x.id==='${c.id}'))">Editar</button> ${c.no_cobrable?`<button class="green" onclick="toggleNo('${c.id}',false)">Reactivar</button>`:c.cartera_activa===false?`<button class="green" onclick="reactivatePortfolio('${c.id}')">Volver a cartera</button>`:`<button class="red" onclick="toggleNo('${c.id}',true)">No cobrable</button>`}</td></tr>`).join('')}</tbody></table>`}
+function renderClients(){let q=(document.getElementById('csearch')?.value||'').toLowerCase(),a=clients.filter(c=>`${c.codigo} ${c.nombre} ${c.whatsapp||''}`.toLowerCase().includes(q));document.getElementById('clientTable').innerHTML=`<table><thead><tr><th>Código</th><th>Cliente</th><th>WhatsApp</th><th>Dirección</th><th>Estado</th><th></th></tr></thead><tbody>${a.map(c=>`<tr><td><b>${esc(c.codigo)}</b></td><td>${esc(c.nombre)}</td><td>+591 ${esc(c.whatsapp||'')}</td><td>${esc(c.direccion||'')}<br><span class="muted">${esc(c.observacion||'')}</span></td><td>${c.no_cobrable?'<span class="badge bred">No cobrable</span>':c.cartera_activa===false?'<span class="badge byellow">Fuera de cartera</span>':'<span class="badge bgreen">Normal</span>'}</td><td><button class="soft" onclick="clientModal(clients.find(x=>x.id==='${c.id}'))">Editar</button> ${c.no_cobrable?`<button class="green" onclick="toggleNo('${c.id}',false)">Reactivar</button>`:c.cartera_activa===false?`<button class="green" onclick="reactivatePortfolio('${c.id}')">Volver a cartera</button>`:`<button class="red" onclick="toggleNo('${c.id}',true)">No cobrable</button>`} ${!sales.some(s=>String(s.cliente_id)===String(c.id))?`<button class="red" onclick="deleteEmptyClient('${c.id}')">🗑️ Borrar</button>`:''}</td></tr>`).join('')}</tbody></table>`}
+async function deleteEmptyClient(id){
+  let c=clients.find(x=>String(x.id)===String(id));
+  if(!c)return;
+  let hasSales=sales.some(s=>String(s.cliente_id)===String(id));
+  if(hasSales)return notice('Este cliente tiene ventas registradas. Para proteger el historial, elimínalo desde Historial si realmente es un registro de prueba.',true);
+  if(!confirm(`¿Eliminar definitivamente a ${c.codigo} · ${c.nombre}?\n\nEste cliente no tiene ventas registradas. Se borrará de Supabase.`))return;
+  let r=await db.from('clientes').delete().eq('id',id);
+  if(r.error)return notice('No se pudo eliminar el cliente: '+r.error.message,true);
+  await load();
+  notice('Cliente eliminado correctamente.');
+}
+
 async function toggleNo(id,v){let r=await db.from('clientes').update({no_cobrable:v,cartera_activa:v?false:true}).eq('id',id);if(r.error)return notice(r.error.message,true);await load();notice(v?'Cliente marcado como no cobrable.':'Cliente reactivado.')}
 function renderNo(){
   let a=clients.filter(c=>c.no_cobrable).sort((x,y)=>String(x.codigo).localeCompare(String(y.codigo),undefined,{numeric:true}));
@@ -262,8 +274,80 @@ function renderSummary(){
   const totalPaid=rows.reduce((a,r)=>a+r.totalPaid,0);
   const totalSales=rows.length;
   const totalClients=new Set(rows.map(r=>String(r.c.id))).size;
-  document.getElementById('kpis').innerHTML=`<div class="kpi"><span class="muted">Clientes con deuda</span><strong>${totalClients}</strong></div><div class="kpi"><span class="muted">Ventas activas con deuda</span><strong>${totalSales}</strong></div><div class="kpi"><span class="muted">Deuda total</span><strong>${money(totalDebt)}</strong></div>`;
+  let allActiveSales=sales.filter(s=>s.estado!=='Cancelada');let totalCollected=allActiveSales.reduce((a,s)=>a+paidSale(s.id),0);let historicalPaid=allActiveSales.filter(s=>Math.max(0,Number(s.precio_venta||0)-paidSale(s.id))<=0).length;document.getElementById('kpis').innerHTML=`<div class="kpi"><span class="muted">Clientes con deuda</span><strong>${totalClients}</strong></div><div class="kpi"><span class="muted">Ventas activas con deuda</span><strong>${totalSales}</strong></div><div class="kpi"><span class="muted">Deuda total</span><strong>${money(totalDebt)}</strong></div><div class="kpi"><span class="muted">Total cobrado</span><strong>${money(totalCollected)}</strong></div><div class="kpi"><span class="muted">Ventas totalmente pagadas</span><strong>${historicalPaid}</strong></div><div class="kpi"><span class="muted">Clientes no cobrables</span><strong>${clients.filter(c=>c.no_cobrable).length}</strong></div>`;
   document.getElementById('summaryTable').innerHTML=rows.length?`<table><thead><tr><th>Código venta</th><th>Cliente</th><th>Producto</th><th>Fecha</th><th>Valor venta</th><th>Inicial</th><th>Cuotas pagadas</th><th>Total pagado</th><th>Deuda</th><th>Cuotas restantes</th></tr></thead><tbody>${rows.sort((a,b)=>String(a.c.codigo).localeCompare(String(b.c.codigo),undefined,{numeric:true})).map(r=>`<tr ondblclick="clientDetail('${r.c.id}')" style="cursor:pointer" title="Doble clic para ver detalle"><td><b>${esc(r.s.codigo_venta||'')}</b></td><td><b>${esc(r.c.codigo||'')} · ${esc(r.c.nombre||'')}</b></td><td>${esc(r.s.producto_codigo||'')} · ${esc(r.s.producto_nombre||'')}</td><td>${dateFmt(r.s.fecha_venta)}</td><td>${money(r.value)}</td><td>${money(r.s.inicial||0)}</td><td>${money(r.installmentPaid)}</td><td>${money(r.totalPaid)}</td><td><b>${money(r.debt)}</b></td><td>${r.remaining}</td></tr>`).join('')}</tbody></table><div class="muted" style="margin-top:10px">Solo aparecen ventas con deuda activa. Cuando una venta queda totalmente pagada, desaparece automáticamente. Doble clic para abrir el detalle.</div>`:'<div class="muted">No hay ventas con deuda activa.</div>';
+}
+
+function renderHistory(){
+  let q=(document.getElementById('historySearch')?.value||'').toLowerCase();
+  let rows=[];
+
+  clients.forEach(c=>{
+    let clientSales=sales.filter(s=>s.estado!=='Cancelada'&&String(s.cliente_id)===String(c.id));
+    if(!clientSales.length)return;
+
+    let hasActiveDebt=clientSales.some(s=>Math.max(0,Number(s.precio_venta||0)-paidSale(s.id))>0);
+    let historical=c.no_cobrable||c.cartera_activa===false||!hasActiveDebt;
+    if(!historical)return;
+
+    let total=clientSales.reduce((a,s)=>a+Number(s.precio_venta||0),0);
+    let paid=clientSales.reduce((a,s)=>a+paidSale(s.id),0);
+    let debt=Math.max(0,total-paid);
+    let lastPaid=clientSales.map(s=>payments.filter(p=>String(p.venta_id)===String(s.id)&&!p.anulado).map(p=>p.fecha_pago)).flat().sort().pop()||'';
+    let state=c.no_cobrable?'No cobrable':debt<=0?'Pagado':'Fuera de cartera';
+
+    rows.push({c,clientSales,total,paid,debt,lastPaid,state});
+  });
+
+  rows=rows.filter(r=>`${r.c.codigo} ${r.c.nombre} ${r.c.whatsapp||''}`.toLowerCase().includes(q));
+  rows.sort((a,b)=>String(a.c.codigo).localeCompare(String(b.c.codigo),undefined,{numeric:true}));
+
+  document.getElementById('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Código</th><th>Cliente</th><th>Ventas</th><th>Total</th><th>Pagado</th><th>Saldo</th><th>Último pago</th><th>Estado</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr ondblclick="clientDetail('${r.c.id}')" style="cursor:pointer" title="Doble clic para ver detalle"><td><b>${esc(r.c.codigo)}</b></td><td><b>${esc(r.c.nombre)}</b><br><span class="muted">+591 ${esc(r.c.whatsapp||'')}</span></td><td>${r.clientSales.length}</td><td>${money(r.total)}</td><td>${money(r.paid)}</td><td><b>${money(r.debt)}</b></td><td>${dateFmt(r.lastPaid)}</td><td>${r.state==='No cobrable'?'<span class="badge bred">No cobrable</span>':r.state==='Pagado'?'<span class="badge bgreen">Pagado</span>':'<span class="badge byellow">Fuera de cartera</span>'}</td><td><button class="red" onclick="deleteClientAndHistory('${r.c.id}')">🗑️ Eliminar todo</button></td></tr>`).join('')}</tbody></table><div class="muted" style="margin-top:10px">Los clientes con ventas pagadas aparecen automáticamente aquí. Los clientes no cobrables también aparecen. Doble clic para ver el detalle. El botón “Eliminar todo” borra permanentemente el cliente y sus ventas, cuotas, pagos y compromisos asociados.</div>`:'<div class="muted">No hay clientes en historial.</div>';
+}
+
+async function deleteClientAndHistory(id){
+  let c=clients.find(x=>String(x.id)===String(id));
+  if(!c)return;
+
+  let clientSales=sales.filter(s=>String(s.cliente_id)===String(id));
+  let warning=`¿ELIMINAR DEFINITIVAMENTE a ${c.codigo} · ${c.nombre}?\n\n`+
+    `Se eliminarán de Supabase:\n`+
+    `• El cliente\n`+
+    `• ${clientSales.length} venta(s)\n`+
+    `• Todas sus cuotas\n`+
+    `• Todos sus pagos\n`+
+    `• Todos sus compromisos\n\n`+
+    `Esta acción NO se puede deshacer.\n\n`+
+    `Úsalo solamente para datos de prueba o registros que realmente quieras borrar.`;
+
+  if(!confirm(warning))return;
+
+  try{
+    for(let s of clientSales){
+      let saleId=s.id;
+
+      let r=await db.from('compromisos').delete().eq('venta_id',saleId);
+      if(r.error)throw r.error;
+
+      r=await db.from('pagos').delete().eq('venta_id',saleId);
+      if(r.error)throw r.error;
+
+      r=await db.from('cuotas').delete().eq('venta_id',saleId);
+      if(r.error)throw r.error;
+
+      r=await db.from('ventas').delete().eq('id',saleId);
+      if(r.error)throw r.error;
+    }
+
+    let r=await db.from('clientes').delete().eq('id',id);
+    if(r.error)throw r.error;
+
+    await load();
+    view('historial');
+    notice('Cliente y todos sus registros eliminados definitivamente de Supabase.');
+  }catch(e){
+    notice('No se pudo completar la eliminación: '+e.message,true);
+  }
 }
 
 function renderEstado(){
