@@ -3071,6 +3071,32 @@ function creditCalc(p){
 }
 
 
+function formatInstallments(amounts){
+
+  if(!amounts || !amounts.length)
+    return `Cuota: <b>${money(0)}</b>`;
+
+  const groups=[];
+
+  amounts.forEach((amount)=>{
+    const last=groups[groups.length-1];
+    if(last && Number(last.amount)===Number(amount)){
+      last.count++;
+    }else{
+      groups.push({amount,count:1});
+    }
+  });
+
+  const text=groups.map(g=>
+    g.count===1
+      ? `1 cuota de <b>${money(g.amount)}</b>`
+      : `${g.count} cuotas de <b>${money(g.amount)}</b>`
+  ).join(' + ');
+
+  return `Cuotas: ${text}`;
+
+}
+
 function updateCreditResult(){
 
   const box =
@@ -3089,6 +3115,8 @@ function updateCreditResult(){
       selectedProduct
     );
 
+  const plan = formatInstallments(c.installments);
+
   box.innerHTML = `
 
     Inicial:
@@ -3101,9 +3129,7 @@ function updateCreditResult(){
 
     <br>
 
-    Cuota:
-    <b>${money(c.installment)}</b>
-    × ${creditTerm}
+    ${plan}
 
     <div class="credit-promo-mini">
 
@@ -3251,6 +3277,9 @@ function addSelected(){
 
     item.balance =
       c.balance;
+
+    item.installments =
+      c.installments;
 
     item.installment =
       c.installment;
@@ -3445,7 +3474,7 @@ function creditSummary(p){
     ${money(p.salePrice)}
     · Inicial ${money(p.initialPaid)}
     · Plan: ${unit}
-    · Cuota ${money(p.installment)}
+    · ${formatInstallments(p.installments || [p.installment])}
   `;
 
 }
@@ -3563,7 +3592,7 @@ function sendWhatsApp(){
 
   Plan: ${plan}
 
-  Cuota: ${money(p.installment)}
+  ${formatInstallments(p.installments || [p.installment])}
 
   ${
     p.promo
