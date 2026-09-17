@@ -2992,6 +2992,37 @@ function setCreditTerm(term,el){
 
 }
 
+function buildInstallments(balance,n){
+
+  if(n<=0) return [];
+
+  if(balance<=0) return Array(n).fill(0);
+
+  let base = Math.round((balance/n)/10)*10;
+
+  if(base<=0) base=10;
+
+  let last = balance - base*(n-1);
+
+  if(last<0){
+
+    base = Math.floor((balance/n)/10)*10;
+
+    last = balance - base*(n-1);
+
+  }
+
+  if(base<0) base=0;
+
+  last = balance - base*(n-1);
+
+  return Array.from(
+    {length:n},
+    (_,i) => i===n-1 ? last : base
+  );
+
+}
+
 function creditCalc(p){
 
   const promo =
@@ -3012,6 +3043,12 @@ function creditCalc(p){
       total - initial
     );
 
+  const installments =
+    buildInstallments(
+      balance,
+      creditTerm
+    );
+
   return {
 
     promo,
@@ -3022,14 +3059,17 @@ function creditCalc(p){
 
     balance,
 
+    installments,
+
     installment:
-      creditTerm
-        ? balance / creditTerm
+      installments.length
+        ? installments[0]
         : balance
 
   };
 
 }
+
 
 function updateCreditResult(){
 
