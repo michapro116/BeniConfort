@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="es">
 <head>
@@ -427,77 +428,72 @@ function previewImage(){
 
 async function uploadImage(){
 
-  const file=
+  const file =
     document.getElementById("imageFile").files[0];
 
+  // Si no se seleccionó una imagen:
+  // en edición conserva la imagen actual.
   if(!file){
-
     return currentImageUrl || null;
-
   }
 
+  // Verificar que sea una imagen
   if(!file.type.startsWith("image/")){
-
-    throw new Error("El archivo seleccionado no es una imagen.");
-
+    throw new Error(
+      "El archivo seleccionado no es una imagen."
+    );
   }
 
-  /*
-    Creamos un nombre único para evitar
-    que una imagen reemplace accidentalmente
-    otra imagen.
-  */
+  // Worker de BeniConfort
+  const WORKER_URL =
+    "https://beniconfort-image-upload.michael-justiniano1995.workers.dev/upload";
 
-  const extension=
-    file.name.split(".").pop().toLowerCase();
+  // FormData permite enviar el archivo como multipart/form-data.
+  // IMPORTANTE: no ponemos manualmente Content-Type,
+  // porque el navegador debe generar el boundary.
+  const formData = new FormData();
 
-  const fileName=
-    "producto-"+Date.now()+"-"+Math.random().toString(36).substring(2,8)+"."+extension;
+  formData.append("file", file);
 
-  const filePath=fileName;
+  const response =
+    await fetch(WORKER_URL, {
+      method: "POST",
+      body: formData
+    });
 
+  // Intentar leer la respuesta del Worker
+  let result;
 
-  const {error:uploadError}=
+  try{
+    result = await response.json();
+  }catch(e){
+    throw new Error(
+      "El Worker respondió con un formato inesperado."
+    );
+  }
 
-    await db.storage
-      .from(STORAGE_BUCKET)
-      .upload(
-        filePath,
-        file,
-        {
-          cacheControl:"3600",
-          upsert:false
-        }
-      );
-
-
-  if(uploadError){
+  // Si el Worker devolvió error
+  if(!response.ok || !result.success){
 
     throw new Error(
-      "No se pudo subir la imagen: "+
-      uploadError.message
+      result.error ||
+      result.details ||
+      "No se pudo subir la imagen al servidor."
     );
 
   }
 
-
-  const {data}=
-
-    db.storage
-      .from(STORAGE_BUCKET)
-      .getPublicUrl(filePath);
-
-
-  if(!data || !data.publicUrl){
+  // Verificar que recibimos la URL pública
+  if(!result.url){
 
     throw new Error(
-      "La imagen se subió, pero no se pudo obtener su URL."
+      "La imagen se subió, pero el Worker no devolvió una URL."
     );
 
   }
 
-
-  return data.publicUrl;
+  // Esta será la URL que se guardará en Supabase
+  return result.url;
 
 }
 
@@ -1135,36 +1131,4 @@ async function removeProduct(id){
   );
 
 
-  load();
-
-}
-
-
-/* =========================
-   INICIO
-   ========================= */
-
-initSizes();
-
-toggleSizes();
-
-document
-  .getElementById("pass")
-  .addEventListener(
-    "keydown",
-    e=>{
-      if(e.key==="Enter")
-        login();
-    }
-  );
-
-
-if(
-  sessionStorage.getItem("beni_admin")==="1"
-)
-  showApp();
-
-</script>
-
-</body>
-</html>
+  load()
