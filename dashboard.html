@@ -44,7 +44,7 @@ function calculateSale(){if(!selectedClient||!selectedProduct)return notice('Sel
 function addPeriod(d,n,f){let x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n*({Semanal:7,Quincenal:15,Mensual:30}[f]));return x.toLocaleDateString('en-CA')}
 async function registerSale(){calculateSale();if(!calculated)return;try{if(!available(selectedProduct))throw Error('El producto ya está vendido.');let code='V-'+Date.now(),sale={codigo_venta:code,cliente_id:selectedClient.id,producto_id:selectedProduct.id,producto_codigo:selectedProduct.code,producto_nombre:selectedProduct.nombre,fecha_venta:document.getElementById('sdate').value,precio_venta:calculated.amount,modalidad:calculated.mode==='credito'?calculated.frequency:'Contado',inicial:calculated.initial,estado:'Activa'};let r=await db.from('ventas').insert(sale).select().single();if(r.error)throw r.error;let saleId=r.data.id;if(calculated.mode==='credito'){let amounts=calculated.installments||buildInstallments(calculated.balance,calculated.n);let rows=amounts.map((monto,i)=>({venta_id:saleId,numero:i+1,fecha_vencimiento:addPeriod(calculated.first,i,calculated.frequency),monto,estado:'Pendiente'}));let q=await db.from('cuotas').insert(rows);if(q.error)throw q.error}if(calculated.initial>0){let p=await db.from('pagos').insert({venta_id:saleId,cuota_id:null,monto:calculated.initial,fecha_pago:document.getElementById('sdate').value,metodo:'Inicial',anulado:false});if(p.error)throw p.error}notice('Venta registrada correctamente. Código: '+code+'\n\nEl Dashboard NO modifica el producto en Supabase. Si quieres que aparezca como Vendido en la tienda, cámbialo manualmente desde admin.html.');await load();resetSale();view('cobros')}catch(e){notice('No se pudo registrar la venta: '+e.message,true)}}
 function resetSale(){selectedClient=null;selectedProduct=null;calculated=null;document.getElementById('cs').value='';document.getElementById('csel').value='';document.getElementById('ps').value='';document.getElementById('initial').value='';filterClients();showSelectedProduct();renderProducts();calc()}
-function paidQ(qid){return payments.filter(p=>String(p.cuota_id)===String(qid)&&!p.anulado).reduce((a,p)=>a+Number(p.monto||0),0)}function paidSale(sid){return payments.filter(p=>String(p.venta_id)===String(sid)&&!p.anulado).reduce((a,p)=>a+Number(p.monto||0),0)}function totalDebtForClient(clientId){return sales.filter(s=>s.estado!=='Cancelada'&&String(s.cliente_id)===String(clientId)).reduce((a,s)=>a+Math.max(0,Number(s.precio_venta||0)-paidSale(s.id)),0)}function currentCommit(sid){return commitments.filter(c=>String(c.venta_id)===String(sid)&&c.activo).sort((a,b)=>String(b.fecha_compromiso).localeCompare(String(a.fecha_compromiso)))[0]}
+function paidQ(qid){return payments.filter(p=>String(p.cuota_id)===String(qid)&&!p.anulado).reduce((a,p)=>a+Number(p.monto||0),0)}function paidSale(sid){return payments.filter(p=>String(p.venta_id)===String(sid)&&!p.anulado).reduce((a,p)=>a+Number(p.monto||0),0)}function currentCommit(sid){return commitments.filter(c=>String(c.venta_id)===String(sid)&&c.activo).sort((a,b)=>String(b.fecha_compromiso).localeCompare(String(a.fecha_compromiso)))[0]}
 function rowsForToday(){
   let out=[];
   for(let q of installments){
@@ -79,14 +79,12 @@ function collectionClientRows(){
     let st=overdue.length?'overdue':commit.length?'commit':'due';
     let relevant=st==='overdue'?overdue:st==='commit'?commit:due;
     let amount=relevant.reduce((a,r)=>a+r.rem,0);
-    let totalDebt=totalDebtForClient(x.c.id);
     let oldest=overdue.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
     let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
     let products=[...new Set(relevant.map(r=>r.s.producto_nombre).filter(Boolean))];
-    return {c:x.c,rows,overdue,commit,due,st,relevant,amount,totalDebt,days,products};
+    return {c:x.c,rows,overdue,commit,due,st,relevant,amount,days,products};
   }).sort((a,b)=>String(a.c.codigo).localeCompare(String(b.c.codigo),undefined,{numeric:true}));
 }
-
 function collections(){
   let a=collectionClientRows(),groups=[['overdue','🔴 Vencidos','rborder','bred','Vencido'],['commit','🟡 Compromisos de hoy','yborder','byellow','Compromiso hoy'],['due','🔵 Vence hoy','bborder','bblue','Vence hoy']];
   return groups.map(g=>{
@@ -114,30 +112,28 @@ function greeting(){
 }
 function buildWhatsAppMessage(c, rows, kind='auto'){
   // Un solo mensaje por cliente. El compromiso solo aporta la fecha; nunca crea ni suma un monto.
-  // La deuda actual se calcula con las cuotas ya vencidas o que vencen hoy.
+  // La deuda siempre se calcula con las cuotas realmente pendientes en este momento.
   let all=pendingRowsForClient(c.id);
   if(!all.length)all=rows.filter(r=>Number(r.rem||0)>0);
 
   let overdue=all.filter(r=>r.q.fecha_vencimiento<today());
   let commit=all.filter(r=>r.com?.fecha_compromiso===today());
   let due=all.filter(r=>r.q.fecha_vencimiento===today());
+  // Para un compromiso de hoy, solo se consideran las cuotas que ya vencieron
+  // o que vencen hoy. Las cuotas futuras no forman parte de lo que corresponde pagar hoy.
   let dueUpToToday=all.filter(r=>r.q.fecha_vencimiento<=today());
   let pending=dueUpToToday;
   let totalPending=pending.reduce((a,r)=>a+Number(r.rem||0),0);
   let oldest=overdue.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
   let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
   let count=pending.length;
-  let totalDebt=totalDebtForClient(c.id);
-  let debtSales=sales.filter(s=>s.estado!=='Cancelada'&&String(s.cliente_id)===String(c.id)&&Math.max(0,Number(s.precio_venta||0)-paidSale(s.id))>0);
-  let products=[...new Set(debtSales.map(s=>s.producto_nombre).filter(Boolean))];
-  let product=products.length===1?products[0]:products.length>1?'Varios productos':'Tu compra';
   let countText=count===1?'cuota pendiente':'cuotas pendientes';
   let delayText=oldest?` La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.`:'';
   const SMILE='😊';
   let head=greeting()+`, ${c.nombre} ${SMILE}\n\n`;
-  let detail=`📋 Detalle de su crédito\n👟 Producto: ${product}\n💰 Deuda total: ${money(totalDebt)}`;
 
   // 1. Compromiso para hoy: el compromiso no tiene monto propio.
+  // Se recuerda el compromiso y después se muestra la deuda real actual del cliente.
   if(commit.length){
     let commitCount=pending.length;
     let commitCountText=commitCount===1?'cuota pendiente':'cuotas pendientes';
@@ -147,26 +143,25 @@ function buildWhatsAppMessage(c, rows, kind='auto'){
     let debtText=commitCount
       ? `Actualmente tiene ${commitCount} ${commitCountText} por un total de ${money(totalPending)}.${commitDelay}`
       : 'Actualmente no registra cuotas pendientes.';
-    return `${head}Le escribimos de BeniConfort para recordarle su compromiso de pago.\n\n${debtText}\n\n${detail}\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+    return `${head}Le escribimos de BeniConfort para recordarle su compromiso de pago.\n\n${debtText}\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
   }
 
   // 2. Una o varias cuotas vencidas.
   if(overdue.length){
     let amount=overdue.reduce((a,r)=>a+Number(r.rem||0),0);
-    return `${head}Le escribimos de BeniConfort. Actualmente tiene ${overdue.length} ${overdue.length===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(amount)}. La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.\n\n${detail}\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+    return `${head}Le escribimos de BeniConfort. Actualmente tiene ${overdue.length} ${overdue.length===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(amount)}. La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
   }
 
   // 3. Una o varias cuotas que vencen hoy.
   if(due.length){
     let amount=due.reduce((a,r)=>a+Number(r.rem||0),0);
-    let dueProducts=[...new Set(due.map(r=>r.s.producto_nombre).filter(Boolean))];
-    let dueProduct=dueProducts.length===1?dueProducts[0]:dueProducts.length>1?'varios productos':'tu compra';
-    return `${head}Le escribimos de BeniConfort para recordarle que hoy corresponde su cuota de ${money(amount)} por su compra de ${dueProduct}.\n\n${detail}\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+    let products=[...new Set(due.map(r=>r.s.producto_nombre).filter(Boolean))];
+    let product=products.length===1?products[0]:products.length>1?'varios productos':'tu compra';
+    return `${head}Le escribimos de BeniConfort para recordarle que hoy corresponde su cuota de ${money(amount)} por su compra de ${product}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
   }
 
-  return `${head}Le escribimos de BeniConfort para recordarle que tiene un saldo pendiente.\n\n${detail}\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  return `${head}Le escribimos de BeniConfort para recordarle que tiene un saldo pendiente.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
 }
-
 function waLink(c,msg){
   let n=(c.whatsapp||'').replace(/\D/g,'');
   if(n.startsWith('591'))n=n.slice(3);
@@ -177,16 +172,15 @@ function person(r,g){
   let wa=waLink(r.c,msg);
   let dueLabel=r.st==='overdue'?`${r.overdue.length} ${r.overdue.length===1?'cuota vencida':'cuotas vencidas'}`:r.st==='commit'?`${r.commit.length} ${r.commit.length===1?'compromiso de hoy':'compromisos de hoy'}`:`${r.due.length} ${r.due.length===1?'cuota vence hoy':'cuotas vencen hoy'}`;
   let productText=r.products.length===1?r.products[0]:(r.products.length>1?'Varios productos':'Compra');
-  return `<div class="person ${g[2]}"><div class="row"><b>${esc(r.c.codigo)} · ${esc(r.c.nombre)}</b><span class="badge ${g[3]}">${g[4]}</span></div><div class="amount">Deuda total: ${money(r.totalDebt)}</div><div><b>Pendiente hasta hoy:</b> ${money(r.amount)}</div><div>${esc(productText)} · ${dueLabel}</div>${r.st==='overdue'?`<div class="muted">Cuota más antigua: ${r.days} ${r.days===1?'día':'días'} de retraso</div>`:''}<div class="muted">${esc(r.c.direccion||'')} ${r.c.observacion?'· '+esc(r.c.observacion):''}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">📅 Compromiso</button><button class="red" onclick="toggleNo('${r.c.id}',true)">🚫 No cobrable</button></div></div>`;
+  return `<div class="person ${g[2]}"><div class="row"><b>${esc(r.c.codigo)} · ${esc(r.c.nombre)}</b><span class="badge ${g[3]}">${g[4]}</span></div><div class="amount">${money(r.amount)}</div><div>${esc(productText)} · ${dueLabel}</div>${r.st==='overdue'?`<div class="muted">Cuota más antigua: ${r.days} ${r.days===1?'día':'días'} de retraso</div>`:''}<div class="muted">${esc(r.c.direccion||'')} ${r.c.observacion?'· '+esc(r.c.observacion):''}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">📅 Compromiso</button><button class="red" onclick="toggleNo('${r.c.id}',true)">🚫 No cobrable</button></div></div>`;
 }
-
 function renderCollections(){
   let a=collectionClientRows();
   document.getElementById('attention').textContent=a.length+' cliente(s) requieren atención';
   document.getElementById('collections').innerHTML=collections();
 }
 function paymentModal(sid){let s=sales.find(x=>String(x.id)===String(sid));if(!s)return;let c=clients.find(x=>String(x.id)===String(s.cliente_id)),hist=payments.filter(p=>String(p.venta_id)===String(sid));openModal(`<h2>💰 Registrar pago</h2><p><b>${esc(c.nombre)}</b> · ${esc(s.producto_nombre)}</p><div class="grid"><div><label>Monto</label><input id="pamt" type="number" min="0.01" step="0.01"></div><div><label>Fecha</label><input id="pdate" type="date" value="${today()}"></div><div><label>Forma de pago</label><select id="pmethod"><option>Efectivo</option><option>QR</option><option>Transferencia</option><option>Otro</option></select></div><div><label>Nota</label><input id="pnote"></div></div><p class="muted">El pago se aplica a las cuotas más antiguas pendientes. Los pagos parciales quedan como saldo pendiente.</p><div class="actions"><button class="green" onclick="savePayment('${sid}')">Guardar pago</button><button class="soft" onclick="closeModal()">Cancelar</button></div><hr><h3>Historial</h3>${hist.map(p=>`<div class="row" style="padding:8px 0;border-bottom:1px solid #eee"><span>${dateFmt(p.fecha_pago)} · ${esc(p.metodo)} ${p.anulado?'<b class="dangerText">· ANULADO</b>':''}</span><b>${money(p.monto)}</b>${!p.anulado?`<button class="red" onclick="annulPayment('${p.id}')">Anular</button>`:''}</div>`).join('')||'<span class="muted">Sin pagos.</span>'}`)}
-function paymentReceiptMessage(c,s,amt,date,method){let debt=Math.max(0,Number(s.precio_venta)-paidSale(s.id)),qs=installments.filter(q=>String(q.venta_id)===String(s.id)&&Number(q.monto)-paidQ(q.id)>0).sort((a,b)=>String(a.fecha_vencimiento).localeCompare(String(b.fecha_vencimiento)));let next=qs[0];let msg=greeting()+`, ${c.nombre} ${String.fromCodePoint(0x1F60A)}\n\n`;msg+=`Le escribimos de BeniConfort para confirmar el pago realizado por su compra de ${s.producto_nombre}.\n\n`;msg+=`💰 Pago realizado: ${money(amt)}\n📅 Fecha: ${dateFmt(date)}\n💳 Forma de pago: ${method}\n`;if(debt>0){msg+=`\nSaldo pendiente: ${money(debt)}.`;if(next)msg+=`\nPróxima cuota: ${money(Math.max(0,Number(next.monto)-paidQ(next.id)))} con vencimiento el ${dateFmt(next.fecha_vencimiento)}.`}else msg+=`\nSu cuenta queda totalmente pagada. ¡Muchas gracias por su compra!`;return msg}
+function paymentReceiptMessage(c,s,amt,date,method){let debt=Math.max(0,Number(s.precio_venta)-paidSale(s.id)),qs=installments.filter(q=>String(q.venta_id)===String(s.id)&&Number(q.monto)-paidQ(q.id)>0).sort((a,b)=>Number(a.numero)-Number(b.numero)),next=qs[0],totalQs=installments.filter(q=>String(q.venta_id)===String(s.id)).length;let msg=`🧾 *BENICONFORT — COMPROBANTE DE PAGO*\n\nHola, ${c.nombre}. Confirmamos que hemos recibido su pago.\n\n👤 *Cliente:* ${c.nombre}\n🛍️ *Compra:* ${s.producto_nombre||'TENIS'}\n\n📅 *Fecha del pago:* ${dateFmt(date)}\n💰 *Pago realizado:* ${money(amt)}\n💳 *Método:* ${method}\n\n💵 *Saldo pendiente:* ${money(debt)}\n`;if(next){let nextMonto=Math.max(0,Number(next.monto)-paidQ(next.id));msg+=`📋 *Próxima cuota:* ${next.numero}/${totalQs} · ${money(nextMonto)} · ${dateFmt(next.fecha_vencimiento)}\n`}else msg+=`📋 *Próxima cuota:* No tiene cuotas pendientes.\n`;msg+=`\nGracias por su pago y por confiar en *BeniConfort*.`;return msg}
 
 async function savePayment(sid){let amt=Number(document.getElementById('pamt').value),date=document.getElementById('pdate').value,paymentMethod=document.getElementById('pmethod').value;if(!(amt>0)||!date)return notice('Ingresa monto y fecha.',true);let qs=installments.filter(q=>String(q.venta_id)===String(sid)).sort((a,b)=>a.numero-b.numero),left=amt;try{for(let q of qs){if(left<=0)break;let rem=Math.max(0,Number(q.monto)-paidQ(q.id));if(!rem)continue;let use=Math.min(left,rem),r=await db.from('pagos').insert({venta_id:sid,cuota_id:q.id,monto:use,fecha_pago:date,metodo:paymentMethod,anulado:false});if(r.error)throw r.error;left-=use}if(left>0){let r=await db.from('pagos').insert({venta_id:sid,cuota_id:null,monto:left,fecha_pago:date,metodo:paymentMethod,anulado:false});if(r.error)throw r.error}await load();let s=sales.find(x=>String(x.id)===String(sid)),c=clients.find(x=>String(x.id)===String(s.cliente_id));let msg=paymentReceiptMessage(c,s,amt,date,paymentMethod),wa=waLink(c,msg);openModal(`<h2>✅ Pago registrado</h2><p><b>${esc(c.nombre)}</b> · ${esc(s.producto_nombre)}</p><div class="summary">${esc(msg).replace(/\n/g,'<br>')}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 Enviar comprobante por WhatsApp</button><button class="soft" onclick="closeModal()">Cerrar</button></div>`);notice('Pago registrado correctamente.')}catch(e){notice('No se pudo registrar: '+e.message,true)}}
 async function annulPayment(id){if(!confirm('¿Anular este pago? El historial se conservará.'))return;let r=await db.from('pagos').update({anulado:true,fecha_anulacion:new Date().toISOString()}).eq('id',id);if(r.error)return notice(r.error.message,true);closeModal();await load();notice('Pago anulado correctamente.')}
