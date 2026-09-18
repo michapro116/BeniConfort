@@ -162,13 +162,10 @@ function buildWhatsAppMessage(c, rows, kind='auto'){
 
   return `${head}Le escribimos de BeniConfort para recordarle que tiene un saldo pendiente.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
 }
-function waLink(c,msg){let n=(c.whatsapp||'').replace(/\D/g,'');if(n.startsWith('591'))n=n.slice(3);let encoded=encodeURIComponent(msg);return `https://wa.me/591${n}?text=${encoded}`}
-function person(r,g){
-  let msg=buildWhatsAppMessage(r.c,r.rows,'auto');
-  let wa=waLink(r.c,msg);
-  let dueLabel=r.st==='overdue'?`${r.overdue.length} ${r.overdue.length===1?'cuota vencida':'cuotas vencidas'}`:r.st==='commit'?`${r.commit.length} ${r.commit.length===1?'compromiso de hoy':'compromisos de hoy'}`:`${r.due.length} ${r.due.length===1?'cuota vence hoy':'cuotas vencen hoy'}`;
-  let productText=r.products.length===1?r.products[0]:(r.products.length>1?'Varios productos':'Compra');
-  return `<div class="person ${g[2]}"><div class="row"><b>${esc(r.c.codigo)} · ${esc(r.c.nombre)}</b><span class="badge ${g[3]}">${g[4]}</span></div><div class="amount">${money(r.amount)}</div><div>${esc(productText)} · ${dueLabel}</div>${r.st==='overdue'?`<div class="muted">Cuota más antigua: ${r.days} ${r.days===1?'día':'días'} de retraso</div>`:''}<div class="muted">${esc(r.c.direccion||'')} ${r.c.observacion?'· '+esc(r.c.observacion):''}</div><div class="actions"><button class="green" onclick="location.href='${wa}'">💬 WhatsApp</button><button class="primary" onclick="paymentModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">💰 Registrar pago</button><button class="soft" onclick="commitModal('${r.relevant[0]?.s.id||r.rows[0]?.s.id}')">📅 Compromiso</button><button class="red" onclick="toggleNo('${r.c.id}',true)">🚫 No cobrable</button></div></div>`;
+function waLink(c,msg){
+  let n=(c.whatsapp||'').replace(/\D/g,'');
+  if(n.startsWith('591'))n=n.slice(3);
+  return `https://web.whatsapp.com/send?phone=591${n}&text=${encodeURIComponent(msg)}`;
 }
 function renderCollections(){
   let a=collectionClientRows();
