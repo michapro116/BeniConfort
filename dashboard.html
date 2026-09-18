@@ -106,50 +106,52 @@ function pendingRowsForClient(clientId){
   }
   return out;
 }
+function greeting(){
+  let h=new Date().getHours();
+  return h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
+}
 function buildWhatsAppMessage(c, rows, kind='auto'){
-  // Siempre construye el mensaje desde el estado completo del cliente,
-  // para que Estado, Resumen y Cobros de hoy no envíen textos diferentes.
+  // Un solo mensaje por cliente. El compromiso solo aporta la fecha; nunca crea ni suma un monto.
+  // La deuda siempre se calcula con las cuotas realmente pendientes en este momento.
   let all=pendingRowsForClient(c.id);
   if(!all.length)all=rows.filter(r=>Number(r.rem||0)>0);
 
-  let overdue=all.filter(r=>r.q.fecha_vencimiento<today() && r.com?.fecha_compromiso!==today());
+  let overdue=all.filter(r=>r.q.fecha_vencimiento<today());
   let commit=all.filter(r=>r.com?.fecha_compromiso===today());
-  let due=all.filter(r=>r.q.fecha_vencimiento===today() && r.com?.fecha_compromiso!==today());
+  let due=all.filter(r=>r.q.fecha_vencimiento===today());
+  let pending=all;
+  let totalPending=pending.reduce((a,r)=>a+Number(r.rem||0),0);
+  let oldest=overdue.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
+  let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
+  let count=pending.length;
+  let countText=count===1?'cuota pendiente':'cuotas pendientes';
+  let delayText=oldest?` La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.`:'';
+  let head=greeting()+`, ${c.nombre} \uD83D\uDE0A\n\n`;
 
-  // Si hay vencidas y además un compromiso para hoy, se informa ambas cosas
-  // en un solo mensaje para evitar dos recordatorios contradictorios.
-  if(overdue.length && commit.length){
-    let oldest=overdue.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
-    let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
-    let overdueAmount=overdue.reduce((a,r)=>a+Number(r.rem||0),0);
-    let commitAmount=commit.reduce((a,r)=>a+Number(r.rem||0),0);
-    let products=[...new Set(commit.map(r=>r.s.producto_nombre).filter(Boolean))];
-    let product=products.length===1?products[0]:products.length>1?'varios productos':'tu compra';
-    return `Buenas tardes, ${c.nombre} \\uD83D\\uDE0A\\n\\nLe escribimos de BeniConfort. Actualmente tiene ${overdue.length} ${overdue.length===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(overdueAmount)}. La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.\\n\\nAdemás, hoy corresponde su compromiso de pago de ${money(commitAmount)} por su compra de ${product}.\\n\\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
-  }
-
-  if(overdue.length){
-    let oldest=overdue.slice().sort((a,b)=>String(a.q.fecha_vencimiento).localeCompare(String(b.q.fecha_vencimiento)))[0];
-    let days=oldest?Math.max(0,Math.floor((new Date(today()+'T00:00:00')-new Date(oldest.q.fecha_vencimiento+'T00:00:00'))/86400000)):0;
-    let amount=overdue.reduce((a,r)=>a+Number(r.rem||0),0);
-    return `Buenas tardes, ${c.nombre} \\uD83D\\uDE0A\\n\\nLe escribimos de BeniConfort. Actualmente tiene ${overdue.length} ${overdue.length===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(amount)}. La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.\\n\\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
-  }
-
+  // 1. Compromiso para hoy: el compromiso no tiene monto propio.
+  // Se recuerda el compromiso y después se muestra la deuda real actual del cliente.
   if(commit.length){
-    let amount=commit.reduce((a,r)=>a+Number(r.rem||0),0);
-    let products=[...new Set(commit.map(r=>r.s.producto_nombre).filter(Boolean))];
-    let product=products.length===1?products[0]:products.length>1?'varios productos':'tu compra';
-    return `Buenos días, ${c.nombre} \\uD83D\\uDE0A\\n\\nLe escribimos de BeniConfort para recordarle que hoy corresponde su compromiso de pago de ${money(amount)} por su compra de ${product}.\\n\\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+    let debtText=count
+      ? `Actualmente tiene ${count} ${countText} por un total de ${money(totalPending)}.${delayText}`
+      : 'Actualmente no registra cuotas pendientes.';
+    return `${head}Le escribimos de BeniConfort para recordarle su compromiso de pago.\n\n${debtText}\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
   }
 
+  // 2. Una o varias cuotas vencidas.
+  if(overdue.length){
+    let amount=overdue.reduce((a,r)=>a+Number(r.rem||0),0);
+    return `${head}Le escribimos de BeniConfort. Actualmente tiene ${overdue.length} ${overdue.length===1?'cuota pendiente':'cuotas pendientes'} por un total de ${money(amount)}. La cuota más antigua registra ${days} ${days===1?'día':'días'} de retraso.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  }
+
+  // 3. Una o varias cuotas que vencen hoy.
   if(due.length){
     let amount=due.reduce((a,r)=>a+Number(r.rem||0),0);
     let products=[...new Set(due.map(r=>r.s.producto_nombre).filter(Boolean))];
     let product=products.length===1?products[0]:products.length>1?'varios productos':'tu compra';
-    return `Buenos días, ${c.nombre} \\uD83D\\uDE0A\\n\\nLe escribimos de BeniConfort para recordarle que hoy corresponde su cuota de ${money(amount)} por su compra de ${product}.\\n\\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+    return `${head}Le escribimos de BeniConfort para recordarle que hoy corresponde su cuota de ${money(amount)} por su compra de ${product}.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
   }
 
-  return `Hola, ${c.nombre} \\uD83D\\uDE0A\\n\\nLe escribimos de BeniConfort para recordarle que tiene un saldo pendiente.\\n\\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
+  return `${head}Le escribimos de BeniConfort para recordarle que tiene un saldo pendiente.\n\n¿A qué hora podemos pasar por su domicilio o prefiere realizar el pago mediante QR?`;
 }
 function waLink(c,msg){let n=(c.whatsapp||'').replace(/\D/g,'');if(n.startsWith('591'))n=n.slice(3);return `https://wa.me/591${n}?text=${encodeURIComponent(msg)}`}
 function person(r,g){
