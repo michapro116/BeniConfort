@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>BeniConfort | Ayuda</title>
+<style>
+:root{--ink:#171717;--muted:#68706b;--line:#e3e6e3;--bg:#f5f3ee;--card:#fff;--green:#25D366;--green-dark:#128C7E;--soft:#effaf3;--soft-border:#b8dfc7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;padding-bottom:76px}.app{min-height:100vh}header{text-align:center;padding:22px 16px 12px}.logo{font-size:25px;font-weight:900;letter-spacing:-.6px}.logo span{font-weight:500}.page{display:none;max-width:700px;margin:auto;padding:8px 16px 24px}.page.active{display:block}h1{font-size:27px;text-align:center;margin:10px 0 8px}.sub{text-align:center;color:var(--muted);font-size:14px;line-height:1.45;margin:0 auto 20px}.sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;max-width:500px;margin:auto}.size-btn{border:1px solid #ddd;background:#fff;border-radius:15px;padding:18px 8px;font-size:21px;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.06);cursor:pointer}.size-btn.unavailable{background:#eee;color:#aaa;text-decoration:line-through;cursor:not-allowed;box-shadow:none}.selected-size{margin:20px auto 0;max-width:650px;padding:16px;border:2px solid var(--soft-border);border-radius:16px;background:var(--soft)}.selected-size strong{display:block;text-align:center;font-size:18px;margin-bottom:8px}.link-row{display:grid;grid-template-columns:1fr auto;gap:7px}.link-row input{min-width:0;border:1px solid #d7dfda;border-radius:10px;padding:11px;background:#fff;font-size:12px;color:#555}.btn{border:0;border-radius:11px;padding:11px 13px;font-weight:900;cursor:pointer}.copy{background:#171717;color:#fff}.open{display:block;width:100%;margin-top:9px;background:var(--green);color:#073b1c;text-align:center;text-decoration:none}.status{text-align:center;color:var(--green-dark);font-size:12px;font-weight:800;min-height:16px;margin-top:7px}.info-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;margin:12px 0;box-shadow:0 3px 10px rgba(0,0,0,.04)}.info-card h2{font-size:18px;margin:0 0 8px}.info-card p{margin:0;color:#4e5752;line-height:1.5;font-size:14px}.message-box{white-space:pre-line;background:#f7f7f5;border:1px solid #e5e5e2;border-radius:12px;padding:12px;font-size:13px;line-height:1.45;color:#333}.copy-msg{width:100%;margin-top:10px;background:#111;color:#fff}.pending{background:#fff8e5;border-color:#ead38a}.bottom{position:fixed;left:0;right:0;bottom:0;height:68px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;z-index:20;box-shadow:0 -4px 14px rgba(0,0,0,.07)}.bottom button{border:0;background:#fff;font-weight:900;color:#777;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.bottom button.active{color:#111}.ico{font-size:23px;line-height:1}@media(min-width:650px){.sizes{grid-template-columns:repeat(4,1fr)}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">Beni<span>Confort</span></div></header>
+
+<section id="home" class="page active">
+  <h1>¿QUÉ TALLA BUSCA EL CLIENTE?</h1>
+  <p class="sub">Selecciona una talla para generar el enlace del catálogo y revisar los modelos disponibles.</p>
+  <div id="sizes" class="sizes"><div style="grid-column:1/-1;text-align:center;padding:25px;color:#68706b">Cargando tallas...</div></div>
+  <div id="selectedSizeBox" class="selected-size" style="display:none">
+    <strong id="selectedTitle">Catálogo talla 43</strong>
+    <div class="link-row"><input id="sizeLink" readonly><button class="btn copy" onclick="copyLink()">COPIAR</button></div>
+    <a id="openCatalog" class="btn open" href="#" target="_blank" rel="noopener">VER CATÁLOGO</a>
+    <div id="copyStatus" class="status"></div>
+  </div>
+</section>
+
+<section id="info" class="page">
+  <h1>INFORMACIÓN</h1>
+  <p class="sub">Mensajes rápidos para responder las preguntas frecuentes de los clientes.</p>
+
+  <div class="info-card"><h2>👟 Prueba de modelos</h2><p>El cliente puede seleccionar los modelos que le gusten y se los llevamos a domicilio para que pueda probárselos sin compromiso.</p></div>
+  <div class="info-card"><h2>🚚 Delivery</h2><p>Realizamos delivery gratuito en Trinidad, coordinando la entrega con el cliente.</p></div>
+  <div class="info-card"><h2>💳 Forma de pago a crédito</h2><p>El precio de crédito y la inicial dependen del modelo. La modalidad mostrada para el cliente es de hasta dos meses, con dos cuotas mensuales.</p></div>
+  <div class="info-card"><h2>👟 Estado de los modelos</h2><p>En el catálogo se muestran tanto modelos económicos nuevos como modelos americanos. La información concreta de cada modelo aparece en su ficha.</p></div>
+  <div class="info-card"><h2>🎨 Colores</h2><p>Los colores disponibles son los que aparecen en las fotografías del catálogo.</p></div>
+  <div class="info-card pending"><h2>📄 Requisitos para crédito</h2><p>Este mensaje queda listo para copiar, pero los requisitos exactos todavía no fueron definidos en esta versión.</p><div class="message-box" id="requirementsMessage">REQUISITOS DE CRÉDITO:\n\n[COMPLETAR CON LOS REQUISITOS EXACTOS]</div><button class="btn copy-msg" onclick="copyRequirements()">COPIAR MENSAJE</button><div id="reqStatus" class="status"></div></div>
+</section>
+</div>
+
+<div class="bottom"><button id="homeBtn" class="active" onclick="showPage('home')"><span class="ico">⌂</span>INICIO</button><button id="infoBtn" onclick="showPage('info')"><span class="ico">ℹ️</span>INFORMACIÓN</button></div>
+
+<script>
+const SUPABASE_URL="https://lydlyusuanvjjoavbocr.supabase.co";
+const SUPABASE_KEY="sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let products=[];let selectedSize=null;
+const CATALOG_URL=new URL("index.html",window.location.href).href;
+
+function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('homeBtn').classList.toggle('active',id==='home');document.getElementById('infoBtn').classList.toggle('active',id==='info');window.scrollTo({top:0,behavior:'smooth'});}
+function parseSizesQty(v){if(!v)return{};if(typeof v==='string'){try{return JSON.parse(v)}catch(e){return{}}}return v;}
+function availableSizes(p){
+  const quality=String(p.quality||p.tipo||'').toLowerCase();
+  const status=String(p.estado||p.status||'').toLowerCase();
+  if(status.includes('vend')||status==='sold'||status.includes('reserv'))return[];
+  const sq=parseSizesQty(p.tamaño??p.tamano??p.sizesQty??p.sizes);
+  if(sq&&typeof sq==='object'&&Object.keys(sq).length){return Object.keys(sq).map(Number).filter(n=>Number.isFinite(n)&&Number(sq[n])>0);}
+  const raw=p.talla??p.size??p.tamaño??p.tamano;
+  const n=Number(raw);return Number.isFinite(n)&&n>0?[n]:[];
+}
+function catalogSizes(){const set=new Set();products.forEach(p=>availableSizes(p).forEach(s=>set.add(s)));return set;}
+function renderSizes(){
+  const box=document.getElementById('sizes');const available=catalogSizes();const all=[];for(let s=34;s<=45;s++)all.push(s);
+  const extras=[...available].filter(s=>s<34||s>45).sort((a,b)=>a-b);extras.forEach(s=>all.push(s));
+  if(!all.length){box.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:25px">No se encontraron tallas.</div>';return;}
+  box.innerHTML=all.map(s=>available.has(s)?`<button class="size-btn" onclick="selectSize(${s})">${s}</button>`:`<button class="size-btn unavailable" disabled>${s}</button>`).join('');
+}
+function selectSize(size){selectedSize=size;const url=new URL(CATALOG_URL);url.searchParams.set('talla',String(size));document.getElementById('selectedTitle').textContent='Catálogo talla '+size;document.getElementById('sizeLink').value=url.href;document.getElementById('openCatalog').href=url.href;document.getElementById('selectedSizeBox').style.display='block';document.getElementById('copyStatus').textContent='';window.scrollTo({top:document.getElementById('selectedSizeBox').offsetTop-20,behavior:'smooth'});}
+async function copyLink(){if(!selectedSize)return;const text=document.getElementById('sizeLink').value;try{await navigator.clipboard.writeText(text);document.getElementById('copyStatus').textContent='Enlace copiado ✓';}catch(e){const el=document.getElementById('sizeLink');el.select();document.execCommand('copy');document.getElementById('copyStatus').textContent='Enlace copiado ✓';}}
+async function copyRequirements(){const text=document.getElementById('requirementsMessage').innerText;try{await navigator.clipboard.writeText(text);document.getElementById('reqStatus').textContent='Mensaje copiado ✓';}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();document.getElementById('reqStatus').textContent='Mensaje copiado ✓';}}
+async function load(){const {data,error}=await supabaseClient.from('productos').select('*');if(error){document.getElementById('sizes').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:25px;color:#a33">No se pudo cargar el catálogo.</div>';return;}products=data||[];renderSizes();}
+load();
+</script>
+</body></html>
