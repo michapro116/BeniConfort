@@ -13,7 +13,6 @@
 <body>
 <div class="app">
 <header><div class="logo">Beni<span>Confort</span></div></header>
-
 <section id="home" class="page active">
   <h1>¿QUÉ TALLA BUSCA EL CLIENTE?</h1>
   <p class="sub">Selecciona una talla para generar el enlace del catálogo y revisar los modelos disponibles.</p>
@@ -25,51 +24,81 @@
     <div id="copyStatus" class="status"></div>
   </div>
 </section>
-
 <section id="info" class="page">
   <h1>INFORMACIÓN</h1>
   <p class="sub">Mensajes rápidos para responder las preguntas frecuentes de los clientes.</p>
-
   <div class="info-card"><h2>👟 Prueba de modelos</h2><p>El cliente puede seleccionar los modelos que le gusten y se los llevamos a domicilio para que pueda probárselos sin compromiso.</p></div>
   <div class="info-card"><h2>🚚 Delivery</h2><p>Realizamos delivery gratuito en Trinidad, coordinando la entrega con el cliente.</p></div>
   <div class="info-card"><h2>💳 Forma de pago a crédito</h2><p>El precio de crédito y la inicial dependen del modelo. La modalidad mostrada para el cliente es de hasta dos meses, con dos cuotas mensuales.</p></div>
   <div class="info-card"><h2>👟 Estado de los modelos</h2><p>En el catálogo se muestran tanto modelos económicos nuevos como modelos americanos. La información concreta de cada modelo aparece en su ficha.</p></div>
   <div class="info-card"><h2>🎨 Colores</h2><p>Los colores disponibles son los que aparecen en las fotografías del catálogo.</p></div>
-  <div class="info-card pending"><h2>📄 Requisitos para crédito</h2><p>Este mensaje queda listo para copiar, pero los requisitos exactos todavía no fueron definidos en esta versión.</p><div class="message-box" id="requirementsMessage">REQUISITOS DE CRÉDITO:\n\n[COMPLETAR CON LOS REQUISITOS EXACTOS]</div><button class="btn copy-msg" onclick="copyRequirements()">COPIAR MENSAJE</button><div id="reqStatus" class="status"></div></div>
+  <div class="info-card pending"><h2>📄 Requisitos para crédito</h2><p>Este mensaje queda listo para copiar, pero los requisitos exactos todavía no fueron definidos en esta versión.</p><div class="message-box" id="requirementsMessage">REQUISITOS DE CRÉDITO:
+
+[COMPLETAR CON LOS REQUISITOS EXACTOS]</div><button class="btn copy-msg" onclick="copyRequirements()">COPIAR MENSAJE</button><div id="reqStatus" class="status"></div></div>
 </section>
 </div>
-
 <div class="bottom"><button id="homeBtn" class="active" onclick="showPage('home')"><span class="ico">⌂</span>INICIO</button><button id="infoBtn" onclick="showPage('info')"><span class="ico">ℹ️</span>INFORMACIÓN</button></div>
-
 <script>
 const SUPABASE_URL="https://lydlyusuanvjjoavbocr.supabase.co";
 const SUPABASE_KEY="sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let products=[];let selectedSize=null;
-const CATALOG_URL=new URL("index.html",window.location.href).href;
+const CATALOG_FILE="index (2) corregido.html";
+const CATALOG_URL=new URL(CATALOG_FILE,window.location.href).href;
 
 function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('homeBtn').classList.toggle('active',id==='home');document.getElementById('infoBtn').classList.toggle('active',id==='info');window.scrollTo({top:0,behavior:'smooth'});}
 function parseSizesQty(v){if(!v)return{};if(typeof v==='string'){try{return JSON.parse(v)}catch(e){return{}}}return v;}
+function normalizeProduct(p){
+  const rawType=String(p.tipo??p.type??"").trim();
+  const type=rawType.toLowerCase().startsWith("americano")?"Americano":rawType.toLowerCase().startsWith("econ")?"Económico":rawType;
+  const rawStatus=String(p.estado??p.status??"").trim().toLowerCase();
+  const status=rawStatus==="activo"||rawStatus==="disponible"?"available":rawStatus==="reservado"?"reserved":rawStatus==="vendido"?"sold":rawStatus;
+  let sizesQty={};
+  if(p.tamaños&&typeof p.tamaños==="object"&&!Array.isArray(p.tamaños))sizesQty=p.tamaños;
+  else if(p.sizesQty&&typeof p.sizesQty==="object")sizesQty=p.sizesQty;
+  return {...p,id:String(p.id),type,quality:type,name:String(p.nombre??p.name??""),brand:String(p.marca??p.brand??""),gender:String(p.género??p.gender??""),img:String(p.image_url??p.image??""),cashPrice:Number(p.precio_efectivo??p.price??0),creditPrice:Number(p.precio_crédito??p.precio_credito??p.price??0),initial:Number(p.initial_payment??p.initial??0),stock:Number(p.stock??0),size:p.size??"",sizesQty,tag:p.promoción??p.tag??"",desc:String(p.description??p.desc??""),whatsappLink:p.whatsapp_link??p.WhatsApp_link??p.whatsappLink??""};
+}
 function availableSizes(p){
-  const quality=String(p.quality||p.tipo||'').toLowerCase();
-  const status=String(p.estado||p.status||'').toLowerCase();
-  if(status.includes('vend')||status==='sold'||status.includes('reserv'))return[];
-  const sq=parseSizesQty(p.tamaño??p.tamano??p.sizesQty??p.sizes);
-  if(sq&&typeof sq==='object'&&Object.keys(sq).length){return Object.keys(sq).map(Number).filter(n=>Number.isFinite(n)&&Number(sq[n])>0);}
-  const raw=p.talla??p.size??p.tamaño??p.tamano;
-  const n=Number(raw);return Number.isFinite(n)&&n>0?[n]:[];
+  if(p.quality==="Americanos"||p.quality==="Americano"){
+    return (p.status==="sold"||p.status==="reserved"||!p.size||Number(p.stock??1)<=0)?[]:[Number(p.size)];
+  }
+  return Object.keys(p.sizesQty||{}).map(Number).filter(s=>Number.isFinite(s)&&Number(p.sizesQty[s])>0&&p.status!=="sold"&&p.status!=="reserved");
 }
 function catalogSizes(){const set=new Set();products.forEach(p=>availableSizes(p).forEach(s=>set.add(s)));return set;}
+
 function renderSizes(){
-  const box=document.getElementById('sizes');const available=catalogSizes();const all=[];for(let s=34;s<=45;s++)all.push(s);
-  const extras=[...available].filter(s=>s<34||s>45).sort((a,b)=>a-b);extras.forEach(s=>all.push(s));
-  if(!all.length){box.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:25px">No se encontraron tallas.</div>';return;}
-  box.innerHTML=all.map(s=>available.has(s)?`<button class="size-btn" onclick="selectSize(${s})">${s}</button>`:`<button class="size-btn unavailable" disabled>${s}</button>`).join('');
+  const box=document.getElementById('sizes');const available=catalogSizes();const all=[...available].sort((a,b)=>a-b);
+  if(!all.length){box.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:25px">No hay tallas disponibles en este momento.</div>';return;}
+  box.innerHTML=all.map(s=>`<button class="size-btn" onclick="selectSize(${s})">${s}</button>`).join('');
 }
-function selectSize(size){selectedSize=size;const url=new URL(CATALOG_URL);url.searchParams.set('talla',String(size));document.getElementById('selectedTitle').textContent='Catálogo talla '+size;document.getElementById('sizeLink').value=url.href;document.getElementById('openCatalog').href=url.href;document.getElementById('selectedSizeBox').style.display='block';document.getElementById('copyStatus').textContent='';window.scrollTo({top:document.getElementById('selectedSizeBox').offsetTop-20,behavior:'smooth'});}
-async function copyLink(){if(!selectedSize)return;const text=document.getElementById('sizeLink').value;try{await navigator.clipboard.writeText(text);document.getElementById('copyStatus').textContent='Enlace copiado ✓';}catch(e){const el=document.getElementById('sizeLink');el.select();document.execCommand('copy');document.getElementById('copyStatus').textContent='Enlace copiado ✓';}}
+
+function selectSize(size){
+  selectedSize=size;
+  const url=new URL(CATALOG_URL);
+  url.searchParams.set('talla',String(size));
+  document.getElementById('selectedTitle').textContent='Catálogo talla '+size;
+  document.getElementById('sizeLink').value=url.href;
+  document.getElementById('openCatalog').href=url.href;
+  document.getElementById('selectedSizeBox').style.display='block';
+  document.getElementById('copyStatus').textContent='';
+  window.scrollTo({top:document.getElementById('selectedSizeBox').offsetTop-20,behavior:'smooth'});
+}
+
+async function copyLink(){
+  if(!selectedSize)return;
+  const text=document.getElementById('sizeLink').value;
+  try{await navigator.clipboard.writeText(text);document.getElementById('copyStatus').textContent='Enlace copiado ✓';}
+  catch(e){const el=document.getElementById('sizeLink');el.select();document.execCommand('copy');document.getElementById('copyStatus').textContent='Enlace copiado ✓';}
+}
+
 async function copyRequirements(){const text=document.getElementById('requirementsMessage').innerText;try{await navigator.clipboard.writeText(text);document.getElementById('reqStatus').textContent='Mensaje copiado ✓';}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();document.getElementById('reqStatus').textContent='Mensaje copiado ✓';}}
-async function load(){const {data,error}=await supabaseClient.from('productos').select('*');if(error){document.getElementById('sizes').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:25px;color:#a33">No se pudo cargar el catálogo.</div>';return;}products=data||[];renderSizes();}
+
+async function load(){
+  const {data,error}=await supabaseClient.from('productos').select('*');
+  if(error){document.getElementById('sizes').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:25px;color:#a33">No se pudo cargar el catálogo.</div>';return;}
+  products=(data||[]).map(normalizeProduct);
+  renderSizes();
+}
 load();
 </script>
 </body></html>
