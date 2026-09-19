@@ -43,7 +43,7 @@ const SUPABASE_URL="https://lydlyusuanvjjoavbocr.supabase.co";
 const SUPABASE_KEY="sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let products=[];let selectedSize=null;
-const CATALOG_FILE="index (2) corregido.html";
+const CATALOG_FILE="index(2).html";
 const CATALOG_URL=new URL(CATALOG_FILE,window.location.href).href;
 
 function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('homeBtn').classList.toggle('active',id==='home');document.getElementById('infoBtn').classList.toggle('active',id==='info');window.scrollTo({top:0,behavior:'smooth'});}
