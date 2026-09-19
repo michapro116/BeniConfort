@@ -389,8 +389,14 @@ function renderChosen(){
   if(!selected.length){list.innerHTML='<div class="chosen-empty">Todavía no has elegido ningún modelo.</div>';actions.style.display="none";return;}
   list.innerHTML=selected.map((p,i)=>`<div class="chosen-item"><img src="${esc(p.img)}" alt="${esc(p.brand||p.name)}"><div><strong>${esc(p.brand||p.name)}</strong><span>Talla ${esc(p.size)} · ${esc(p.type)}</span></div><button class="remove" onclick="removeChosen(${i})">Quitar</button></div>`).join("");
   actions.style.display="block";
-  const lines=selected.map((p,i)=>`${i+1}. ${p.brand||p.name} — Talla ${p.size}${p.img?`\n   Imagen: ${p.img}`:""}`).join("\n");
-  document.getElementById("tryWhatsapp").href=wa(`Hola, BeniConfort.\nQuiero probarme estos modelos en mi domicilio.\n\nSon solo para probarme, sin compromiso de compra:\n\n${lines}\n\n¿Podemos coordinar para que me los lleven?`);
+  const lines=selected.map((p,i)=>[
+    `${i+1}. ${p.brand||p.name}, talla ${p.size}`,
+    `💵 Contado: ${money(p.cashPrice)}`,
+    `💳 Crédito: ${money(p.creditPrice)}`,
+    `💰 Inicial: ${money(p.initial)}`,
+    `Imagen: ${p.img||"No disponible"}`
+  ].join("\n")).join("\n\n");
+  document.getElementById("tryWhatsapp").href=wa(`Hola BeniConfort 👋\n\nQuisiera probarme estos modelos:\n\n${lines}`);
 }
 function removeChosen(i){selected.splice(i,1);updateChosenBadge();renderChosen();if(currentPage==="catalog")renderProducts();}
 function showChosen(){renderChosen();showPage("chosen");}
@@ -475,32 +481,15 @@ function tryWhatsapp(){
     alert("Primero elige los modelos que te gusten.");
     return;
   }
-
-  const lines = [
-    "Hola, BeniConfort. Quiero probarme estos modelos en mi domicilio.",
-    "",
-    "Estos modelos son solo para probarme, sin compromiso de compra:",
-    ""
-  ];
-
-  selected.forEach((p, i) => {
-    const exactSize = p.selectedSize ?? p.size ?? "No especificada";
-    lines.push(
-      `${i + 1}. ${p.brand ? p.brand + " " : ""}${p.name || "Modelo"}`,
-      `Talla: ${exactSize}`,
-      `Precio de contado: ${money(p.cashPrice)}`,
-      `Precio a crédito: ${money(p.creditPrice)}`,
-      `Imagen: ${p.img || "No disponible"}`,
-      ""
-    );
-  });
-
-  lines.push(
-    "Por favor, indíqueme cuándo pueden llevarme estos modelos para probármelos."
-  );
-
-  const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(lines.join("\n"));
-  window.open(url, "_blank");
+  const lines=selected.map((p,i)=>[
+    `${i+1}. ${p.brand||p.name}, talla ${p.size}`,
+    `💵 Contado: ${money(p.cashPrice)}`,
+    `💳 Crédito: ${money(p.creditPrice)}`,
+    `💰 Inicial: ${money(p.initial)}`,
+    `Imagen: ${p.img||"No disponible"}`
+  ].join("\n")).join("\n\n");
+  const url=wa(`Hola BeniConfort 👋\n\nQuisiera probarme estos modelos:\n\n${lines}`);
+  window.open(url,"_blank");
 }
 </script>
 </body>
