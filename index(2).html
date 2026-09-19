@@ -193,9 +193,64 @@ h1{
 <div class="app">
 <header><div class="logo">Beni<span>Confort</span></div></header>
 
+<section id="home" class="page active">
+  <div class="notice">
+    <div class="notice-title">👟 ELIGE SIN COMPROMISO</div>
+    <div class="notice-text">
+      Selecciona los modelos que te gusten y
+      <strong>te los llevamos a domicilio para que te los pruebes sin compromiso.</strong>
+    </div>
+  </div>
+
+  <h1>¿Qué talla buscas?</h1>
+  <div id="sizes" class="sizes"></div>
+
+  <div id="linkTools" class="link-tools" style="display:none">
+    <div class="link-tools-title">🔗 Enlace de esta talla</div>
+    <div class="link-tools-text">Puedes copiar este enlace y enviárselo directamente al cliente.</div>
+    <div class="link-row">
+      <input id="sizeLink" type="text" readonly>
+      <button onclick="copySizeLink()">COPIAR ENLACE</button>
+    </div>
+    <div id="copyStatus" class="copy-status"></div>
+  </div>
+</section>
+
 <section id="catalog" class="page">
+  <button class="back" onclick="goHome()">← ATRÁS</button>
   <h2 class="results-title" id="catalogTitle">Modelos disponibles</h2>
+  <div id="catalogLinkTools" class="link-tools" style="display:none">
+    <div class="link-tools-title">🔗 Enlace de esta talla</div>
+    <div class="link-tools-text">Copia este enlace para enviárselo al cliente.</div>
+    <div class="link-row">
+      <input id="catalogSizeLink" type="text" readonly>
+      <button onclick="copyCatalogSizeLink()">COPIAR ENLACE</button>
+    </div>
+    <div id="catalogCopyStatus" class="copy-status"></div>
+  </div>
   <div id="productGrid" class="grid"></div>
+</section>
+
+<section id="info" class="page">
+  <button class="back" onclick="goHome()">← ATRÁS</button>
+  <h1>ℹ️ Más información</h1>
+  <div class="info-box"><h3>💳 ¿Cómo funciona el crédito?</h3><p>El precio de crédito y la inicial aparecen directamente en cada modelo.</p><p style="margin-top:8px">El crédito se paga en <strong>2 cuotas mensuales</strong>.</p></div>
+  <div class="info-box"><h3>🚚 Delivery</h3><p>Hacemos delivery gratuito en Trinidad.</p></div>
+  <div class="info-box"><h3>👟 ¿Puedo probarme los modelos?</h3><p>Sí. Selecciona los modelos que te gusten y te los llevamos a domicilio para que puedas probártelos sin compromiso.</p></div>
+  <div class="info-box"><h3>📍 ¿Dónde están ubicados?</h3><p>BeniConfort no cuenta con una tienda física. Coordinamos la entrega a domicilio.</p></div>
+  <div class="info-box"><h3>🎨 Colores y tallas</h3><p>Los colores son los que aparecen en las imágenes del catálogo. Las tallas disponibles dependen de los modelos publicados.</p></div>
+  <div class="info-box"><h3>👟 ¿Son nuevos?</h3><p>Tenemos modelos económicos nuevos y modelos americanos con distintos niveles de uso. Cada publicación muestra su información.</p></div>
+</section>
+
+<section id="chosen" class="page">
+  <button class="back" onclick="goBackToCatalog()">← ATRÁS</button>
+  <h1>🛍 Quiero probármelos</h1>
+  <div class="try-text">Te llevamos estos modelos a domicilio para que puedas <strong>probártelos sin compromiso.</strong></div>
+  <div id="chosenList" class="chosen-list"></div>
+  <div id="chosenActions" style="display:none;margin-top:16px">
+    <button class="more" onclick="goBackToCatalog()">ELEGIR MÁS MODELOS</button>
+    <a id="tryWhatsapp" href="#" target="_blank" class="more" style="display:block;text-align:center;text-decoration:none;margin-top:10px;background:#25D366;color:#fff">ENVIAR POR WHATSAPP</a>
+  </div>
 </section>
 
 </div>
@@ -284,15 +339,42 @@ function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   const page=document.getElementById(id); if(page) page.classList.add("active");
   currentPage=id;
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  if(id==="home")document.getElementById("navHome").classList.add("active");
-  if(id==="info")document.getElementById("navInfo").classList.add("active");
-  if(id==="chosen")document.getElementById("navChosen").classList.add("active");
-  document.getElementById("floatingWhatsapp").style.display=id==="chosen"?"none":"flex";
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function goHome(){currentSize=null;showPage("home");}
 
+function renderSizeButtons(){
+  const box=document.getElementById("sizes");
+  const actual=[...new Set(products.flatMap(availableSizes).filter(Number.isFinite))].sort((a,b)=>a-b);
+  if(!actual.length){box.innerHTML='<div class="error-box" style="grid-column:1/-1">No hay tallas disponibles en este momento.</div>';return;}
+  box.innerHTML=actual.map(s=>`<button class="size-btn" onclick="openSize(${s})">${s}</button>`).join("");
+}
+function updateSizeLink(){
+  const homeTools=document.getElementById("linkTools"),homeInput=document.getElementById("sizeLink");
+  const catalogTools=document.getElementById("catalogLinkTools"),catalogInput=document.getElementById("catalogSizeLink");
+  if(typeof currentSize!=="number"){
+    if(homeTools)homeTools.style.display="none";
+    if(catalogTools)catalogTools.style.display="none";
+    return;
+  }
+  const url=new URL(window.location.href);
+  url.search="";
+  url.searchParams.set("talla",String(currentSize));
+  if(homeInput)homeInput.value=url.toString();
+  if(catalogInput)catalogInput.value=url.toString();
+  if(homeTools)homeTools.style.display="block";
+  if(catalogTools)catalogTools.style.display="block";
+}
+async function copySizeLink(){
+  const input=document.getElementById("sizeLink"),status=document.getElementById("copyStatus");
+  if(!input?.value)return;
+  await copyText(input.value,status);
+}
+async function copyCatalogSizeLink(){
+  const input=document.getElementById("catalogSizeLink"),status=document.getElementById("catalogCopyStatus");
+  if(!input?.value)return;
+  await copyText(input.value,status);
+}
 async function copyText(text,status){
   try{await navigator.clipboard.writeText(text);}
   catch(e){const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
@@ -329,7 +411,7 @@ function renderProducts(){
         <div class="name">${identity}</div>
         <div class="prices"><div class="pricebox"><small>CONTADO</small><b>${money(p.cashPrice)}</b></div><div class="pricebox"><small>CRÉDITO</small><b>${money(p.creditPrice)}</b></div></div>
         <div class="initial"><span>INICIAL</span><b>${money(p.initial)}</b></div>
-        <div class="actions"><button class="btn detail" onclick="openDetail('${esc(p.id)}')">FORMA DE PAGO</button><button class="btn choose ${isChosen?"selected":""}" onclick="${isChosen?`chooseProduct('${esc(p.id)}',${currentSize})`:chooseAction}">${isChosen?"✓ SELECCIONADO":"SELECCIONAR"}</button></div>
+        <div class="actions"><button class="btn detail" onclick="openDetail('${esc(p.id)}')">FORMA DE PAGO</button><button class="btn choose ${isChosen?"selected":""}" onclick="${isChosen?`chooseProduct('${esc(p.id)}',${currentSize})`:chooseAction}">${isChosen?"QUITAR":"SELECCIONAR"}</button></div>
       </div></article>`;
   }).join("");
 }
@@ -356,11 +438,12 @@ function chooseProduct(id,sizeOverride){
 }
 function updateChosenBadge(){const count=selected.length;const badge=document.getElementById("chosenBadge");if(badge)badge.textContent=count;const icon=document.getElementById("chosenNavIcon");if(icon)icon.classList.toggle("has-items",count>0);const c=document.getElementById("chosenCount");if(c)c.textContent=count;const w=document.getElementById("clientWhatsapp");if(w){w.href=count?wa(buildWhatsappMessage()):"#";w.classList.toggle("disabled",!count);}}
 function renderChosen(){
-  const count=selected.length;
-  const badge=document.getElementById("chosenCount");
-  if(badge)badge.textContent=count;
-  const link=document.getElementById("clientWhatsapp");
-  if(link)link.href=count?wa(buildWhatsappMessage()):"#";
+  updateChosenBadge();
+  const list=document.getElementById("chosenList"),actions=document.getElementById("chosenActions");
+  if(!selected.length){updateChosenBadge();list.innerHTML='<div class="chosen-empty">Todavía no has seleccionado ningún modelo.</div>';actions.style.display="none";return;}
+  list.innerHTML=selected.map((p,i)=>`<div class="chosen-item"><img src="${esc(p.img)}" alt="${esc(p.brand||p.name)}"><div><strong>${esc(p.brand||p.name)}</strong><span>Talla ${esc(p.selectedSize??p.size)} · ${esc(p.type)}</span></div><button class="remove" onclick="removeChosen(${i})">Quitar</button></div>`).join("");
+  actions.style.display="block";
+  document.getElementById("tryWhatsapp").href=wa(buildWhatsappMessage());
 }
 function buildWhatsappMessage(){
   const multiple=selected.length>1;
@@ -452,26 +535,21 @@ function showToast(msg){const t=document.getElementById("toast");t.textContent=m
 function availableCatalogSize(size){return products.some(p=>availableSizes(p).includes(Number(size)));}
 
 async function init(){
-  const grid=document.getElementById("productGrid");
-  if(grid)grid.innerHTML='<div class="loading" style="grid-column:1/-1">Cargando catálogo...</div>';
+  document.getElementById("sizes").innerHTML='<div class="loading" style="grid-column:1/-1">Cargando tallas...</div>';
   const result=await loadProducts();
-  if(result.error){
-    if(grid)grid.innerHTML='<div class="error-box" style="grid-column:1/-1">No se pudo cargar el catálogo. Revisa la conexión e inténtalo nuevamente.</div>';
-    return;
-  }
-  products=result.data||[];
+  if(result.error){document.getElementById("sizes").innerHTML='<div class="error-box" style="grid-column:1/-1">No se pudo cargar el catálogo. Revisa la conexión e inténtalo nuevamente.</div>';return;}
+  products=result.data||[];renderSizeButtons();renderChosen();
   const params=new URLSearchParams(window.location.search);
   const tallaParam=Number(params.get("talla"));
-  if(!Number.isFinite(tallaParam)||!availableCatalogSize(tallaParam)){
-    if(grid)grid.innerHTML='<div class="error-box" style="grid-column:1/-1"><strong>Catálogo no disponible.</strong><br>Este enlace debe corresponder a una talla disponible.</div>';
-    return;
+  if(Number.isFinite(tallaParam)&&availableCatalogSize(tallaParam)){
+    currentSize=tallaParam;
+    document.getElementById("catalogTitle").textContent="Modelos en talla "+tallaParam;
+    updateSizeLink();
+    const sellerTools=document.getElementById("catalogLinkTools");
+    if(sellerTools)sellerTools.style.display="none";
+    renderProducts();
+    showPage("catalog");
   }
-  currentSize=tallaParam;
-  const title=document.getElementById("catalogTitle");
-  if(title)title.textContent="Modelos disponibles en talla "+tallaParam;
-  renderProducts();
-  renderChosen();
-  window.scrollTo({top:0,behavior:"auto"});
 }
 init();
 
