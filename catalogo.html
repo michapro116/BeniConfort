@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="BeniConfort · catálogo de tenis disponibles por talla.">
+<title>BeniConfort | Catálogo de Tenis</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --black:#111;
+  --ink:#171717;
+  --muted:#707070;
+  --line:#e7e7e7;
+  --soft:#f5f5f3;
+  --paper:#fff;
+  --accent:#111;
+  --green:#16864a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0;background:#f5f5f3;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+body{padding:0 0 50px}
+button{font:inherit}
+
+#catalog{max-width:1100px;margin:0 auto}
+.page{background:#fff}
+
+/* Cover */
+.cover{padding:42px 42px 48px;margin:0 0 8px}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--black);padding-bottom:16px}
+.logo{font-size:23px;font-weight:900;letter-spacing:2.2px}
+.edition{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:right}
+.cover-middle{padding:75px 0 70px}
+.cover-kicker{font-size:11px;letter-spacing:2.8px;font-weight:800;text-transform:uppercase;margin-bottom:18px}
+.cover h1{font-size:72px;line-height:.9;letter-spacing:-4px;margin:0;font-weight:900}
+.cover-line{height:6px;background:var(--black);width:55px;margin:28px 0 22px}
+.cover-sub{font-size:15px;line-height:1.5;color:#555;max-width:600px}
+.cover-bottom{border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.cover-bottom strong{font-size:12px}
+.cover-bottom span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.cover-contact{text-align:right;font-size:12px;font-weight:800}
+
+/* One clean divider per size */
+.size-section{padding:0 42px}
+.size-header{display:flex;align-items:flex-end;justify-content:space-between;padding:48px 0 17px;margin:0 0 28px;border-bottom:2px solid #111}
+.size-header .kicker{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:7px}
+.size-header h2{font-size:42px;line-height:1;margin:0;letter-spacing:-1.8px}
+.size-header .count{text-align:right;font-size:11px;color:var(--muted);line-height:1.4;font-weight:700}
+
+.product-list{display:flex;flex-direction:column;gap:24px;padding-bottom:24px}
+
+/* Product = clearly defined visual card; no separator lines between products */
+.product{display:grid;grid-template-columns:minmax(420px,1.25fr) minmax(300px,.75fr);background:#fff;border:1px solid #e2e2e2;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.055);break-inside:avoid;page-break-inside:avoid}
+.product-img{width:100%;height:390px;background:var(--soft);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:contain;display:block}
+.no-image{font-size:10px;color:#999}
+.product-info{padding:27px 29px 29px;display:flex;flex-direction:column;min-width:0;background:#fff}
+.product-number{font-size:10px;color:var(--muted);letter-spacing:1.7px;font-weight:900;text-transform:uppercase;margin-bottom:13px}
+.type-badge{display:inline-flex;align-items:center;align-self:flex-start;background:#111;color:#fff;padding:8px 11px;border-radius:5px;font-size:9px;line-height:1;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:17px}
+.brandline{font-size:11px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:#333}
+.name{font-size:28px;line-height:1.04;font-weight:900;letter-spacing:-.8px;margin-top:6px;max-width:500px}
+.product-meta{display:flex;align-items:center;gap:7px;margin-top:13px;font-size:11px;font-weight:800;color:#555}
+.size-label{font-size:12px;color:#111;font-weight:900}
+.tag{display:inline-block;margin-top:12px;padding:5px 8px;border:1px solid #111;border-radius:4px;font-size:8px;line-height:1;font-weight:900;text-transform:uppercase;letter-spacing:.5px;max-width:max-content}
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto;padding-top:30px}
+.price{background:#f5f5f3;border-radius:10px;padding:12px 13px}
+.price small{display:block;font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
+.price strong{display:block;font-size:21px;margin-top:4px;white-space:nowrap}
+.payment-plan{margin-top:18px;border:1px solid #d9d9d9;border-radius:12px;overflow:hidden;background:#fff}
+.payment-plan-title{padding:9px 12px;background:#111;color:#fff;font-size:8px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}
+.payment-plan-body{padding:12px}
+.initial{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 11px;background:#f1f1ee;border-radius:9px;font-size:10px;font-weight:900;color:#111}
+.initial strong{font-size:22px;line-height:1;white-space:nowrap}
+.monthly{margin-top:9px;font-size:11px;font-weight:900;color:#222;line-height:1.35}
+.monthly strong{font-size:15px}
+.payment-note{margin-top:4px;font-size:9px;color:#666;font-weight:700}
+
+.loading,.error,.empty{max-width:1100px;min-height:300px;background:#fff;margin:0 auto;padding:80px 30px;text-align:center}
+.error{color:#a40000}
+
+@media(max-width:900px){
+  html,body{background:#fff}
+  body{padding-bottom:28px}
+  .toolbar{padding:10px 12px}
+  #catalog{max-width:none}
+  .cover{padding:25px 18px 38px;margin:0}
+  .logo{font-size:20px}.edition{font-size:8px}
+  .cover-middle{padding:65px 0 55px}
+  .cover h1{font-size:48px;letter-spacing:-2.8px}
+  .cover-sub{font-size:14px}
+  .cover-bottom{gap:12px}.cover-contact{font-size:11px}
+  .size-section{padding:0 14px}
+  .size-header{padding:38px 4px 14px;margin-bottom:20px}
+  .size-header h2{font-size:34px}
+  .size-header .count{font-size:10px}
+  .product-list{gap:22px;padding-bottom:20px}
+  .product{display:block;border-radius:16px}
+  .product-img{height:78vw;min-height:285px;max-height:520px}
+  .product-info{padding:17px 17px 19px}
+  .product-number{font-size:9px;margin-bottom:9px}
+  .type-badge{font-size:9px;padding:7px 10px;margin-bottom:11px}
+  .brandline{font-size:10px}
+  .name{font-size:25px;max-width:none;margin-top:5px}
+  .product-meta{margin-top:9px;font-size:10px}
+  .size-label{font-size:11px}
+  .tag{margin-top:9px}
+  .prices{margin-top:20px;padding-top:0;gap:10px}
+  .price{padding:11px 12px}
+  .price strong{font-size:20px}
+  .payment-plan{margin-top:14px}
+  .initial{padding:9px 10px}
+  .initial strong{font-size:20px}
+  .monthly{font-size:10px}
+  .monthly strong{font-size:14px}
+  .loading,.error,.empty{width:100%;min-height:100vh;padding:90px 25px}
+}
+
+</style>
+</head>
+<body>
+<main id="catalog">
+  <section class="page cover">
+    <div class="cover-top">
+      <div class="logo">BENICONFORT</div>
+      <div class="edition">FOOTWEAR<br>CATÁLOGO</div>
+    </div>
+    <div class="cover-middle">
+      <div class="cover-kicker">Colección disponible</div>
+      <h1>TENIS<br>2026</h1>
+      <div class="cover-line"></div>
+      <div class="cover-sub">Modelos disponibles organizados por talla. Una selección actualizada directamente desde nuestro inventario.</div>
+    </div>
+    <div class="cover-bottom">
+      <div><strong>ENTREGAS EN TRINIDAD</strong><span>Consulta disponibilidad antes de pedir.</span></div>
+      <div class="cover-contact">PEDIDOS<br>739 13409</div>
+    </div>
+  </section>
+
+  <section id="status" class="loading"><h2>Cargando catálogo...</h2><p>Consultando modelos disponibles.</p></section>
+  <div id="pages"></div>
+</main>
+
+<script>
+const WHATSAPP_NUMBER = "59173913409";
+const SUPABASE_URL = "https://lydlyusuanvjjoavbocr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const SIZE_MIN = 34;
+const SIZE_MAX = 45;
+
+function text(v){ return v == null ? "" : String(v).trim(); }
+function money(v){
+  const n = Number(v || 0);
+  return `Bs ${n.toLocaleString('es-BO')}`;
+}
+function normalizeStatus(v){
+  const s = text(v).toLowerCase();
+  if(["vendido","sold"].includes(s)) return "sold";
+  if(["reservado","reserved"].includes(s)) return "reserved";
+  return "available";
+}
+function normalizeProduct(p){
+  const rawType = text(p.tipo ?? p.type);
+  const typeLower = rawType.toLowerCase();
+  const type = typeLower.includes("americano") ? "Americano" :
+               typeLower.includes("económico") || typeLower.includes("economico") ? "Económico" : rawType;
+
+  let sizesQty = p.sizesQty;
+  if(!sizesQty && p.tamaños && typeof p.tamaños === "object") sizesQty = p.tamaños;
+  if(typeof sizesQty === "string"){
+    try{ sizesQty = JSON.parse(sizesQty); }catch{ sizesQty = {}; }
+  }
+  if(!sizesQty || typeof sizesQty !== "object") sizesQty = {};
+
+  return {
+    id:String(p.id ?? ""),
+    type,
+    quality:type,
+    status:normalizeStatus(p.estado ?? p.status),
+    name:text(p.nombre ?? p.name),
+    brand:text(p.marca ?? p.brand),
+    gender:text(p.género ?? p.gender),
+    img:text(p.image_url ?? p.image),
+    cashPrice:Number(p.precio_efectivo ?? p.price ?? 0),
+    creditPrice:Number(p.precio_crédito ?? p.precio_credito ?? p.price ?? 0),
+    initial:Number(p.initial_payment ?? p.initial ?? 0),
+    stock:Number(p.stock ?? 0),
+    size:p.size ?? "",
+    sizesQty,
+    tag:text(p.promoción ?? p.tag),
+    desc:text(p.description ?? p.desc),
+    whatsappLink:p.whatsapp_link ?? p.WhatsApp_link ?? p.whatsappLink ?? ""
+  };
+}
+function availableSizes(p){
+  if(p.quality === "Americanos" || p.quality === "Americano"){
+    if(p.status === "sold" || p.status === "reserved" || !p.size || Number(p.stock ?? 1) <= 0) return [];
+    const n = Number(p.size);
+    return Number.isFinite(n) ? [n] : [];
+  }
+  return Object.keys(p.sizesQty || {})
+    .map(Number)
+    .filter(s => Number.isFinite(s) && Number(p.sizesQty[s]) > 0 && p.status !== "sold" && p.status !== "reserved");
+}
+function selectableProducts(products){
+  return products.filter(p => p.status !== "sold" && p.status !== "reserved" && availableSizes(p).length > 0 && p.img);
+}
+function productForSize(p,size){ return availableSizes(p).includes(size); }
+function escapeHtml(value){
+  return text(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function productCard(p,size,index){
+  const brand=escapeHtml(p.brand || p.type || "Tenis");
+  const name=escapeHtml(p.name || "Modelo disponible");
+  const tag=p.tag ? `<div class="tag">${escapeHtml(p.tag)}</div>` : "";
+  const monthly=p.initial>0 && p.creditPrice>p.initial ? Math.max(0,(p.creditPrice-p.initial)/2) : 0;
+  const paymentPlan=p.initial>0 && monthly>0 ? `
+    <div class="payment-plan">
+      <div class="payment-plan-title">Forma de pago a crédito</div>
+      <div class="payment-plan-body">
+        <div class="initial"><span>Inicial</span><strong>${money(p.initial)}</strong></div>
+        <div class="monthly">Luego, <strong>2 pagos mensuales de ${money(monthly)}</strong></div>
+        <div class="payment-note">Pagos durante 2 meses · Total a crédito: ${money(p.creditPrice)}</div>
+      </div>
+    </div>` : "";
+  return `
+    <article class="product">
+      <div class="product-img">
+        <img src="${escapeHtml(p.img)}" alt="${brand} ${name} talla ${size}" loading="eager" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\'no-image\'>Imagen no disponible</div>'">
+      </div>
+      <div class="product-info">
+        <div class="product-number">Modelo ${String(index+1).padStart(2,'0')}</div>
+        <div class="type-badge">${escapeHtml(p.type || 'Tenis')}</div>
+        <div class="brandline">${brand}</div>
+        <div class="name">${name}</div>
+        <div class="product-meta"><span class="size-label">TALLA ${size}</span></div>
+        ${tag}
+        <div class="prices">
+          <div class="price"><small>Al contado</small><strong>${money(p.cashPrice)}</strong></div>
+          <div class="price"><small>Al crédito</small><strong>${money(p.creditPrice)}</strong></div>
+        </div>
+        ${paymentPlan}
+      </div>
+    </article>`;
+}
+function createSizeSections(products){
+  const sections=[];
+  for(let size=SIZE_MIN;size<=SIZE_MAX;size++){
+    const models=products.filter(p=>productForSize(p,size));
+    if(models.length) sections.push({size,models});
+  }
+  return sections;
+}
+function renderPages(products){
+  const container=document.getElementById('pages');
+  container.innerHTML='';
+  const sections=createSizeSections(products);
+  if(!sections.length){
+    container.innerHTML='<section class="page empty"><h2>No hay modelos disponibles</h2><p>No se encontraron productos con stock e imagen disponibles.</p></section>';
+    return;
+  }
+  sections.forEach(sectionData=>{
+    const section=document.createElement('section');
+    section.className='page size-section';
+    section.innerHTML=`
+      <div class="size-header">
+        <div><div class="kicker">Modelos disponibles</div><h2>TALLA ${sectionData.size}</h2></div>
+        <div class="count">${sectionData.models.length} modelo${sectionData.models.length===1?'':'s'} disponibles</div>
+      </div>
+      <div class="product-list">${sectionData.models.map((p,i)=>productCard(p,sectionData.size,i)).join('')}</div>`;
+    container.appendChild(section);
+  });
+}
+async function loadCatalog(){
+  const status=document.getElementById('status');
+  status.style.display='block';
+  status.className='loading';
+  status.innerHTML='<h2>Cargando catálogo...</h2><p>Consultando modelos disponibles.</p>';
+  document.getElementById('pages').innerHTML='';
+  try{
+    const {data,error}=await supabaseClient.from('productos').select('*');
+    if(error) throw error;
+    const products=selectableProducts((data||[]).map(normalizeProduct));
+    status.style.display='none';
+    renderPages(products);
+  }catch(error){
+    console.error(error);
+    status.className='error';
+    status.style.display='block';
+    status.innerHTML=`<h2>No se pudo cargar el catálogo</h2><p>Verifica la conexión con Supabase y que la tabla <b>productos</b> esté disponible.</p><p style="font-size:12px">${escapeHtml(error.message || error)}</p>`;
+  }
+}
+loadCatalog();
+</script>
+</body>
+</html>
