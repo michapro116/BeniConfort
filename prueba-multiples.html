@@ -3,895 +3,1921 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prueba múltiples imágenes | BeniConfort</title>
+
+<title>BeniConfort | Compartir por talla</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    body {
-        margin: 0;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        background: #f3f4f6;
-        color: #111827;
-    }
+body{
+  margin:0;
+  background:#f5f5f3;
+  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+}
 
-    .contenedor {
-        max-width: 900px;
-        margin: auto;
-    }
+header{
+  background:#111;
+  color:#fff;
+  padding:18px;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
 
-    h1 {
-        margin-top: 0;
-        text-align: center;
-    }
+.header-inner{
+  max-width:1000px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
 
-    .subtitulo {
-        text-align: center;
-        color: #6b7280;
-        margin-bottom: 25px;
-    }
+.logo{
+  font-size:21px;
+  font-weight:900;
+  letter-spacing:2px;
+}
 
-    .productos {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 15px;
-    }
+.estado{
+  font-size:11px;
+  opacity:.75;
+}
 
-    .producto {
-        background: white;
-        border-radius: 15px;
-        padding: 15px;
-        box-shadow: 0 3px 12px rgba(0,0,0,.08);
-        border: 2px solid transparent;
-    }
+main{
+  max-width:1000px;
+  margin:auto;
+  padding:20px 15px 50px;
+}
 
-    .producto.seleccionado {
-        border-color: #111827;
-    }
+.panel{
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 3px 15px rgba(0,0,0,.07);
+}
 
-    .producto img {
-        width: 100%;
-        height: 180px;
-        object-fit: contain;
-        background: #f9fafb;
-        border-radius: 10px;
-    }
+h1{
+  margin:0 0 7px;
+  font-size:28px;
+}
 
-    .producto label {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 10px;
-        cursor: pointer;
-    }
+h2{
+  margin:0 0 15px;
+  font-size:20px;
+}
 
-    .producto input {
-        width: 20px;
-        height: 20px;
-    }
+.sub{
+  color:#666;
+  font-size:13px;
+  line-height:1.5;
+}
 
-    .datos {
-        line-height: 1.6;
-        margin-top: 10px;
-    }
+.tallas{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
 
-    button {
-        width: 100%;
-        padding: 16px;
-        margin-top: 15px;
-        border: none;
-        border-radius: 12px;
-        font-size: 17px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+.talla{
+  border:1px solid #ccc;
+  background:#fff;
+  border-radius:10px;
+  padding:11px 15px;
+  font-weight:800;
+  cursor:pointer;
+}
 
-    .generar {
-        background: #2563eb;
-        color: white;
-    }
+.talla.activa{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
 
-    .compartir {
-        background: #16a34a;
-        color: white;
-    }
+.contador{
+  margin-top:15px;
+  font-size:13px;
+  color:#555;
+}
 
-    button:disabled {
-        opacity: .5;
-        cursor: not-allowed;
-    }
+.productos{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:15px;
+}
 
-    .estado {
-        margin-top: 20px;
-        background: white;
-        border-radius: 15px;
-        padding: 15px;
-    }
+.producto{
+  background:#fff;
+  border:2px solid #e3e3e3;
+  border-radius:16px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:.15s;
+}
 
-    .ok {
-        color: #15803d;
-        font-weight: bold;
-    }
+.producto.seleccionado{
+  border-color:#111;
+  box-shadow:0 0 0 2px #111;
+}
 
-    .error {
-        color: #dc2626;
-        font-weight: bold;
-    }
+.producto-imagen{
+  width:100%;
+  height:220px;
+  background:#f4f4f2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .archivo {
-        padding: 10px;
-        margin-top: 8px;
-        background: #f3f4f6;
-        border-radius: 8px;
-        font-size: 14px;
-    }
+.producto-imagen img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
 
-    .archivo a {
-        display: inline-block;
-        margin-top: 5px;
-        color: #2563eb;
-    }
+.producto-info{
+  padding:15px;
+}
 
-    .instruccion {
-        margin-top: 20px;
-        padding: 15px;
-        background: #fff7ed;
-        border-radius: 12px;
-        border: 1px solid #fed7aa;
-    }
+.checkline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.checkline input{
+  width:21px;
+  height:21px;
+}
+
+.tipo{
+  display:inline-block;
+  background:#111;
+  color:#fff;
+  padding:6px 8px;
+  border-radius:5px;
+  font-size:9px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:9px;
+}
+
+.marca{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:#555;
+}
+
+.nombre{
+  font-size:21px;
+  font-weight:900;
+  margin-top:4px;
+}
+
+.datos{
+  margin-top:10px;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.precio{
+  font-weight:900;
+}
+
+.botones{
+  display:grid;
+  gap:10px;
+}
+
+button.accion{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:16px;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.generar{
+  background:#2563eb;
+  color:white;
+}
+
+.compartir{
+  background:#16a34a;
+  color:white;
+}
+
+.secundario{
+  background:#e5e7eb;
+  color:#111;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.resultado{
+  font-size:13px;
+  line-height:1.6;
+}
+
+.ok{
+  color:#15803d;
+  font-weight:900;
+}
+
+.error{
+  color:#b91c1c;
+  font-weight:900;
+}
+
+.archivo{
+  background:#f4f4f2;
+  border-radius:10px;
+  padding:10px;
+  margin-top:8px;
+}
+
+.oculto{
+  display:none;
+}
+
+@media(max-width:600px){
+
+  main{
+    padding:15px 10px 40px;
+  }
+
+  h1{
+    font-size:24px;
+  }
+
+  .productos{
+    grid-template-columns:1fr;
+  }
+
+  .producto-imagen{
+    height:260px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<div class="contenedor">
+<header>
 
-    <h1>👟 Prueba de múltiples imágenes</h1>
+  <div class="header-inner">
 
-    <div class="subtitulo">
-        BeniConfort · Prueba independiente
+    <div class="logo">
+      BENICONFORT
     </div>
 
-    <div class="productos">
-
-        <!-- PRODUCTO 1 -->
-        <div class="producto seleccionado" id="card1">
-
-            <label>
-                <input
-                    type="checkbox"
-                    class="selector"
-                    value="1"
-                    checked
-                    onchange="actualizarSeleccion()"
-                >
-                Producto 1
-            </label>
-
-            <img id="preview1" alt="Producto 1">
-
-            <div class="datos">
-                <strong>Adidas Run</strong><br>
-                Talla: 40<br>
-                Contado: Bs 350<br>
-                Crédito: Bs 400
-            </div>
-
-        </div>
-
-
-        <!-- PRODUCTO 2 -->
-        <div class="producto seleccionado" id="card2">
-
-            <label>
-                <input
-                    type="checkbox"
-                    class="selector"
-                    value="2"
-                    checked
-                    onchange="actualizarSeleccion()"
-                >
-                Producto 2
-            </label>
-
-            <img id="preview2" alt="Producto 2">
-
-            <div class="datos">
-                <strong>Nike Street</strong><br>
-                Talla: 41<br>
-                Contado: Bs 350<br>
-                Crédito: Bs 400
-            </div>
-
-        </div>
-
-
-        <!-- PRODUCTO 3 -->
-        <div class="producto seleccionado" id="card3">
-
-            <label>
-                <input
-                    type="checkbox"
-                    class="selector"
-                    value="3"
-                    checked
-                    onchange="actualizarSeleccion()"
-                >
-                Producto 3
-            </label>
-
-            <img id="preview3" alt="Producto 3">
-
-            <div class="datos">
-                <strong>Puma Sport</strong><br>
-                Talla: 42<br>
-                Contado: Bs 350<br>
-                Crédito: Bs 400
-            </div>
-
-        </div>
-
+    <div class="estado" id="estadoConexion">
+      Conectando...
     </div>
 
+  </div>
 
-    <button class="generar" onclick="generarImagenes()">
+</header>
+
+
+<main>
+
+  <section class="panel">
+
+    <h1>Compartir productos</h1>
+
+    <div class="sub">
+      Selecciona una talla, marca los modelos que quieres mostrar
+      y genera imágenes reales para compartir por WhatsApp.
+    </div>
+
+  </section>
+
+
+  <!-- TALLAS -->
+
+  <section class="panel">
+
+    <h2>1. Selecciona la talla</h2>
+
+    <div class="tallas" id="tallas">
+      Cargando tallas...
+    </div>
+
+    <div class="contador" id="contador">
+      Cargando inventario...
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTOS -->
+
+  <section class="panel">
+
+    <h2>2. Selecciona los modelos</h2>
+
+    <div
+      id="productos"
+      class="productos"
+    >
+      Selecciona una talla.
+    </div>
+
+  </section>
+
+
+  <!-- ACCIONES -->
+
+  <section class="panel">
+
+    <h2>3. Generar y compartir</h2>
+
+    <div class="contador">
+      Seleccionados:
+      <strong id="cantidadSeleccionados">0</strong>
+    </div>
+
+    <div class="botones">
+
+      <button
+        class="accion generar"
+        id="btnGenerar"
+        onclick="generarImagenes()"
+        disabled
+      >
         🖼️ GENERAR IMÁGENES
-    </button>
+      </button>
 
-    <button
-        class="compartir"
+      <button
+        class="accion compartir"
         id="btnCompartir"
         onclick="compartirImagenes()"
         disabled
-    >
+      >
         📤 COMPARTIR IMÁGENES
-    </button>
+      </button>
 
+      <button
+        class="accion secundario"
+        onclick="seleccionarTodos()"
+      >
+        ☑️ SELECCIONAR TODOS
+      </button>
 
-    <div class="instruccion">
-        <strong>IMPORTANTE:</strong><br>
-        Para esta prueba deja seleccionados los 3 productos.
-        Primero toca <b>GENERAR IMÁGENES</b> y después
-        <b>COMPARTIR IMÁGENES</b>.
-    </div>
-
-
-    <div class="estado">
-
-        <h3>Diagnóstico</h3>
-
-        <div id="diagnostico"></div>
-
-        <h3>Archivos generados</h3>
-
-        <div id="archivos">
-            Todavía no se han generado archivos.
-        </div>
+      <button
+        class="accion secundario"
+        onclick="quitarTodos()"
+      >
+        ⬜ QUITAR SELECCIÓN
+      </button>
 
     </div>
 
-</div>
+  </section>
+
+
+  <!-- RESULTADO -->
+
+  <section class="panel">
+
+    <h2>Resultado</h2>
+
+    <div
+      id="resultado"
+      class="resultado"
+    >
+      Todavía no se han generado imágenes.
+    </div>
+
+  </section>
+
+</main>
 
 
 <script>
 
+/* =========================================================
+   CONFIGURACIÓN SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://lydlyusuanvjjoavbocr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let productos = [];
+
+let tallaActual = null;
+
+let productosMostrados = [];
+
 let archivosGenerados = [];
 
 
-/* ---------------------------------------------------------
-   SVG DE PRUEBA
---------------------------------------------------------- */
+/* =========================================================
+   FUNCIONES GENERALES
+========================================================= */
 
-function crearSVG(nombre, numero) {
+function text(v){
 
-    const colores = {
-        1: "#111827",
-        2: "#dc2626",
-        3: "#2563eb"
-    };
+  return v == null
+    ? ""
+    : String(v).trim();
 
-    const color = colores[numero];
+}
 
-    return `
-    <svg xmlns="http://www.w3.org/2000/svg"
-         width="1000"
-         height="750"
-         viewBox="0 0 1000 750">
 
-        <rect width="1000" height="750" fill="#f3f4f6"/>
+function money(v){
 
-        <ellipse
-            cx="500"
-            cy="560"
-            rx="350"
-            ry="55"
-            fill="#d1d5db"/>
+  const n = Number(v || 0);
 
-        <path
-            d="M190 480
-               C260 470 320 410 390 330
-               C430 285 475 290 510 330
-               L610 430
-               C650 470 710 480 790 490
-               C850 498 890 535 870 570
-               C850 605 790 615 700 610
-               L250 610
-               C170 610 130 560 190 480Z"
-            fill="${color}"/>
+  return "Bs " +
+    n.toLocaleString("es-BO");
 
-        <path
-            d="M390 330
-               C430 370 470 410 520 450"
-            stroke="white"
-            stroke-width="22"
-            fill="none"/>
+}
 
-        <path
-            d="M420 360 L550 490
-               M390 395 L520 525
-               M360 430 L490 555"
-            stroke="white"
-            stroke-width="12"/>
 
-        <text
-            x="500"
-            y="100"
-            text-anchor="middle"
-            font-family="Arial"
-            font-size="55"
-            font-weight="bold"
-            fill="#111827">
-            ${nombre}
-        </text>
+function escapeHtml(value){
 
-    </svg>
+  return text(value).replace(
+    /[&<>'"]/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      "'":"&#39;",
+      '"':"&quot;"
+    }[c])
+  );
+
+}
+
+
+function normalizeStatus(v){
+
+  const s =
+    text(v).toLowerCase();
+
+  if(
+    s === "vendido" ||
+    s === "sold"
+  ){
+    return "sold";
+  }
+
+  if(
+    s === "reservado" ||
+    s === "reserved"
+  ){
+    return "reserved";
+  }
+
+  return "available";
+}
+
+
+/* =========================================================
+   NORMALIZAR PRODUCTO REAL
+========================================================= */
+
+function normalizeProduct(p){
+
+  const rawType =
+    text(
+      p.tipo ??
+      p.type
+    );
+
+  const typeLower =
+    rawType.toLowerCase();
+
+
+  const type =
+    typeLower.includes("americano")
+      ? "Americano"
+      :
+    (
+      typeLower.includes("económico") ||
+      typeLower.includes("economico")
+    )
+      ? "Económico"
+      :
+      rawType;
+
+
+  let sizesQty =
+    p.sizesQty;
+
+
+  if(
+    !sizesQty &&
+    p.tamaños &&
+    typeof p.tamaños === "object"
+  ){
+    sizesQty = p.tamaños;
+  }
+
+
+  if(typeof sizesQty === "string"){
+
+    try{
+
+      sizesQty =
+        JSON.parse(sizesQty);
+
+    }catch{
+
+      sizesQty = {};
+
+    }
+
+  }
+
+
+  if(
+    !sizesQty ||
+    typeof sizesQty !== "object"
+  ){
+
+    sizesQty = {};
+
+  }
+
+
+  return {
+
+    id:
+      String(
+        p.id ?? ""
+      ),
+
+    type,
+
+    status:
+      normalizeStatus(
+        p.estado ??
+        p.status
+      ),
+
+    name:
+      text(
+        p.nombre ??
+        p.name
+      ),
+
+    brand:
+      text(
+        p.marca ??
+        p.brand
+      ),
+
+    img:
+      text(
+        p.image_url ??
+        p.image
+      ),
+
+    cashPrice:
+      Number(
+        p.precio_efectivo ??
+        p.price ??
+        0
+      ),
+
+    creditPrice:
+      Number(
+        p.precio_crédito ??
+        p.precio_credito ??
+        p.price ??
+        0
+      ),
+
+    initial:
+      Number(
+        p.initial_payment ??
+        p.initial ??
+        0
+      ),
+
+    stock:
+      Number(
+        p.stock ??
+        0
+      ),
+
+    size:
+      p.size ??
+      "",
+
+    sizesQty,
+
+    tag:
+      text(
+        p.promoción ??
+        p.tag
+      ),
+
+    desc:
+      text(
+        p.description ??
+        p.desc
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   TALLAS DISPONIBLES
+========================================================= */
+
+function availableSizes(p){
+
+  if(
+    p.type === "Americano"
+  ){
+
+    if(
+      p.status !== "available" ||
+      !p.size ||
+      Number(p.stock || 1) <= 0
+    ){
+
+      return [];
+
+    }
+
+    const n =
+      Number(p.size);
+
+    return Number.isFinite(n)
+      ? [n]
+      : [];
+
+  }
+
+
+  return Object.keys(
+    p.sizesQty || {}
+  )
+
+  .map(Number)
+
+  .filter(
+
+    s =>
+      Number.isFinite(s) &&
+      Number(
+        p.sizesQty[s]
+      ) > 0 &&
+      p.status === "available"
+
+  );
+
+}
+
+
+/* =========================================================
+   CARGAR SUPABASE
+========================================================= */
+
+async function cargarProductos(){
+
+  const estado =
+    document.getElementById(
+      "estadoConexion"
+    );
+
+  try{
+
+    estado.textContent =
+      "Consultando inventario...";
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("productos")
+        .select("*");
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    productos =
+      (data || [])
+        .map(normalizeProduct)
+        .filter(
+          p =>
+            p.status ===
+            "available" &&
+            p.img &&
+            availableSizes(p).length
+        );
+
+
+    estado.textContent =
+      "● Inventario conectado";
+
+
+    estado.style.color =
+      "#86efac";
+
+
+    crearBotonesTalla();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    estado.textContent =
+      "Error de conexión";
+
+    estado.style.color =
+      "#fca5a5";
+
+
+    document.getElementById(
+      "contador"
+    ).innerHTML = `
+
+      <span class="error">
+        No se pudo conectar con Supabase.
+      </span>
+
+      <br><br>
+
+      ${escapeHtml(
+        error.message ||
+        error
+      )}
+
     `;
-}
 
-
-/* ---------------------------------------------------------
-   CREAR PREVIEWS
---------------------------------------------------------- */
-
-function cargarPreviews() {
-
-    for (let i = 1; i <= 3; i++) {
-
-        const nombres = {
-            1: "ADIDAS RUN",
-            2: "NIKE STREET",
-            3: "PUMA SPORT"
-        };
-
-        const svg = crearSVG(nombres[i], i);
-
-        const blob = new Blob([svg], {
-            type: "image/svg+xml"
-        });
-
-        const url = URL.createObjectURL(blob);
-
-        document.getElementById("preview" + i).src = url;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   SELECCIÓN
---------------------------------------------------------- */
-
-function actualizarSeleccion() {
-
-    document.querySelectorAll(".selector").forEach(input => {
-
-        const card = document.getElementById(
-            "card" + input.value
-        );
-
-        if (input.checked) {
-            card.classList.add("seleccionado");
-        } else {
-            card.classList.remove("seleccionado");
-        }
-
-    });
-
-    const cantidad =
-        document.querySelectorAll(".selector:checked").length;
-
-    document.getElementById("diagnostico").innerHTML =
-        `Productos seleccionados: <strong>${cantidad}</strong>`;
+  }
 
 }
 
 
-/* ---------------------------------------------------------
-   CREAR UNA IMAGEN REAL
---------------------------------------------------------- */
-
-function crearArchivoProducto(producto) {
-
-    return new Promise((resolve, reject) => {
-
-        const svg = crearSVG(
-            producto.nombre,
-            producto.numero
-        );
-
-        const blobSVG = new Blob(
-            [svg],
-            { type: "image/svg+xml" }
-        );
-
-        const url = URL.createObjectURL(blobSVG);
-
-        const img = new Image();
-
-        img.onload = function() {
-
-            const canvas = document.createElement("canvas");
-
-            canvas.width = 1200;
-            canvas.height = 1300;
-
-            const ctx = canvas.getContext("2d");
-
-            /* Fondo */
-
-            ctx.fillStyle = "#ffffff";
-
-            ctx.fillRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-
-            /* Imagen del producto */
-
-            ctx.drawImage(
-                img,
-                100,
-                80,
-                1000,
-                750
-            );
-
-
-            /* Separador */
-
-            ctx.fillStyle = "#e5e7eb";
-
-            ctx.fillRect(
-                80,
-                870,
-                1040,
-                3
-            );
-
-
-            /* Nombre */
-
-            ctx.fillStyle = "#111827";
-
-            ctx.font = "bold 55px Arial";
-
-            ctx.fillText(
-                producto.nombre,
-                100,
-                960
-            );
-
-
-            /* Talla */
-
-            ctx.font = "bold 45px Arial";
-
-            ctx.fillText(
-                "Talla " + producto.talla,
-                100,
-                1035
-            );
-
-
-            /* Precio contado */
-
-            ctx.font = "40px Arial";
-
-            ctx.fillText(
-                "Contado: Bs " + producto.contado,
-                100,
-                1100
-            );
-
-
-            /* Precio crédito */
-
-            ctx.fillText(
-                "Crédito: Bs " + producto.credito,
-                100,
-                1160
-            );
-
-
-            /* Marca */
-
-            ctx.font = "bold 35px Arial";
-
-            ctx.fillText(
-                "BeniConfort",
-                100,
-                1230
-            );
-
-
-            canvas.toBlob(
-                function(blob) {
-
-                    if (!blob) {
-                        reject(
-                            new Error(
-                                "No se pudo crear el JPG"
-                            )
-                        );
-                        return;
-                    }
-
-                    const archivo = new File(
-                        [blob],
-                        producto.nombre
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")
-                            + "-talla-"
-                            + producto.talla
-                            + ".jpg",
-                        {
-                            type: "image/jpeg",
-                            lastModified: Date.now()
-                        }
-                    );
-
-                    URL.revokeObjectURL(url);
-
-                    resolve(archivo);
-
-                },
-                "image/jpeg",
-                0.90
-            );
-        };
-
-        img.onerror = function() {
-
-            URL.revokeObjectURL(url);
-
-            reject(
-                new Error(
-                    "No se pudo cargar la imagen de prueba"
-                )
-            );
-        };
-
-        img.src = url;
-
-    });
-}
-
-
-/* ---------------------------------------------------------
-   GENERAR IMÁGENES
---------------------------------------------------------- */
-
-async function generarImagenes() {
-
-    const seleccionados =
-        [...document.querySelectorAll(".selector:checked")];
-
-    if (seleccionados.length === 0) {
-
-        alert(
-            "Selecciona al menos un producto."
-        );
-
-        return;
-    }
-
-
-    const productos = {
-
-        1: {
-            numero: 1,
-            nombre: "Adidas Run",
-            talla: "40",
-            contado: "350",
-            credito: "400"
-        },
-
-        2: {
-            numero: 2,
-            nombre: "Nike Street",
-            talla: "41",
-            contado: "350",
-            credito: "400"
-        },
-
-        3: {
-            numero: 3,
-            nombre: "Puma Sport",
-            talla: "42",
-            contado: "350",
-            credito: "400"
-        }
-
-    };
-
-
-    archivosGenerados = [];
-
-    document.getElementById("archivos").innerHTML =
-        "Generando archivos...";
-
-
-    try {
-
-        for (const checkbox of seleccionados) {
-
-            const producto =
-                productos[checkbox.value];
-
-            const archivo =
-                await crearArchivoProducto(producto);
-
-            archivosGenerados.push(archivo);
-        }
-
-
-        mostrarArchivos();
-
-
-        document.getElementById("btnCompartir").disabled = false;
-
-
-        document.getElementById("diagnostico").innerHTML = `
-
-            <div class="ok">
-                ✅ ${archivosGenerados.length}
-                archivo(s) JPG generados correctamente.
-            </div>
-
-            <br>
-
-            navigator.share:
-            <strong>
-                ${navigator.share ? "SÍ" : "NO"}
-            </strong>
-
-            <br>
-
-            navigator.canShare:
-            <strong>
-                ${navigator.canShare ? "SÍ" : "NO"}
-            </strong>
-
-        `;
-
-    } catch (error) {
-
-        console.error(error);
-
-        document.getElementById("diagnostico").innerHTML = `
-
-            <div class="error">
-                ❌ Error al generar las imágenes:
-                ${error.message}
-            </div>
-
-        `;
+/* =========================================================
+   CREAR BOTONES DE TALLA
+========================================================= */
+
+function crearBotonesTalla(){
+
+  const todasLasTallas =
+    new Set();
+
+
+  productos.forEach(
+    producto => {
+
+      availableSizes(
+        producto
+      ).forEach(
+        talla =>
+          todasLasTallas.add(
+            talla
+          )
+      );
 
     }
+  );
+
+
+  const tallas =
+    [...todasLasTallas]
+      .sort(
+        (a,b) =>
+          a - b
+      );
+
+
+  const contenedor =
+    document.getElementById(
+      "tallas"
+    );
+
+
+  if(!tallas.length){
+
+    contenedor.innerHTML =
+      "No hay tallas disponibles.";
+
+    return;
+
+  }
+
+
+  contenedor.innerHTML =
+    tallas
+      .map(
+        talla => `
+
+          <button
+            class="talla"
+            data-talla="${talla}"
+            onclick="seleccionarTalla(${talla})"
+          >
+            ${talla}
+          </button>
+
+        `
+      )
+      .join("");
+
+
+  seleccionarTalla(
+    tallas[0]
+  );
 
 }
 
 
-/* ---------------------------------------------------------
-   MOSTRAR ARCHIVOS
---------------------------------------------------------- */
+/* =========================================================
+   SELECCIONAR TALLA
+========================================================= */
 
-function mostrarArchivos() {
+function seleccionarTalla(talla){
 
-    const contenedor =
-        document.getElementById("archivos");
+  tallaActual =
+    Number(talla);
 
-    contenedor.innerHTML = "";
 
-    archivosGenerados.forEach(
-        (archivo, indice) => {
+  document
+    .querySelectorAll(".talla")
+    .forEach(
+      boton => {
 
-            const div =
-                document.createElement("div");
+        boton.classList.toggle(
+          "activa",
+          Number(
+            boton.dataset.talla
+          ) === tallaActual
+        );
 
-            div.className = "archivo";
+      }
+    );
 
-            const url =
-                URL.createObjectURL(archivo);
 
-            div.innerHTML = `
+  productosMostrados =
+    productos.filter(
+      producto =>
+        availableSizes(
+          producto
+        ).includes(
+          tallaActual
+        )
+    );
 
-                <strong>
-                    Archivo ${indice + 1}
-                </strong><br>
 
-                Nombre:
-                ${archivo.name}
-                <br>
+  renderProductos();
 
-                Tipo:
-                ${archivo.type}
-                <br>
 
-                Tamaño:
-                ${(archivo.size / 1024).toFixed(1)}
-                KB
-                <br>
+  document.getElementById(
+    "contador"
+  ).innerHTML = `
 
-                <a
-                    href="${url}"
-                    download="${archivo.name}">
-                    Descargar / comprobar archivo
-                </a>
+    Talla <strong>
+      ${tallaActual}
+    </strong>:
 
-            `;
+    <strong>
+      ${productosMostrados.length}
+    </strong>
+    modelos disponibles.
 
-            contenedor.appendChild(div);
+  `;
+
+}
+
+
+/* =========================================================
+   MOSTRAR PRODUCTOS
+========================================================= */
+
+function renderProductos(){
+
+  const contenedor =
+    document.getElementById(
+      "productos"
+    );
+
+
+  if(!productosMostrados.length){
+
+    contenedor.innerHTML =
+      "No hay modelos disponibles en esta talla.";
+
+    actualizarCantidad();
+
+    return;
+
+  }
+
+
+  contenedor.innerHTML =
+    productosMostrados
+      .map(
+        (p,index) => {
+
+          const monthly =
+            p.initial > 0 &&
+            p.creditPrice >
+            p.initial
+
+              ? (
+                  p.creditPrice -
+                  p.initial
+                ) / 2
+
+              : 0;
+
+
+          return `
+
+            <article
+              class="producto"
+              id="producto-${index}"
+              onclick="alternarProducto(${index})"
+            >
+
+              <div class="producto-imagen">
+
+                <img
+                  src="${escapeHtml(p.img)}"
+                  alt="${escapeHtml(p.name)}"
+                  crossorigin="anonymous"
+                  onerror="
+                    this.style.display='none';
+                    this.parentElement.innerHTML=
+                    '<span class=error>No se pudo cargar la imagen</span>';
+                  "
+                >
+
+              </div>
+
+
+              <div class="producto-info">
+
+                <div class="checkline">
+
+                  <input
+                    type="checkbox"
+                    id="check-${index}"
+                    onclick="
+                      event.stopPropagation();
+                      alternarProducto(${index});
+                    "
+                  >
+
+                  <span>
+                    Seleccionar
+                  </span>
+
+                </div>
+
+
+                <div class="tipo">
+                  ${escapeHtml(
+                    p.type ||
+                    "Tenis"
+                  )}
+                </div>
+
+
+                <div class="marca">
+                  ${escapeHtml(
+                    p.brand ||
+                    "Marca"
+                  )}
+                </div>
+
+
+                <div class="nombre">
+                  ${escapeHtml(
+                    p.name ||
+                    "Modelo"
+                  )}
+                </div>
+
+
+                <div class="datos">
+
+                  <strong>
+                    Talla ${tallaActual}
+                  </strong>
+
+                  <br>
+
+                  Al contado:
+                  <span class="precio">
+                    ${money(p.cashPrice)}
+                  </span>
+
+                  <br>
+
+                  Al crédito:
+                  <span class="precio">
+                    ${money(p.creditPrice)}
+                  </span>
+
+                  ${
+                    p.initial > 0
+                    ? `
+                      <br>
+                      Inicial:
+                      <span class="precio">
+                        ${money(p.initial)}
+                      </span>
+                    `
+                    : ""
+                  }
+
+                  ${
+                    monthly > 0
+                    ? `
+                      <br>
+                      2 pagos de:
+                      <span class="precio">
+                        ${money(monthly)}
+                      </span>
+                    `
+                    : ""
+                  }
+
+                </div>
+
+              </div>
+
+            </article>
+
+          `;
 
         }
+      )
+      .join("");
+
+
+  actualizarCantidad();
+
+}
+
+
+/* =========================================================
+   SELECCIONAR / DESELECCIONAR PRODUCTO
+========================================================= */
+
+function alternarProducto(index){
+
+  const producto =
+    document.getElementById(
+      "producto-" +
+      index
+    );
+
+
+  const checkbox =
+    document.getElementById(
+      "check-" +
+      index
+    );
+
+
+  checkbox.checked =
+    !checkbox.checked;
+
+
+  producto.classList.toggle(
+    "seleccionado",
+    checkbox.checked
+  );
+
+
+  actualizarCantidad();
+
+}
+
+
+function obtenerSeleccionados(){
+
+  return productosMostrados
+    .filter(
+      (_,index) => {
+
+        const checkbox =
+          document.getElementById(
+            "check-" +
+            index
+          );
+
+        return checkbox &&
+               checkbox.checked;
+
+      }
     );
 
 }
 
 
-/* ---------------------------------------------------------
-   COMPARTIR MÚLTIPLES ARCHIVOS
---------------------------------------------------------- */
+/* =========================================================
+   CONTADOR
+========================================================= */
 
-async function compartirImagenes() {
+function actualizarCantidad(){
 
-    if (archivosGenerados.length < 2) {
-
-        alert(
-            "Para esta prueba necesitamos al menos 2 imágenes."
-        );
-
-        return;
-    }
+  const cantidad =
+    obtenerSeleccionados()
+      .length;
 
 
-    if (!navigator.share) {
-
-        document.getElementById("diagnostico").innerHTML += `
-
-            <p class="error">
-                ❌ Este navegador no tiene navigator.share.
-            </p>
-
-        `;
-
-        return;
-    }
+  document.getElementById(
+    "cantidadSeleccionados"
+  ).textContent =
+    cantidad;
 
 
-    if (!navigator.canShare) {
-
-        document.getElementById("diagnostico").innerHTML += `
-
-            <p class="error">
-                ❌ Este navegador no tiene navigator.canShare.
-            </p>
-
-        `;
-
-        return;
-    }
+  document.getElementById(
+    "btnGenerar"
+  ).disabled =
+    cantidad === 0;
 
 
-    /* ESTA ES LA PRUEBA IMPORTANTE */
-
-    const puedeCompartir =
-        navigator.canShare({
-            files: archivosGenerados
-        });
-
-
-    document.getElementById("diagnostico").innerHTML += `
-
-        <p>
-            navigator.canShare({ files: [...] }):
-            <strong>
-                ${puedeCompartir ? "✅ SÍ" : "❌ NO"}
-            </strong>
-        </p>
-
-    `;
-
-
-    if (!puedeCompartir) {
-
-        alert(
-            "El navegador no permite compartir estos archivos juntos."
-        );
-
-        return;
-    }
-
-
-    try {
-
-        await navigator.share({
-
-            files: archivosGenerados,
-
-            title:
-                "Tenis BeniConfort"
-
-        });
-
-
-        document.getElementById("diagnostico").innerHTML += `
-
-            <p class="ok">
-                ✅ COMPARTIDO CORRECTAMENTE.
-            </p>
-
-        `;
-
-    } catch (error) {
-
-        console.error(error);
-
-
-        if (error.name === "AbortError") {
-
-            document.getElementById("diagnostico").innerHTML += `
-
-                <p>
-                    ℹ️ Compartir fue cancelado por el usuario.
-                </p>
-
-            `;
-
-        } else {
-
-            document.getElementById("diagnostico").innerHTML += `
-
-                <p class="error">
-                    ❌ Error al compartir:
-                    ${error.name}
-                    -
-                    ${error.message}
-                </p>
-
-            `;
-
-        }
-
-    }
+  document.getElementById(
+    "btnCompartir"
+  ).disabled =
+    archivosGenerados.length === 0;
 
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
+   SELECCIONAR TODOS
+========================================================= */
+
+function seleccionarTodos(){
+
+  productosMostrados
+    .forEach(
+      (_,index) => {
+
+        const checkbox =
+          document.getElementById(
+            "check-" +
+            index
+          );
+
+        const producto =
+          document.getElementById(
+            "producto-" +
+            index
+          );
+
+        if(checkbox){
+
+          checkbox.checked =
+            true;
+
+          producto.classList.add(
+            "seleccionado"
+          );
+
+        }
+
+      }
+    );
+
+
+  actualizarCantidad();
+
+}
+
+
+/* =========================================================
+   QUITAR TODOS
+========================================================= */
+
+function quitarTodos(){
+
+  productosMostrados
+    .forEach(
+      (_,index) => {
+
+        const checkbox =
+          document.getElementById(
+            "check-" +
+            index
+          );
+
+        const producto =
+          document.getElementById(
+            "producto-" +
+            index
+          );
+
+        if(checkbox){
+
+          checkbox.checked =
+            false;
+
+          producto.classList.remove(
+            "seleccionado"
+          );
+
+        }
+
+      }
+    );
+
+
+  actualizarCantidad();
+
+}
+
+
+/* =========================================================
+   CARGAR IMAGEN REAL
+========================================================= */
+
+function cargarImagenReal(url){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const img =
+        new Image();
+
+
+      img.crossOrigin =
+        "anonymous";
+
+
+      img.onload = () => {
+
+        resolve(img);
+
+      };
+
+
+      img.onerror = () => {
+
+        reject(
+          new Error(
+            "No se pudo cargar la imagen desde R2. Posible problema de CORS."
+          )
+        );
+
+      };
+
+
+      img.src =
+        url;
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CREAR JPG REAL
+========================================================= */
+
+async function crearJPG(
+  producto
+){
+
+  const img =
+    await cargarImagenReal(
+      producto.img
+    );
+
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+
+  canvas.width =
+    1200;
+
+  canvas.height =
+    1500;
+
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+
+  /* Fondo */
+
+  ctx.fillStyle =
+    "#ffffff";
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  /* Imagen */
+
+  const margen =
+    70;
+
+  const ancho =
+    1060;
+
+  const alto =
+    850;
+
+
+  const ratio =
+    Math.min(
+      ancho / img.width,
+      alto / img.height
+    );
+
+
+  const w =
+    img.width *
+    ratio;
+
+
+  const h =
+    img.height *
+    ratio;
+
+
+  const x =
+    (canvas.width - w) / 2;
+
+
+  const y =
+    60 +
+    (alto - h) / 2;
+
+
+  ctx.fillStyle =
+    "#f5f5f3";
+
+  ctx.fillRect(
+    margen,
+    60,
+    ancho,
+    alto
+  );
+
+
+  ctx.drawImage(
+    img,
+    x,
+    y,
+    w,
+    h
+  );
+
+
+  /* Línea */
+
+  ctx.fillStyle =
+    "#111111";
+
+  ctx.fillRect(
+    70,
+    960,
+    1060,
+    4
+  );
+
+
+  /* Marca */
+
+  ctx.font =
+    "bold 30px Arial";
+
+  ctx.fillStyle =
+    "#555555";
+
+  ctx.fillText(
+    (
+      producto.brand ||
+      "BENICONFORT"
+    ).toUpperCase(),
+    75,
+    1020
+  );
+
+
+  /* Nombre */
+
+  ctx.font =
+    "bold 54px Arial";
+
+  ctx.fillStyle =
+    "#111111";
+
+  ctx.fillText(
+    producto.name ||
+    "Tenis",
+    75,
+    1090
+  );
+
+
+  /* Tipo */
+
+  ctx.font =
+    "bold 30px Arial";
+
+  ctx.fillText(
+    (
+      producto.type ||
+      "TENIS"
+    ).toUpperCase(),
+    75,
+    1140
+  );
+
+
+  /* Talla */
+
+  ctx.font =
+    "bold 45px Arial";
+
+  ctx.fillText(
+    "TALLA " +
+    tallaActual,
+    75,
+    1210
+  );
+
+
+  /* Precios */
+
+  ctx.font =
+    "34px Arial";
+
+  ctx.fillText(
+    "Contado: " +
+    money(
+      producto.cashPrice
+    ),
+    75,
+    1270
+  );
+
+
+  ctx.fillText(
+    "Crédito: " +
+    money(
+      producto.creditPrice
+    ),
+    75,
+    1320
+  );
+
+
+  /* Inicial */
+
+  if(producto.initial > 0){
+
+    ctx.fillText(
+      "Inicial: " +
+      money(
+        producto.initial
+      ),
+      520,
+      1270
+    );
+
+
+    const monthly =
+      producto.creditPrice >
+      producto.initial
+
+        ? (
+            producto.creditPrice -
+            producto.initial
+          ) / 2
+
+        : 0;
+
+
+    if(monthly > 0){
+
+      ctx.fillText(
+        "2 pagos de " +
+        money(monthly),
+        520,
+        1320
+      );
+
+    }
+
+  }
+
+
+  /* Pie */
+
+  ctx.font =
+    "bold 32px Arial";
+
+  ctx.fillText(
+    "BENICONFORT",
+    75,
+    1400
+  );
+
+
+  ctx.font =
+    "24px Arial";
+
+  ctx.fillStyle =
+    "#555555";
+
+  ctx.fillText(
+    "Entregas a domicilio en Trinidad",
+    75,
+    1440
+  );
+
+
+  /* Convertir a JPG */
+
+  const blob =
+    await new Promise(
+      resolve =>
+        canvas.toBlob(
+          resolve,
+          "image/jpeg",
+          0.90
+        )
+    );
+
+
+  if(!blob){
+
+    throw new Error(
+      "No se pudo convertir la imagen a JPG."
+    );
+
+  }
+
+
+  const nombre =
+    (
+      producto.brand ||
+      "tenis"
+    )
+    .replace(
+      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+/g,
+      "-"
+    )
+    .toLowerCase();
+
+
+  const modelo =
+    (
+      producto.name ||
+      "modelo"
+    )
+    .replace(
+      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+/g,
+      "-"
+    )
+    .toLowerCase();
+
+
+  return new File(
+    [blob],
+    nombre +
+    "-" +
+    modelo +
+    "-talla-" +
+    tallaActual +
+    ".jpg",
+    {
+      type:"image/jpeg",
+      lastModified:
+        Date.now()
+    }
+  );
+
+}
+
+
+/* =========================================================
+   GENERAR IMÁGENES
+========================================================= */
+
+async function generarImagenes(){
+
+  const seleccionados =
+    obtenerSeleccionados();
+
+
+  if(!seleccionados.length){
+
+    alert(
+      "Selecciona al menos un modelo."
+    );
+
+    return;
+
+  }
+
+
+  archivosGenerados =
+    [];
+
+
+  const resultado =
+    document.getElementById(
+      "resultado"
+    );
+
+
+  resultado.innerHTML =
+    "⏳ Generando imágenes reales...";
+
+
+  document.getElementById(
+    "btnGenerar"
+  ).disabled =
+    true;
+
+
+  try{
+
+    for(
+      const producto
+      of seleccionados
+    ){
+
+      const archivo =
+        await crearJPG(
+          producto
+        );
+
+
+      archivosGenerados.push(
+        archivo
+      );
+
+    }
+
+
+    resultado.innerHTML = `
+
+      <div class="ok">
+        ✅ Se generaron
+        ${archivosGenerados.length}
+        imagen(es) JPG reales.
+      </div>
+
+      <br>
+
+      ${archivosGenerados
+        .map(
+          (archivo,index) => `
+
+            <div class="archivo">
+
+              <strong>
+                ${index + 1}.
+                ${escapeHtml(
+                  archivo.name
+                )}
+              </strong>
+
+              <br>
+
+              ${(archivo.size / 1024)
+                .toFixed(1)}
+              KB
+
+            </div>
+
+          `
+        )
+        .join("")
+      }
+
+    `;
+
+
+    document.getElementById(
+      "btnCompartir"
+    ).disabled =
+      false;
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    resultado.innerHTML = `
+
+      <div class="error">
+        ❌ No se pudo generar la imagen.
+      </div>
+
+      <br>
+
+      ${escapeHtml(
+        error.message ||
+        error
+      )}
+
+      <br><br>
+
+      Si el mensaje menciona
+      <strong>CORS</strong>,
+      tendremos que configurar CORS
+      en Cloudflare R2.
+
+    `;
+
+  }
+
+
+  document.getElementById(
+    "btnGenerar"
+  ).disabled =
+    false;
+
+}
+
+
+/* =========================================================
+   COMPARTIR
+========================================================= */
+
+async function compartirImagenes(){
+
+  if(
+    !archivosGenerados.length
+  ){
+
+    alert(
+      "Primero genera las imágenes."
+    );
+
+    return;
+
+  }
+
+
+  if(!navigator.share){
+
+    alert(
+      "Este navegador no soporta compartir archivos."
+    );
+
+    return;
+
+  }
+
+
+  if(!navigator.canShare){
+
+    alert(
+      "Este navegador no permite comprobar archivos."
+    );
+
+    return;
+
+  }
+
+
+  const puede =
+    navigator.canShare({
+      files:
+        archivosGenerados
+    });
+
+
+  if(!puede){
+
+    alert(
+      "Android no permite compartir estos archivos juntos."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await navigator.share({
+
+      files:
+        archivosGenerados,
+
+      title:
+        "Tenis BeniConfort"
+
+    });
+
+
+    document.getElementById(
+      "resultado"
+    ).innerHTML += `
+
+      <div class="ok">
+        <br>
+        ✅ Imágenes compartidas correctamente.
+      </div>
+
+    `;
+
+
+  }catch(error){
+
+    if(
+      error.name ===
+      "AbortError"
+    ){
+
+      return;
+
+    }
+
+
+    console.error(error);
+
+
+    document.getElementById(
+      "resultado"
+    ).innerHTML += `
+
+      <div class="error">
+
+        <br>
+        ❌ Error al compartir:
+        ${escapeHtml(
+          error.message ||
+          error
+        )}
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
    INICIO
---------------------------------------------------------- */
+========================================================= */
 
-cargarPreviews();
-
-actualizarSeleccion();
+cargarProductos();
 
 </script>
 
