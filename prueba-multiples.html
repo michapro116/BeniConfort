@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prueba múltiples imágenes | BeniConfort</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f3f4f6;
+        color: #111827;
+    }
+
+    .contenedor {
+        max-width: 900px;
+        margin: auto;
+    }
+
+    h1 {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .subtitulo {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 25px;
+    }
+
+    .productos {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .producto {
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        border: 2px solid transparent;
+    }
+
+    .producto.seleccionado {
+        border-color: #111827;
+    }
+
+    .producto img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        background: #f9fafb;
+        border-radius: 10px;
+    }
+
+    .producto label {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .producto input {
+        width: 20px;
+        height: 20px;
+    }
+
+    .datos {
+        line-height: 1.6;
+        margin-top: 10px;
+    }
+
+    button {
+        width: 100%;
+        padding: 16px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 12px;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .generar {
+        background: #2563eb;
+        color: white;
+    }
+
+    .compartir {
+        background: #16a34a;
+        color: white;
+    }
+
+    button:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+
+    .estado {
+        margin-top: 20px;
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+    }
+
+    .ok {
+        color: #15803d;
+        font-weight: bold;
+    }
+
+    .error {
+        color: #dc2626;
+        font-weight: bold;
+    }
+
+    .archivo {
+        padding: 10px;
+        margin-top: 8px;
+        background: #f3f4f6;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .archivo a {
+        display: inline-block;
+        margin-top: 5px;
+        color: #2563eb;
+    }
+
+    .instruccion {
+        margin-top: 20px;
+        padding: 15px;
+        background: #fff7ed;
+        border-radius: 12px;
+        border: 1px solid #fed7aa;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>👟 Prueba de múltiples imágenes</h1>
+
+    <div class="subtitulo">
+        BeniConfort · Prueba independiente
+    </div>
+
+    <div class="productos">
+
+        <!-- PRODUCTO 1 -->
+        <div class="producto seleccionado" id="card1">
+
+            <label>
+                <input
+                    type="checkbox"
+                    class="selector"
+                    value="1"
+                    checked
+                    onchange="actualizarSeleccion()"
+                >
+                Producto 1
+            </label>
+
+            <img id="preview1" alt="Producto 1">
+
+            <div class="datos">
+                <strong>Adidas Run</strong><br>
+                Talla: 40<br>
+                Contado: Bs 350<br>
+                Crédito: Bs 400
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCTO 2 -->
+        <div class="producto seleccionado" id="card2">
+
+            <label>
+                <input
+                    type="checkbox"
+                    class="selector"
+                    value="2"
+                    checked
+                    onchange="actualizarSeleccion()"
+                >
+                Producto 2
+            </label>
+
+            <img id="preview2" alt="Producto 2">
+
+            <div class="datos">
+                <strong>Nike Street</strong><br>
+                Talla: 41<br>
+                Contado: Bs 350<br>
+                Crédito: Bs 400
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCTO 3 -->
+        <div class="producto seleccionado" id="card3">
+
+            <label>
+                <input
+                    type="checkbox"
+                    class="selector"
+                    value="3"
+                    checked
+                    onchange="actualizarSeleccion()"
+                >
+                Producto 3
+            </label>
+
+            <img id="preview3" alt="Producto 3">
+
+            <div class="datos">
+                <strong>Puma Sport</strong><br>
+                Talla: 42<br>
+                Contado: Bs 350<br>
+                Crédito: Bs 400
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button class="generar" onclick="generarImagenes()">
+        🖼️ GENERAR IMÁGENES
+    </button>
+
+    <button
+        class="compartir"
+        id="btnCompartir"
+        onclick="compartirImagenes()"
+        disabled
+    >
+        📤 COMPARTIR IMÁGENES
+    </button>
+
+
+    <div class="instruccion">
+        <strong>IMPORTANTE:</strong><br>
+        Para esta prueba deja seleccionados los 3 productos.
+        Primero toca <b>GENERAR IMÁGENES</b> y después
+        <b>COMPARTIR IMÁGENES</b>.
+    </div>
+
+
+    <div class="estado">
+
+        <h3>Diagnóstico</h3>
+
+        <div id="diagnostico"></div>
+
+        <h3>Archivos generados</h3>
+
+        <div id="archivos">
+            Todavía no se han generado archivos.
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let archivosGenerados = [];
+
+
+/* ---------------------------------------------------------
+   SVG DE PRUEBA
+--------------------------------------------------------- */
+
+function crearSVG(nombre, numero) {
+
+    const colores = {
+        1: "#111827",
+        2: "#dc2626",
+        3: "#2563eb"
+    };
+
+    const color = colores[numero];
+
+    return `
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="1000"
+         height="750"
+         viewBox="0 0 1000 750">
+
+        <rect width="1000" height="750" fill="#f3f4f6"/>
+
+        <ellipse
+            cx="500"
+            cy="560"
+            rx="350"
+            ry="55"
+            fill="#d1d5db"/>
+
+        <path
+            d="M190 480
+               C260 470 320 410 390 330
+               C430 285 475 290 510 330
+               L610 430
+               C650 470 710 480 790 490
+               C850 498 890 535 870 570
+               C850 605 790 615 700 610
+               L250 610
+               C170 610 130 560 190 480Z"
+            fill="${color}"/>
+
+        <path
+            d="M390 330
+               C430 370 470 410 520 450"
+            stroke="white"
+            stroke-width="22"
+            fill="none"/>
+
+        <path
+            d="M420 360 L550 490
+               M390 395 L520 525
+               M360 430 L490 555"
+            stroke="white"
+            stroke-width="12"/>
+
+        <text
+            x="500"
+            y="100"
+            text-anchor="middle"
+            font-family="Arial"
+            font-size="55"
+            font-weight="bold"
+            fill="#111827">
+            ${nombre}
+        </text>
+
+    </svg>
+    `;
+}
+
+
+/* ---------------------------------------------------------
+   CREAR PREVIEWS
+--------------------------------------------------------- */
+
+function cargarPreviews() {
+
+    for (let i = 1; i <= 3; i++) {
+
+        const nombres = {
+            1: "ADIDAS RUN",
+            2: "NIKE STREET",
+            3: "PUMA SPORT"
+        };
+
+        const svg = crearSVG(nombres[i], i);
+
+        const blob = new Blob([svg], {
+            type: "image/svg+xml"
+        });
+
+        const url = URL.createObjectURL(blob);
+
+        document.getElementById("preview" + i).src = url;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   SELECCIÓN
+--------------------------------------------------------- */
+
+function actualizarSeleccion() {
+
+    document.querySelectorAll(".selector").forEach(input => {
+
+        const card = document.getElementById(
+            "card" + input.value
+        );
+
+        if (input.checked) {
+            card.classList.add("seleccionado");
+        } else {
+            card.classList.remove("seleccionado");
+        }
+
+    });
+
+    const cantidad =
+        document.querySelectorAll(".selector:checked").length;
+
+    document.getElementById("diagnostico").innerHTML =
+        `Productos seleccionados: <strong>${cantidad}</strong>`;
+
+}
+
+
+/* ---------------------------------------------------------
+   CREAR UNA IMAGEN REAL
+--------------------------------------------------------- */
+
+function crearArchivoProducto(producto) {
+
+    return new Promise((resolve, reject) => {
+
+        const svg = crearSVG(
+            producto.nombre,
+            producto.numero
+        );
+
+        const blobSVG = new Blob(
+            [svg],
+            { type: "image/svg+xml" }
+        );
+
+        const url = URL.createObjectURL(blobSVG);
+
+        const img = new Image();
+
+        img.onload = function() {
+
+            const canvas = document.createElement("canvas");
+
+            canvas.width = 1200;
+            canvas.height = 1300;
+
+            const ctx = canvas.getContext("2d");
+
+            /* Fondo */
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            /* Imagen del producto */
+
+            ctx.drawImage(
+                img,
+                100,
+                80,
+                1000,
+                750
+            );
+
+
+            /* Separador */
+
+            ctx.fillStyle = "#e5e7eb";
+
+            ctx.fillRect(
+                80,
+                870,
+                1040,
+                3
+            );
+
+
+            /* Nombre */
+
+            ctx.fillStyle = "#111827";
+
+            ctx.font = "bold 55px Arial";
+
+            ctx.fillText(
+                producto.nombre,
+                100,
+                960
+            );
+
+
+            /* Talla */
+
+            ctx.font = "bold 45px Arial";
+
+            ctx.fillText(
+                "Talla " + producto.talla,
+                100,
+                1035
+            );
+
+
+            /* Precio contado */
+
+            ctx.font = "40px Arial";
+
+            ctx.fillText(
+                "Contado: Bs " + producto.contado,
+                100,
+                1100
+            );
+
+
+            /* Precio crédito */
+
+            ctx.fillText(
+                "Crédito: Bs " + producto.credito,
+                100,
+                1160
+            );
+
+
+            /* Marca */
+
+            ctx.font = "bold 35px Arial";
+
+            ctx.fillText(
+                "BeniConfort",
+                100,
+                1230
+            );
+
+
+            canvas.toBlob(
+                function(blob) {
+
+                    if (!blob) {
+                        reject(
+                            new Error(
+                                "No se pudo crear el JPG"
+                            )
+                        );
+                        return;
+                    }
+
+                    const archivo = new File(
+                        [blob],
+                        producto.nombre
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")
+                            + "-talla-"
+                            + producto.talla
+                            + ".jpg",
+                        {
+                            type: "image/jpeg",
+                            lastModified: Date.now()
+                        }
+                    );
+
+                    URL.revokeObjectURL(url);
+
+                    resolve(archivo);
+
+                },
+                "image/jpeg",
+                0.90
+            );
+        };
+
+        img.onerror = function() {
+
+            URL.revokeObjectURL(url);
+
+            reject(
+                new Error(
+                    "No se pudo cargar la imagen de prueba"
+                )
+            );
+        };
+
+        img.src = url;
+
+    });
+}
+
+
+/* ---------------------------------------------------------
+   GENERAR IMÁGENES
+--------------------------------------------------------- */
+
+async function generarImagenes() {
+
+    const seleccionados =
+        [...document.querySelectorAll(".selector:checked")];
+
+    if (seleccionados.length === 0) {
+
+        alert(
+            "Selecciona al menos un producto."
+        );
+
+        return;
+    }
+
+
+    const productos = {
+
+        1: {
+            numero: 1,
+            nombre: "Adidas Run",
+            talla: "40",
+            contado: "350",
+            credito: "400"
+        },
+
+        2: {
+            numero: 2,
+            nombre: "Nike Street",
+            talla: "41",
+            contado: "350",
+            credito: "400"
+        },
+
+        3: {
+            numero: 3,
+            nombre: "Puma Sport",
+            talla: "42",
+            contado: "350",
+            credito: "400"
+        }
+
+    };
+
+
+    archivosGenerados = [];
+
+    document.getElementById("archivos").innerHTML =
+        "Generando archivos...";
+
+
+    try {
+
+        for (const checkbox of seleccionados) {
+
+            const producto =
+                productos[checkbox.value];
+
+            const archivo =
+                await crearArchivoProducto(producto);
+
+            archivosGenerados.push(archivo);
+        }
+
+
+        mostrarArchivos();
+
+
+        document.getElementById("btnCompartir").disabled = false;
+
+
+        document.getElementById("diagnostico").innerHTML = `
+
+            <div class="ok">
+                ✅ ${archivosGenerados.length}
+                archivo(s) JPG generados correctamente.
+            </div>
+
+            <br>
+
+            navigator.share:
+            <strong>
+                ${navigator.share ? "SÍ" : "NO"}
+            </strong>
+
+            <br>
+
+            navigator.canShare:
+            <strong>
+                ${navigator.canShare ? "SÍ" : "NO"}
+            </strong>
+
+        `;
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("diagnostico").innerHTML = `
+
+            <div class="error">
+                ❌ Error al generar las imágenes:
+                ${error.message}
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   MOSTRAR ARCHIVOS
+--------------------------------------------------------- */
+
+function mostrarArchivos() {
+
+    const contenedor =
+        document.getElementById("archivos");
+
+    contenedor.innerHTML = "";
+
+    archivosGenerados.forEach(
+        (archivo, indice) => {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "archivo";
+
+            const url =
+                URL.createObjectURL(archivo);
+
+            div.innerHTML = `
+
+                <strong>
+                    Archivo ${indice + 1}
+                </strong><br>
+
+                Nombre:
+                ${archivo.name}
+                <br>
+
+                Tipo:
+                ${archivo.type}
+                <br>
+
+                Tamaño:
+                ${(archivo.size / 1024).toFixed(1)}
+                KB
+                <br>
+
+                <a
+                    href="${url}"
+                    download="${archivo.name}">
+                    Descargar / comprobar archivo
+                </a>
+
+            `;
+
+            contenedor.appendChild(div);
+
+        }
+    );
+
+}
+
+
+/* ---------------------------------------------------------
+   COMPARTIR MÚLTIPLES ARCHIVOS
+--------------------------------------------------------- */
+
+async function compartirImagenes() {
+
+    if (archivosGenerados.length < 2) {
+
+        alert(
+            "Para esta prueba necesitamos al menos 2 imágenes."
+        );
+
+        return;
+    }
+
+
+    if (!navigator.share) {
+
+        document.getElementById("diagnostico").innerHTML += `
+
+            <p class="error">
+                ❌ Este navegador no tiene navigator.share.
+            </p>
+
+        `;
+
+        return;
+    }
+
+
+    if (!navigator.canShare) {
+
+        document.getElementById("diagnostico").innerHTML += `
+
+            <p class="error">
+                ❌ Este navegador no tiene navigator.canShare.
+            </p>
+
+        `;
+
+        return;
+    }
+
+
+    /* ESTA ES LA PRUEBA IMPORTANTE */
+
+    const puedeCompartir =
+        navigator.canShare({
+            files: archivosGenerados
+        });
+
+
+    document.getElementById("diagnostico").innerHTML += `
+
+        <p>
+            navigator.canShare({ files: [...] }):
+            <strong>
+                ${puedeCompartir ? "✅ SÍ" : "❌ NO"}
+            </strong>
+        </p>
+
+    `;
+
+
+    if (!puedeCompartir) {
+
+        alert(
+            "El navegador no permite compartir estos archivos juntos."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        await navigator.share({
+
+            files: archivosGenerados,
+
+            title:
+                "Tenis BeniConfort"
+
+        });
+
+
+        document.getElementById("diagnostico").innerHTML += `
+
+            <p class="ok">
+                ✅ COMPARTIDO CORRECTAMENTE.
+            </p>
+
+        `;
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        if (error.name === "AbortError") {
+
+            document.getElementById("diagnostico").innerHTML += `
+
+                <p>
+                    ℹ️ Compartir fue cancelado por el usuario.
+                </p>
+
+            `;
+
+        } else {
+
+            document.getElementById("diagnostico").innerHTML += `
+
+                <p class="error">
+                    ❌ Error al compartir:
+                    ${error.name}
+                    -
+                    ${error.message}
+                </p>
+
+            `;
+
+        }
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   INICIO
+--------------------------------------------------------- */
+
+cargarPreviews();
+
+actualizarSeleccion();
+
+</script>
+
+</body>
+</html>
