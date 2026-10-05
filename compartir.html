@@ -279,7 +279,6 @@ button:disabled{
 <body>
 
 <header>
-
   <div class="header-inner">
 
     <div class="logo">
@@ -291,7 +290,6 @@ button:disabled{
     </div>
 
   </div>
-
 </header>
 
 
@@ -309,8 +307,6 @@ button:disabled{
   </section>
 
 
-  <!-- TALLAS -->
-
   <section class="panel">
 
     <h2>1. Selecciona la talla</h2>
@@ -326,23 +322,16 @@ button:disabled{
   </section>
 
 
-  <!-- PRODUCTOS -->
-
   <section class="panel">
 
     <h2>2. Selecciona los modelos</h2>
 
-    <div
-      id="productos"
-      class="productos"
-    >
+    <div id="productos" class="productos">
       Selecciona una talla.
     </div>
 
   </section>
 
-
-  <!-- ACCIONES -->
 
   <section class="panel">
 
@@ -392,16 +381,11 @@ button:disabled{
   </section>
 
 
-  <!-- RESULTADO -->
-
   <section class="panel">
 
     <h2>Resultado</h2>
 
-    <div
-      id="resultado"
-      class="resultado"
-    >
+    <div id="resultado" class="resultado">
       Todavía no se han generado imágenes.
     </div>
 
@@ -447,11 +431,9 @@ let archivosGenerados = [];
 ========================================================= */
 
 function text(v){
-
   return v == null
     ? ""
     : String(v).trim();
-
 }
 
 
@@ -487,15 +469,13 @@ function normalizeStatus(v){
     text(v).toLowerCase();
 
   if(
-    s === "vendido" ||
-    s === "sold"
+    ["vendido","sold"].includes(s)
   ){
     return "sold";
   }
 
   if(
-    s === "reservado" ||
-    s === "reserved"
+    ["reservado","reserved"].includes(s)
   ){
     return "reserved";
   }
@@ -505,7 +485,8 @@ function normalizeStatus(v){
 
 
 /* =========================================================
-   NORMALIZAR PRODUCTO REAL
+   NORMALIZAR PRODUCTO
+   MISMA LÓGICA DEL CATÁLOGO
 ========================================================= */
 
 function normalizeProduct(p){
@@ -518,7 +499,6 @@ function normalizeProduct(p){
 
   const typeLower =
     rawType.toLowerCase();
-
 
   const type =
     typeLower.includes("americano")
@@ -542,7 +522,8 @@ function normalizeProduct(p){
     p.tamaños &&
     typeof p.tamaños === "object"
   ){
-    sizesQty = p.tamaños;
+    sizesQty =
+      p.tamaños;
   }
 
 
@@ -581,6 +562,9 @@ function normalizeProduct(p){
 
     type,
 
+    quality:
+      type,
+
     status:
       normalizeStatus(
         p.estado ??
@@ -597,6 +581,12 @@ function normalizeProduct(p){
       text(
         p.marca ??
         p.brand
+      ),
+
+    gender:
+      text(
+        p.género ??
+        p.gender
       ),
 
     img:
@@ -649,7 +639,13 @@ function normalizeProduct(p){
       text(
         p.description ??
         p.desc
-      )
+      ),
+
+    whatsappLink:
+      p.whatsapp_link ??
+      p.WhatsApp_link ??
+      p.whatsappLink ??
+      ""
 
   };
 
@@ -657,19 +653,24 @@ function normalizeProduct(p){
 
 
 /* =========================================================
-   TALLAS DISPONIBLES
+   TALLAS
+   EXACTAMENTE CON LA LÓGICA DEL CATÁLOGO
 ========================================================= */
 
 function availableSizes(p){
 
   if(
-    p.type === "Americano"
+    p.quality === "Americanos" ||
+    p.quality === "Americano"
   ){
 
     if(
-      p.status !== "available" ||
+      p.status === "sold" ||
+      p.status === "reserved" ||
       !p.size ||
-      Number(p.stock || 1) <= 0
+      Number(
+        p.stock ?? 1
+      ) <= 0
     ){
 
       return [];
@@ -693,15 +694,42 @@ function availableSizes(p){
   .map(Number)
 
   .filter(
-
     s =>
       Number.isFinite(s) &&
       Number(
         p.sizesQty[s]
       ) > 0 &&
-      p.status === "available"
-
+      p.status !== "sold" &&
+      p.status !== "reserved"
   );
+
+}
+
+
+/* =========================================================
+   PRODUCTOS SELECCIONABLES
+   MISMA LÓGICA DEL CATÁLOGO
+========================================================= */
+
+function selectableProducts(products){
+
+  return products.filter(
+    p =>
+      p.status !== "sold" &&
+      p.status !== "reserved" &&
+      availableSizes(p).length > 0 &&
+      p.img
+  );
+
+}
+
+
+function productForSize(p,size){
+
+  return availableSizes(p)
+    .includes(
+      Number(size)
+    );
 
 }
 
@@ -740,20 +768,16 @@ async function cargarProductos(){
 
 
     productos =
-      (data || [])
-        .map(normalizeProduct)
-        .filter(
-          p =>
-            p.status ===
-            "available" &&
-            p.img &&
-            availableSizes(p).length
-        );
+      selectableProducts(
+        (data || [])
+          .map(
+            normalizeProduct
+          )
+      );
 
 
     estado.textContent =
       "● Inventario conectado";
-
 
     estado.style.color =
       "#86efac";
@@ -797,1129 +821,3 @@ async function cargarProductos(){
 
 /* =========================================================
    CREAR BOTONES DE TALLA
-========================================================= */
-
-function crearBotonesTalla(){
-
-  const todasLasTallas =
-    new Set();
-
-
-  productos.forEach(
-    producto => {
-
-      availableSizes(
-        producto
-      ).forEach(
-        talla =>
-          todasLasTallas.add(
-            talla
-          )
-      );
-
-    }
-  );
-
-
-  const tallas =
-    [...todasLasTallas]
-      .sort(
-        (a,b) =>
-          a - b
-      );
-
-
-  const contenedor =
-    document.getElementById(
-      "tallas"
-    );
-
-
-  if(!tallas.length){
-
-    contenedor.innerHTML =
-      "No hay tallas disponibles.";
-
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    tallas
-      .map(
-        talla => `
-
-          <button
-            class="talla"
-            data-talla="${talla}"
-            onclick="seleccionarTalla(${talla})"
-          >
-            ${talla}
-          </button>
-
-        `
-      )
-      .join("");
-
-
-  seleccionarTalla(
-    tallas[0]
-  );
-
-}
-
-
-/* =========================================================
-   SELECCIONAR TALLA
-========================================================= */
-
-function seleccionarTalla(talla){
-
-  tallaActual =
-    Number(talla);
-
-
-  document
-    .querySelectorAll(".talla")
-    .forEach(
-      boton => {
-
-        boton.classList.toggle(
-          "activa",
-          Number(
-            boton.dataset.talla
-          ) === tallaActual
-        );
-
-      }
-    );
-
-
-  productosMostrados =
-    productos.filter(
-      producto =>
-        availableSizes(
-          producto
-        ).includes(
-          tallaActual
-        )
-    );
-
-
-  renderProductos();
-
-
-  document.getElementById(
-    "contador"
-  ).innerHTML = `
-
-    Talla <strong>
-      ${tallaActual}
-    </strong>:
-
-    <strong>
-      ${productosMostrados.length}
-    </strong>
-    modelos disponibles.
-
-  `;
-
-}
-
-
-/* =========================================================
-   MOSTRAR PRODUCTOS
-========================================================= */
-
-function renderProductos(){
-
-  const contenedor =
-    document.getElementById(
-      "productos"
-    );
-
-
-  if(!productosMostrados.length){
-
-    contenedor.innerHTML =
-      "No hay modelos disponibles en esta talla.";
-
-    actualizarCantidad();
-
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    productosMostrados
-      .map(
-        (p,index) => {
-
-          const monthly =
-            p.initial > 0 &&
-            p.creditPrice >
-            p.initial
-
-              ? (
-                  p.creditPrice -
-                  p.initial
-                ) / 2
-
-              : 0;
-
-
-          return `
-
-            <article
-              class="producto"
-              id="producto-${index}"
-              onclick="alternarProducto(${index})"
-            >
-
-              <div class="producto-imagen">
-
-                <img
-                  src="${escapeHtml(p.img)}"
-                  alt="${escapeHtml(p.name)}"
-                  crossorigin="anonymous"
-                  onerror="
-                    this.style.display='none';
-                    this.parentElement.innerHTML=
-                    '<span class=error>No se pudo cargar la imagen</span>';
-                  "
-                >
-
-              </div>
-
-
-              <div class="producto-info">
-
-                <div class="checkline">
-
-                  <input
-                    type="checkbox"
-                    id="check-${index}"
-                    onclick="
-                      event.stopPropagation();
-                      alternarProducto(${index});
-                    "
-                  >
-
-                  <span>
-                    Seleccionar
-                  </span>
-
-                </div>
-
-
-                <div class="tipo">
-                  ${escapeHtml(
-                    p.type ||
-                    "Tenis"
-                  )}
-                </div>
-
-
-                <div class="marca">
-                  ${escapeHtml(
-                    p.brand ||
-                    "Marca"
-                  )}
-                </div>
-
-
-                <div class="nombre">
-                  ${escapeHtml(
-                    p.name ||
-                    "Modelo"
-                  )}
-                </div>
-
-
-                <div class="datos">
-
-                  <strong>
-                    Talla ${tallaActual}
-                  </strong>
-
-                  <br>
-
-                  Al contado:
-                  <span class="precio">
-                    ${money(p.cashPrice)}
-                  </span>
-
-                  <br>
-
-                  Al crédito:
-                  <span class="precio">
-                    ${money(p.creditPrice)}
-                  </span>
-
-                  ${
-                    p.initial > 0
-                    ? `
-                      <br>
-                      Inicial:
-                      <span class="precio">
-                        ${money(p.initial)}
-                      </span>
-                    `
-                    : ""
-                  }
-
-                  ${
-                    monthly > 0
-                    ? `
-                      <br>
-                      2 pagos de:
-                      <span class="precio">
-                        ${money(monthly)}
-                      </span>
-                    `
-                    : ""
-                  }
-
-                </div>
-
-              </div>
-
-            </article>
-
-          `;
-
-        }
-      )
-      .join("");
-
-
-  actualizarCantidad();
-
-}
-
-
-/* =========================================================
-   SELECCIONAR / DESELECCIONAR PRODUCTO
-========================================================= */
-
-function alternarProducto(index){
-
-  const producto =
-    document.getElementById(
-      "producto-" +
-      index
-    );
-
-
-  const checkbox =
-    document.getElementById(
-      "check-" +
-      index
-    );
-
-
-  checkbox.checked =
-    !checkbox.checked;
-
-
-  producto.classList.toggle(
-    "seleccionado",
-    checkbox.checked
-  );
-
-
-  actualizarCantidad();
-
-}
-
-
-function obtenerSeleccionados(){
-
-  return productosMostrados
-    .filter(
-      (_,index) => {
-
-        const checkbox =
-          document.getElementById(
-            "check-" +
-            index
-          );
-
-        return checkbox &&
-               checkbox.checked;
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   CONTADOR
-========================================================= */
-
-function actualizarCantidad(){
-
-  const cantidad =
-    obtenerSeleccionados()
-      .length;
-
-
-  document.getElementById(
-    "cantidadSeleccionados"
-  ).textContent =
-    cantidad;
-
-
-  document.getElementById(
-    "btnGenerar"
-  ).disabled =
-    cantidad === 0;
-
-
-  document.getElementById(
-    "btnCompartir"
-  ).disabled =
-    archivosGenerados.length === 0;
-
-}
-
-
-/* =========================================================
-   SELECCIONAR TODOS
-========================================================= */
-
-function seleccionarTodos(){
-
-  productosMostrados
-    .forEach(
-      (_,index) => {
-
-        const checkbox =
-          document.getElementById(
-            "check-" +
-            index
-          );
-
-        const producto =
-          document.getElementById(
-            "producto-" +
-            index
-          );
-
-        if(checkbox){
-
-          checkbox.checked =
-            true;
-
-          producto.classList.add(
-            "seleccionado"
-          );
-
-        }
-
-      }
-    );
-
-
-  actualizarCantidad();
-
-}
-
-
-/* =========================================================
-   QUITAR TODOS
-========================================================= */
-
-function quitarTodos(){
-
-  productosMostrados
-    .forEach(
-      (_,index) => {
-
-        const checkbox =
-          document.getElementById(
-            "check-" +
-            index
-          );
-
-        const producto =
-          document.getElementById(
-            "producto-" +
-            index
-          );
-
-        if(checkbox){
-
-          checkbox.checked =
-            false;
-
-          producto.classList.remove(
-            "seleccionado"
-          );
-
-        }
-
-      }
-    );
-
-
-  actualizarCantidad();
-
-}
-
-
-/* =========================================================
-   CARGAR IMAGEN REAL
-========================================================= */
-
-function cargarImagenReal(url){
-
-  return new Promise(
-    (resolve,reject) => {
-
-      const img =
-        new Image();
-
-
-      img.crossOrigin =
-        "anonymous";
-
-
-      img.onload = () => {
-
-        resolve(img);
-
-      };
-
-
-      img.onerror = () => {
-
-        reject(
-          new Error(
-            "No se pudo cargar la imagen desde R2. Posible problema de CORS."
-          )
-        );
-
-      };
-
-
-      img.src =
-        url;
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CREAR JPG REAL
-========================================================= */
-
-async function crearJPG(
-  producto
-){
-
-  const img =
-    await cargarImagenReal(
-      producto.img
-    );
-
-
-  const canvas =
-    document.createElement(
-      "canvas"
-    );
-
-
-  canvas.width =
-    1200;
-
-  canvas.height =
-    1500;
-
-
-  const ctx =
-    canvas.getContext(
-      "2d"
-    );
-
-
-  /* Fondo */
-
-  ctx.fillStyle =
-    "#ffffff";
-
-  ctx.fillRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-
-  /* Imagen */
-
-  const margen =
-    70;
-
-  const ancho =
-    1060;
-
-  const alto =
-    850;
-
-
-  const ratio =
-    Math.min(
-      ancho / img.width,
-      alto / img.height
-    );
-
-
-  const w =
-    img.width *
-    ratio;
-
-
-  const h =
-    img.height *
-    ratio;
-
-
-  const x =
-    (canvas.width - w) / 2;
-
-
-  const y =
-    60 +
-    (alto - h) / 2;
-
-
-  ctx.fillStyle =
-    "#f5f5f3";
-
-  ctx.fillRect(
-    margen,
-    60,
-    ancho,
-    alto
-  );
-
-
-  ctx.drawImage(
-    img,
-    x,
-    y,
-    w,
-    h
-  );
-
-
-  /* Línea */
-
-  ctx.fillStyle =
-    "#111111";
-
-  ctx.fillRect(
-    70,
-    960,
-    1060,
-    4
-  );
-
-
-  /* Marca */
-
-  ctx.font =
-    "bold 30px Arial";
-
-  ctx.fillStyle =
-    "#555555";
-
-  ctx.fillText(
-    (
-      producto.brand ||
-      "BENICONFORT"
-    ).toUpperCase(),
-    75,
-    1020
-  );
-
-
-  /* Nombre */
-
-  ctx.font =
-    "bold 54px Arial";
-
-  ctx.fillStyle =
-    "#111111";
-
-  ctx.fillText(
-    producto.name ||
-    "Tenis",
-    75,
-    1090
-  );
-
-
-  /* Tipo */
-
-  ctx.font =
-    "bold 30px Arial";
-
-  ctx.fillText(
-    (
-      producto.type ||
-      "TENIS"
-    ).toUpperCase(),
-    75,
-    1140
-  );
-
-
-  /* Talla */
-
-  ctx.font =
-    "bold 45px Arial";
-
-  ctx.fillText(
-    "TALLA " +
-    tallaActual,
-    75,
-    1210
-  );
-
-
-  /* Precios */
-
-  ctx.font =
-    "34px Arial";
-
-  ctx.fillText(
-    "Contado: " +
-    money(
-      producto.cashPrice
-    ),
-    75,
-    1270
-  );
-
-
-  ctx.fillText(
-    "Crédito: " +
-    money(
-      producto.creditPrice
-    ),
-    75,
-    1320
-  );
-
-
-  /* Inicial */
-
-  if(producto.initial > 0){
-
-    ctx.fillText(
-      "Inicial: " +
-      money(
-        producto.initial
-      ),
-      520,
-      1270
-    );
-
-
-    const monthly =
-      producto.creditPrice >
-      producto.initial
-
-        ? (
-            producto.creditPrice -
-            producto.initial
-          ) / 2
-
-        : 0;
-
-
-    if(monthly > 0){
-
-      ctx.fillText(
-        "2 pagos de " +
-        money(monthly),
-        520,
-        1320
-      );
-
-    }
-
-  }
-
-
-  /* Pie */
-
-  ctx.font =
-    "bold 32px Arial";
-
-  ctx.fillText(
-    "BENICONFORT",
-    75,
-    1400
-  );
-
-
-  ctx.font =
-    "24px Arial";
-
-  ctx.fillStyle =
-    "#555555";
-
-  ctx.fillText(
-    "Entregas a domicilio en Trinidad",
-    75,
-    1440
-  );
-
-
-  /* Convertir a JPG */
-
-  const blob =
-    await new Promise(
-      resolve =>
-        canvas.toBlob(
-          resolve,
-          "image/jpeg",
-          0.90
-        )
-    );
-
-
-  if(!blob){
-
-    throw new Error(
-      "No se pudo convertir la imagen a JPG."
-    );
-
-  }
-
-
-  const nombre =
-    (
-      producto.brand ||
-      "tenis"
-    )
-    .replace(
-      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+/g,
-      "-"
-    )
-    .toLowerCase();
-
-
-  const modelo =
-    (
-      producto.name ||
-      "modelo"
-    )
-    .replace(
-      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+/g,
-      "-"
-    )
-    .toLowerCase();
-
-
-  return new File(
-    [blob],
-    nombre +
-    "-" +
-    modelo +
-    "-talla-" +
-    tallaActual +
-    ".jpg",
-    {
-      type:"image/jpeg",
-      lastModified:
-        Date.now()
-    }
-  );
-
-}
-
-
-/* =========================================================
-   GENERAR IMÁGENES
-========================================================= */
-
-async function generarImagenes(){
-
-  const seleccionados =
-    obtenerSeleccionados();
-
-
-  if(!seleccionados.length){
-
-    alert(
-      "Selecciona al menos un modelo."
-    );
-
-    return;
-
-  }
-
-
-  archivosGenerados =
-    [];
-
-
-  const resultado =
-    document.getElementById(
-      "resultado"
-    );
-
-
-  resultado.innerHTML =
-    "⏳ Generando imágenes reales...";
-
-
-  document.getElementById(
-    "btnGenerar"
-  ).disabled =
-    true;
-
-
-  try{
-
-    for(
-      const producto
-      of seleccionados
-    ){
-
-      const archivo =
-        await crearJPG(
-          producto
-        );
-
-
-      archivosGenerados.push(
-        archivo
-      );
-
-    }
-
-
-    resultado.innerHTML = `
-
-      <div class="ok">
-        ✅ Se generaron
-        ${archivosGenerados.length}
-        imagen(es) JPG reales.
-      </div>
-
-      <br>
-
-      ${archivosGenerados
-        .map(
-          (archivo,index) => `
-
-            <div class="archivo">
-
-              <strong>
-                ${index + 1}.
-                ${escapeHtml(
-                  archivo.name
-                )}
-              </strong>
-
-              <br>
-
-              ${(archivo.size / 1024)
-                .toFixed(1)}
-              KB
-
-            </div>
-
-          `
-        )
-        .join("")
-      }
-
-    `;
-
-
-    document.getElementById(
-      "btnCompartir"
-    ).disabled =
-      false;
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    resultado.innerHTML = `
-
-      <div class="error">
-        ❌ No se pudo generar la imagen.
-      </div>
-
-      <br>
-
-      ${escapeHtml(
-        error.message ||
-        error
-      )}
-
-      <br><br>
-
-      Si el mensaje menciona
-      <strong>CORS</strong>,
-      tendremos que configurar CORS
-      en Cloudflare R2.
-
-    `;
-
-  }
-
-
-  document.getElementById(
-    "btnGenerar"
-  ).disabled =
-    false;
-
-}
-
-
-/* =========================================================
-   COMPARTIR
-========================================================= */
-
-async function compartirImagenes(){
-
-  if(
-    !archivosGenerados.length
-  ){
-
-    alert(
-      "Primero genera las imágenes."
-    );
-
-    return;
-
-  }
-
-
-  if(!navigator.share){
-
-    alert(
-      "Este navegador no soporta compartir archivos."
-    );
-
-    return;
-
-  }
-
-
-  if(!navigator.canShare){
-
-    alert(
-      "Este navegador no permite comprobar archivos."
-    );
-
-    return;
-
-  }
-
-
-  const puede =
-    navigator.canShare({
-      files:
-        archivosGenerados
-    });
-
-
-  if(!puede){
-
-    alert(
-      "Android no permite compartir estos archivos juntos."
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    await navigator.share({
-
-      files:
-        archivosGenerados,
-
-      title:
-        "Tenis BeniConfort"
-
-    });
-
-
-    document.getElementById(
-      "resultado"
-    ).innerHTML += `
-
-      <div class="ok">
-        <br>
-        ✅ Imágenes compartidas correctamente.
-      </div>
-
-    `;
-
-
-  }catch(error){
-
-    if(
-      error.name ===
-      "AbortError"
-    ){
-
-      return;
-
-    }
-
-
-    console.error(error);
-
-
-    document.getElementById(
-      "resultado"
-    ).innerHTML += `
-
-      <div class="error">
-
-        <br>
-        ❌ Error al compartir:
-        ${escapeHtml(
-          error.message ||
-          error
-        )}
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-/* =========================================================
-   INICIO
-========================================================= */
-
-cargarProductos();
-
-</script>
-
-</body>
-</html>
