@@ -1,0 +1,1219 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Necesario para que se vea correctamente en Android -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prueba Compartir Imagen - BeniConfort</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f2f2f2;
+            color: #222;
+        }
+
+        .contenedor {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        .tarjeta {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .campo {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 9px;
+            padding: 14px;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #btnGenerar {
+            background: #222;
+            color: white;
+        }
+
+        #btnCompartir {
+            background: #128c7e;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .estado {
+            padding: 14px;
+            border-radius: 9px;
+            background: #f5f5f5;
+            white-space: pre-line;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .diagnostico {
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            background: #111;
+            color: #eee;
+            padding: 14px;
+            border-radius: 9px;
+            overflow-x: auto;
+        }
+
+        .resultado {
+            display: none;
+            margin-top: 18px;
+        }
+
+        .resultado img {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 8px;
+        }
+
+        .exito {
+            color: #087f23;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #b00020;
+            font-weight: bold;
+        }
+
+        .nota {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>Prueba de compartir imágenes</h1>
+
+    <div class="tarjeta">
+
+        <div class="campo">
+            <label for="producto">Producto</label>
+            <input
+                id="producto"
+                type="text"
+                value="Tenis de prueba"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="talla">Talla</label>
+            <input
+                id="talla"
+                type="text"
+                value="37"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="precioContado">Precio contado</label>
+            <input
+                id="precioContado"
+                type="number"
+                value="250"
+            >
+        </div>
+
+        <div class="campo">
+            <label for="precioCredito">Precio crédito</label>
+            <input
+                id="precioCredito"
+                type="number"
+                value="280"
+            >
+        </div>
+
+        <button id="btnGenerar">
+            GENERAR IMAGEN
+        </button>
+
+        <button id="btnCompartir" disabled>
+            COMPARTIR IMAGEN
+        </button>
+
+    </div>
+
+
+    <div class="tarjeta">
+
+        <h2>Estado</h2>
+
+        <div id="estado" class="estado">
+            Esperando...
+        </div>
+
+    </div>
+
+
+    <div class="tarjeta">
+
+        <h2>Diagnóstico</h2>
+
+        <div id="diagnostico" class="diagnostico">
+            Comprobando...
+        </div>
+
+    </div>
+
+
+    <div id="resultado" class="tarjeta resultado">
+
+        <h2>Imagen generada</h2>
+
+        <img id="imagenResultado" alt="Imagen generada">
+
+        <p id="datosArchivo" class="nota"></p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // ============================================================
+    // VARIABLES
+    // ============================================================
+
+    let archivoGenerado = null;
+
+    const productoInput = document.getElementById("producto");
+    const tallaInput = document.getElementById("talla");
+    const precioContadoInput = document.getElementById("precioContado");
+    const precioCreditoInput = document.getElementById("precioCredito");
+
+    const btnGenerar = document.getElementById("btnGenerar");
+    const btnCompartir = document.getElementById("btnCompartir");
+
+    const estado = document.getElementById("estado");
+    const diagnostico = document.getElementById("diagnostico");
+
+    const resultado = document.getElementById("resultado");
+    const imagenResultado = document.getElementById("imagenResultado");
+    const datosArchivo = document.getElementById("datosArchivo");
+
+
+    // ============================================================
+    // DIAGNÓSTICO INICIAL
+    // ============================================================
+
+    function comprobarCompatibilidad() {
+
+        const tieneShare =
+            typeof navigator.share === "function";
+
+        const tieneCanShare =
+            typeof navigator.canShare === "function";
+
+        let lineas = [];
+
+        lineas.push(
+            "navigator.share disponible: " +
+            (tieneShare ? "SÍ" : "NO")
+        );
+
+        lineas.push(
+            "navigator.canShare disponible: " +
+            (tieneCanShare ? "SÍ" : "NO")
+        );
+
+        lineas.push(
+            "File API disponible: " +
+            (typeof File === "function" ? "SÍ" : "NO")
+        );
+
+        lineas.push(
+            "Blob API disponible: " +
+            (typeof Blob === "function" ? "SÍ" : "NO")
+        );
+
+        lineas.push(
+            "Canvas disponible: " +
+            (typeof HTMLCanvasElement !== "undefined" ? "SÍ" : "NO")
+        );
+
+        lineas.push(
+            "HTTPS: " +
+            (
+                location.protocol === "https:"
+                    ? "SÍ"
+                    : "NO (" + location.protocol + ")"
+            )
+        );
+
+        diagnostico.textContent = lineas.join("\n");
+    }
+
+
+    comprobarCompatibilidad();
+
+
+    // ============================================================
+    // CREAR LA IMAGEN DE PRUEBA
+    // ============================================================
+    //
+    // Para esta primera etapa no usamos R2.
+    //
+    // La imagen está incluida como SVG dentro del propio HTML.
+    // Después se convierte en una imagen que Canvas puede dibujar.
+    //
+    // ============================================================
+
+    function obtenerImagenPrueba() {
+
+        const svg = `
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1000"
+            height="700"
+            viewBox="0 0 1000 700"
+        >
+
+            <rect
+                width="1000"
+                height="700"
+                fill="#eeeeee"
+            />
+
+            <!-- sombra -->
+            <ellipse
+                cx="500"
+                cy="545"
+                rx="330"
+                ry="55"
+                fill="#cccccc"
+            />
+
+            <!-- suela -->
+            <path
+                d="
+                M180 480
+                C230 510 310 525 430 525
+                L790 525
+                C840 525 865 550 850 575
+                C830 600 760 610 650 610
+                L300 610
+                C220 610 160 585 150 540
+                C145 515 155 490 180 480
+                Z"
+                fill="#ffffff"
+                stroke="#222222"
+                stroke-width="8"
+            />
+
+            <!-- cuerpo del tenis -->
+            <path
+                d="
+                M170 480
+                C230 430 270 370 315 300
+                C345 255 390 225 440 215
+                C490 205 545 225 600 270
+                L760 405
+                C805 440 825 465 820 500
+                C815 530 790 545 750 545
+                L300 545
+                C225 545 170 525 160 500
+                C155 493 160 485 170 480
+                Z"
+                fill="#ffffff"
+                stroke="#222222"
+                stroke-width="10"
+            />
+
+            <!-- parte superior -->
+            <path
+                d="
+                M315 300
+                C380 325 430 360 470 405
+                L520 465
+                L680 465
+                C700 465 710 445 695 430
+                L600 270
+                C545 225 490 205 440 215
+                C390 225 345 255 315 300
+                Z"
+                fill="#dddddd"
+                stroke="#222222"
+                stroke-width="7"
+            />
+
+            <!-- agujetas -->
+            <line
+                x1="350"
+                y1="330"
+                x2="520"
+                y2="350"
+                stroke="#222222"
+                stroke-width="9"
+            />
+
+            <line
+                x1="335"
+                y1="355"
+                x2="535"
+                y2="375"
+                stroke="#222222"
+                stroke-width="9"
+            />
+
+            <line
+                x1="320"
+                y1="380"
+                x2="550"
+                y2="400"
+                stroke="#222222"
+                stroke-width="9"
+            />
+
+            <line
+                x1="315"
+                y1="405"
+                x2="565"
+                y2="425"
+                stroke="#222222"
+                stroke-width="9"
+            />
+
+            <!-- logo de prueba -->
+            <circle
+                cx="640"
+                cy="365"
+                r="45"
+                fill="#222222"
+            />
+
+            <text
+                x="640"
+                y="378"
+                text-anchor="middle"
+                font-family="Arial"
+                font-size="30"
+                fill="white"
+                font-weight="bold"
+            >
+                BC
+            </text>
+
+            <!-- texto -->
+            <text
+                x="500"
+                y="90"
+                text-anchor="middle"
+                font-family="Arial"
+                font-size="42"
+                font-weight="bold"
+                fill="#222222"
+            >
+                TENIS DE PRUEBA
+            </text>
+
+        </svg>
+        `;
+
+        return svg;
+    }
+
+
+    // ============================================================
+    // CONVERTIR SVG A IMAGE
+    // ============================================================
+
+    function cargarImagenPrueba() {
+
+        return new Promise((resolve, reject) => {
+
+            const svg = obtenerImagenPrueba();
+
+            const blob = new Blob(
+                [svg],
+                {
+                    type: "image/svg+xml"
+                }
+            );
+
+            const url = URL.createObjectURL(blob);
+
+            const img = new Image();
+
+            img.onload = function() {
+
+                URL.revokeObjectURL(url);
+
+                resolve(img);
+            };
+
+            img.onerror = function() {
+
+                URL.revokeObjectURL(url);
+
+                reject(
+                    new Error(
+                        "No se pudo cargar la imagen de prueba."
+                    )
+                );
+            };
+
+            img.src = url;
+        });
+    }
+
+
+    // ============================================================
+    // GENERAR IMAGEN
+    // ============================================================
+
+    async function generarImagen() {
+
+        try {
+
+            btnGenerar.disabled = true;
+            btnCompartir.disabled = true;
+
+            estado.className = "estado";
+
+            estado.textContent =
+                "1/6 Cargando imagen de prueba...";
+
+
+            // ----------------------------------------------------
+            // OBTENER DATOS
+            // ----------------------------------------------------
+
+            const producto =
+                productoInput.value.trim() ||
+                "Tenis de prueba";
+
+            const talla =
+                tallaInput.value.trim() ||
+                "37";
+
+            const precioContado =
+                precioContadoInput.value.trim() ||
+                "250";
+
+            const precioCredito =
+                precioCreditoInput.value.trim() ||
+                "280";
+
+
+            // ----------------------------------------------------
+            // CARGAR IMAGEN
+            // ----------------------------------------------------
+
+            const img =
+                await cargarImagenPrueba();
+
+
+            estado.textContent =
+                "2/6 Imagen cargada correctamente.\n" +
+                "Creando Canvas...";
+
+
+            // ----------------------------------------------------
+            // CREAR CANVAS
+            // ----------------------------------------------------
+
+            const ancho = 1000;
+
+            // Altura de la foto
+            const altoFoto = 700;
+
+            // Área adicional para información
+            const altoPanel = 360;
+
+            const altoTotal =
+                altoFoto + altoPanel;
+
+
+            const canvas =
+                document.createElement("canvas");
+
+            canvas.width = ancho;
+            canvas.height = altoTotal;
+
+
+            const ctx =
+                canvas.getContext("2d");
+
+
+            if (!ctx) {
+
+                throw new Error(
+                    "El navegador no pudo crear el contexto 2D del Canvas."
+                );
+            }
+
+
+            estado.textContent =
+                "3/6 Dibujando fotografía...";
+
+
+            // ----------------------------------------------------
+            // FONDO DE LA FOTO
+            // ----------------------------------------------------
+
+            ctx.fillStyle = "#eeeeee";
+
+            ctx.fillRect(
+                0,
+                0,
+                ancho,
+                altoFoto
+            );
+
+
+            // ----------------------------------------------------
+            // DIBUJAR IMAGEN
+            // ----------------------------------------------------
+            //
+            // La imagen se mantiene en proporción.
+            //
+            // No la estiramos.
+            //
+            // object-fit equivalente mediante cálculo de escala.
+            // ----------------------------------------------------
+
+            const escala =
+                Math.min(
+                    ancho / img.naturalWidth,
+                    altoFoto / img.naturalHeight
+                );
+
+            const nuevoAncho =
+                img.naturalWidth * escala;
+
+            const nuevoAlto =
+                img.naturalHeight * escala;
+
+
+            const x =
+                (ancho - nuevoAncho) / 2;
+
+            const y =
+                (altoFoto - nuevoAlto) / 2;
+
+
+            ctx.drawImage(
+                img,
+                x,
+                y,
+                nuevoAncho,
+                nuevoAlto
+            );
+
+
+            // ----------------------------------------------------
+            // PANEL INFERIOR
+            // ----------------------------------------------------
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillRect(
+                0,
+                altoFoto,
+                ancho,
+                altoPanel
+            );
+
+
+            // Línea divisoria
+
+            ctx.fillStyle = "#222222";
+
+            ctx.fillRect(
+                0,
+                altoFoto,
+                ancho,
+                6
+            );
+
+
+            estado.textContent =
+                "4/6 Dibujando información del producto...";
+
+
+            // ----------------------------------------------------
+            // TEXTO
+            // ----------------------------------------------------
+
+            const margen = 55;
+
+            let posicionY =
+                altoFoto + 65;
+
+
+            // PRODUCTO
+
+            ctx.fillStyle = "#111111";
+
+            ctx.font =
+                "bold 42px Arial";
+
+            ctx.textAlign =
+                "left";
+
+            ctx.textBaseline =
+                "middle";
+
+
+            ctx.fillText(
+                producto.toUpperCase(),
+                margen,
+                posicionY
+            );
+
+
+            // TALLA
+
+            posicionY += 55;
+
+            ctx.font =
+                "bold 34px Arial";
+
+            ctx.fillText(
+                "TALLA " + talla,
+                margen,
+                posicionY
+            );
+
+
+            // PRECIOS
+
+            posicionY += 70;
+
+            ctx.font =
+                "bold 32px Arial";
+
+            ctx.fillText(
+                "CONTADO: Bs " + precioContado,
+                margen,
+                posicionY
+            );
+
+
+            posicionY += 48;
+
+            ctx.fillText(
+                "CRÉDITO: Bs " + precioCredito,
+                margen,
+                posicionY
+            );
+
+
+            // MARCA
+
+            ctx.font =
+                "bold 28px Arial";
+
+            ctx.textAlign =
+                "right";
+
+            ctx.fillText(
+                "BeniConfort",
+                ancho - margen,
+                altoFoto + altoPanel - 35
+            );
+
+
+            estado.textContent =
+                "5/6 Canvas terminado.\n" +
+                "Convirtiendo Canvas a JPG real...";
+
+
+            // ----------------------------------------------------
+            // CANVAS -> BLOB
+            // ----------------------------------------------------
+
+            const blob =
+                await new Promise((resolve, reject) => {
+
+                    canvas.toBlob(
+                        function(resultadoBlob) {
+
+                            if (!resultadoBlob) {
+
+                                reject(
+                                    new Error(
+                                        "canvas.toBlob() no generó ningún archivo."
+                                    )
+                                );
+
+                                return;
+                            }
+
+                            resolve(resultadoBlob);
+                        },
+                        "image/jpeg",
+                        0.90
+                    );
+                });
+
+
+            // ----------------------------------------------------
+            // CREAR FILE REAL
+            // ----------------------------------------------------
+
+            const nombreArchivo =
+                "tenis-prueba-talla-" +
+                talla +
+                ".jpg";
+
+
+            archivoGenerado =
+                new File(
+                    [blob],
+                    nombreArchivo,
+                    {
+                        type: "image/jpeg",
+                        lastModified: Date.now()
+                    }
+                );
+
+
+            // ----------------------------------------------------
+            // COMPROBACIONES
+            // ----------------------------------------------------
+
+            if (!(archivoGenerado instanceof File)) {
+
+                throw new Error(
+                    "El resultado no es un objeto File real."
+                );
+            }
+
+
+            estado.textContent =
+                "6/6 ¡IMAGEN GENERADA CORRECTAMENTE!";
+
+
+            estado.className =
+                "estado exito";
+
+
+            // ----------------------------------------------------
+            // MOSTRAR PREVISUALIZACIÓN
+            // ----------------------------------------------------
+
+            const urlImagen =
+                URL.createObjectURL(archivoGenerado);
+
+
+            imagenResultado.src =
+                urlImagen;
+
+
+            resultado.style.display =
+                "block";
+
+
+            datosArchivo.textContent =
+                "Archivo: " +
+                archivoGenerado.name +
+                "\n" +
+                "Tipo MIME: " +
+                archivoGenerado.type +
+                "\n" +
+                "Tamaño: " +
+                formatearBytes(archivoGenerado.size) +
+                "\n" +
+                "Objeto: File real";
+
+
+            // ----------------------------------------------------
+            // COMPROBAR COMPARTIR ARCHIVOS
+            // ----------------------------------------------------
+
+            comprobarCompartirArchivo();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            estado.className =
+                "estado error";
+
+            estado.textContent =
+                "ERROR:\n" +
+                error.message;
+
+            archivoGenerado = null;
+
+        } finally {
+
+            btnGenerar.disabled = false;
+
+        }
+    }
+
+
+    // ============================================================
+    // COMPROBAR WEB SHARE
+    // ============================================================
+
+    function comprobarCompartirArchivo() {
+
+        let lineas = [];
+
+
+        const shareDisponible =
+            typeof navigator.share === "function";
+
+
+        const canShareDisponible =
+            typeof navigator.canShare === "function";
+
+
+        lineas.push(
+            "navigator.share disponible: " +
+            (shareDisponible ? "SÍ" : "NO")
+        );
+
+
+        lineas.push(
+            "navigator.canShare disponible: " +
+            (canShareDisponible ? "SÍ" : "NO")
+        );
+
+
+        if (!archivoGenerado) {
+
+            lineas.push(
+                "Archivo generado: NO"
+            );
+
+            diagnostico.textContent =
+                lineas.join("\n");
+
+            return;
+        }
+
+
+        lineas.push(
+            "Archivo generado: SÍ"
+        );
+
+
+        lineas.push(
+            "Nombre: " +
+            archivoGenerado.name
+        );
+
+
+        lineas.push(
+            "Tipo MIME: " +
+            archivoGenerado.type
+        );
+
+
+        lineas.push(
+            "Tamaño: " +
+            formatearBytes(archivoGenerado.size)
+        );
+
+
+        let puedeCompartirArchivo =
+            false;
+
+
+        if (canShareDisponible) {
+
+            try {
+
+                puedeCompartirArchivo =
+                    navigator.canShare({
+                        files: [archivoGenerado]
+                    });
+
+            } catch (error) {
+
+                puedeCompartirArchivo =
+                    false;
+            }
+        }
+
+
+        lineas.push(
+            "Compartir archivos: " +
+            (
+                puedeCompartirArchivo
+                    ? "SÍ"
+                    : "NO"
+            )
+        );
+
+
+        diagnostico.textContent =
+            lineas.join("\n");
+
+
+        if (
+            shareDisponible &&
+            puedeCompartirArchivo
+        ) {
+
+            btnCompartir.disabled =
+                false;
+
+        } else {
+
+            btnCompartir.disabled =
+                true;
+
+            estado.textContent +=
+                "\n\nEste dispositivo/navegador no permite compartir archivos mediante Web Share.";
+
+        }
+    }
+
+
+    // ============================================================
+    // COMPARTIR
+    // ============================================================
+
+    async function compartirImagen() {
+
+        if (!archivoGenerado) {
+
+            estado.className =
+                "estado error";
+
+            estado.textContent =
+                "Primero debes generar la imagen.";
+
+            return;
+        }
+
+
+        // --------------------------------------------------------
+        // COMPROBAR navigator.share
+        // --------------------------------------------------------
+
+        if (typeof navigator.share !== "function") {
+
+            estado.className =
+                "estado error";
+
+            estado.textContent =
+                "Este navegador no dispone de navigator.share.";
+
+            return;
+        }
+
+
+        // --------------------------------------------------------
+        // COMPROBAR navigator.canShare
+        // --------------------------------------------------------
+
+        if (typeof navigator.canShare !== "function") {
+
+            estado.className =
+                "estado error";
+
+            estado.textContent =
+                "Este navegador no dispone de navigator.canShare().";
+
+            return;
+        }
+
+
+        let puedeCompartir = false;
+
+
+        try {
+
+            puedeCompartir =
+                navigator.canShare({
+                    files: [archivoGenerado]
+                });
+
+        } catch (error) {
+
+            console.error(error);
+
+            puedeCompartir =
+                false;
+        }
+
+
+        if (!puedeCompartir) {
+
+            estado.className =
+                "estado error";
+
+            estado.textContent =
+                "Este dispositivo/navegador no permite compartir archivos mediante Web Share.";
+
+            return;
+        }
+
+
+        // --------------------------------------------------------
+        // COMPARTIR ARCHIVO REAL
+        // --------------------------------------------------------
+
+        try {
+
+            estado.className =
+                "estado";
+
+            estado.textContent =
+                "Abriendo el menú nativo de compartir...";
+
+
+            await navigator.share({
+
+                files: [archivoGenerado],
+
+                title:
+                    archivoGenerado.name
+            });
+
+
+            estado.className =
+                "estado exito";
+
+            estado.textContent =
+                "Imagen compartida correctamente.";
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            // El usuario puede cerrar el menú sin compartir.
+            if (error.name === "AbortError") {
+
+                estado.className =
+                    "estado";
+
+                estado.textContent =
+                    "El menú de compartir fue cerrado.";
+
+                return;
+            }
+
+
+            estado.className =
+                "estado error";
+
+            estado.textContent =
+                "No se pudo compartir la imagen.\n\n" +
+                error.name +
+                ": " +
+                error.message;
+        }
+    }
+
+
+    // ============================================================
+    // FORMATEAR TAMAÑO
+    // ============================================================
+
+    function formatearBytes(bytes) {
+
+        if (bytes === 0) {
+            return "0 Bytes";
+        }
+
+
+        const unidades = [
+            "Bytes",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+
+        const indice =
+            Math.floor(
+                Math.log(bytes) /
+                Math.log(1024)
+            );
+
+
+        return (
+            bytes /
+            Math.pow(1024, indice)
+        ).toFixed(2) +
+        " " +
+        unidades[indice];
+    }
+
+
+    // ============================================================
+    // EVENTOS
+    // ============================================================
+
+    btnGenerar.addEventListener(
+        "click",
+        generarImagen
+    );
+
+
+    btnCompartir.addEventListener(
+        "click",
+        compartirImagen
+    );
+
+</script>
+
+</body>
+</html>
+```
