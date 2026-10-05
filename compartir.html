@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BeniConfort | Compartir por talla</title>
+
+  <title>BeniConfort | Compartir</title>
 
   <style>
     * {
@@ -19,14 +20,14 @@
 
     header {
       background: #111;
-      color: white;
+      color: #fff;
       padding: 18px;
       text-align: center;
     }
 
     header h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 23px;
     }
 
     header p {
@@ -42,24 +43,61 @@
     }
 
     .panel {
-      background: white;
+      background: #fff;
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,.08);
     }
 
-    .panel h2 {
-      margin-top: 0;
-      font-size: 18px;
+    .conexion {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .luz {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #aaa;
+      flex-shrink: 0;
+    }
+
+    .luz.verde {
+      background: #20b26b;
+      box-shadow: 0 0 7px rgba(32,178,107,.7);
+    }
+
+    .luz.roja {
+      background: #e53935;
+      box-shadow: 0 0 7px rgba(229,57,53,.6);
+    }
+
+    .luz.amarilla {
+      background: #f4b400;
+      box-shadow: 0 0 7px rgba(244,180,0,.6);
     }
 
     #estado {
-      padding: 12px;
+      padding: 11px;
       border-radius: 8px;
       background: #eee;
       margin-bottom: 15px;
       font-size: 14px;
+      line-height: 1.4;
+    }
+
+    #estado.ok {
+      background: #e8f7ef;
+      color: #14733f;
+    }
+
+    #estado.error {
+      background: #fdecec;
+      color: #a71919;
     }
 
     .tallas {
@@ -70,7 +108,7 @@
 
     .talla {
       border: 1px solid #ccc;
-      background: white;
+      background: #fff;
       padding: 10px 14px;
       border-radius: 8px;
       cursor: pointer;
@@ -83,8 +121,12 @@
 
     .talla.activa {
       background: #111;
-      color: white;
+      color: #fff;
       border-color: #111;
+    }
+
+    .talla.sin-stock {
+      opacity: .35;
     }
 
     .acciones {
@@ -109,7 +151,7 @@
 
     #btnCompartir {
       background: #111;
-      color: white;
+      color: #fff;
     }
 
     #btnCompartir:disabled {
@@ -130,7 +172,7 @@
     }
 
     .producto {
-      background: white;
+      background: #fff;
       border-radius: 12px;
       overflow: hidden;
       border: 2px solid transparent;
@@ -139,12 +181,12 @@
       transition: .15s;
     }
 
-    .producto.seleccionado {
-      border-color: #111;
-    }
-
     .producto:hover {
       transform: translateY(-2px);
+    }
+
+    .producto.seleccionado {
+      border-color: #111;
     }
 
     .imagen-wrap {
@@ -177,7 +219,7 @@
     }
 
     .producto-info h3 {
-      margin: 0 0 5px;
+      margin: 0 0 6px;
       font-size: 16px;
     }
 
@@ -205,23 +247,26 @@
       color: #777;
       word-break: break-all;
       line-height: 1.3;
-      margin-top: 8px;
+      margin-top: 9px;
       background: #f5f5f5;
-      padding: 6px;
+      padding: 7px;
       border-radius: 5px;
     }
 
     .sin-productos {
-      background: white;
+      background: #fff;
       padding: 25px;
       border-radius: 12px;
       text-align: center;
       color: #666;
+      grid-column: 1 / -1;
     }
 
     .cargando {
       text-align: center;
-      padding: 30px;
+      padding: 25px;
+      color: #666;
+      grid-column: 1 / -1;
     }
 
     .nota {
@@ -232,6 +277,7 @@
     }
 
     @media (max-width: 600px) {
+
       .productos {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
@@ -267,13 +313,25 @@
 
   <div class="panel">
 
+    <div class="conexion">
+      <span id="luzConexion" class="luz amarilla"></span>
+      <span id="textoConexion">Conectando...</span>
+    </div>
+
+    <div id="estado">
+      Conectando con el inventario...
+    </div>
+
     <h2>1. Selecciona una talla</h2>
 
     <div id="tallas" class="tallas">
-      <div class="cargando">Cargando tallas...</div>
+      <div class="cargando">
+        Cargando tallas...
+      </div>
     </div>
 
     <div class="acciones">
+
       <button id="btnSeleccionarTodos">
         Seleccionar todos
       </button>
@@ -281,6 +339,7 @@
       <button id="btnCompartir" disabled>
         Compartir seleccionados
       </button>
+
     </div>
 
     <div id="contador">
@@ -288,294 +347,453 @@
     </div>
 
     <div class="nota">
-      Las imágenes generadas serán archivos JPG reales para poder compartirlas directamente por WhatsApp, Messenger, Telegram, etc.
+      Selecciona una talla, elige los modelos y luego compártelos como imágenes reales.
     </div>
 
   </div>
 
-  <div id="estado">
-    Cargando productos...
-  </div>
+  <div id="productos" class="productos">
 
-  <div id="productos" class="productos"></div>
+    <div class="cargando">
+      Cargando inventario...
+    </div>
+
+  </div>
 
 </div>
 
+
 <script>
 
-  /* ============================================================
-     CONFIGURACIÓN
-     ============================================================ */
+/* ============================================================
+   CONFIGURACIÓN
+   ============================================================ */
 
-  const SUPABASE_URL =
-    "https://lydlyusuanvjjoavbocr.supabase.co";
+const SUPABASE_URL =
+  "https://lydlyusuanvjjoavbocr.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
+const SUPABASE_KEY =
+  "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
 
-  const SIZE_MIN = 34;
-  const SIZE_MAX = 45;
-
-  let productos = [];
-  let tallaSeleccionada = null;
-  let seleccionados = new Set();
+const SIZE_MIN = 34;
+const SIZE_MAX = 45;
 
 
-  /* ============================================================
-     UTILIDADES
-     ============================================================ */
+/* ============================================================
+   VARIABLES
+   ============================================================ */
 
-  function escapeHtml(value) {
+let productos = [];
 
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+let tallaSeleccionada = null;
+
+let seleccionados = new Set();
+
+
+/* ============================================================
+   ELEMENTOS
+   ============================================================ */
+
+const estado =
+  document.getElementById("estado");
+
+const luzConexion =
+  document.getElementById("luzConexion");
+
+const textoConexion =
+  document.getElementById("textoConexion");
+
+const contenedorTallas =
+  document.getElementById("tallas");
+
+const contenedorProductos =
+  document.getElementById("productos");
+
+const contador =
+  document.getElementById("contador");
+
+const btnSeleccionarTodos =
+  document.getElementById("btnSeleccionarTodos");
+
+const btnCompartir =
+  document.getElementById("btnCompartir");
+
+
+/* ============================================================
+   ESTADO DE CONEXIÓN
+   ============================================================ */
+
+function conexionCargando() {
+
+  luzConexion.className =
+    "luz amarilla";
+
+  textoConexion.textContent =
+    "Conectando...";
+
+}
+
+
+function conexionOK() {
+
+  luzConexion.className =
+    "luz verde";
+
+  textoConexion.textContent =
+    "Conectado";
+
+}
+
+
+function conexionError() {
+
+  luzConexion.className =
+    "luz roja";
+
+  textoConexion.textContent =
+    "Sin conexión";
+
+}
+
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+
+function mostrarEstado(texto, tipo = "") {
+
+  estado.textContent = texto;
+
+  estado.className = "";
+
+  if (tipo) {
+    estado.classList.add(tipo);
+  }
+
+}
+
+
+/* ============================================================
+   ESCAPAR HTML
+   ============================================================ */
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+/* ============================================================
+   DINERO
+   ============================================================ */
+
+function money(value) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+
+    return "Consultar";
+
+  }
+
+  const n = Number(value);
+
+  if (!Number.isFinite(n)) {
+
+    return String(value);
+
+  }
+
+  return "Bs " + n;
+
+}
+
+
+/* ============================================================
+   NORMALIZAR PRODUCTO
+   ============================================================ */
+
+function normalizeProduct(p) {
+
+  const rawType =
+    p.tipo ??
+    p.type ??
+    "";
+
+  let type =
+    String(rawType).trim();
+
+
+  if (
+    type
+      .toLowerCase()
+      .includes("americano")
+  ) {
+
+    type = "Americano";
+
+  } else {
+
+    type = "Económico";
 
   }
 
 
-  function money(value) {
+  let sizesQty =
+    p.sizesQty ??
+    p.tamaños ??
+    {};
 
-    if (value === null || value === undefined || value === "") {
-      return "Consultar";
+
+  if (
+    typeof sizesQty === "string"
+  ) {
+
+    try {
+
+      sizesQty =
+        JSON.parse(sizesQty);
+
+    } catch (error) {
+
+      sizesQty = {};
+
     }
-
-    const n = Number(value);
-
-    if (!Number.isFinite(n)) {
-      return escapeHtml(value);
-    }
-
-    return "Bs " + n;
 
   }
 
 
-  /* ============================================================
-     NORMALIZAR PRODUCTO
-     ============================================================ */
+  return {
 
-  function normalizeProduct(p) {
+    id: p.id,
 
-    const rawType =
-      p.tipo ??
-      p.type ??
-      "";
+    type: type,
 
-    let type = String(rawType).trim();
+    quality: type,
+
+    status:
+      String(
+        p.status ??
+        p.estado ??
+        "disponible"
+      ).toLowerCase(),
+
+    name:
+      p.name ??
+      p.nombre ??
+      "Producto",
+
+    brand:
+      p.brand ??
+      p.marca ??
+      "",
+
+    gender:
+      p.gender ??
+      p.genero ??
+      "",
+
+    img:
+      p.image_url ??
+      p.image ??
+      "",
+
+    cashPrice:
+      p.cashPrice ??
+      p.precioContado ??
+      p.precio_contado ??
+      p.cash_price ??
+      "",
+
+    creditPrice:
+      p.creditPrice ??
+      p.precioCredito ??
+      p.precio_credito ??
+      p.credit_price ??
+      "",
+
+    initial:
+      p.initial ??
+      p.inicial ??
+      "",
+
+    stock:
+      p.stock ??
+      1,
+
+    size:
+      p.size ??
+      p.talla ??
+      "",
+
+    sizesQty:
+      sizesQty,
+
+    tag:
+      p.tag ??
+      "",
+
+    desc:
+      p.desc ??
+      p.descripcion ??
+      "",
+
+    whatsappLink:
+      p.whatsappLink ??
+      p.whatsapp_link ??
+      p.whatsapp ??
+      ""
+
+  };
+
+}
+
+
+/* ============================================================
+   TALLAS DISPONIBLES
+   ============================================================ */
+
+function availableSizes(p) {
+
+  if (
+    p.quality === "Americanos" ||
+    p.quality === "Americano"
+  ) {
 
     if (
-      type.toLowerCase().includes("americano")
+
+      p.status === "sold" ||
+      p.status === "reserved" ||
+      p.status === "vendido" ||
+      p.status === "reservado" ||
+      !p.size ||
+      Number(p.stock ?? 1) <= 0
+
     ) {
-      type = "Americano";
-    } else {
-      type = "Económico";
-    }
 
-
-    let sizesQty =
-      p.sizesQty ??
-      p.tamaños ??
-      {};
-
-    if (typeof sizesQty === "string") {
-
-      try {
-        sizesQty = JSON.parse(sizesQty);
-      } catch (e) {
-        sizesQty = {};
-      }
+      return [];
 
     }
 
 
-    return {
+    const n =
+      Number(p.size);
 
-      id: p.id,
 
-      type: type,
-
-      quality: type,
-
-      status:
-        String(
-          p.status ??
-          p.estado ??
-          "disponible"
-        ).toLowerCase(),
-
-      name:
-        p.name ??
-        p.nombre ??
-        "Producto",
-
-      brand:
-        p.brand ??
-        p.marca ??
-        "",
-
-      gender:
-        p.gender ??
-        p.genero ??
-        "",
-
-      img:
-        p.image_url ??
-        p.image ??
-        "",
-
-      cashPrice:
-        p.cashPrice ??
-        p.precioContado ??
-        p.precio_contado ??
-        p.cash_price ??
-        "",
-
-      creditPrice:
-        p.creditPrice ??
-        p.precioCredito ??
-        p.precio_credito ??
-        p.credit_price ??
-        "",
-
-      initial:
-        p.initial ??
-        p.inicial ??
-        "",
-
-      stock:
-        p.stock ??
-        1,
-
-      size:
-        p.size ??
-        p.talla ??
-        "",
-
-      sizesQty: sizesQty,
-
-      tag:
-        p.tag ??
-        "",
-
-      desc:
-        p.desc ??
-        p.descripcion ??
-        "",
-
-      whatsappLink:
-        p.whatsappLink ??
-        p.whatsapp_link ??
-        p.whatsapp ??
-        ""
-
-    };
+    return Number.isFinite(n)
+      ? [n]
+      : [];
 
   }
 
 
-  /* ============================================================
-     TALLAS DISPONIBLES
-     ============================================================ */
+  return Object.keys(
+    p.sizesQty || {}
+  )
 
-  function availableSizes(p) {
+    .map(Number)
 
-    if (
-      p.quality === "Americanos" ||
-      p.quality === "Americano"
-    ) {
+    .filter(
 
-      if (
-        p.status === "sold" ||
-        p.status === "reserved" ||
-        p.status === "vendido" ||
-        p.status === "reservado" ||
-        !p.size ||
-        Number(p.stock ?? 1) <= 0
-      ) {
-        return [];
-      }
+      s =>
 
-      const n = Number(p.size);
+        Number.isFinite(s) &&
 
-      return Number.isFinite(n)
-        ? [n]
-        : [];
-
-    }
-
-
-    return Object.keys(p.sizesQty || {})
-      .map(Number)
-      .filter(
-
-        s =>
-
-          Number.isFinite(s) &&
-
-          Number(p.sizesQty[s]) > 0 &&
-
-          p.status !== "sold" &&
-          p.status !== "reserved" &&
-          p.status !== "vendido" &&
-          p.status !== "reservado"
-
-      );
-
-  }
-
-
-  /* ============================================================
-     PRODUCTOS SELECCIONABLES
-     ============================================================ */
-
-  function selectableProducts(products) {
-
-    return products.filter(
-
-      p =>
+        Number(p.sizesQty[s]) > 0 &&
 
         p.status !== "sold" &&
         p.status !== "reserved" &&
         p.status !== "vendido" &&
-        p.status !== "reservado" &&
-
-        availableSizes(p).length > 0 &&
-
-        p.img
+        p.status !== "reservado"
 
     );
 
-  }
+}
 
 
-  function productForSize(p, size) {
+/* ============================================================
+   PRODUCTOS SELECCIONABLES
+   ============================================================ */
 
-    return availableSizes(p)
-      .includes(Number(size));
+function selectableProducts(products) {
 
-  }
+  return products.filter(
+
+    p =>
+
+      p.status !== "sold" &&
+      p.status !== "reserved" &&
+      p.status !== "vendido" &&
+      p.status !== "reservado" &&
+
+      availableSizes(p).length > 0 &&
+
+      p.img
+
+  );
+
+}
 
 
-  /* ============================================================
-     CARGAR PRODUCTOS DESDE SUPABASE
-     ============================================================ */
+/* ============================================================
+   PRODUCTO PARA TALLA
+   ============================================================ */
 
-  async function loadCatalog() {
+function productForSize(p, size) {
 
-    const estado =
-      document.getElementById("estado");
+  return availableSizes(p)
+    .includes(Number(size));
 
-    try {
-
-      estado.textContent =
-        "Cargando productos desde Supabase...";
+}
 
 
-      const response = await fetch(
+/* ============================================================
+   CARGAR SUPABASE
+   ============================================================ */
+
+async function loadCatalog() {
+
+  conexionCargando();
+
+  mostrarEstado(
+    "Conectando con el inventario..."
+  );
+
+
+  try {
+
+    /*
+      Timeout de 15 segundos.
+      Si Supabase no responde,
+      no dejamos la página congelada.
+    */
+
+    const controller =
+      new AbortController();
+
+    const timeout =
+      setTimeout(
+
+        () => {
+          controller.abort();
+        },
+
+        15000
+
+      );
+
+
+    const response =
+      await fetch(
 
         SUPABASE_URL +
         "/rest/v1/productos?select=*",
@@ -586,198 +804,752 @@
 
           headers: {
 
-            "apikey": SUPABASE_KEY,
+            "apikey":
+              SUPABASE_KEY,
 
             "Authorization":
-              "Bearer " + SUPABASE_KEY,
+              "Bearer " +
+              SUPABASE_KEY,
 
             "Content-Type":
               "application/json"
 
-          }
+          },
+
+          signal:
+            controller.signal
 
         }
 
       );
 
 
-      if (!response.ok) {
-
-        const errorText =
-          await response.text();
-
-        throw new Error(
-          "Supabase respondió " +
-          response.status +
-          ": " +
-          errorText
-        );
-
-      }
+    clearTimeout(timeout);
 
 
-      const data =
-        await response.json();
+    if (!response.ok) {
 
+      const errorText =
+        await response.text();
 
-      productos =
-        selectableProducts(
-          data.map(normalizeProduct)
-        );
+      throw new Error(
 
+        "Supabase respondió " +
+        response.status +
+        ": " +
+        errorText
 
-      estado.textContent =
-        "Productos cargados: " +
-        productos.length;
-
-
-      crearBotonesTallas();
-
-
-    } catch (error) {
-
-      console.error(error);
-
-      estado.textContent =
-        "Error cargando productos: " +
-        error.message;
+      );
 
     }
 
+
+    const data =
+      await response.json();
+
+
+    if (!Array.isArray(data)) {
+
+      throw new Error(
+        "Supabase no devolvió una lista de productos."
+      );
+
+    }
+
+
+    /*
+      AQUÍ SUPABASE RESPONDIÓ CORRECTAMENTE
+    */
+
+    conexionOK();
+
+
+    productos =
+      selectableProducts(
+
+        data.map(
+          normalizeProduct
+        )
+
+      );
+
+
+    mostrarEstado(
+
+      "Inventario conectado correctamente. " +
+      productos.length +
+      " productos disponibles.",
+
+      "ok"
+
+    );
+
+
+    crearBotonesTallas();
+
+    contenedorProductos.innerHTML = `
+
+      <div class="sin-productos">
+
+        Selecciona una talla para ver
+        los productos disponibles.
+
+      </div>
+
+    `;
+
+
+  } catch (error) {
+
+    console.error(
+      "ERROR SUPABASE:",
+      error
+    );
+
+
+    conexionError();
+
+
+    if (
+      error.name === "AbortError"
+    ) {
+
+      mostrarEstado(
+
+        "Supabase no respondió después de 15 segundos. " +
+        "La conexión quedó agotada.",
+
+        "error"
+
+      );
+
+    } else {
+
+      mostrarEstado(
+
+        "No se pudo conectar con el inventario: " +
+        error.message,
+
+        "error"
+
+      );
+
+    }
+
+
+    contenedorTallas.innerHTML = `
+
+      <div class="sin-productos">
+
+        No se pudieron cargar las tallas.
+
+      </div>
+
+    `;
+
+
+    contenedorProductos.innerHTML = `
+
+      <div class="sin-productos">
+
+        <strong>No se pudo cargar el inventario.</strong>
+
+        <br><br>
+
+        ${escapeHtml(error.message)}
+
+      </div>
+
+    `;
+
   }
 
-
-  /* ============================================================
-     CREAR BOTONES DE TALLAS
-     ============================================================ */
-
-  function crearBotonesTallas() {
-
-    const contenedor =
-      document.getElementById("tallas");
-
-    const tallasDisponibles =
-      new Set();
+}
 
 
-    productos.forEach(p => {
+/* ============================================================
+   CREAR TALLAS
+   ============================================================ */
 
-      availableSizes(p).forEach(size => {
+function crearBotonesTallas() {
+
+  const tallasDisponibles =
+    new Set();
+
+
+  productos.forEach(p => {
+
+    availableSizes(p)
+      .forEach(size => {
 
         if (
           size >= SIZE_MIN &&
           size <= SIZE_MAX
         ) {
 
-          tallasDisponibles.add(size);
+          tallasDisponibles.add(
+            size
+          );
 
         }
 
       });
 
-    });
+  });
 
 
-    contenedor.innerHTML = "";
+  contenedorTallas.innerHTML = "";
 
 
-    for (
-      let size = SIZE_MIN;
-      size <= SIZE_MAX;
-      size++
+  for (
+    let size = SIZE_MIN;
+    size <= SIZE_MAX;
+    size++
+  ) {
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.className =
+      "talla";
+
+
+    button.textContent =
+      "Talla " + size;
+
+
+    if (
+      !tallasDisponibles.has(size)
     ) {
 
-      const button =
-        document.createElement("button");
+      button.classList.add(
+        "sin-stock"
+      );
 
-      button.className = "talla";
-
-      button.textContent =
-        "Talla " + size;
+    }
 
 
-      if (!tallasDisponibles.has(size)) {
+    button.addEventListener(
+      "click",
+      () => {
 
-        button.style.opacity = "0.4";
+        seleccionarTalla(size);
+
+      }
+    );
+
+
+    contenedorTallas.appendChild(
+      button
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   SELECCIONAR TALLA
+   ============================================================ */
+
+function seleccionarTalla(size) {
+
+  tallaSeleccionada =
+    Number(size);
+
+
+  seleccionados.clear();
+
+
+  actualizarBotonesTalla();
+
+  renderProductos();
+
+  actualizarContador();
+
+}
+
+
+/* ============================================================
+   BOTONES TALLA
+   ============================================================ */
+
+function actualizarBotonesTalla() {
+
+  document
+    .querySelectorAll(".talla")
+    .forEach(button => {
+
+      const size =
+        Number(
+
+          button.textContent
+            .replace("Talla", "")
+            .trim()
+
+        );
+
+
+      button.classList.toggle(
+
+        "activa",
+
+        size === tallaSeleccionada
+
+      );
+
+    });
+
+}
+
+
+/* ============================================================
+   MOSTRAR PRODUCTOS
+   ============================================================ */
+
+function renderProductos() {
+
+  if (
+    tallaSeleccionada === null
+  ) {
+
+    contenedorProductos.innerHTML = `
+
+      <div class="sin-productos">
+
+        Selecciona una talla para ver
+        los productos disponibles.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const lista =
+    productos.filter(
+
+      p =>
+
+        productForSize(
+          p,
+          tallaSeleccionada
+        )
+
+    );
+
+
+  if (!lista.length) {
+
+    contenedorProductos.innerHTML = `
+
+      <div class="sin-productos">
+
+        No hay productos disponibles
+        en la talla
+        <strong>
+          ${tallaSeleccionada}
+        </strong>.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  contenedorProductos.innerHTML =
+    lista
+      .map(productCard)
+      .join("");
+
+
+  /*
+    EVENTOS
+  */
+
+  contenedorProductos
+    .querySelectorAll(".producto")
+    .forEach(card => {
+
+      const id =
+        String(
+          card.dataset.id
+        );
+
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          toggleSeleccion(id);
+
+        }
+      );
+
+
+      const checkbox =
+        card.querySelector(
+          "input[type=checkbox]"
+        );
+
+
+      checkbox.addEventListener(
+        "click",
+        event => {
+
+          event.stopPropagation();
+
+        }
+      );
+
+
+      checkbox.addEventListener(
+        "change",
+        event => {
+
+          event.stopPropagation();
+
+
+          if (
+            event.target.checked
+          ) {
+
+            seleccionados.add(id);
+
+          } else {
+
+            seleccionados.delete(id);
+
+          }
+
+
+          actualizarTarjeta(id);
+
+          actualizarContador();
+
+        }
+      );
+
+
+      const img =
+        card.querySelector("img");
+
+
+      if (img) {
+
+        img.addEventListener(
+          "load",
+          () => {
+
+            console.log(
+              "IMAGEN CARGADA:",
+              img.src
+            );
+
+          }
+        );
+
+
+        img.addEventListener(
+          "error",
+          () => {
+
+            console.error(
+              "ERROR IMAGEN:",
+              img.src
+            );
+
+
+            const wrap =
+              img.closest(
+                ".imagen-wrap"
+              );
+
+
+            if (wrap) {
+
+              wrap.innerHTML = `
+
+                <div class="imagen-error">
+
+                  <strong>
+                    No se pudo cargar la imagen
+                  </strong>
+
+                  <br><br>
+
+                  La URL aparece debajo
+                  de esta tarjeta.
+
+                </div>
+
+              `;
+
+            }
+
+          }
+        );
 
       }
 
 
-      button.addEventListener(
-        "click",
-        () => seleccionarTalla(size)
-      );
+    });
 
 
-      contenedor.appendChild(button);
+  lista.forEach(p => {
 
-    }
+    actualizarTarjeta(
+      String(p.id)
+    );
 
-  }
+  });
 
-
-  /* ============================================================
-     SELECCIONAR TALLA
-     ============================================================ */
-
-  function seleccionarTalla(size) {
-
-    tallaSeleccionada = Number(size);
-
-    seleccionados.clear();
-
-    actualizarBotonesTalla();
-
-    renderProductos();
-
-    actualizarContador();
-
-  }
+}
 
 
-  function actualizarBotonesTalla() {
+/* ============================================================
+   TARJETA
+   ============================================================ */
 
-    document
-      .querySelectorAll(".talla")
-      .forEach(button => {
+function productCard(p) {
 
-        const size =
-          Number(
-            button.textContent
-              .replace("Talla", "")
-              .trim()
-          );
-
-        button.classList.toggle(
-
-          "activa",
-
-          size === tallaSeleccionada
-
-        );
-
-      });
-
-  }
+  const id =
+    String(p.id);
 
 
-  /* ============================================================
-     RENDER PRODUCTOS
-     ============================================================ */
-
-  function renderProductos() {
-
-    const contenedor =
-      document.getElementById("productos");
+  const checked =
+    seleccionados.has(id)
+      ? "checked"
+      : "";
 
 
-    if (tallaSeleccionada === null) {
+  return `
 
-      contenedor.innerHTML = `
-        <div class="sin-productos">
-          Selecciona una talla para ver los productos disponibles.
+    <div
+      class="producto"
+      data-id="${escapeHtml(id)}"
+    >
+
+      <div class="imagen-wrap">
+
+        <img
+          src="${escapeHtml(p.img)}"
+          alt="${escapeHtml(p.name)}"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"
+          loading="eager"
+        >
+
+      </div>
+
+
+      <div class="producto-info">
+
+        <h3>
+          ${escapeHtml(p.name)}
+        </h3>
+
+
+        ${
+          p.brand
+            ? `
+              <p>
+                <strong>Marca:</strong>
+                ${escapeHtml(p.brand)}
+              </p>
+            `
+            : ""
+        }
+
+
+        <p>
+          <strong>Tipo:</strong>
+          ${escapeHtml(p.type)}
+        </p>
+
+
+        <p>
+          <strong>Talla:</strong>
+          ${escapeHtml(tallaSeleccionada)}
+        </p>
+
+
+        ${
+          p.cashPrice !== ""
+            ? `
+              <p>
+                <strong>Contado:</strong>
+                ${money(p.cashPrice)}
+              </p>
+            `
+            : ""
+        }
+
+
+        ${
+          p.creditPrice !== ""
+            ? `
+              <p>
+                <strong>Crédito:</strong>
+                ${money(p.creditPrice)}
+              </p>
+            `
+            : ""
+        }
+
+
+        <label class="check">
+
+          <input
+            type="checkbox"
+            ${checked}
+          >
+
+          Seleccionar
+
+        </label>
+
+
+        <div class="url-diagnostico">
+
+          <strong>IMG:</strong><br>
+
+          ${escapeHtml(p.img)}
+
         </div>
-      `;
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   SELECCIONAR / DESELECCIONAR
+   ============================================================ */
+
+function toggleSeleccion(id) {
+
+  if (
+    seleccionados.has(id)
+  ) {
+
+    seleccionados.delete(id);
+
+  } else {
+
+    seleccionados.add(id);
+
+  }
+
+
+  actualizarTarjeta(id);
+
+  actualizarContador();
+
+}
+
+
+/* ============================================================
+   ACTUALIZAR TARJETA
+   ============================================================ */
+
+function actualizarTarjeta(id) {
+
+  const card =
+    document.querySelector(
+
+      `.producto[data-id="${CSS.escape(id)}"]`
+
+    );
+
+
+  if (!card) {
+    return;
+  }
+
+
+  const activo =
+    seleccionados.has(id);
+
+
+  card.classList.toggle(
+    "seleccionado",
+    activo
+  );
+
+
+  const checkbox =
+    card.querySelector(
+      "input[type=checkbox]"
+    );
+
+
+  if (checkbox) {
+
+    checkbox.checked =
+      activo;
+
+  }
+
+}
+
+
+/* ============================================================
+   CONTADOR
+   ============================================================ */
+
+function actualizarContador() {
+
+  if (
+    seleccionados.size === 1
+  ) {
+
+    contador.textContent =
+      "1 producto seleccionado";
+
+  } else {
+
+    contador.textContent =
+      seleccionados.size +
+      " productos seleccionados";
+
+  }
+
+
+  btnCompartir.disabled =
+    seleccionados.size === 0;
+
+}
+
+
+/* ============================================================
+   SELECCIONAR TODOS
+   ============================================================ */
+
+btnSeleccionarTodos.addEventListener(
+  "click",
+  () => {
+
+    if (
+      tallaSeleccionada === null
+    ) {
+
+      alert(
+        "Primero selecciona una talla."
+      );
 
       return;
 
@@ -788,6 +1560,7 @@
       productos.filter(
 
         p =>
+
           productForSize(
             p,
             tallaSeleccionada
@@ -796,1009 +1569,602 @@
       );
 
 
-    if (!lista.length) {
+    const todos =
+      lista.length > 0 &&
+      lista.every(
 
-      contenedor.innerHTML = `
-        <div class="sin-productos">
-          No hay productos disponibles en la talla
-          ${tallaSeleccionada}.
-        </div>
-      `;
+        p =>
 
-      return;
+          seleccionados.has(
+            String(p.id)
+          )
 
-    }
-
-
-    contenedor.innerHTML =
-      lista.map(productCard).join("");
-
-
-    /* ------------------------------------------------------------
-       EVENTOS DE TARJETAS
-       ------------------------------------------------------------ */
-
-    contenedor
-      .querySelectorAll(".producto")
-      .forEach(card => {
-
-        const id =
-          String(card.dataset.id);
-
-
-        card.addEventListener(
-          "click",
-          () => {
-
-            toggleSeleccion(id);
-
-          }
-
-        );
-
-
-        const checkbox =
-          card.querySelector("input[type=checkbox]");
-
-
-        checkbox.addEventListener(
-          "click",
-          event => {
-
-            event.stopPropagation();
-
-          }
-        );
-
-
-        checkbox.addEventListener(
-          "change",
-          event => {
-
-            event.stopPropagation();
-
-            if (event.target.checked) {
-
-              seleccionados.add(id);
-
-            } else {
-
-              seleccionados.delete(id);
-
-            }
-
-            actualizarTarjeta(id);
-
-            actualizarContador();
-
-          }
-        );
-
-
-        const img =
-          card.querySelector("img");
-
-
-        if (img) {
-
-          img.addEventListener(
-            "load",
-            () => {
-
-              console.log(
-                "IMAGEN CARGADA:",
-                img.src
-              );
-
-            }
-          );
-
-
-          img.addEventListener(
-            "error",
-            () => {
-
-              console.error(
-                "ERROR CARGANDO IMAGEN:",
-                img.src
-              );
-
-
-              const wrap =
-                img.closest(".imagen-wrap");
-
-
-              if (wrap) {
-
-                wrap.innerHTML = `
-
-                  <div class="imagen-error">
-
-                    <strong>
-                      No se pudo cargar la imagen
-                    </strong>
-
-                    <br><br>
-
-                    Revisa la URL que aparece
-                    debajo de la tarjeta.
-
-                  </div>
-
-                `;
-
-              }
-
-            }
-          );
-
-        }
-
-      });
-
-
-    /* ------------------------------------------------------------
-       SINCRONIZAR CHECKBOXES
-       ------------------------------------------------------------ */
-
-    lista.forEach(p => {
-
-      actualizarTarjeta(
-        String(p.id)
       );
 
-    });
 
-  }
+    if (todos) {
 
-
-  /* ============================================================
-     TARJETA DE PRODUCTO
-     ============================================================ */
-
-  function productCard(p) {
-
-    const id =
-      String(p.id);
-
-
-    const checked =
-      seleccionados.has(id)
-        ? "checked"
-        : "";
-
-
-    return `
-
-      <div
-        class="producto"
-        data-id="${escapeHtml(id)}"
-      >
-
-        <div class="imagen-wrap">
-
-          <img
-            src="${escapeHtml(p.img)}"
-            alt="${escapeHtml(p.name)}"
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-            loading="eager"
-          >
-
-        </div>
-
-
-        <div class="producto-info">
-
-          <h3>
-            ${escapeHtml(p.name)}
-          </h3>
-
-
-          ${
-            p.brand
-              ? `<p><strong>Marca:</strong> ${escapeHtml(p.brand)}</p>`
-              : ""
-          }
-
-
-          <p>
-            <strong>Tipo:</strong>
-            ${escapeHtml(p.type)}
-          </p>
-
-
-          <p>
-            <strong>Talla:</strong>
-            ${escapeHtml(tallaSeleccionada)}
-          </p>
-
-
-          ${
-            p.cashPrice !== ""
-              ? `
-                <p>
-                  <strong>Contado:</strong>
-                  ${money(p.cashPrice)}
-                </p>
-              `
-              : ""
-          }
-
-
-          ${
-            p.creditPrice !== ""
-              ? `
-                <p>
-                  <strong>Crédito:</strong>
-                  ${money(p.creditPrice)}
-                </p>
-              `
-              : ""
-          }
-
-
-          <label class="check">
-
-            <input
-              type="checkbox"
-              ${checked}
-            >
-
-            Seleccionar
-
-          </label>
-
-
-          <!-- DIAGNÓSTICO -->
-          <div class="url-diagnostico">
-
-            <strong>IMG:</strong><br>
-
-            ${escapeHtml(p.img)}
-
-          </div>
-
-
-        </div>
-
-      </div>
-
-    `;
-
-  }
-
-
-  /* ============================================================
-     SELECCIÓN
-     ============================================================ */
-
-  function toggleSeleccion(id) {
-
-    if (seleccionados.has(id)) {
-
-      seleccionados.delete(id);
+      seleccionados.clear();
 
     } else {
 
-      seleccionados.add(id);
+      lista.forEach(p => {
+
+        seleccionados.add(
+          String(p.id)
+        );
+
+      });
 
     }
 
 
-    actualizarTarjeta(id);
+    renderProductos();
 
     actualizarContador();
 
   }
+);
 
 
-  function actualizarTarjeta(id) {
+/* ============================================================
+   CREAR JPG REAL
+   ============================================================ */
 
-    const card =
-      document.querySelector(
-        `.producto[data-id="${CSS.escape(id)}"]`
-      );
+async function crearImagenProducto(p) {
 
+  return new Promise(
+    (resolve, reject) => {
 
-    if (!card) {
-      return;
-    }
-
-
-    const checked =
-      seleccionados.has(id);
+      const img =
+        new Image();
 
 
-    card.classList.toggle(
-      "seleccionado",
-      checked
-    );
+      img.crossOrigin =
+        "anonymous";
 
 
-    const checkbox =
-      card.querySelector(
-        "input[type=checkbox]"
-      );
+      img.referrerPolicy =
+        "no-referrer";
 
 
-    if (checkbox) {
+      img.onload = () => {
 
-      checkbox.checked =
-        checked;
+        try {
 
-    }
-
-  }
-
-
-  function actualizarContador() {
-
-    const contador =
-      document.getElementById("contador");
+          const canvas =
+            document.createElement(
+              "canvas"
+            );
 
 
-    contador.textContent =
+          const width =
+            1200;
 
-      seleccionados.size === 1
-
-        ? "1 producto seleccionado"
-
-        : seleccionados.size +
-          " productos seleccionados";
+          const height =
+            1500;
 
 
-    document.getElementById(
-      "btnCompartir"
-    ).disabled =
-      seleccionados.size === 0;
+          canvas.width =
+            width;
 
-  }
-
-
-  /* ============================================================
-     SELECCIONAR TODOS
-     ============================================================ */
-
-  document
-    .getElementById(
-      "btnSeleccionarTodos"
-    )
-    .addEventListener(
-      "click",
-      () => {
-
-        if (tallaSeleccionada === null) {
-
-          alert(
-            "Primero selecciona una talla."
-          );
-
-          return;
-
-        }
+          canvas.height =
+            height;
 
 
-        const lista =
-          productos.filter(
+          const ctx =
+            canvas.getContext("2d");
 
-            p =>
-              productForSize(
-                p,
-                tallaSeleccionada
-              )
 
+          /*
+            FONDO
+          */
+
+          ctx.fillStyle =
+            "#ffffff";
+
+
+          ctx.fillRect(
+            0,
+            0,
+            width,
+            height
           );
 
 
-        const todosSeleccionados =
-          lista.length > 0 &&
-          lista.every(
+          /*
+            IMAGEN
+          */
 
-            p =>
-              seleccionados.has(
-                String(p.id)
-              )
+          const maxW =
+            1000;
+
+          const maxH =
+            850;
+
+
+          const ratio =
+            Math.min(
+
+              maxW /
+                img.naturalWidth,
+
+              maxH /
+                img.naturalHeight
+
+            );
+
+
+          const drawW =
+            img.naturalWidth *
+            ratio;
+
+
+          const drawH =
+            img.naturalHeight *
+            ratio;
+
+
+          const x =
+            (width - drawW) / 2;
+
+
+          const y =
+            80 +
+            (maxH - drawH) / 2;
+
+
+          ctx.drawImage(
+
+            img,
+
+            x,
+            y,
+
+            drawW,
+            drawH
 
           );
 
 
-        if (todosSeleccionados) {
+          /*
+            TEXTO
+          */
 
-          seleccionados.clear();
+          ctx.fillStyle =
+            "#111";
 
-        } else {
 
-          lista.forEach(p => {
+          ctx.textAlign =
+            "center";
 
-            seleccionados.add(
-              String(p.id)
-            );
 
-          });
+          ctx.font =
+            "bold 55px Arial";
 
-        }
 
+          ctx.fillText(
+            "BENICONFORT",
+            width / 2,
+            1030
+          );
 
-        renderProductos();
 
-        actualizarContador();
+          ctx.font =
+            "bold 42px Arial";
 
-      }
-    );
 
+          ctx.fillText(
+            p.name,
+            width / 2,
+            1090
+          );
 
-  /* ============================================================
-     CREAR IMAGEN REAL
-     ============================================================ */
 
-  async function crearImagenProducto(p) {
+          ctx.font =
+            "28px Arial";
 
-    return new Promise(
-      (resolve, reject) => {
 
-        const img =
-          new Image();
+          ctx.fillText(
+            p.type,
+            width / 2,
+            1135
+          );
 
 
-        img.crossOrigin =
-          "anonymous";
+          ctx.font =
+            "bold 38px Arial";
 
 
-        img.referrerPolicy =
-          "no-referrer";
+          ctx.fillText(
 
+            "TALLA " +
+            tallaSeleccionada,
 
-        img.onload = () => {
+            width / 2,
+            1195
 
-          try {
+          );
 
-            const canvas =
-              document.createElement(
-                "canvas"
-              );
 
-
-            const width = 1200;
-            const height = 1500;
-
-
-            canvas.width =
-              width;
-
-            canvas.height =
-              height;
-
-
-            const ctx =
-              canvas.getContext(
-                "2d"
-              );
-
-
-            /* FONDO */
-
-            ctx.fillStyle =
-              "#ffffff";
-
-            ctx.fillRect(
-              0,
-              0,
-              width,
-              height
-            );
-
-
-            /* ------------------------------------------------
-               IMAGEN DEL TENIS
-               ------------------------------------------------ */
-
-            const maxW =
-              1000;
-
-            const maxH =
-              850;
-
-
-            const ratio =
-              Math.min(
-
-                maxW / img.naturalWidth,
-
-                maxH / img.naturalHeight
-
-              );
-
-
-            const drawW =
-              img.naturalWidth *
-              ratio;
-
-
-            const drawH =
-              img.naturalHeight *
-              ratio;
-
-
-            const x =
-              (width - drawW) / 2;
-
-
-            const y =
-              80 +
-              (maxH - drawH) / 2;
-
-
-            ctx.drawImage(
-
-              img,
-
-              x,
-              y,
-
-              drawW,
-              drawH
-
-            );
-
-
-            /* ------------------------------------------------
-               TEXTO
-               ------------------------------------------------ */
-
-            ctx.fillStyle =
-              "#111111";
-
-
-            ctx.textAlign =
-              "center";
-
-
-            ctx.font =
-              "bold 55px Arial";
-
-
-            ctx.fillText(
-              "BENICONFORT",
-              width / 2,
-              1030
-            );
-
-
-            ctx.font =
-              "bold 42px Arial";
-
-
-            ctx.fillText(
-
-              p.name,
-
-              width / 2,
-
-              1090
-
-            );
-
-
-            ctx.font =
-              "28px Arial";
-
-
-            ctx.fillText(
-
-              p.type,
-
-              width / 2,
-
-              1135
-
-            );
-
-
-            ctx.font =
-              "bold 38px Arial";
-
-
-            ctx.fillText(
-
-              "TALLA " +
-              tallaSeleccionada,
-
-              width / 2,
-
-              1195
-
-            );
-
-
-            /* ------------------------------------------------
-               PRECIOS
-               ------------------------------------------------ */
+          if (
+            p.cashPrice !== ""
+          ) {
 
             ctx.font =
               "bold 34px Arial";
 
 
-            if (p.cashPrice !== "") {
+            ctx.fillText(
 
-              ctx.fillText(
+              "Contado: " +
+              money(p.cashPrice),
 
-                "Contado: " +
-                money(p.cashPrice),
+              width / 2,
+              1260
 
-                width / 2,
+            );
 
-                1260
-
-              );
-
-            }
+          }
 
 
-            if (p.creditPrice !== "") {
-
-              ctx.fillText(
-
-                "Crédito: " +
-                money(p.creditPrice),
-
-                width / 2,
-
-                1310
-
-              );
-
-            }
-
-
-            if (p.initial !== "") {
-
-              ctx.font =
-                "27px Arial";
-
-
-              ctx.fillText(
-
-                "Inicial: " +
-                money(p.initial),
-
-                width / 2,
-
-                1355
-
-              );
-
-
-              ctx.fillText(
-
-                "2 cuotas mensuales",
-
-                width / 2,
-
-                1395
-
-              );
-
-            }
-
+          if (
+            p.creditPrice !== ""
+          ) {
 
             ctx.font =
-              "24px Arial";
+              "bold 34px Arial";
 
 
             ctx.fillText(
 
-              "Entregas a domicilio en Trinidad",
+              "Crédito: " +
+              money(p.creditPrice),
 
               width / 2,
+              1310
 
-              1450
+            );
+
+          }
+
+
+          if (
+            p.initial !== ""
+          ) {
+
+            ctx.font =
+              "27px Arial";
+
+
+            ctx.fillText(
+
+              "Inicial: " +
+              money(p.initial),
+
+              width / 2,
+              1355
 
             );
 
 
-            /* ------------------------------------------------
-               CONVERTIR A JPG REAL
-               ------------------------------------------------ */
+            ctx.fillText(
 
-            canvas.toBlob(
+              "2 cuotas mensuales",
 
-              blob => {
+              width / 2,
+              1395
 
-                if (!blob) {
+            );
 
-                  reject(
-                    new Error(
-                      "No se pudo crear el JPG."
-                    )
-                  );
-
-                  return;
-
-                }
+          }
 
 
-                const nombreSeguro =
+          ctx.font =
+            "24px Arial";
 
-                  String(
-                    p.name || "producto"
+
+          ctx.fillText(
+
+            "Entregas a domicilio en Trinidad",
+
+            width / 2,
+            1450
+
+          );
+
+
+          /*
+            JPG
+          */
+
+          canvas.toBlob(
+
+            blob => {
+
+              if (!blob) {
+
+                reject(
+
+                  new Error(
+                    "No se pudo crear el JPG."
                   )
 
-                    .replace(
-                      /[^a-z0-9áéíóúñü _-]/gi,
-                      ""
-                    )
+                );
 
-                    .replace(
-                      /\s+/g,
-                      "_"
-                    );
+                return;
+
+              }
 
 
-                const archivo =
-                  new File(
+              const nombreSeguro =
 
-                    [
-                      blob
-                    ],
+                String(
+                  p.name ||
+                  "producto"
+                )
 
-                    "BeniConfort_" +
-                    nombreSeguro +
-                    "_Talla_" +
-                    tallaSeleccionada +
-                    ".jpg",
+                  .replace(
+                    /[^a-z0-9áéíóúñü _-]/gi,
+                    ""
+                  )
 
-                    {
-                      type:
-                        "image/jpeg"
-                    }
-
+                  .replace(
+                    /\s+/g,
+                    "_"
                   );
 
 
-                resolve(
-                  archivo
+              const archivo =
+                new File(
+
+                  [blob],
+
+                  "BeniConfort_" +
+                  nombreSeguro +
+                  "_Talla_" +
+                  tallaSeleccionada +
+                  ".jpg",
+
+                  {
+                    type:
+                      "image/jpeg"
+                  }
+
                 );
 
-              },
 
-              "image/jpeg",
-
-              0.90
-
-            );
-
-
-          } catch (error) {
-
-            reject(error);
-
-          }
-
-        };
-
-
-        img.onerror = () => {
-
-          reject(
-
-            new Error(
-
-              "No se pudo cargar la imagen R2: " +
-              p.img
-
-            )
-
-          );
-
-        };
-
-
-        img.src =
-          p.img;
-
-      }
-
-    );
-
-  }
-
-
-  /* ============================================================
-     COMPARTIR
-     ============================================================ */
-
-  document
-    .getElementById(
-      "btnCompartir"
-    )
-    .addEventListener(
-      "click",
-      async () => {
-
-        if (
-          seleccionados.size === 0
-        ) {
-
-          alert(
-            "Selecciona al menos un producto."
-          );
-
-          return;
-
-        }
-
-
-        const productosSeleccionados =
-          productos.filter(
-
-            p =>
-              seleccionados.has(
-                String(p.id)
-              )
-
-          );
-
-
-        const estado =
-          document.getElementById(
-            "estado"
-          );
-
-
-        estado.textContent =
-          "Generando imágenes...";
-
-
-        const archivosGenerados =
-          [];
-
-
-        try {
-
-          for (
-            const p
-            of productosSeleccionados
-          ) {
-
-            estado.textContent =
-
-              "Generando imagen " +
-
-              (
-                archivosGenerados.length +
-                1
-              ) +
-
-              " de " +
-
-              productosSeleccionados.length +
-
-              "...";
-
-
-            const archivo =
-              await crearImagenProducto(
-                p
+              resolve(
+                archivo
               );
 
+            },
 
-            archivosGenerados.push(
-              archivo
-            );
+            "image/jpeg",
 
-          }
+            0.90
 
+          );
 
-          if (
-            !archivosGenerados.length
-          ) {
-
-            throw new Error(
-              "No se generaron archivos."
-            );
-
-          }
-
-
-          /* ------------------------------------------------
-             COMPROBAR SOPORTE DE ARCHIVOS
-             ------------------------------------------------ */
-
-          if (
-            !navigator.share
-          ) {
-
-            alert(
-              "Este navegador no permite compartir archivos."
-            );
-
-            return;
-
-          }
-
-
-          if (
-            navigator.canShare &&
-            !navigator.canShare({
-              files:
-                archivosGenerados
-            })
-          ) {
-
-            alert(
-              "El navegador no permite compartir estos archivos."
-            );
-
-            return;
-
-          }
-
-
-          estado.textContent =
-            "Abriendo menú para compartir...";
-
-
-          await navigator.share({
-
-            files:
-              archivosGenerados,
-
-            title:
-              "Tenis BeniConfort",
-
-            text:
-              "Modelos BeniConfort talla " +
-              tallaSeleccionada
-
-          });
-
-
-          estado.textContent =
-            "Compartido correctamente.";
 
         } catch (error) {
 
-          console.error(
-            "ERROR AL COMPARTIR:",
-            error
-          );
-
-
-          if (
-            error.name ===
-            "AbortError"
-          ) {
-
-            estado.textContent =
-              "Compartir cancelado.";
-
-            return;
-
-          }
-
-
-          estado.textContent =
-            "Error: " +
-            error.message;
-
-
-          alert(
-            "No se pudo generar o compartir la imagen.\n\n" +
-            error.message
-          );
+          reject(error);
 
         }
 
-      }
+      };
+
+
+      img.onerror = () => {
+
+        reject(
+
+          new Error(
+
+            "No se pudo cargar la imagen R2:\n" +
+            p.img
+
+          )
+
+        );
+
+      };
+
+
+      img.src =
+        p.img;
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   COMPARTIR
+   ============================================================ */
+
+btnCompartir.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      seleccionados.size === 0
+    ) {
+
+      alert(
+        "Selecciona al menos un producto."
+      );
+
+      return;
+
+    }
+
+
+    const lista =
+      productos.filter(
+
+        p =>
+
+          seleccionados.has(
+            String(p.id)
+          )
+
+      );
+
+
+    mostrarEstado(
+      "Generando imágenes..."
     );
 
 
-  /* ============================================================
-     INICIO
-     ============================================================ */
+    const archivos =
+      [];
 
-  loadCatalog();
+
+    try {
+
+      for (
+        const p of lista
+      ) {
+
+        mostrarEstado(
+
+          "Generando imagen " +
+          (
+            archivos.length + 1
+          ) +
+          " de " +
+          lista.length +
+          "..."
+
+        );
+
+
+        const archivo =
+          await crearImagenProducto(
+            p
+          );
+
+
+        archivos.push(
+          archivo
+        );
+
+      }
+
+
+      if (
+        !archivos.length
+      ) {
+
+        throw new Error(
+          "No se generaron imágenes."
+        );
+
+      }
+
+
+      if (
+        !navigator.share
+      ) {
+
+        throw new Error(
+          "Este navegador no permite compartir archivos."
+        );
+
+      }
+
+
+      if (
+        navigator.canShare &&
+        !navigator.canShare({
+          files: archivos
+        })
+      ) {
+
+        throw new Error(
+          "Este navegador no permite compartir estos archivos."
+        );
+
+      }
+
+
+      mostrarEstado(
+        "Abriendo menú para compartir..."
+      );
+
+
+      await navigator.share({
+
+        files: archivos,
+
+        title:
+          "Tenis BeniConfort",
+
+        text:
+          "Modelos BeniConfort talla " +
+          tallaSeleccionada
+
+      });
+
+
+      mostrarEstado(
+        "Compartido correctamente.",
+        "ok"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "ERROR COMPARTIENDO:",
+        error
+      );
+
+
+      if (
+        error.name === "AbortError"
+      ) {
+
+        mostrarEstado(
+          "Compartir cancelado."
+        );
+
+        return;
+
+      }
+
+
+      mostrarEstado(
+
+        "Error: " +
+        error.message,
+
+        "error"
+
+      );
+
+
+      alert(
+
+        "No se pudo generar o compartir la imagen.\n\n" +
+        error.message
+
+      );
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   INICIAR
+   ============================================================ */
+
+loadCatalog();
 
 </script>
 
