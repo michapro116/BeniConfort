@@ -17,6 +17,7 @@
   --soft:#f5f5f3;
   --green:#16864a;
   --red:#b00020;
+  --yellow:#d49a00;
 }
 
 *{
@@ -79,15 +80,15 @@ body{
 }
 
 .connection-dot.ok{
-  background:#16864a;
+  background:var(--green);
 }
 
 .connection-dot.error{
-  background:#b00020;
+  background:var(--red);
 }
 
 .connection-dot.loading{
-  background:#d49a00;
+  background:var(--yellow);
 }
 
 /* STATUS */
@@ -165,12 +166,10 @@ body{
   align-items:center;
   gap:12px;
   flex-wrap:wrap;
-
   background:#fff;
   border-radius:16px;
   padding:16px;
   margin-bottom:16px;
-
   box-shadow:0 3px 15px rgba(0,0,0,.05);
 }
 
@@ -196,11 +195,6 @@ button{
   font-size:12px;
   font-weight:900;
   cursor:pointer;
-}
-
-.btn-dark{
-  background:#111;
-  color:#fff;
 }
 
 .btn-light{
@@ -244,11 +238,9 @@ button{
   width:100%;
   aspect-ratio:1/1;
   background:#f5f5f3;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   overflow:hidden;
 }
 
@@ -264,24 +256,21 @@ button{
   padding:20px;
   font-size:12px;
   color:#b00020;
+  word-break:break-word;
 }
 
 .check{
   position:absolute;
   top:10px;
   right:10px;
-
   width:28px;
   height:28px;
-
   border-radius:50%;
   background:#fff;
   border:2px solid #aaa;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   font-size:16px;
   font-weight:900;
 }
@@ -300,16 +289,12 @@ button{
   display:inline-block;
   background:#111;
   color:#fff;
-
   padding:6px 8px;
-
   border-radius:5px;
-
   font-size:8px;
   font-weight:900;
   letter-spacing:1px;
   text-transform:uppercase;
-
   margin-bottom:9px;
 }
 
@@ -323,16 +308,13 @@ button{
 
 .name{
   margin-top:4px;
-
   font-size:20px;
   line-height:1.05;
-
   font-weight:900;
 }
 
 .meta{
   margin-top:8px;
-
   font-size:11px;
   font-weight:800;
 }
@@ -345,29 +327,22 @@ button{
 
 .price{
   flex:1;
-
   background:#f5f5f3;
-
   border-radius:8px;
-
   padding:8px;
 }
 
 .price small{
   display:block;
-
   font-size:7px;
   color:#777;
-
   text-transform:uppercase;
   font-weight:800;
 }
 
 .price strong{
   display:block;
-
   margin-top:3px;
-
   font-size:15px;
 }
 
@@ -376,40 +351,28 @@ button{
 .generating{
   position:fixed;
   inset:0;
-
   background:rgba(0,0,0,.72);
-
   display:none;
-
   align-items:center;
   justify-content:center;
-
   z-index:9999;
 }
 
 .generating-box{
   background:#fff;
-
   border-radius:16px;
-
   padding:30px;
-
   width:min(90%,350px);
-
   text-align:center;
 }
 
 .spinner{
   width:35px;
   height:35px;
-
   border:4px solid #ddd;
   border-top-color:#111;
-
   border-radius:50%;
-
   animation:spin .8s linear infinite;
-
   margin:0 auto 15px;
 }
 
@@ -470,8 +433,10 @@ button{
 
       <div class="connection">
 
-        <span id="connectionDot"
-              class="connection-dot loading"></span>
+        <span
+          id="connectionDot"
+          class="connection-dot loading">
+        </span>
 
         <span id="connectionText">
           Conectando...
@@ -497,15 +462,15 @@ button{
 
   <div id="mainContent" style="display:none;">
 
-
     <div class="size-box">
 
       <div class="size-title">
         Selecciona una talla
       </div>
 
-      <div id="sizes"
-           class="sizes">
+      <div
+        id="sizes"
+        class="sizes">
       </div>
 
     </div>
@@ -513,8 +478,9 @@ button{
 
     <div class="actions">
 
-      <div id="selectedInfo"
-           class="selected-info">
+      <div
+        id="selectedInfo"
+        class="selected-info">
 
         0 modelos seleccionados
 
@@ -552,8 +518,9 @@ button{
     </div>
 
 
-    <div id="products"
-         class="products">
+    <div
+      id="products"
+      class="products">
     </div>
 
   </div>
@@ -561,8 +528,9 @@ button{
 </div>
 
 
-<div id="generating"
-     class="generating">
+<div
+  id="generating"
+  class="generating">
 
   <div class="generating-box">
 
@@ -572,8 +540,9 @@ button{
       Preparando imágenes...
     </h3>
 
-    <p id="generatingText"
-       style="font-size:12px;color:#666;">
+    <p
+      id="generatingText"
+      style="font-size:12px;color:#666;">
 
       Generando archivos reales.
 
@@ -587,7 +556,8 @@ button{
 <script>
 
 /* =========================================================
-   MISMA CONEXIÓN DEL CATALOGO.HTML
+   CONFIGURACIÓN
+   EXACTAMENTE LA MISMA DEL CATALOGO.HTML
 ========================================================= */
 
 const WHATSAPP_NUMBER = "59173913409";
@@ -597,14 +567,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
-
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
 
 const SIZE_MIN = 34;
 const SIZE_MAX = 45;
@@ -640,13 +602,17 @@ function normalizeStatus(v){
   if(
     ["vendido","sold"].includes(s)
   ){
+
     return "sold";
+
   }
 
   if(
     ["reservado","reserved"].includes(s)
   ){
+
     return "reserved";
+
   }
 
   return "available";
@@ -655,7 +621,8 @@ function normalizeStatus(v){
 
 
 /* =========================================================
-   EXACTAMENTE LA MISMA NORMALIZACIÓN DEL CATÁLOGO
+   NORMALIZAR PRODUCTO
+   MISMO CÓDIGO DEL CATALOGO
 ========================================================= */
 
 function normalizeProduct(p){
@@ -815,7 +782,8 @@ function normalizeProduct(p){
 
 
 /* =========================================================
-   EXACTAMENTE LA MISMA LÓGICA DE TALLAS
+   TALLAS
+   MISMO CÓDIGO DEL CATALOGO
 ========================================================= */
 
 function availableSizes(p){
@@ -851,23 +819,13 @@ function availableSizes(p){
   return Object.keys(
     p.sizesQty || {}
   )
-
   .map(Number)
-
   .filter(
-
     s =>
-
       Number.isFinite(s) &&
-
-      Number(
-        p.sizesQty[s]
-      ) > 0 &&
-
+      Number(p.sizesQty[s]) > 0 &&
       p.status !== "sold" &&
-
       p.status !== "reserved"
-
   );
 
 }
@@ -876,26 +834,17 @@ function availableSizes(p){
 function selectableProducts(products){
 
   return products.filter(
-
     p =>
-
       p.status !== "sold" &&
-
       p.status !== "reserved" &&
-
       availableSizes(p).length > 0 &&
-
       p.img
-
   );
 
 }
 
 
-function productForSize(
-  p,
-  size
-){
+function productForSize(p,size){
 
   return availableSizes(p)
     .includes(
@@ -913,7 +862,8 @@ let products = [];
 
 let selectedSize = null;
 
-let selectedProducts = new Set();
+let selectedProducts =
+  new Set();
 
 
 /* =========================================================
@@ -962,7 +912,7 @@ const clearBtn =
 
 
 /* =========================================================
-   CONEXIÓN VISUAL
+   ESTADO DE CONEXIÓN
 ========================================================= */
 
 function connectionLoading(){
@@ -1029,7 +979,7 @@ function connectionError(){
 
 
 /* =========================================================
-   TALLAS DISPONIBLES
+   CREAR TALLAS
 ========================================================= */
 
 function createAvailableSizes(){
@@ -1134,9 +1084,8 @@ function selectSize(size){
 
         btn.classList.toggle(
           "active",
-          Number(
-            btn.dataset.size
-          ) === selectedSize
+          Number(btn.dataset.size)
+            === selectedSize
         );
 
       }
@@ -1149,7 +1098,7 @@ function selectSize(size){
 
 
 /* =========================================================
-   RENDER PRODUCTOS
+   MOSTRAR PRODUCTOS
 ========================================================= */
 
 function renderProducts(){
@@ -1160,14 +1109,17 @@ function renderProducts(){
   if(selectedSize === null){
 
     productsEl.innerHTML = `
-      <div class="empty"
-           style="grid-column:1/-1">
+      <div
+        class="empty"
+        style="grid-column:1/-1">
 
-        <h3>Selecciona una talla</h3>
+        <h3>
+          Selecciona una talla
+        </h3>
 
         <p>
-          Luego podrás seleccionar los modelos
-          que quieres compartir.
+          Luego podrás seleccionar
+          los modelos que quieres compartir.
         </p>
 
       </div>
@@ -1193,8 +1145,9 @@ function renderProducts(){
   if(!available.length){
 
     productsEl.innerHTML = `
-      <div class="empty"
-           style="grid-column:1/-1">
+      <div
+        class="empty"
+        style="grid-column:1/-1">
 
         No hay modelos disponibles
         para la talla ${selectedSize}.
@@ -1246,7 +1199,11 @@ function renderProducts(){
           >
 
           <div class="check">
-            ${selectedProducts.has(p.id) ? "✓" : ""}
+            ${
+              selectedProducts.has(p.id)
+                ? "✓"
+                : ""
+            }
           </div>
 
         </div>
@@ -1255,15 +1212,22 @@ function renderProducts(){
         <div class="card-info">
 
           <div class="type">
-            ${escapeHtml(p.type || "Tenis")}
+            ${escapeHtml(
+              p.type || "Tenis"
+            )}
           </div>
 
           <div class="brand">
-            ${escapeHtml(p.brand || "Marca")}
+            ${escapeHtml(
+              p.brand || "Marca"
+            )}
           </div>
 
           <div class="name">
-            ${escapeHtml(p.name || "Modelo disponible")}
+            ${escapeHtml(
+              p.name ||
+              "Modelo disponible"
+            )}
           </div>
 
           <div class="meta">
@@ -1318,14 +1282,23 @@ function renderProducts(){
           const box =
             img.parentElement;
 
-          box.insertAdjacentHTML(
-            "beforeend",
-            `
-              <div class="image-error">
-                No se pudo cargar la imagen.
-              </div>
-            `
-          );
+
+          if(
+            !box.querySelector(
+              ".image-error"
+            )
+          ){
+
+            box.insertAdjacentHTML(
+              "beforeend",
+              `
+                <div class="image-error">
+                  No se pudo cargar la imagen.
+                </div>
+              `
+            );
+
+          }
 
         }
       );
@@ -1358,7 +1331,7 @@ function renderProducts(){
 
 
 /* =========================================================
-   SELECCIÓN
+   SELECCIONAR PRODUCTO
 ========================================================= */
 
 function toggleProduct(
@@ -1407,7 +1380,7 @@ function updateSelectionInfo(){
 
 
   selectedInfo.textContent =
-    `${count} modelo${count===1?"":"s"} seleccionado${count===1?"":"s"}`;
+    `${count} modelo${count === 1 ? "" : "s"} seleccionado${count === 1 ? "" : "s"}`;
 
 
   shareBtn.disabled =
@@ -1493,7 +1466,8 @@ function escapeHtml(value){
 
 /* =========================================================
    CARGAR INVENTARIO
-   MISMO MÉTODO DEL CATALOGO
+   IMPORTANTE:
+   LA CONEXIÓN SE CREA DENTRO DEL TRY
 ========================================================= */
 
 async function loadInventory(){
@@ -1506,7 +1480,10 @@ async function loadInventory(){
 
 
   statusEl.innerHTML = `
-    <h2>Cargando inventario...</h2>
+    <h2>
+      Cargando inventario...
+    </h2>
+
     <p>
       Consultando modelos disponibles.
     </p>
@@ -1515,10 +1492,38 @@ async function loadInventory(){
 
   try{
 
+    /* -----------------------------------------
+       COMPROBAR SUPABASE
+    ----------------------------------------- */
+
+    if(!window.supabase){
+
+      throw new Error(
+        "La biblioteca de Supabase no terminó de cargar."
+      );
+
+    }
+
+
+    /* -----------------------------------------
+       MISMA CONEXIÓN DEL CATALOGO
+    ----------------------------------------- */
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
     console.log(
-      "Conectando con Supabase..."
+      "Supabase inicializado correctamente."
     );
 
+
+    /* -----------------------------------------
+       MISMA CONSULTA DEL CATALOGO
+    ----------------------------------------- */
 
     const {
       data,
@@ -1543,6 +1548,10 @@ async function loadInventory(){
     }
 
 
+    /* -----------------------------------------
+       NORMALIZAR
+    ----------------------------------------- */
+
     products =
       selectableProducts(
         (data || [])
@@ -1553,10 +1562,22 @@ async function loadInventory(){
 
 
     console.log(
-      "Productos utilizables:",
-      products
+      "Total registros:",
+      data
+        ? data.length
+        : 0
     );
 
+
+    console.log(
+      "Productos utilizables:",
+      products.length
+    );
+
+
+    /* -----------------------------------------
+       CONEXIÓN OK
+    ----------------------------------------- */
 
     connectionOK();
 
@@ -1569,6 +1590,10 @@ async function loadInventory(){
       "block";
 
 
+    /* -----------------------------------------
+       TALLAS
+    ----------------------------------------- */
+
     createAvailableSizes();
 
 
@@ -1578,7 +1603,7 @@ async function loadInventory(){
   }catch(error){
 
     console.error(
-      "ERROR SUPABASE:",
+      "ERROR COMPLETO DE SUPABASE:",
       error
     );
 
@@ -1592,9 +1617,19 @@ async function loadInventory(){
         No se pudo cargar el inventario
       </h2>
 
-      <p>
+      <p style="margin-bottom:12px;">
+        Se produjo un error al conectar
+        con el inventario.
+      </p>
+
+      <p style="
+        font-size:12px;
+        color:#b00020;
+        word-break:break-word;
+      ">
         ${escapeHtml(
-          error.message || error
+          error?.message ||
+          String(error)
         )}
       </p>
 
@@ -1606,7 +1641,7 @@ async function loadInventory(){
 
 
 /* =========================================================
-   GENERAR IMAGEN REAL
+   CARGAR IMAGEN PARA CANVAS
 ========================================================= */
 
 function loadImage(url){
@@ -1648,6 +1683,10 @@ function loadImage(url){
 
 }
 
+
+/* =========================================================
+   GENERAR JPG REAL
+========================================================= */
 
 async function generateProductImage(
   product,
@@ -1740,10 +1779,13 @@ async function generateProductImage(
 
 
   const drawW =
-    img.naturalWidth * ratio;
+    img.naturalWidth *
+    ratio;
+
 
   const drawH =
-    img.naturalHeight * ratio;
+    img.naturalHeight *
+    ratio;
 
 
   const drawX =
@@ -1787,8 +1829,10 @@ async function generateProductImage(
     "900 25px Arial";
 
   ctx.fillText(
-    (product.brand || "BENICONFORT")
-      .toUpperCase(),
+    (
+      product.brand ||
+      "BENICONFORT"
+    ).toUpperCase(),
     70,
     985
   );
@@ -1801,6 +1845,7 @@ async function generateProductImage(
 
   ctx.font =
     "900 55px Arial";
+
 
   const productName =
     product.name ||
@@ -1866,11 +1911,12 @@ async function generateProductImage(
   );
 
 
-  /* PLAN */
+  /* PLAN DE CRÉDITO */
 
   if(
     product.initial > 0 &&
-    product.creditPrice > product.initial
+    product.creditPrice >
+      product.initial
   ){
 
     const monthly =
@@ -1900,6 +1946,7 @@ async function generateProductImage(
     ctx.font =
       "700 21px Arial";
 
+
     ctx.fillText(
       `Inicial ${money(product.initial)}  ·  Luego 2 pagos mensuales de ${money(monthly)}`,
       95,
@@ -1923,6 +1970,8 @@ async function generateProductImage(
     1450
   );
 
+
+  /* CREAR ARCHIVO JPG */
 
   return new Promise(
     (resolve,reject) => {
@@ -1960,9 +2009,7 @@ async function generateProductImage(
 
           const file =
             new File(
-              [
-                blob
-              ],
+              [blob],
               `BeniConfort-Talla-${size}-${safeName}.jpg`,
               {
                 type:
@@ -1988,7 +2035,7 @@ async function generateProductImage(
 
 
 /* =========================================================
-   COMPARTIR
+   COMPARTIR VARIAS IMÁGENES REALES
 ========================================================= */
 
 shareBtn.addEventListener(
@@ -2040,13 +2087,13 @@ shareBtn.addEventListener(
     try{
 
       for(
-        let i=0;
-        i<selected.length;
+        let i = 0;
+        i < selected.length;
         i++
       ){
 
         generatingText.textContent =
-          `Preparando imagen ${i+1} de ${selected.length}...`;
+          `Preparando imagen ${i + 1} de ${selected.length}...`;
 
 
         const file =
@@ -2086,7 +2133,7 @@ shareBtn.addEventListener(
       if(
         navigator.canShare &&
         !navigator.canShare({
-          files:archivos
+          files: archivos
         })
       ){
 
@@ -2103,7 +2150,8 @@ shareBtn.addEventListener(
 
       await navigator.share({
 
-        files:archivos,
+        files:
+          archivos,
 
         title:
           "Tenis BeniConfort",
@@ -2146,7 +2194,7 @@ shareBtn.addEventListener(
 
 
 /* =========================================================
-   INICIO
+   INICIAR
 ========================================================= */
 
 loadInventory();
