@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -247,6 +248,147 @@ header p{
 }
 
 /* =========================================================
+   SECCIÓN DE LOTES GENERADOS
+========================================================= */
+
+.generated-section{
+    margin-top:35px;
+}
+
+.generated-section.hidden{
+    display:none;
+}
+
+.generated-header{
+    background:white;
+    border-radius:14px;
+    padding:17px;
+    margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+.generated-header h2{
+    font-size:20px;
+    margin-bottom:5px;
+}
+
+.generated-header p{
+    color:#666;
+    font-size:14px;
+}
+
+.batch{
+    background:white;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+    border:2px solid #e5e7eb;
+    transition:.2s;
+}
+
+.batch.shared{
+    border-color:#16a34a;
+}
+
+.batch-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
+}
+
+.batch-title{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.batch-count{
+    font-size:13px;
+    color:#666;
+    margin-top:3px;
+}
+
+.batch-status{
+    font-size:14px;
+    font-weight:bold;
+    padding:7px 11px;
+    border-radius:9px;
+    background:#fff7ed;
+    color:#c2410c;
+}
+
+.batch.shared .batch-status{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.batch-images{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:16px;
+}
+
+.batch-image-card{
+    background:#f4f6f8;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.batch-image-card img{
+    width:100%;
+    display:block;
+    aspect-ratio:4/5;
+    object-fit:cover;
+}
+
+.batch-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.batch-share-btn{
+    border:0;
+    background:#2563eb;
+    color:white;
+    border-radius:10px;
+    padding:12px 18px;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+    flex:1;
+    min-width:180px;
+}
+
+.batch-share-btn:hover:not(:disabled){
+    background:#1d4ed8;
+}
+
+.batch-share-btn:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+}
+
+.batch-download-btn{
+    border:0;
+    background:#e5e7eb;
+    color:#111827;
+    border-radius:10px;
+    padding:12px 18px;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.batch-download-btn:hover{
+    background:#d1d5db;
+}
+
+/* =========================================================
    BARRA INFERIOR
 ========================================================= */
 
@@ -357,7 +499,7 @@ header p{
    MÓVIL
 ========================================================= */
 
-@media(max-width:600px){
+@media(max-width:700px){
 
     .container{
         padding:14px;
@@ -386,6 +528,14 @@ header p{
 
     .select-all-btn{
         width:100%;
+    }
+
+    .batch-images{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .batch{
+        padding:13px;
     }
 
     .bottom-inner{
@@ -464,6 +614,34 @@ header p{
 
     <div id="products" class="products"></div>
 
+
+    <!-- =====================================================
+         LOTES GENERADOS
+    ====================================================== -->
+
+    <section
+        id="generatedSection"
+        class="generated-section hidden"
+    >
+
+        <div class="generated-header">
+
+            <h2>
+                Imágenes listas para compartir
+            </h2>
+
+            <p>
+                Las imágenes se dividen automáticamente en lotes
+                de 8 para evitar el límite de archivos del navegador.
+            </p>
+
+        </div>
+
+
+        <div id="batchesContainer"></div>
+
+    </section>
+
 </div>
 
 
@@ -499,7 +677,7 @@ header p{
                 class="share-btn"
                 disabled
             >
-                Compartir imágenes
+                Compartir lote 1
             </button>
 
         </div>
@@ -531,6 +709,18 @@ const SIZE_MIN = 34;
 const SIZE_MAX = 45;
 
 
+/*
+ * =========================================================
+ * TAMAÑO MÁXIMO DE CADA LOTE
+ * =========================================================
+ *
+ * Aunque tu navegador parece permitir hasta 11,
+ * usamos 8 para dejar margen de seguridad.
+ */
+
+const IMAGES_PER_BATCH = 8;
+
+
 /* =========================================================
    ESTADO
 ========================================================= */
@@ -541,20 +731,26 @@ let currentSize = null;
 
 let selectedProducts = [];
 
+
 /*
- * Aquí guardaremos los JPG ya generados.
- *
- * IMPORTANTE:
- *
- * Se generan en un paso.
- * Se comparten en otro clic.
- *
- * Esto evita el error:
- *
- * "Must be handling a user gesture"
+ * Todos los JPG generados.
  */
 
 let generatedFiles = [];
+
+
+/*
+ * Lotes creados a partir de generatedFiles.
+ *
+ * Cada lote tendrá:
+ *
+ * {
+ *   files: [],
+ *   shared: false
+ * }
+ */
+
+let generatedBatches = [];
 
 
 /* =========================================================
@@ -581,6 +777,12 @@ const shareBtn =
 
 const selectAllBtn =
     document.getElementById("selectAllBtn");
+
+const generatedSection =
+    document.getElementById("generatedSection");
+
+const batchesContainer =
+    document.getElementById("batchesContainer");
 
 
 /* =========================================================
@@ -1111,14 +1313,7 @@ function renderSizes(){
                 selectedProducts =
                     [];
 
-                generatedFiles =
-                    [];
-
-                shareBtn.disabled =
-                    true;
-
-                shareBtn.textContent =
-                    "Compartir imágenes";
+                clearGeneratedImages();
 
                 renderSizes();
 
@@ -1251,21 +1446,11 @@ selectAllBtn.addEventListener(
             allSelected
         ){
 
-            /*
-             * Deseleccionar todos los productos
-             * de la talla actual.
-             */
-
             selectedProducts =
                 [];
 
         }
         else{
-
-            /*
-             * Seleccionar todos los productos
-             * de la talla actual.
-             */
 
             selectedProducts =
                 [...list];
@@ -1273,21 +1458,7 @@ selectAllBtn.addEventListener(
         }
 
 
-        /*
-         * Al cambiar la selección,
-         * los JPG anteriores ya no corresponden
-         * necesariamente a la selección actual.
-         */
-
-        generatedFiles =
-            [];
-
-        shareBtn.disabled =
-            true;
-
-        shareBtn.textContent =
-            "Compartir imágenes";
-
+        clearGeneratedImages();
 
         renderProducts();
 
@@ -1564,27 +1735,55 @@ function toggleProduct(p){
     }
 
 
-    /*
-     * La selección cambió,
-     * por lo tanto los archivos generados
-     * anteriores ya no son necesariamente válidos.
-     */
-
-    generatedFiles =
-        [];
-
-    shareBtn.disabled =
-        true;
-
-    shareBtn.textContent =
-        "Compartir imágenes";
-
+    clearGeneratedImages();
 
     renderProducts();
 
     updateSelectedInfo();
 
     updateSelectAllButton();
+
+}
+
+
+/* =========================================================
+   LIMPIAR IMÁGENES GENERADAS
+========================================================= */
+
+function clearGeneratedImages(){
+
+    generatedFiles =
+        [];
+
+    generatedBatches =
+        [];
+
+
+    generatedSection
+        .classList
+        .add(
+            "hidden"
+        );
+
+
+    batchesContainer.innerHTML =
+        "";
+
+
+    shareBtn.disabled =
+        true;
+
+
+    shareBtn.textContent =
+        "Compartir imágenes";
+
+
+    generateBtn.textContent =
+        "Generar imágenes";
+
+
+    generateBtn.disabled =
+        selectedProducts.length === 0;
 
 }
 
@@ -1612,11 +1811,6 @@ function updateSelectedInfo(){
     generateBtn.disabled =
         count === 0;
 
-
-    /*
-     * Si no hay productos seleccionados,
-     * tampoco se puede compartir.
-     */
 
     if(
         count === 0
@@ -2085,12 +2279,6 @@ async function loadImageForCanvas(url){
     );
 
 
-    /*
-     * MÉTODO 1:
-     *
-     * Blob + object URL.
-     */
-
     try{
 
         const blob =
@@ -2122,12 +2310,6 @@ async function loadImageForCanvas(url){
 
     }
 
-
-    /*
-     * MÉTODO 2:
-     *
-     * Carga directa con CORS.
-     */
 
     try{
 
@@ -2190,10 +2372,6 @@ function drawFittedText(
         color;
 
 
-    /*
-     * Si cabe, dibujamos normalmente.
-     */
-
     if(
         ctx.measureText(
             value
@@ -2210,11 +2388,6 @@ function drawFittedText(
 
     }
 
-
-    /*
-     * Si es demasiado largo,
-     * reducimos el tamaño de fuente.
-     */
 
     const match =
         font.match(
@@ -2245,11 +2418,6 @@ function drawFittedText(
 
     }
 
-
-    /*
-     * Si aun así no cabe,
-     * usamos puntos suspensivos.
-     */
 
     while(
         ctx.measureText(
@@ -2307,13 +2475,6 @@ async function generateJpg(
             product.img
         );
 
-
-    /*
-     * Canvas vertical.
-     *
-     * 1080 x 1350 funciona muy bien
-     * para WhatsApp, Messenger y redes.
-     */
 
     const width =
         1080;
@@ -2373,10 +2534,6 @@ async function generateJpg(
      * =====================================================
      */
 
-    /*
-     * BeniConfort como marca.
-     */
-
     ctx.textAlign =
         "center";
 
@@ -2392,10 +2549,6 @@ async function generateJpg(
         58
     );
 
-
-    /*
-     * Pequeña línea de categoría.
-     */
 
     ctx.fillStyle =
         "#6b7280";
@@ -2414,12 +2567,6 @@ async function generateJpg(
      * =====================================================
      * IMAGEN PRINCIPAL
      * =====================================================
-     *
-     * ESTA ES LA PARTE MÁS IMPORTANTE.
-     *
-     * La imagen ocupa la mayor parte del diseño.
-     *
-     * No colocamos ningún texto encima.
      */
 
     const imageAreaLeft =
@@ -2458,15 +2605,6 @@ async function generateJpg(
     }
 
 
-    /*
-     * contain:
-     *
-     * La zapatilla conserva completamente
-     * su proporción.
-     *
-     * Se aprovecha al máximo el espacio.
-     */
-
     const scale =
         Math.min(
             imageAreaWidth /
@@ -2502,11 +2640,6 @@ async function generateJpg(
             drawHeight
         ) / 2;
 
-
-    /*
-     * Un pequeño espacio blanco alrededor
-     * mantiene la fotografía limpia.
-     */
 
     try{
 
@@ -2553,15 +2686,8 @@ async function generateJpg(
 
     /*
      * =====================================================
-     * INFORMACIÓN COMPACTA
+     * INFORMACIÓN
      * =====================================================
-     */
-
-    /*
-     * Desde aquí comienza la información.
-     *
-     * Todo queda compacto para no quitar
-     * protagonismo a la zapatilla.
      */
 
     const infoLeft =
@@ -2598,8 +2724,6 @@ async function generateJpg(
 
     /*
      * TALLA
-     *
-     * A la derecha para ahorrar espacio.
      */
 
     ctx.textAlign =
@@ -2619,7 +2743,7 @@ async function generateJpg(
 
 
     /*
-     * Marca pequeña debajo del modelo.
+     * MARCA
      */
 
     if(
@@ -2649,20 +2773,11 @@ async function generateJpg(
 
 
     /*
-     * =====================================================
-     * PRECIOS
-     * =====================================================
-     *
-     * Los colocamos juntos horizontalmente.
+     * CONTADO
      */
 
     ctx.textAlign =
         "left";
-
-
-    /*
-     * CONTADO
-     */
 
     ctx.font =
         "bold 27px Arial";
@@ -2692,9 +2807,7 @@ async function generateJpg(
 
 
     /*
-     * =====================================================
      * INICIAL
-     * =====================================================
      */
 
     if(
@@ -2720,9 +2833,7 @@ async function generateJpg(
 
 
     /*
-     * =====================================================
-     * FRASE DE VENTA
-     * =====================================================
+     * FRASE
      */
 
     ctx.textAlign =
@@ -2742,9 +2853,7 @@ async function generateJpg(
 
 
     /*
-     * =====================================================
      * ENTREGA
-     * =====================================================
      */
 
     ctx.font =
@@ -2761,9 +2870,7 @@ async function generateJpg(
 
 
     /*
-     * =====================================================
-     * MARCA FINAL DISCRETA
-     * =====================================================
+     * MARCA FINAL
      */
 
     ctx.font =
@@ -2846,10 +2953,6 @@ async function generateJpg(
     }
 
 
-    /*
-     * Nombre seguro.
-     */
-
     const safeName =
         (
             product.name ||
@@ -2881,6 +2984,43 @@ async function generateJpg(
 
 
 /* =========================================================
+   CREAR LOTES
+========================================================= */
+
+function createBatches(files){
+
+    const batches =
+        [];
+
+
+    for(
+        let i = 0;
+        i < files.length;
+        i += IMAGES_PER_BATCH
+    ){
+
+        batches.push({
+
+            files:
+                files.slice(
+                    i,
+                    i + IMAGES_PER_BATCH
+                ),
+
+            shared:
+                false
+
+        });
+
+    }
+
+
+    return batches;
+
+}
+
+
+/* =========================================================
    GENERAR IMÁGENES
 ========================================================= */
 
@@ -2895,12 +3035,7 @@ async function generateImages(){
     }
 
 
-    /*
-     * Borramos los archivos anteriores.
-     */
-
-    generatedFiles =
-        [];
+    clearGeneratedImages();
 
 
     generateBtn.disabled =
@@ -3001,13 +3136,36 @@ async function generateImages(){
 
 
         /*
-         * Ya tenemos los JPG listos.
-         *
-         * Ahora NO llamamos navigator.share().
-         *
-         * Esperamos el clic del usuario
-         * sobre "Compartir imágenes".
+         * AQUÍ se dividen los archivos.
          */
+
+        generatedBatches =
+            createBatches(
+                generatedFiles
+            );
+
+
+        /*
+         * Mostrar los lotes.
+         */
+
+        renderBatches();
+
+
+        generatedSection
+            .classList
+            .remove(
+                "hidden"
+            );
+
+
+        /*
+         * El botón inferior comienza
+         * con el primer lote pendiente.
+         */
+
+        updateMainShareButton();
+
 
         generateBtn.textContent =
             `✓ ${generatedFiles.length} imagen${
@@ -3021,12 +3179,8 @@ async function generateImages(){
             }`;
 
 
-        shareBtn.disabled =
+        generateBtn.disabled =
             false;
-
-
-        shareBtn.textContent =
-            "Compartir imágenes";
 
 
     }
@@ -3038,8 +3192,7 @@ async function generateImages(){
         );
 
 
-        generatedFiles =
-            [];
+        clearGeneratedImages();
 
 
         alert(
@@ -3055,23 +3208,443 @@ async function generateImages(){
         generateBtn.disabled =
             selectedProducts.length === 0;
 
-
-        shareBtn.disabled =
-            true;
-
     }
 
 }
 
 
 /* =========================================================
-   COMPARTIR IMÁGENES
+   RENDERIZAR LOTES
 ========================================================= */
 
-async function shareGeneratedImages(){
+function renderBatches(){
+
+    batchesContainer.innerHTML =
+        "";
+
+
+    generatedBatches.forEach(
+        (
+            batch,
+            batchIndex
+        ) => {
+
+            const batchEl =
+                document.createElement(
+                    "div"
+                );
+
+
+            batchEl.className =
+                "batch";
+
+
+            if(
+                batch.shared
+            ){
+
+                batchEl.classList.add(
+                    "shared"
+                );
+
+            }
+
+
+            /*
+             * Encabezado
+             */
+
+            const header =
+                document.createElement(
+                    "div"
+                );
+
+
+            header.className =
+                "batch-header";
+
+
+            const titleWrapper =
+                document.createElement(
+                    "div"
+                );
+
+
+            const title =
+                document.createElement(
+                    "div"
+                );
+
+
+            title.className =
+                "batch-title";
+
+
+            title.textContent =
+                `Lote ${batchIndex + 1}`;
+
+
+            const count =
+                document.createElement(
+                    "div"
+                );
+
+
+            count.className =
+                "batch-count";
+
+
+            count.textContent =
+                `${batch.files.length} imagen${
+                    batch.files.length === 1
+                        ? ""
+                        : "es"
+                }`;
+
+
+            titleWrapper.appendChild(
+                title
+            );
+
+            titleWrapper.appendChild(
+                count
+            );
+
+
+            const status =
+                document.createElement(
+                    "div"
+                );
+
+
+            status.className =
+                "batch-status";
+
+
+            status.textContent =
+                batch.shared
+                    ? "🟢 Compartido"
+                    : "🟡 Pendiente";
+
+
+            header.appendChild(
+                titleWrapper
+            );
+
+            header.appendChild(
+                status
+            );
+
+
+            /*
+             * Imágenes
+             */
+
+            const images =
+                document.createElement(
+                    "div"
+                );
+
+
+            images.className =
+                "batch-images";
+
+
+            batch.files.forEach(
+                file => {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "batch-image-card";
+
+
+                    const img =
+                        document.createElement(
+                            "img"
+                        );
+
+
+                    const url =
+                        URL.createObjectURL(
+                            file
+                        );
+
+
+                    img.src =
+                        url;
+
+
+                    img.alt =
+                        file.name;
+
+
+                    /*
+                     * No revocamos inmediatamente
+                     * el ObjectURL porque la vista
+                     * necesita seguir mostrando la imagen.
+                     */
+
+                    card.appendChild(
+                        img
+                    );
+
+
+                    images.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+
+            /*
+             * Acciones
+             */
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+
+            actions.className =
+                "batch-actions";
+
+
+            const shareBatchBtn =
+                document.createElement(
+                    "button"
+                );
+
+
+            shareBatchBtn.type =
+                "button";
+
+
+            shareBatchBtn.className =
+                "batch-share-btn";
+
+
+            if(
+                batch.shared
+            ){
+
+                shareBatchBtn.textContent =
+                    "✓ Lote compartido";
+
+                shareBatchBtn.disabled =
+                    true;
+
+            }
+            else{
+
+                shareBatchBtn.textContent =
+                    `📤 Compartir lote ${batchIndex + 1}`;
+
+            }
+
+
+            shareBatchBtn.addEventListener(
+                "click",
+                () => {
+
+                    shareBatch(
+                        batchIndex,
+                        shareBatchBtn
+                    );
+
+                }
+            );
+
+
+            /*
+             * Descargar lote.
+             *
+             * Es respaldo.
+             */
+
+            const downloadBtn =
+                document.createElement(
+                    "button"
+                );
+
+
+            downloadBtn.type =
+                "button";
+
+
+            downloadBtn.className =
+                "batch-download-btn";
+
+
+            downloadBtn.textContent =
+                "Descargar lote";
+
+
+            downloadBtn.addEventListener(
+                "click",
+                () => {
+
+                    downloadBatch(
+                        batch
+                    );
+
+                }
+            );
+
+
+            actions.appendChild(
+                shareBatchBtn
+            );
+
+            actions.appendChild(
+                downloadBtn
+            );
+
+
+            batchEl.appendChild(
+                header
+            );
+
+            batchEl.appendChild(
+                images
+            );
+
+            batchEl.appendChild(
+                actions
+            );
+
+
+            batchesContainer.appendChild(
+                batchEl
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BUSCAR PRIMER LOTE PENDIENTE
+========================================================= */
+
+function getFirstPendingBatchIndex(){
+
+    for(
+        let i = 0;
+        i < generatedBatches.length;
+        i++
+    ){
+
+        if(
+            !generatedBatches[i].shared
+        ){
+
+            return i;
+
+        }
+
+    }
+
+
+    return -1;
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR BOTÓN PRINCIPAL
+========================================================= */
+
+function updateMainShareButton(){
+
+    const pendingIndex =
+        getFirstPendingBatchIndex();
+
+
+    /*
+     * No hay lotes.
+     */
 
     if(
-        generatedFiles.length === 0
+        generatedBatches.length === 0
+    ){
+
+        shareBtn.disabled =
+            true;
+
+        shareBtn.textContent =
+            "Compartir imágenes";
+
+        return;
+
+    }
+
+
+    /*
+     * Todos compartidos.
+     */
+
+    if(
+        pendingIndex === -1
+    ){
+
+        shareBtn.disabled =
+            true;
+
+        shareBtn.textContent =
+            "✓ Todos los lotes compartidos";
+
+        return;
+
+    }
+
+
+    /*
+     * Hay un lote pendiente.
+     */
+
+    shareBtn.disabled =
+        false;
+
+    shareBtn.textContent =
+        `Compartir lote ${pendingIndex + 1}`;
+
+}
+
+
+/* =========================================================
+   COMPARTIR LOTE
+========================================================= */
+
+async function shareBatch(
+    batchIndex,
+    button
+){
+
+    const batch =
+        generatedBatches[
+            batchIndex
+        ];
+
+
+    if(
+        !batch
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        batch.shared
     ){
 
         return;
@@ -3080,8 +3653,7 @@ async function shareGeneratedImages(){
 
 
     /*
-     * Si el navegador no soporta Web Share,
-     * mostramos una alternativa.
+     * Web Share no disponible.
      */
 
     if(
@@ -3098,8 +3670,10 @@ async function shareGeneratedImages(){
 
 
     /*
-     * Comprobar si el navegador puede compartir
-     * los archivos generados.
+     * El lote tiene máximo 8 archivos.
+     *
+     * Comprobamos exactamente ESTE lote,
+     * no todos los archivos.
      */
 
     if(
@@ -3115,7 +3689,7 @@ async function shareGeneratedImages(){
             shareable =
                 navigator.canShare({
                     files:
-                        generatedFiles
+                        batch.files
                 });
 
         }
@@ -3134,7 +3708,7 @@ async function shareGeneratedImages(){
         ){
 
             alert(
-                "El navegador no permite compartir estos archivos."
+                `El navegador no permite compartir este lote de ${batch.files.length} imágenes. Prueba con un lote más pequeño.`
             );
 
             return;
@@ -3144,28 +3718,30 @@ async function shareGeneratedImages(){
     }
 
 
-    /*
-     * MUY IMPORTANTE:
-     *
-     * navigator.share() se ejecuta DIRECTAMENTE
-     * como consecuencia del clic del usuario.
-     *
-     * No generamos imágenes aquí.
-     */
-
     try{
+
+        /*
+         * ESTE es el punto importante:
+         *
+         * navigator.share() se ejecuta directamente
+         * por el clic del botón.
+         */
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "⏳ Compartiendo...";
+
 
         shareBtn.disabled =
             true;
-
-        shareBtn.textContent =
-            "Abriendo compartir...";
 
 
         await navigator.share({
 
             files:
-                generatedFiles,
+                batch.files,
 
             title:
                 "BeniConfort",
@@ -3176,72 +3752,140 @@ async function shareGeneratedImages(){
         });
 
 
-        shareBtn.textContent =
-            "✓ Compartido";
+        /*
+         * Si navigator.share() termina correctamente,
+         * marcamos el lote como compartido.
+         */
+
+        batch.shared =
+            true;
 
 
-        setTimeout(
-            () => {
+        button.textContent =
+            "✓ Lote compartido";
 
-                if(
-                    generatedFiles.length > 0
-                ){
 
-                    shareBtn.textContent =
-                        "Compartir imágenes";
+        /*
+         * Actualizamos visualmente
+         * todo el lote.
+         */
 
-                    shareBtn.disabled =
-                        false;
+        renderBatches();
 
-                }
 
-            },
-            2000
-        );
+        updateMainShareButton();
+
+
+        /*
+         * Llevar la vista al siguiente lote pendiente,
+         * si existe.
+         */
+
+        const nextPending =
+            getFirstPendingBatchIndex();
+
+
+        if(
+            nextPending >= 0
+        ){
+
+            setTimeout(
+                () => {
+
+                    const batchElements =
+                        batchesContainer
+                        .querySelectorAll(
+                            ".batch"
+                        );
+
+
+                    if(
+                        batchElements[
+                            nextPending
+                        ]
+                    ){
+
+                        batchElements[
+                            nextPending
+                        ].scrollIntoView({
+                            behavior:"smooth",
+                            block:"center"
+                        });
+
+                    }
+
+                },
+                250
+            );
+
+        }
+
 
     }
     catch(error){
 
         console.error(
-            "ERROR AL COMPARTIR:",
+            "ERROR AL COMPARTIR LOTE:",
             error
         );
 
 
         /*
-         * AbortError significa normalmente que
-         * el usuario cerró la ventana de compartir.
+         * IMPORTANTE:
          *
-         * No mostramos un error molesto.
+         * Si el usuario cancela,
+         * NO lo marcamos como compartido.
          */
 
         if(
             error &&
-            error.name === "AbortError"
+            error.name ===
+            "AbortError"
         ){
 
-            shareBtn.textContent =
-                "Compartir imágenes";
+            button.disabled =
+                false;
+
+            button.textContent =
+                `📤 Compartir lote ${batchIndex + 1}`;
+
 
             shareBtn.disabled =
                 false;
+
+
+            updateMainShareButton();
 
             return;
 
         }
 
 
-        alert(
-            error.message ||
-            "No se pudieron compartir las imágenes."
-        );
+        /*
+         * Si Chrome vuelve a indicar
+         * que el lote es demasiado grande,
+         * mantenemos el lote pendiente.
+         */
+
+        button.disabled =
+            false;
 
 
-        shareBtn.textContent =
-            "Compartir imágenes";
+        button.textContent =
+            `📤 Compartir lote ${batchIndex + 1}`;
+
 
         shareBtn.disabled =
             false;
+
+
+        updateMainShareButton();
+
+
+        alert(
+            error.message ||
+            "No se pudo compartir este lote. El lote permanece pendiente."
+        );
 
     }
 
@@ -3249,18 +3893,146 @@ async function shareGeneratedImages(){
 
 
 /* =========================================================
-   EVENTOS
+   BOTÓN INFERIOR
+========================================================= */
+
+shareBtn.addEventListener(
+    "click",
+    () => {
+
+        const pendingIndex =
+            getFirstPendingBatchIndex();
+
+
+        if(
+            pendingIndex === -1
+        ){
+
+            return;
+
+        }
+
+
+        /*
+         * IMPORTANTE:
+         *
+         * Esta función se llama directamente
+         * desde el clic del botón inferior.
+         */
+
+        const batch =
+            generatedBatches[
+                pendingIndex
+            ];
+
+
+        /*
+         * Buscar el botón visual
+         * correspondiente al lote.
+         */
+
+        const buttons =
+            batchesContainer
+            .querySelectorAll(
+                ".batch-share-btn"
+            );
+
+
+        const button =
+            buttons[
+                pendingIndex
+            ];
+
+
+        if(
+            button
+        ){
+
+            shareBatch(
+                pendingIndex,
+                button
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   DESCARGAR LOTE
+========================================================= */
+
+function downloadBatch(batch){
+
+    batch.files.forEach(
+        (
+            file,
+            index
+        ) => {
+
+            setTimeout(
+                () => {
+
+                    const url =
+                        URL.createObjectURL(
+                            file
+                        );
+
+
+                    const a =
+                        document.createElement(
+                            "a"
+                        );
+
+
+                    a.href =
+                        url;
+
+
+                    a.download =
+                        file.name;
+
+
+                    document.body.appendChild(
+                        a
+                    );
+
+
+                    a.click();
+
+
+                    a.remove();
+
+
+                    setTimeout(
+                        () => {
+
+                            URL.revokeObjectURL(
+                                url
+                            );
+
+                        },
+                        1000
+                    );
+
+                },
+                index * 250
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EVENTO GENERAR
 ========================================================= */
 
 generateBtn.addEventListener(
     "click",
     generateImages
-);
-
-
-shareBtn.addEventListener(
-    "click",
-    shareGeneratedImages
 );
 
 
@@ -3274,3 +4046,4 @@ loadInventory();
 
 </body>
 </html>
+```
