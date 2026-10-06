@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -73,6 +73,10 @@ header p{
     margin-bottom:12px;
 }
 
+/* =========================================================
+   TALLAS
+========================================================= */
+
 .sizes{
     display:flex;
     flex-wrap:wrap;
@@ -104,6 +108,42 @@ header p{
 .size-btn.empty{
     opacity:.45;
 }
+
+/* =========================================================
+   HERRAMIENTAS DE SELECCIÓN
+========================================================= */
+
+.selection-tools{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:-3px;
+    margin-bottom:14px;
+}
+
+.select-all-btn{
+    border:0;
+    background:#e5e7eb;
+    color:#111827;
+    border-radius:10px;
+    padding:10px 15px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.select-all-btn:hover{
+    background:#d1d5db;
+}
+
+.select-all-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   PRODUCTOS
+========================================================= */
 
 .products{
     display:grid;
@@ -206,6 +246,10 @@ header p{
     box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
+/* =========================================================
+   BARRA INFERIOR
+========================================================= */
+
 .bottom-bar{
     position:sticky;
     bottom:0;
@@ -230,6 +274,16 @@ header p{
     font-weight:bold;
 }
 
+/* Grupo de botones */
+
+.bottom-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+/* Generar */
+
 .generate-btn{
     border:0;
     background:#16a34a;
@@ -241,10 +295,40 @@ header p{
     cursor:pointer;
 }
 
+.generate-btn:hover:not(:disabled){
+    background:#15803d;
+}
+
 .generate-btn:disabled{
     opacity:.5;
     cursor:not-allowed;
 }
+
+/* Compartir */
+
+.share-btn{
+    border:0;
+    background:#2563eb;
+    color:white;
+    border-radius:11px;
+    padding:13px 20px;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.share-btn:hover:not(:disabled){
+    background:#1d4ed8;
+}
+
+.share-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   MENSAJES
+========================================================= */
 
 .preview-note{
     background:#fff7ed;
@@ -269,6 +353,10 @@ header p{
     text-align:center;
 }
 
+/* =========================================================
+   MÓVIL
+========================================================= */
+
 @media(max-width:600px){
 
     .container{
@@ -292,24 +380,46 @@ header p{
         font-size:15px;
     }
 
+    .selection-tools{
+        justify-content:stretch;
+    }
+
+    .select-all-btn{
+        width:100%;
+    }
+
     .bottom-inner{
         flex-direction:column;
         align-items:stretch;
     }
 
-    .generate-btn{
+    .bottom-actions{
+        flex-direction:column;
         width:100%;
     }
+
+    .generate-btn,
+    .share-btn{
+        width:100%;
+    }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
+
     <h1>BeniConfort</h1>
-    <p>Selecciona una talla y comparte productos reales del catálogo</p>
+
+    <p>
+        Selecciona una talla y comparte productos reales del catálogo
+    </p>
+
 </header>
+
 
 <div class="container">
 
@@ -317,42 +427,87 @@ header p{
         Conectando con el catálogo...
     </div>
 
+
     <div class="preview-note">
-        Selecciona una talla, elige uno o varios productos y luego genera las imágenes
-        para compartirlas directamente desde tu teléfono.
+
+        Selecciona una talla, elige uno o varios productos y luego
+        genera las imágenes para compartirlas directamente desde tu teléfono.
+
     </div>
+
 
     <div class="section-title">
         Seleccionar talla
     </div>
 
+
     <div id="sizes" class="sizes"></div>
+
 
     <div class="section-title">
         Productos disponibles
     </div>
 
+
+    <div class="selection-tools">
+
+        <button
+            id="selectAllBtn"
+            class="select-all-btn"
+            disabled
+        >
+            Seleccionar todo
+        </button>
+
+    </div>
+
+
     <div id="products" class="products"></div>
 
 </div>
 
+
+<!-- =======================================================
+     BARRA INFERIOR
+======================================================= -->
+
 <div class="bottom-bar">
+
     <div class="bottom-inner">
 
-        <div id="selectedInfo" class="selected-info">
+        <div
+            id="selectedInfo"
+            class="selected-info"
+        >
             0 productos seleccionados
         </div>
 
-        <button
-            id="generateBtn"
-            class="generate-btn"
-            disabled
-        >
-            Generar y compartir
-        </button>
+
+        <div class="bottom-actions">
+
+            <button
+                id="generateBtn"
+                class="generate-btn"
+                disabled
+            >
+                Generar imágenes
+            </button>
+
+
+            <button
+                id="shareBtn"
+                class="share-btn"
+                disabled
+            >
+                Compartir imágenes
+            </button>
+
+        </div>
 
     </div>
+
 </div>
+
 
 <script>
 
@@ -381,8 +536,25 @@ const SIZE_MAX = 45;
 ========================================================= */
 
 let products = [];
+
 let currentSize = null;
+
 let selectedProducts = [];
+
+/*
+ * Aquí guardaremos los JPG ya generados.
+ *
+ * IMPORTANTE:
+ *
+ * Se generan en un paso.
+ * Se comparten en otro clic.
+ *
+ * Esto evita el error:
+ *
+ * "Must be handling a user gesture"
+ */
+
+let generatedFiles = [];
 
 
 /* =========================================================
@@ -404,6 +576,12 @@ const selectedInfoEl =
 const generateBtn =
     document.getElementById("generateBtn");
 
+const shareBtn =
+    document.getElementById("shareBtn");
+
+const selectAllBtn =
+    document.getElementById("selectAllBtn");
+
 
 /* =========================================================
    FUNCIONES GENERALES
@@ -424,6 +602,7 @@ function money(v){
         Number(v || 0);
 
     return `Bs ${n.toLocaleString("es-BO")}`;
+
 }
 
 
@@ -435,16 +614,21 @@ function normalizeStatus(v){
     if(
         ["vendido","sold"].includes(s)
     ){
+
         return "sold";
+
     }
 
     if(
         ["reservado","reserved"].includes(s)
     ){
+
         return "reserved";
+
     }
 
     return "available";
+
 }
 
 
@@ -802,6 +986,8 @@ async function loadInventory(){
 
         updateSelectedInfo();
 
+        updateSelectAllButton();
+
     }
     catch(error){
 
@@ -847,6 +1033,7 @@ function findFirstAvailableSize(){
     }
 
     return null;
+
 }
 
 
@@ -924,11 +1111,22 @@ function renderSizes(){
                 selectedProducts =
                     [];
 
+                generatedFiles =
+                    [];
+
+                shareBtn.disabled =
+                    true;
+
+                shareBtn.textContent =
+                    "Compartir imágenes";
+
                 renderSizes();
 
                 renderProducts();
 
                 updateSelectedInfo();
+
+                updateSelectAllButton();
 
             }
         );
@@ -941,6 +1139,164 @@ function renderSizes(){
     }
 
 }
+
+
+/* =========================================================
+   ACTUALIZAR BOTÓN SELECCIONAR TODO
+========================================================= */
+
+function updateSelectAllButton(){
+
+    if(
+        currentSize === null
+    ){
+
+        selectAllBtn.disabled =
+            true;
+
+        selectAllBtn.textContent =
+            "Seleccionar todo";
+
+        return;
+
+    }
+
+
+    const list =
+        productsForSize(
+            currentSize
+        );
+
+
+    if(
+        list.length === 0
+    ){
+
+        selectAllBtn.disabled =
+            true;
+
+        selectAllBtn.textContent =
+            "Seleccionar todo";
+
+        return;
+
+    }
+
+
+    selectAllBtn.disabled =
+        false;
+
+
+    const allSelected =
+        list.every(
+            p =>
+                selectedProducts.some(
+                    x =>
+                        x.id === p.id
+                )
+        );
+
+
+    selectAllBtn.textContent =
+        allSelected
+            ? "Deseleccionar todo"
+            : "Seleccionar todo";
+
+}
+
+
+/* =========================================================
+   SELECCIONAR TODO
+========================================================= */
+
+selectAllBtn.addEventListener(
+    "click",
+    () => {
+
+        if(
+            currentSize === null
+        ){
+
+            return;
+
+        }
+
+
+        const list =
+            productsForSize(
+                currentSize
+            );
+
+
+        if(
+            list.length === 0
+        ){
+
+            return;
+
+        }
+
+
+        const allSelected =
+            list.every(
+                p =>
+                    selectedProducts.some(
+                        x =>
+                            x.id === p.id
+                    )
+            );
+
+
+        if(
+            allSelected
+        ){
+
+            /*
+             * Deseleccionar todos los productos
+             * de la talla actual.
+             */
+
+            selectedProducts =
+                [];
+
+        }
+        else{
+
+            /*
+             * Seleccionar todos los productos
+             * de la talla actual.
+             */
+
+            selectedProducts =
+                [...list];
+
+        }
+
+
+        /*
+         * Al cambiar la selección,
+         * los JPG anteriores ya no corresponden
+         * necesariamente a la selección actual.
+         */
+
+        generatedFiles =
+            [];
+
+        shareBtn.disabled =
+            true;
+
+        shareBtn.textContent =
+            "Compartir imágenes";
+
+
+        renderProducts();
+
+        updateSelectedInfo();
+
+        updateSelectAllButton();
+
+    }
+);
 
 
 /* =========================================================
@@ -962,6 +1318,8 @@ function renderProducts(){
                 Selecciona una talla.
             </div>`;
 
+        updateSelectAllButton();
+
         return;
 
     }
@@ -981,6 +1339,8 @@ function renderProducts(){
             `<div class="empty-message">
                 No hay productos disponibles en la talla ${currentSize}.
             </div>`;
+
+        updateSelectAllButton();
 
         return;
 
@@ -1025,6 +1385,7 @@ function renderProducts(){
 
                 </div>
 
+
                 <div class="product-info">
 
                     <div class="product-name">
@@ -1034,12 +1395,14 @@ function renderProducts(){
                         )}
                     </div>
 
+
                     <div class="product-brand">
                         ${escapeHtml(
                             p.brand ||
                             ""
                         )}
                     </div>
+
 
                     <div class="product-price">
                         Contado:
@@ -1048,12 +1411,14 @@ function renderProducts(){
                         )}
                     </div>
 
+
                     <div class="product-credit">
                         Crédito:
                         ${money(
                             p.creditPrice
                         )}
                     </div>
+
 
                     ${
                         p.type
@@ -1069,6 +1434,7 @@ function renderProducts(){
 
                 </div>
 
+
                 <div class="actions">
 
                     <button
@@ -1078,11 +1444,13 @@ function renderProducts(){
                                 : ""
                         }"
                     >
+
                         ${
                             isSelected
                                 ? "✓ Seleccionado"
                                 : "Seleccionar"
                         }
+
                     </button>
 
                 </div>
@@ -1158,11 +1526,14 @@ function renderProducts(){
         }
     );
 
+
+    updateSelectAllButton();
+
 }
 
 
 /* =========================================================
-   SELECCIONAR / DESELECCIONAR
+   SELECCIONAR / DESELECCIONAR INDIVIDUAL
 ========================================================= */
 
 function toggleProduct(p){
@@ -1193,9 +1564,27 @@ function toggleProduct(p){
     }
 
 
+    /*
+     * La selección cambió,
+     * por lo tanto los archivos generados
+     * anteriores ya no son necesariamente válidos.
+     */
+
+    generatedFiles =
+        [];
+
+    shareBtn.disabled =
+        true;
+
+    shareBtn.textContent =
+        "Compartir imágenes";
+
+
     renderProducts();
 
     updateSelectedInfo();
+
+    updateSelectAllButton();
 
 }
 
@@ -1223,6 +1612,21 @@ function updateSelectedInfo(){
     generateBtn.disabled =
         count === 0;
 
+
+    /*
+     * Si no hay productos seleccionados,
+     * tampoco se puede compartir.
+     */
+
+    if(
+        count === 0
+    ){
+
+        shareBtn.disabled =
+            true;
+
+    }
+
 }
 
 
@@ -1237,24 +1641,17 @@ function normalizeImageUrl(url){
 
 
     if(!clean){
+
         throw new Error(
             "El producto no tiene URL de imagen."
         );
+
     }
 
-
-    /*
-     * Si por alguna razón la URL viene
-     * con espacios, los quitamos.
-     */
 
     clean =
         clean.trim();
 
-
-    /*
-     * Verificar que realmente sea una URL.
-     */
 
     try{
 
@@ -1278,20 +1675,6 @@ function normalizeImageUrl(url){
 /* =========================================================
    CARGAR IMAGEN COMO BLOB
 ========================================================= */
-
-/*
- * ESTA ES LA PARTE NUEVA MÁS IMPORTANTE.
- *
- * Primero intentamos descargar la imagen mediante
- * fetch() con CORS.
- *
- * Si el servidor permite CORS:
- *
- * URL -> fetch -> Blob -> blob:URL -> Canvas
- *
- * Esto evita depender directamente de la URL
- * remota dentro del Canvas.
- */
 
 async function loadImageAsBlob(url){
 
@@ -1418,7 +1801,9 @@ async function imageFromBlob(blob){
                             if(
                                 finished
                             ){
+
                                 return;
+
                             }
 
 
@@ -1443,7 +1828,9 @@ async function imageFromBlob(blob){
                         if(
                             finished
                         ){
+
                             return;
+
                         }
 
 
@@ -1467,7 +1854,9 @@ async function imageFromBlob(blob){
                         if(
                             finished
                         ){
+
                             return;
+
                         }
 
 
@@ -1513,13 +1902,6 @@ async function imageFromBlob(blob){
     }
     finally{
 
-        /*
-         * NO revocamos todavía aquí.
-         *
-         * La imagen ya está cargada en memoria,
-         * por lo que es seguro liberar la URL.
-         */
-
         URL.revokeObjectURL(
             objectUrl
         );
@@ -1562,7 +1944,9 @@ function loadImageDirect(url){
                         if(
                             finished
                         ){
+
                             return;
+
                         }
 
 
@@ -1581,12 +1965,6 @@ function loadImageDirect(url){
                 );
 
 
-            /*
-             * MUY IMPORTANTE:
-             *
-             * crossOrigin va ANTES de src.
-             */
-
             img.crossOrigin =
                 "anonymous";
 
@@ -1601,7 +1979,9 @@ function loadImageDirect(url){
                     if(
                         finished
                     ){
+
                         return;
+
                     }
 
 
@@ -1624,6 +2004,7 @@ function loadImageDirect(url){
                             )
                         );
 
+
                         return;
 
                     }
@@ -1642,7 +2023,9 @@ function loadImageDirect(url){
                     if(
                         finished
                     ){
+
                         return;
+
                     }
 
 
@@ -1703,9 +2086,9 @@ async function loadImageForCanvas(url){
 
 
     /*
-     * MÉTODO 1
+     * MÉTODO 1:
      *
-     * Descargar como Blob.
+     * Blob + object URL.
      */
 
     try{
@@ -1741,7 +2124,7 @@ async function loadImageForCanvas(url){
 
 
     /*
-     * MÉTODO 2
+     * MÉTODO 2:
      *
      * Carga directa con CORS.
      */
@@ -1780,6 +2163,126 @@ async function loadImageForCanvas(url){
 
 
 /* =========================================================
+   UTILIDAD PARA TEXTO DE CANVAS
+========================================================= */
+
+function drawFittedText(
+    ctx,
+    textValue,
+    x,
+    y,
+    maxWidth,
+    font,
+    color = "#111827"
+){
+
+    let value =
+        String(
+            textValue ?? ""
+        );
+
+
+    ctx.font =
+        font;
+
+
+    ctx.fillStyle =
+        color;
+
+
+    /*
+     * Si cabe, dibujamos normalmente.
+     */
+
+    if(
+        ctx.measureText(
+            value
+        ).width <= maxWidth
+    ){
+
+        ctx.fillText(
+            value,
+            x,
+            y
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Si es demasiado largo,
+     * reducimos el tamaño de fuente.
+     */
+
+    const match =
+        font.match(
+            /(\d+)px/
+        );
+
+
+    let size =
+        match
+            ? Number(match[1])
+            : 30;
+
+
+    while(
+        size > 18 &&
+        ctx.measureText(
+            value
+        ).width > maxWidth
+    ){
+
+        size -= 1;
+
+        ctx.font =
+            font.replace(
+                /\d+px/,
+                `${size}px`
+            );
+
+    }
+
+
+    /*
+     * Si aun así no cabe,
+     * usamos puntos suspensivos.
+     */
+
+    while(
+        ctx.measureText(
+            value + "..."
+        ).width > maxWidth &&
+        value.length > 3
+    ){
+
+        value =
+            value.slice(
+                0,
+                -1
+            );
+
+    }
+
+
+    ctx.fillText(
+        value +
+        (
+            value.length <
+            String(textValue ?? "").length
+                ? "..."
+                : ""
+        ),
+        x,
+        y
+    );
+
+}
+
+
+/* =========================================================
    CREAR JPG REAL
 ========================================================= */
 
@@ -1804,6 +2307,13 @@ async function generateJpg(
             product.img
         );
 
+
+    /*
+     * Canvas vertical.
+     *
+     * 1080 x 1350 funciona muy bien
+     * para WhatsApp, Messenger y redes.
+     */
 
     const width =
         1080;
@@ -1841,7 +2351,9 @@ async function generateJpg(
 
 
     /*
-     * Fondo blanco
+     * =====================================================
+     * FONDO
+     * =====================================================
      */
 
     ctx.fillStyle =
@@ -1856,21 +2368,72 @@ async function generateJpg(
 
 
     /*
-     * Imagen del producto
+     * =====================================================
+     * ENCABEZADO
+     * =====================================================
      */
 
-    const margin =
-        50;
+    /*
+     * BeniConfort como marca.
+     */
+
+    ctx.textAlign =
+        "center";
+
+    ctx.fillStyle =
+        "#111827";
+
+    ctx.font =
+        "bold 46px Arial";
+
+    ctx.fillText(
+        "BeniConfort",
+        width / 2,
+        58
+    );
+
+
+    /*
+     * Pequeña línea de categoría.
+     */
+
+    ctx.fillStyle =
+        "#6b7280";
+
+    ctx.font =
+        "bold 20px Arial";
+
+    ctx.fillText(
+        "TENIS DISPONIBLE",
+        width / 2,
+        91
+    );
+
+
+    /*
+     * =====================================================
+     * IMAGEN PRINCIPAL
+     * =====================================================
+     *
+     * ESTA ES LA PARTE MÁS IMPORTANTE.
+     *
+     * La imagen ocupa la mayor parte del diseño.
+     *
+     * No colocamos ningún texto encima.
+     */
+
+    const imageAreaLeft =
+        35;
 
     const imageAreaTop =
-        70;
-
-    const imageAreaHeight =
-        800;
+        115;
 
     const imageAreaWidth =
         width -
-        margin * 2;
+        70;
+
+    const imageAreaHeight =
+        795;
 
 
     const naturalWidth =
@@ -1895,6 +2458,15 @@ async function generateJpg(
     }
 
 
+    /*
+     * contain:
+     *
+     * La zapatilla conserva completamente
+     * su proporción.
+     *
+     * Se aprovecha al máximo el espacio.
+     */
+
     const scale =
         Math.min(
             imageAreaWidth /
@@ -1916,8 +2488,9 @@ async function generateJpg(
 
 
     const x =
+        imageAreaLeft +
         (
-            width -
+            imageAreaWidth -
             drawWidth
         ) / 2;
 
@@ -1931,7 +2504,8 @@ async function generateJpg(
 
 
     /*
-     * Dibujar imagen.
+     * Un pequeño espacio blanco alrededor
+     * mantiene la fotografía limpia.
      */
 
     try{
@@ -1961,7 +2535,9 @@ async function generateJpg(
 
 
     /*
-     * Línea divisoria
+     * =====================================================
+     * DIVISOR
+     * =====================================================
      */
 
     ctx.fillStyle =
@@ -1969,144 +2545,244 @@ async function generateJpg(
 
     ctx.fillRect(
         50,
-        900,
+        935,
         980,
         2
     );
 
 
     /*
-     * Marca
+     * =====================================================
+     * INFORMACIÓN COMPACTA
+     * =====================================================
      */
+
+    /*
+     * Desde aquí comienza la información.
+     *
+     * Todo queda compacto para no quitar
+     * protagonismo a la zapatilla.
+     */
+
+    const infoLeft =
+        60;
+
+    const infoRight =
+        1020;
+
+
+    /*
+     * MODELO
+     */
+
+    ctx.textAlign =
+        "left";
 
     ctx.fillStyle =
         "#111827";
 
     ctx.font =
-        "bold 48px Arial";
+        "bold 31px Arial";
 
-    ctx.fillText(
-        "BeniConfort",
-        60,
-        975
+
+    drawFittedText(
+        ctx,
+        product.name || "Tenis",
+        infoLeft,
+        988,
+        650,
+        "bold 31px Arial",
+        "#111827"
     );
 
 
     /*
-     * Nombre
+     * TALLA
+     *
+     * A la derecha para ahorrar espacio.
      */
 
-    ctx.font =
-        "bold 38px Arial";
-
-    ctx.fillText(
-        product.name ||
-        "Tenis",
-        60,
-        1035
-    );
-
-
-    /*
-     * Marca
-     */
+    ctx.textAlign =
+        "right";
 
     ctx.font =
-        "28px Arial";
+        "bold 30px Arial";
 
     ctx.fillStyle =
-        "#555555";
+        "#111827";
 
+    ctx.fillText(
+        `TALLA ${currentSize}`,
+        infoRight,
+        988
+    );
+
+
+    /*
+     * Marca pequeña debajo del modelo.
+     */
 
     if(
         product.brand
     ){
 
-        ctx.fillText(
+        ctx.textAlign =
+            "left";
+
+        ctx.font =
+            "20px Arial";
+
+        ctx.fillStyle =
+            "#6b7280";
+
+        drawFittedText(
+            ctx,
             product.brand,
-            60,
-            1080
+            infoLeft,
+            1018,
+            450,
+            "20px Arial",
+            "#6b7280"
         );
 
     }
 
 
     /*
-     * Talla
+     * =====================================================
+     * PRECIOS
+     * =====================================================
+     *
+     * Los colocamos juntos horizontalmente.
      */
+
+    ctx.textAlign =
+        "left";
+
+
+    /*
+     * CONTADO
+     */
+
+    ctx.font =
+        "bold 27px Arial";
 
     ctx.fillStyle =
         "#111827";
 
-    ctx.font =
-        "bold 34px Arial";
-
     ctx.fillText(
-        `Talla ${currentSize}`,
-        60,
-        1140
+        `CONTADO  ${money(product.cashPrice)}`,
+        infoLeft,
+        1068
     );
 
 
     /*
-     * Precio contado
+     * CRÉDITO
      */
 
-    ctx.font =
-        "bold 36px Arial";
+    ctx.textAlign =
+        "right";
 
     ctx.fillText(
-        `Contado: ${money(
-            product.cashPrice
-        )}`,
-        60,
-        1195
+        `CRÉDITO  ${money(product.creditPrice)}`,
+        infoRight,
+        1068
     );
 
 
     /*
-     * Crédito
-     */
-
-    ctx.font =
-        "28px Arial";
-
-    ctx.fillStyle =
-        "#444444";
-
-    ctx.fillText(
-        `Crédito: ${money(
-            product.creditPrice
-        )}`,
-        60,
-        1240
-    );
-
-
-    /*
-     * Inicial
+     * =====================================================
+     * INICIAL
+     * =====================================================
      */
 
     if(
         product.initial > 0
     ){
 
+        ctx.textAlign =
+            "center";
+
         ctx.font =
-            "24px Arial";
+            "bold 23px Arial";
+
+        ctx.fillStyle =
+            "#374151";
 
         ctx.fillText(
-            `Inicial: ${money(
-                product.initial
-            )}`,
-            60,
-            1280
+            `INICIAL ${money(product.initial)}`,
+            width / 2,
+            1115
         );
 
     }
 
 
     /*
-     * Convertir Canvas a JPG.
+     * =====================================================
+     * FRASE DE VENTA
+     * =====================================================
+     */
+
+    ctx.textAlign =
+        "center";
+
+    ctx.font =
+        "20px Arial";
+
+    ctx.fillStyle =
+        "#4b5563";
+
+    ctx.fillText(
+        "Usted elige cómo pagar el resto.",
+        width / 2,
+        1162
+    );
+
+
+    /*
+     * =====================================================
+     * ENTREGA
+     * =====================================================
+     */
+
+    ctx.font =
+        "bold 20px Arial";
+
+    ctx.fillStyle =
+        "#111827";
+
+    ctx.fillText(
+        "🚚 Entregas a domicilio en Trinidad",
+        width / 2,
+        1220
+    );
+
+
+    /*
+     * =====================================================
+     * MARCA FINAL DISCRETA
+     * =====================================================
+     */
+
+    ctx.font =
+        "16px Arial";
+
+    ctx.fillStyle =
+        "#9ca3af";
+
+    ctx.fillText(
+        "BeniConfort",
+        width / 2,
+        1270
+    );
+
+
+    /*
+     * =====================================================
+     * CONVERTIR A JPG
+     * =====================================================
      */
 
     const blob =
@@ -2170,6 +2846,10 @@ async function generateJpg(
     }
 
 
+    /*
+     * Nombre seguro.
+     */
+
     const safeName =
         (
             product.name ||
@@ -2201,10 +2881,10 @@ async function generateJpg(
 
 
 /* =========================================================
-   GENERAR Y COMPARTIR
+   GENERAR IMÁGENES
 ========================================================= */
 
-async function generateAndShare(){
+async function generateImages(){
 
     if(
         selectedProducts.length === 0
@@ -2215,23 +2895,30 @@ async function generateAndShare(){
     }
 
 
-    const originalText =
-        generateBtn.textContent;
+    /*
+     * Borramos los archivos anteriores.
+     */
+
+    generatedFiles =
+        [];
 
 
     generateBtn.disabled =
         true;
 
+    shareBtn.disabled =
+        true;
+
+
+    const total =
+        selectedProducts.length;
+
 
     try{
 
-        const files =
-            [];
-
-
         for(
             let i = 0;
-            i < selectedProducts.length;
+            i < total;
             i++
         ){
 
@@ -2240,7 +2927,7 @@ async function generateAndShare(){
 
 
             generateBtn.textContent =
-                `Generando ${i + 1} de ${selectedProducts.length}...`;
+                `Generando ${i + 1} de ${total}...`;
 
 
             console.log(
@@ -2280,7 +2967,7 @@ async function generateAndShare(){
                     );
 
 
-                files.push(
+                generatedFiles.push(
                     file
                 );
 
@@ -2303,7 +2990,7 @@ async function generateAndShare(){
 
 
         if(
-            files.length === 0
+            generatedFiles.length === 0
         ){
 
             throw new Error(
@@ -2313,52 +3000,172 @@ async function generateAndShare(){
         }
 
 
-        generateBtn.textContent =
-            "Preparando compartir...";
-
-
         /*
-         * Comprobar compatibilidad.
+         * Ya tenemos los JPG listos.
+         *
+         * Ahora NO llamamos navigator.share().
+         *
+         * Esperamos el clic del usuario
+         * sobre "Compartir imágenes".
          */
 
-        if(
-            !navigator.share
-        ){
+        generateBtn.textContent =
+            `✓ ${generatedFiles.length} imagen${
+                generatedFiles.length === 1
+                    ? ""
+                    : "es"
+            } lista${
+                generatedFiles.length === 1
+                    ? ""
+                    : "s"
+            }`;
 
-            throw new Error(
-                "Este navegador no admite compartir archivos directamente."
+
+        shareBtn.disabled =
+            false;
+
+
+        shareBtn.textContent =
+            "Compartir imágenes";
+
+
+    }
+    catch(error){
+
+        console.error(
+            "ERROR AL GENERAR:",
+            error
+        );
+
+
+        generatedFiles =
+            [];
+
+
+        alert(
+            error.message ||
+            "No se pudieron generar las imágenes."
+        );
+
+
+        generateBtn.textContent =
+            "Generar imágenes";
+
+
+        generateBtn.disabled =
+            selectedProducts.length === 0;
+
+
+        shareBtn.disabled =
+            true;
+
+    }
+
+}
+
+
+/* =========================================================
+   COMPARTIR IMÁGENES
+========================================================= */
+
+async function shareGeneratedImages(){
+
+    if(
+        generatedFiles.length === 0
+    ){
+
+        return;
+
+    }
+
+
+    /*
+     * Si el navegador no soporta Web Share,
+     * mostramos una alternativa.
+     */
+
+    if(
+        !navigator.share
+    ){
+
+        alert(
+            "Este navegador no permite compartir archivos directamente. Prueba desde Chrome en tu teléfono."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Comprobar si el navegador puede compartir
+     * los archivos generados.
+     */
+
+    if(
+        navigator.canShare
+    ){
+
+        let shareable =
+            false;
+
+
+        try{
+
+            shareable =
+                navigator.canShare({
+                    files:
+                        generatedFiles
+                });
+
+        }
+        catch(error){
+
+            console.error(
+                "Error comprobando canShare:",
+                error
             );
 
         }
 
 
         if(
-            navigator.canShare
+            !shareable
         ){
 
-            const shareable =
-                navigator.canShare({
-                    files
-                });
+            alert(
+                "El navegador no permite compartir estos archivos."
+            );
 
-
-            if(
-                !shareable
-            ){
-
-                throw new Error(
-                    "El navegador no permite compartir estos archivos."
-                );
-
-            }
+            return;
 
         }
+
+    }
+
+
+    /*
+     * MUY IMPORTANTE:
+     *
+     * navigator.share() se ejecuta DIRECTAMENTE
+     * como consecuencia del clic del usuario.
+     *
+     * No generamos imágenes aquí.
+     */
+
+    try{
+
+        shareBtn.disabled =
+            true;
+
+        shareBtn.textContent =
+            "Abriendo compartir...";
 
 
         await navigator.share({
 
             files:
-                files,
+                generatedFiles,
 
             title:
                 "BeniConfort",
@@ -2369,18 +3176,24 @@ async function generateAndShare(){
         });
 
 
-        generateBtn.textContent =
+        shareBtn.textContent =
             "✓ Compartido";
 
 
         setTimeout(
             () => {
 
-                generateBtn.textContent =
-                    originalText;
+                if(
+                    generatedFiles.length > 0
+                ){
 
-                generateBtn.disabled =
-                    selectedProducts.length === 0;
+                    shareBtn.textContent =
+                        "Compartir imágenes";
+
+                    shareBtn.disabled =
+                        false;
+
+                }
 
             },
             2000
@@ -2390,23 +3203,45 @@ async function generateAndShare(){
     catch(error){
 
         console.error(
-            "ERROR AL GENERAR/COMPARTIR:",
+            "ERROR AL COMPARTIR:",
             error
         );
 
 
+        /*
+         * AbortError significa normalmente que
+         * el usuario cerró la ventana de compartir.
+         *
+         * No mostramos un error molesto.
+         */
+
+        if(
+            error &&
+            error.name === "AbortError"
+        ){
+
+            shareBtn.textContent =
+                "Compartir imágenes";
+
+            shareBtn.disabled =
+                false;
+
+            return;
+
+        }
+
+
         alert(
             error.message ||
-            "No se pudieron generar o compartir las imágenes."
+            "No se pudieron compartir las imágenes."
         );
 
 
-        generateBtn.textContent =
-            originalText;
+        shareBtn.textContent =
+            "Compartir imágenes";
 
-
-        generateBtn.disabled =
-            selectedProducts.length === 0;
+        shareBtn.disabled =
+            false;
 
     }
 
@@ -2414,12 +3249,18 @@ async function generateAndShare(){
 
 
 /* =========================================================
-   EVENTO PRINCIPAL
+   EVENTOS
 ========================================================= */
 
 generateBtn.addEventListener(
     "click",
-    generateAndShare
+    generateImages
+);
+
+
+shareBtn.addEventListener(
+    "click",
+    shareGeneratedImages
 );
 
 
@@ -2433,4 +3274,3 @@ loadInventory();
 
 </body>
 </html>
-```
