@@ -270,6 +270,7 @@ header p{
 }
 
 @media(max-width:600px){
+
     .container{
         padding:14px;
     }
@@ -409,13 +410,18 @@ const generateBtn =
 ========================================================= */
 
 function text(v){
-    return v == null ? "" : String(v).trim();
+
+    return v == null
+        ? ""
+        : String(v).trim();
+
 }
 
 
 function money(v){
 
-    const n = Number(v || 0);
+    const n =
+        Number(v || 0);
 
     return `Bs ${n.toLocaleString("es-BO")}`;
 }
@@ -423,7 +429,8 @@ function money(v){
 
 function normalizeStatus(v){
 
-    const s = text(v).toLowerCase();
+    const s =
+        text(v).toLowerCase();
 
     if(
         ["vendido","sold"].includes(s)
@@ -448,7 +455,10 @@ function normalizeStatus(v){
 function normalizeProduct(p){
 
     const rawType =
-        text(p.tipo ?? p.type);
+        text(
+            p.tipo ??
+            p.type
+        );
 
     const typeLower =
         rawType.toLowerCase();
@@ -473,19 +483,31 @@ function normalizeProduct(p){
         p.tamaños &&
         typeof p.tamaños === "object"
     ){
-        sizesQty = p.tamaños;
+
+        sizesQty =
+            p.tamaños;
+
     }
 
 
     if(
         typeof sizesQty === "string"
     ){
+
         try{
-            sizesQty = JSON.parse(sizesQty);
+
+            sizesQty =
+                JSON.parse(
+                    sizesQty
+                );
+
         }
         catch{
+
             sizesQty = {};
+
         }
+
     }
 
 
@@ -493,14 +515,18 @@ function normalizeProduct(p){
         !sizesQty ||
         typeof sizesQty !== "object"
     ){
+
         sizesQty = {};
+
     }
 
 
     return {
 
         id:
-            String(p.id ?? ""),
+            String(
+                p.id ?? ""
+            ),
 
         type:
             type,
@@ -510,27 +536,32 @@ function normalizeProduct(p){
 
         status:
             normalizeStatus(
-                p.estado ?? p.status
+                p.estado ??
+                p.status
             ),
 
         name:
             text(
-                p.nombre ?? p.name
+                p.nombre ??
+                p.name
             ),
 
         brand:
             text(
-                p.marca ?? p.brand
+                p.marca ??
+                p.brand
             ),
 
         gender:
             text(
-                p.género ?? p.gender
+                p.género ??
+                p.gender
             ),
 
         img:
             text(
-                p.image_url ?? p.image
+                p.image_url ??
+                p.image
             ),
 
         cashPrice:
@@ -557,23 +588,27 @@ function normalizeProduct(p){
 
         stock:
             Number(
-                p.stock ?? 0
+                p.stock ??
+                0
             ),
 
         size:
-            p.size ?? "",
+            p.size ??
+            "",
 
         sizesQty:
             sizesQty,
 
         tag:
             text(
-                p.promoción ?? p.tag
+                p.promoción ??
+                p.tag
             ),
 
         desc:
             text(
-                p.description ?? p.desc
+                p.description ??
+                p.desc
             ),
 
         whatsappLink:
@@ -583,6 +618,7 @@ function normalizeProduct(p){
             ""
 
     };
+
 }
 
 
@@ -601,33 +637,48 @@ function availableSizes(p){
             p.status === "sold" ||
             p.status === "reserved" ||
             !p.size ||
-            Number(p.stock ?? 1) <= 0
+            Number(
+                p.stock ?? 1
+            ) <= 0
         ){
+
             return [];
+
         }
+
 
         const n =
             Number(p.size);
 
+
         return Number.isFinite(n)
             ? [n]
             : [];
+
     }
 
 
     return Object.keys(
         p.sizesQty || {}
     )
-    .map(Number)
+    .map(
+        Number
+    )
     .filter(
         s =>
+
             Number.isFinite(s) &&
+
             Number(
                 p.sizesQty[s]
             ) > 0 &&
+
             p.status !== "sold" &&
+
             p.status !== "reserved"
+
     );
+
 }
 
 
@@ -638,6 +689,7 @@ function productForSize(
 
     return availableSizes(p)
         .includes(size);
+
 }
 
 
@@ -652,6 +704,7 @@ function productsForSize(
                 size
             )
     );
+
 }
 
 
@@ -661,12 +714,30 @@ function productsForSize(
 
 function escapeHtml(value){
 
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
 }
 
 
@@ -683,21 +754,62 @@ async function loadInventory(){
         "Conectando con Supabase...";
 
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .from("productos")
-        .select("*");
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+            .from("productos")
+            .select("*");
 
 
-    if(error){
+        if(error){
+
+            throw error;
+
+        }
+
+
+        products =
+            (data || [])
+            .map(
+                normalizeProduct
+            );
+
+
+        statusEl.className =
+            "status ok";
+
+        statusEl.textContent =
+            `Catálogo conectado correctamente · ${products.length} productos encontrados`;
+
+
+        if(
+            currentSize === null
+        ){
+
+            currentSize =
+                findFirstAvailableSize();
+
+        }
+
+
+        renderSizes();
+
+        renderProducts();
+
+        updateSelectedInfo();
+
+    }
+    catch(error){
 
         console.error(
             "Error Supabase:",
             error
         );
+
 
         statusEl.className =
             "status error";
@@ -705,43 +817,8 @@ async function loadInventory(){
         statusEl.textContent =
             "No se pudo conectar con el catálogo.";
 
-        return;
     }
 
-
-    products =
-        (data || [])
-        .map(normalizeProduct);
-
-
-    statusEl.className =
-        "status ok";
-
-    statusEl.textContent =
-        `Catálogo conectado correctamente · ${products.length} productos encontrados`;
-
-
-    renderSizes();
-
-    if(currentSize === null){
-
-        const firstSize =
-            findFirstAvailableSize();
-
-        if(firstSize !== null){
-
-            currentSize =
-                firstSize;
-
-        }
-
-    }
-
-    renderSizes();
-
-    renderProducts();
-
-    updateSelectedInfo();
 }
 
 
@@ -758,9 +835,13 @@ function findFirstAvailableSize(){
     ){
 
         if(
-            productsForSize(size).length > 0
+            productsForSize(
+                size
+            ).length > 0
         ){
+
             return size;
+
         }
 
     }
@@ -775,7 +856,8 @@ function findFirstAvailableSize(){
 
 function renderSizes(){
 
-    sizesEl.innerHTML = "";
+    sizesEl.innerHTML =
+        "";
 
 
     for(
@@ -785,11 +867,16 @@ function renderSizes(){
     ){
 
         const count =
-            productsForSize(size).length;
+            productsForSize(
+                size
+            ).length;
 
 
         const btn =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
+
 
         btn.className =
             "size-btn";
@@ -798,13 +885,21 @@ function renderSizes(){
         if(
             currentSize === size
         ){
-            btn.classList.add("active");
+
+            btn.classList.add(
+                "active"
+            );
+
         }
 
 
-        if(count === 0){
+        if(
+            count === 0
+        ){
 
-            btn.classList.add("empty");
+            btn.classList.add(
+                "empty"
+            );
 
         }
 
@@ -839,8 +934,12 @@ function renderSizes(){
         );
 
 
-        sizesEl.appendChild(btn);
+        sizesEl.appendChild(
+            btn
+        );
+
     }
+
 }
 
 
@@ -850,10 +949,13 @@ function renderSizes(){
 
 function renderProducts(){
 
-    productsEl.innerHTML = "";
+    productsEl.innerHTML =
+        "";
 
 
-    if(currentSize === null){
+    if(
+        currentSize === null
+    ){
 
         productsEl.innerHTML =
             `<div class="empty-message">
@@ -861,6 +963,7 @@ function renderProducts(){
             </div>`;
 
         return;
+
     }
 
 
@@ -870,7 +973,9 @@ function renderProducts(){
         );
 
 
-    if(list.length === 0){
+    if(
+        list.length === 0
+    ){
 
         productsEl.innerHTML =
             `<div class="empty-message">
@@ -878,6 +983,7 @@ function renderProducts(){
             </div>`;
 
         return;
+
     }
 
 
@@ -885,7 +991,9 @@ function renderProducts(){
         p => {
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             const isSelected =
@@ -904,22 +1012,6 @@ function renderProducts(){
                 );
 
 
-            /*
-             * IMPORTANTE:
-             *
-             * NO usamos crossorigin="anonymous"
-             * aquí.
-             *
-             * Esta imagen solamente necesita
-             * mostrarse en pantalla.
-             *
-             * El CORS se usa únicamente
-             * cuando posteriormente cargamos
-             * la imagen en Canvas para crear
-             * el JPG.
-             */
-
-
             card.innerHTML = `
 
                 <div class="product-image">
@@ -933,18 +1025,19 @@ function renderProducts(){
 
                 </div>
 
-
                 <div class="product-info">
 
                     <div class="product-name">
                         ${escapeHtml(
-                            p.name || "Sin nombre"
+                            p.name ||
+                            "Sin nombre"
                         )}
                     </div>
 
                     <div class="product-brand">
                         ${escapeHtml(
-                            p.brand || ""
+                            p.brand ||
+                            ""
                         )}
                     </div>
 
@@ -966,14 +1059,15 @@ function renderProducts(){
                         p.type
                             ?
                         `<span class="product-type">
-                            ${escapeHtml(p.type)}
+                            ${escapeHtml(
+                                p.type
+                            )}
                         </span>`
                             :
                         ""
                     }
 
                 </div>
-
 
                 <div class="actions">
 
@@ -1002,13 +1096,6 @@ function renderProducts(){
                 );
 
 
-            /*
-             * Si la imagen visual no puede cargarse,
-             * mostramos un mensaje claro.
-             *
-             * Esto no afecta la generación de JPG.
-             */
-
             img.addEventListener(
                 "error",
                 () => {
@@ -1016,10 +1103,12 @@ function renderProducts(){
                     const wrapper =
                         img.parentElement;
 
+
                     wrapper.innerHTML =
                         `<div class="error-image">
                             No se pudo cargar la imagen
                         </div>`;
+
 
                     console.error(
                         "No se pudo mostrar imagen:",
@@ -1035,7 +1124,7 @@ function renderProducts(){
                 () => {
 
                     console.log(
-                        "Imagen cargada:",
+                        "Imagen visual cargada:",
                         p.name,
                         p.img
                     );
@@ -1068,6 +1157,7 @@ function renderProducts(){
 
         }
     );
+
 }
 
 
@@ -1084,7 +1174,9 @@ function toggleProduct(p){
         );
 
 
-    if(index >= 0){
+    if(
+        index >= 0
+    ){
 
         selectedProducts.splice(
             index,
@@ -1104,6 +1196,7 @@ function toggleProduct(p){
     renderProducts();
 
     updateSelectedInfo();
+
 }
 
 
@@ -1129,32 +1222,334 @@ function updateSelectedInfo(){
 
     generateBtn.disabled =
         count === 0;
+
 }
 
 
 /* =========================================================
-   CARGAR IMAGEN PARA CANVAS
+   NORMALIZAR URL DE IMAGEN
+========================================================= */
+
+function normalizeImageUrl(url){
+
+    let clean =
+        text(url);
+
+
+    if(!clean){
+        throw new Error(
+            "El producto no tiene URL de imagen."
+        );
+    }
+
+
+    /*
+     * Si por alguna razón la URL viene
+     * con espacios, los quitamos.
+     */
+
+    clean =
+        clean.trim();
+
+
+    /*
+     * Verificar que realmente sea una URL.
+     */
+
+    try{
+
+        new URL(clean);
+
+    }
+    catch{
+
+        throw new Error(
+            "La URL de la imagen no es válida."
+        );
+
+    }
+
+
+    return clean;
+
+}
+
+
+/* =========================================================
+   CARGAR IMAGEN COMO BLOB
 ========================================================= */
 
 /*
- * IMPORTANTE:
+ * ESTA ES LA PARTE NUEVA MÁS IMPORTANTE.
  *
- * AQUÍ sí necesitamos CORS.
+ * Primero intentamos descargar la imagen mediante
+ * fetch() con CORS.
  *
- * Esta imagen no es la misma <img> de la
- * vista previa.
+ * Si el servidor permite CORS:
  *
- * Se crea una nueva imagen específicamente
- * para leer sus píxeles mediante Canvas.
+ * URL -> fetch -> Blob -> blob:URL -> Canvas
+ *
+ * Esto evita depender directamente de la URL
+ * remota dentro del Canvas.
  */
 
-function loadImage(url){
+async function loadImageAsBlob(url){
+
+    const cleanUrl =
+        normalizeImageUrl(
+            url
+        );
+
+
+    console.log(
+        "Intentando descargar imagen:",
+        cleanUrl
+    );
+
+
+    let response;
+
+
+    try{
+
+        response =
+            await fetch(
+                cleanUrl,
+                {
+                    method:"GET",
+                    mode:"cors",
+                    credentials:"omit",
+                    cache:"no-store"
+                }
+            );
+
+    }
+    catch(error){
+
+        console.error(
+            "FETCH CORS FALLÓ:",
+            error
+        );
+
+
+        throw new Error(
+            "El servidor de imágenes no permite que el navegador acceda a esta imagen mediante CORS."
+        );
+
+    }
+
+
+    if(
+        !response.ok
+    ){
+
+        throw new Error(
+            `El servidor respondió ${response.status} al cargar la imagen.`
+        );
+
+    }
+
+
+    const blob =
+        await response.blob();
+
+
+    if(
+        !blob ||
+        blob.size === 0
+    ){
+
+        throw new Error(
+            "El servidor devolvió una imagen vacía."
+        );
+
+    }
+
+
+    console.log(
+        "Imagen descargada correctamente:",
+        blob.type,
+        blob.size,
+        "bytes"
+    );
+
+
+    return blob;
+
+}
+
+
+/* =========================================================
+   CREAR IMAGEN DESDE BLOB
+========================================================= */
+
+async function imageFromBlob(blob){
+
+    const objectUrl =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    try{
+
+        const img =
+            new Image();
+
+
+        img.decoding =
+            "async";
+
+
+        await new Promise(
+            (
+                resolve,
+                reject
+            ) => {
+
+                let finished =
+                    false;
+
+
+                const timer =
+                    setTimeout(
+                        () => {
+
+                            if(
+                                finished
+                            ){
+                                return;
+                            }
+
+
+                            finished =
+                                true;
+
+
+                            reject(
+                                new Error(
+                                    "La imagen tardó demasiado en prepararse."
+                                )
+                            );
+
+                        },
+                        12000
+                    );
+
+
+                img.onload =
+                    () => {
+
+                        if(
+                            finished
+                        ){
+                            return;
+                        }
+
+
+                        finished =
+                            true;
+
+
+                        clearTimeout(
+                            timer
+                        );
+
+
+                        resolve();
+
+                    };
+
+
+                img.onerror =
+                    () => {
+
+                        if(
+                            finished
+                        ){
+                            return;
+                        }
+
+
+                        finished =
+                            true;
+
+
+                        clearTimeout(
+                            timer
+                        );
+
+
+                        reject(
+                            new Error(
+                                "El navegador no pudo interpretar la imagen descargada."
+                            )
+                        );
+
+                    };
+
+
+                img.src =
+                    objectUrl;
+
+            }
+        );
+
+
+        if(
+            !img.naturalWidth ||
+            !img.naturalHeight
+        ){
+
+            throw new Error(
+                "La imagen no tiene dimensiones válidas."
+            );
+
+        }
+
+
+        return img;
+
+    }
+    finally{
+
+        /*
+         * NO revocamos todavía aquí.
+         *
+         * La imagen ya está cargada en memoria,
+         * por lo que es seguro liberar la URL.
+         */
+
+        URL.revokeObjectURL(
+            objectUrl
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MÉTODO DIRECTO DE RESPALDO
+========================================================= */
+
+function loadImageDirect(url){
 
     return new Promise(
-        (resolve,reject) => {
+        (
+            resolve,
+            reject
+        ) => {
+
+            const cleanUrl =
+                normalizeImageUrl(
+                    url
+                );
+
 
             const img =
                 new Image();
+
 
             let finished =
                 false;
@@ -1164,16 +1559,20 @@ function loadImage(url){
                 setTimeout(
                     () => {
 
-                        if(finished){
+                        if(
+                            finished
+                        ){
                             return;
                         }
+
 
                         finished =
                             true;
 
+
                         reject(
                             new Error(
-                                "Tiempo agotado al cargar la imagen"
+                                "Tiempo agotado al cargar la imagen."
                             )
                         );
 
@@ -1183,7 +1582,9 @@ function loadImage(url){
 
 
             /*
-             * NECESARIO PARA CANVAS + R2
+             * MUY IMPORTANTE:
+             *
+             * crossOrigin va ANTES de src.
              */
 
             img.crossOrigin =
@@ -1197,18 +1598,40 @@ function loadImage(url){
             img.onload =
                 () => {
 
-                    if(finished){
+                    if(
+                        finished
+                    ){
                         return;
                     }
 
+
                     finished =
                         true;
+
 
                     clearTimeout(
                         timer
                     );
 
-                    resolve(img);
+
+                    if(
+                        !img.naturalWidth
+                    ){
+
+                        reject(
+                            new Error(
+                                "La imagen se cargó pero no tiene dimensiones."
+                            )
+                        );
+
+                        return;
+
+                    }
+
+
+                    resolve(
+                        img
+                    );
 
                 };
 
@@ -1216,37 +1639,143 @@ function loadImage(url){
             img.onerror =
                 () => {
 
-                    if(finished){
+                    if(
+                        finished
+                    ){
                         return;
                     }
 
+
                     finished =
                         true;
+
 
                     clearTimeout(
                         timer
                     );
 
+
                     reject(
                         new Error(
-                            "No se pudo cargar la imagen"
+                            "El servidor bloqueó la carga de la imagen para Canvas."
                         )
                     );
 
                 };
 
 
-            /*
-             * MUY IMPORTANTE:
-             * crossOrigin debe configurarse
-             * ANTES de src.
-             */
-
             img.src =
-                url;
+                cleanUrl;
 
         }
     );
+
+}
+
+
+/* =========================================================
+   CARGADOR DEFINITIVO PARA CANVAS
+========================================================= */
+
+async function loadImageForCanvas(url){
+
+    const cleanUrl =
+        normalizeImageUrl(
+            url
+        );
+
+
+    console.log(
+        "================================="
+    );
+
+    console.log(
+        "CARGANDO IMAGEN PARA CANVAS"
+    );
+
+    console.log(
+        cleanUrl
+    );
+
+    console.log(
+        "================================="
+    );
+
+
+    /*
+     * MÉTODO 1
+     *
+     * Descargar como Blob.
+     */
+
+    try{
+
+        const blob =
+            await loadImageAsBlob(
+                cleanUrl
+            );
+
+
+        const img =
+            await imageFromBlob(
+                blob
+            );
+
+
+        console.log(
+            "✓ Imagen preparada mediante Blob."
+        );
+
+
+        return img;
+
+    }
+    catch(error){
+
+        console.warn(
+            "Método Blob falló:",
+            error
+        );
+
+    }
+
+
+    /*
+     * MÉTODO 2
+     *
+     * Carga directa con CORS.
+     */
+
+    try{
+
+        const img =
+            await loadImageDirect(
+                cleanUrl
+            );
+
+
+        console.log(
+            "✓ Imagen preparada mediante carga directa."
+        );
+
+
+        return img;
+
+    }
+    catch(error){
+
+        console.error(
+            "Método directo falló:",
+            error
+        );
+
+
+        throw new Error(
+            "La imagen se puede mostrar en el catálogo, pero el servidor no permite utilizarla dentro de Canvas. Esto normalmente significa que falta CORS en el almacenamiento de imágenes."
+        );
+
+    }
+
 }
 
 
@@ -1259,8 +1788,19 @@ async function generateJpg(
     index
 ){
 
+    if(
+        !product.img
+    ){
+
+        throw new Error(
+            "Este producto no tiene imagen."
+        );
+
+    }
+
+
     const image =
-        await loadImage(
+        await loadImageForCanvas(
             product.img
         );
 
@@ -1289,6 +1829,15 @@ async function generateJpg(
         canvas.getContext(
             "2d"
         );
+
+
+    if(!ctx){
+
+        throw new Error(
+            "El navegador no pudo crear Canvas."
+        );
+
+    }
 
 
     /*
@@ -1324,29 +1873,53 @@ async function generateJpg(
         margin * 2;
 
 
+    const naturalWidth =
+        image.naturalWidth ||
+        image.width;
+
+
+    const naturalHeight =
+        image.naturalHeight ||
+        image.height;
+
+
+    if(
+        !naturalWidth ||
+        !naturalHeight
+    ){
+
+        throw new Error(
+            "La imagen no tiene dimensiones válidas."
+        );
+
+    }
+
+
     const scale =
         Math.min(
             imageAreaWidth /
-                image.naturalWidth,
+                naturalWidth,
 
             imageAreaHeight /
-                image.naturalHeight
+                naturalHeight
         );
 
 
     const drawWidth =
-        image.naturalWidth *
+        naturalWidth *
         scale;
 
 
     const drawHeight =
-        image.naturalHeight *
+        naturalHeight *
         scale;
 
 
     const x =
-        (width -
-            drawWidth) / 2;
+        (
+            width -
+            drawWidth
+        ) / 2;
 
 
     const y =
@@ -1357,13 +1930,34 @@ async function generateJpg(
         ) / 2;
 
 
-    ctx.drawImage(
-        image,
-        x,
-        y,
-        drawWidth,
-        drawHeight
-    );
+    /*
+     * Dibujar imagen.
+     */
+
+    try{
+
+        ctx.drawImage(
+            image,
+            x,
+            y,
+            drawWidth,
+            drawHeight
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Canvas drawImage error:",
+            error
+        );
+
+
+        throw new Error(
+            "El navegador bloqueó la imagen al intentar colocarla en Canvas."
+        );
+
+    }
 
 
     /*
@@ -1423,7 +2017,10 @@ async function generateJpg(
     ctx.fillStyle =
         "#555555";
 
-    if(product.brand){
+
+    if(
+        product.brand
+    ){
 
         ctx.fillText(
             product.brand,
@@ -1459,7 +2056,9 @@ async function generateJpg(
         "bold 36px Arial";
 
     ctx.fillText(
-        `Contado: ${money(product.cashPrice)}`,
+        `Contado: ${money(
+            product.cashPrice
+        )}`,
         60,
         1195
     );
@@ -1476,7 +2075,9 @@ async function generateJpg(
         "#444444";
 
     ctx.fillText(
-        `Crédito: ${money(product.creditPrice)}`,
+        `Crédito: ${money(
+            product.creditPrice
+        )}`,
         60,
         1240
     );
@@ -1486,13 +2087,17 @@ async function generateJpg(
      * Inicial
      */
 
-    if(product.initial > 0){
+    if(
+        product.initial > 0
+    ){
 
         ctx.font =
             "24px Arial";
 
         ctx.fillText(
-            `Inicial: ${money(product.initial)}`,
+            `Inicial: ${money(
+                product.initial
+            )}`,
             60,
             1280
         );
@@ -1501,34 +2106,68 @@ async function generateJpg(
 
 
     /*
-     * Convertir Canvas a JPG REAL
+     * Convertir Canvas a JPG.
      */
 
     const blob =
         await new Promise(
-            (resolve,reject) => {
+            (
+                resolve,
+                reject
+            ) => {
 
-                canvas.toBlob(
-                    result => {
+                try{
 
-                        if(result){
-                            resolve(result);
-                        }
-                        else{
-                            reject(
-                                new Error(
-                                    "No se pudo crear el JPG"
-                                )
-                            );
-                        }
+                    canvas.toBlob(
+                        result => {
 
-                    },
-                    "image/jpeg",
-                    0.92
-                );
+                            if(
+                                result
+                            ){
+
+                                resolve(
+                                    result
+                                );
+
+                            }
+                            else{
+
+                                reject(
+                                    new Error(
+                                        "No se pudo crear el archivo JPG."
+                                    )
+                                );
+
+                            }
+
+                        },
+                        "image/jpeg",
+                        0.92
+                    );
+
+                }
+                catch(error){
+
+                    reject(
+                        error
+                    );
+
+                }
 
             }
         );
+
+
+    if(
+        !blob ||
+        blob.size === 0
+    ){
+
+        throw new Error(
+            "El JPG generado está vacío."
+        );
+
+    }
 
 
     const safeName =
@@ -1557,6 +2196,7 @@ async function generateJpg(
             type:"image/jpeg"
         }
     );
+
 }
 
 
@@ -1569,7 +2209,9 @@ async function generateAndShare(){
     if(
         selectedProducts.length === 0
     ){
+
         return;
+
     }
 
 
@@ -1579,9 +2221,6 @@ async function generateAndShare(){
 
     generateBtn.disabled =
         true;
-
-    generateBtn.textContent =
-        "Generando imágenes...";
 
 
     try{
@@ -1605,9 +2244,30 @@ async function generateAndShare(){
 
 
             console.log(
-                "Generando JPG:",
-                product.name,
+                "================================="
+            );
+
+            console.log(
+                "GENERANDO PRODUCTO",
+                i + 1
+            );
+
+            console.log(
+                product.name
+            );
+
+            console.log(
+                "URL:",
                 product.img
+            );
+
+            console.log(
+                "TALLA:",
+                currentSize
+            );
+
+            console.log(
+                "================================="
             );
 
 
@@ -1628,8 +2288,7 @@ async function generateAndShare(){
             catch(error){
 
                 console.error(
-                    "Error generando imagen:",
-                    product,
+                    "ERROR COMPLETO:",
                     error
                 );
 
@@ -1646,70 +2305,25 @@ async function generateAndShare(){
         if(
             files.length === 0
         ){
+
             throw new Error(
                 "No se generaron imágenes."
             );
+
         }
+
+
+        generateBtn.textContent =
+            "Preparando compartir...";
 
 
         /*
-         * Verificar si el navegador
-         * permite compartir múltiples archivos.
+         * Comprobar compatibilidad.
          */
 
         if(
-            navigator.canShare &&
-            !navigator.canShare({
-                files
-            })
+            !navigator.share
         ){
-
-            /*
-             * Intentamos compartir
-             * individualmente si el navegador
-             * no acepta múltiples archivos.
-             */
-
-            if(
-                files.length === 1 &&
-                navigator.share
-            ){
-
-                await navigator.share({
-                    files:files,
-                    title:"BeniConfort",
-                    text:
-                        `Talla ${currentSize}`
-                });
-
-            }
-            else{
-
-                throw new Error(
-                    "Este navegador no permite compartir varios archivos a la vez."
-                );
-
-            }
-
-        }
-        else if(
-            navigator.share
-        ){
-
-            await navigator.share({
-
-                files:files,
-
-                title:
-                    "BeniConfort",
-
-                text:
-                    `Productos disponibles - Talla ${currentSize}`
-
-            });
-
-        }
-        else{
 
             throw new Error(
                 "Este navegador no admite compartir archivos directamente."
@@ -1718,8 +2332,46 @@ async function generateAndShare(){
         }
 
 
+        if(
+            navigator.canShare
+        ){
+
+            const shareable =
+                navigator.canShare({
+                    files
+                });
+
+
+            if(
+                !shareable
+            ){
+
+                throw new Error(
+                    "El navegador no permite compartir estos archivos."
+                );
+
+            }
+
+        }
+
+
+        await navigator.share({
+
+            files:
+                files,
+
+            title:
+                "BeniConfort",
+
+            text:
+                `Productos disponibles · Talla ${currentSize}`
+
+        });
+
+
         generateBtn.textContent =
             "✓ Compartido";
+
 
         setTimeout(
             () => {
@@ -1734,12 +2386,11 @@ async function generateAndShare(){
             2000
         );
 
-
     }
     catch(error){
 
         console.error(
-            "Error al compartir:",
+            "ERROR AL GENERAR/COMPARTIR:",
             error
         );
 
@@ -1752,6 +2403,7 @@ async function generateAndShare(){
 
         generateBtn.textContent =
             originalText;
+
 
         generateBtn.disabled =
             selectedProducts.length === 0;
