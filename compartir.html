@@ -415,15 +415,11 @@ header p{
     font-weight:bold;
 }
 
-/* Grupo de botones */
-
 .bottom-actions{
     display:flex;
     gap:10px;
     align-items:center;
 }
-
-/* Generar */
 
 .generate-btn{
     border:0;
@@ -444,8 +440,6 @@ header p{
     opacity:.5;
     cursor:not-allowed;
 }
-
-/* Compartir */
 
 .share-btn{
     border:0;
@@ -707,16 +701,6 @@ const supabaseClient =
 const SIZE_MIN = 34;
 const SIZE_MAX = 45;
 
-
-/*
- * =========================================================
- * TAMAÑO MÁXIMO DE CADA LOTE
- * =========================================================
- *
- * Aunque tu navegador parece permitir hasta 11,
- * usamos 8 para dejar margen de seguridad.
- */
-
 const IMAGES_PER_BATCH = 8;
 
 
@@ -730,24 +714,7 @@ let currentSize = null;
 
 let selectedProducts = [];
 
-
-/*
- * Todos los JPG generados.
- */
-
 let generatedFiles = [];
-
-
-/*
- * Lotes creados a partir de generatedFiles.
- *
- * Cada lote tendrá:
- *
- * {
- *   files: [],
- *   shared: false
- * }
- */
 
 let generatedBatches = [];
 
@@ -2510,11 +2477,9 @@ async function generateJpg(
     }
 
 
-    /*
-     * =====================================================
-     * FONDO
-     * =====================================================
-     */
+    /* =====================================================
+       FONDO
+    ===================================================== */
 
     ctx.fillStyle =
         "#ffffff";
@@ -2527,27 +2492,57 @@ async function generateJpg(
     );
 
 
-    /*
-     * =====================================================
-     * IMAGEN PRINCIPAL
-     *
-     * Ahora ocupa prácticamente todo el protagonismo.
-     * No se coloca ningún texto encima de la fotografía.
-     * =====================================================
-     */
+    /* =====================================================
+       BENICONFORT
+       
+       Pequeño y discreto.
+       ===================================================== */
+
+    ctx.textAlign =
+        "center";
+
+    ctx.fillStyle =
+        "#111827";
+
+    ctx.font =
+        "bold 28px Arial";
+
+    ctx.fillText(
+        "BeniConfort",
+        width / 2,
+        34
+    );
+
+
+    /* =====================================================
+       IMAGEN PRINCIPAL
+       
+       El tenis ocupa aproximadamente el 90 %
+       del diseño visual.
+       
+       NO se coloca ningún texto sobre la fotografía.
+       ===================================================== */
 
     const imageAreaLeft =
-        25;
+        18;
 
     const imageAreaTop =
-        20;
+        48;
 
     const imageAreaWidth =
         width -
-        50;
+        36;
+
+    /*
+     * 1140px de alto para la fotografía.
+     *
+     * El canvas mide 1350px.
+     * Esto deja solamente el espacio necesario
+     * para la información inferior.
+     */
 
     const imageAreaHeight =
-        875;
+        1140;
 
 
     const naturalWidth =
@@ -2634,92 +2629,66 @@ async function generateJpg(
     }
 
 
-    /*
-     * =====================================================
-     * DIVISOR
-     *
-     * Un poco más marcado que antes,
-     * pero sin hacerlo grueso.
-     * =====================================================
-     */
+    /* =====================================================
+       DIVISOR
+       
+       Muy limpio y cercano a la información.
+       ===================================================== */
 
     ctx.fillStyle =
-        "#111827";
+        "#d1d5db";
 
     ctx.fillRect(
-        45,
-        925,
-        990,
-        4
+        40,
+        1202,
+        1000,
+        3
     );
 
 
-    /*
-     * =====================================================
-     * INFORMACIÓN DEL PRODUCTO
-     *
-     * Solo la información realmente importante.
-     * =====================================================
-     */
+    /* =====================================================
+       ÁREA INFERIOR DE INFORMACIÓN
+       
+       Compacta.
+       ===================================================== */
+
+    const infoTop =
+        1215;
 
     const infoLeft =
-        60;
+        45;
 
     const infoRight =
-        1020;
+        1035;
 
 
-    /*
-     * MODELO
-     */
+    /* =====================================================
+       MODELO
+       ===================================================== */
 
     ctx.textAlign =
         "left";
 
     ctx.fillStyle =
         "#111827";
-
-    ctx.font =
-        "bold 31px Arial";
-
 
     drawFittedText(
         ctx,
         product.name || "Tenis",
         infoLeft,
-        980,
+        infoTop + 27,
         690,
-        "bold 31px Arial",
+        "bold 28px Arial",
         "#111827"
     );
 
 
-    /*
-     * TALLA
-     */
+    /* =====================================================
+       TALLA
+       ===================================================== */
 
     ctx.textAlign =
         "right";
-
-    ctx.font =
-        "bold 30px Arial";
-
-    ctx.fillStyle =
-        "#111827";
-
-    ctx.fillText(
-        `TALLA ${currentSize}`,
-        infoRight,
-        980
-    );
-
-
-    /*
-     * CONTADO
-     */
-
-    ctx.textAlign =
-        "left";
 
     ctx.font =
         "bold 27px Arial";
@@ -2728,57 +2697,160 @@ async function generateJpg(
         "#111827";
 
     ctx.fillText(
-        `CONTADO  ${money(product.cashPrice)}`,
-        infoLeft,
-        1040
-    );
-
-
-    /*
-     * CRÉDITO
-     */
-
-    ctx.textAlign =
-        "right";
-
-    ctx.fillText(
-        `CRÉDITO  ${money(product.creditPrice)}`,
+        `TALLA ${currentSize}`,
         infoRight,
-        1040
+        infoTop + 27
     );
 
 
-    /*
-     * INICIAL
-     */
+    /* =====================================================
+       PEQUEÑOS BLOQUES DE PRECIOS
+       
+       No parecen botones.
+       Funcionan únicamente como elementos
+       visuales para separar la información.
+       ===================================================== */
 
-    if(
-        product.initial > 0
+    const boxY =
+        1250;
+
+    const boxHeight =
+        58;
+
+
+    const boxGap =
+        14;
+
+
+    const totalBoxWidth =
+        990;
+
+
+    const boxWidth =
+        (
+            totalBoxWidth -
+            boxGap * 2
+        ) / 3;
+
+
+    const box1X =
+        infoLeft;
+
+
+    const box2X =
+        box1X +
+        boxWidth +
+        boxGap;
+
+
+    const box3X =
+        box2X +
+        boxWidth +
+        boxGap;
+
+
+    function drawInfoBox(
+        x,
+        label,
+        value
     ){
+
+        /*
+         * Fondo muy suave.
+         */
+
+        ctx.fillStyle =
+            "#f8fafc";
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            x,
+            boxY,
+            boxWidth,
+            boxHeight,
+            12
+        );
+
+        ctx.fill();
+
+
+        /*
+         * Contorno fino.
+         */
+
+        ctx.strokeStyle =
+            "#d1d5db";
+
+        ctx.lineWidth =
+            2;
+
+        ctx.stroke();
+
+
+        /*
+         * Etiqueta.
+         */
 
         ctx.textAlign =
             "center";
 
-        ctx.font =
-            "bold 23px Arial";
-
         ctx.fillStyle =
-            "#374151";
+            "#6b7280";
+
+        ctx.font =
+            "bold 16px Arial";
 
         ctx.fillText(
-            `INICIAL ${money(product.initial)}`,
-            width / 2,
-            1095
+            label,
+            x + boxWidth / 2,
+            boxY + 21
+        );
+
+
+        /*
+         * Precio.
+         */
+
+        ctx.fillStyle =
+            "#111827";
+
+        ctx.font =
+            "bold 21px Arial";
+
+        ctx.fillText(
+            value,
+            x + boxWidth / 2,
+            boxY + 45
         );
 
     }
 
 
-    /*
-     * =====================================================
-     * CONVERTIR A JPG
-     * =====================================================
-     */
+    drawInfoBox(
+        box1X,
+        "CONTADO",
+        money(product.cashPrice)
+    );
+
+
+    drawInfoBox(
+        box2X,
+        "CRÉDITO",
+        money(product.creditPrice)
+    );
+
+
+    drawInfoBox(
+        box3X,
+        "INICIAL",
+        money(product.initial)
+    );
+
+
+    /* =====================================================
+       CONVERTIR A JPG
+    ===================================================== */
 
     const blob =
         await new Promise(
@@ -3023,19 +3095,11 @@ async function generateImages(){
         }
 
 
-        /*
-         * AQUÍ se dividen los archivos.
-         */
-
         generatedBatches =
             createBatches(
                 generatedFiles
             );
 
-
-        /*
-         * Mostrar los lotes.
-         */
 
         renderBatches();
 
@@ -3046,11 +3110,6 @@ async function generateImages(){
                 "hidden"
             );
 
-
-        /*
-         * El botón inferior comienza
-         * con el primer lote pendiente.
-         */
 
         updateMainShareButton();
 
@@ -3138,10 +3197,6 @@ function renderBatches(){
             }
 
 
-            /*
-             * Encabezado
-             */
-
             const header =
                 document.createElement(
                     "div"
@@ -3224,10 +3279,6 @@ function renderBatches(){
             );
 
 
-            /*
-             * Imágenes
-             */
-
             const images =
                 document.createElement(
                     "div"
@@ -3271,12 +3322,6 @@ function renderBatches(){
                         file.name;
 
 
-                    /*
-                     * No revocamos inmediatamente
-                     * el ObjectURL porque la vista
-                     * necesita seguir mostrando la imagen.
-                     */
-
                     card.appendChild(
                         img
                     );
@@ -3289,10 +3334,6 @@ function renderBatches(){
                 }
             );
 
-
-            /*
-             * Acciones
-             */
 
             const actions =
                 document.createElement(
@@ -3349,12 +3390,6 @@ function renderBatches(){
                 }
             );
 
-
-            /*
-             * Descargar lote.
-             *
-             * Es respaldo.
-             */
 
             const downloadBtn =
                 document.createElement(
@@ -3447,17 +3482,6 @@ function getFirstPendingBatchIndex(){
 
 
 /* =========================================================
-   MENSAJE INICIAL
-========================================================= */
-
-function getInitialShareMessage(){
-
-    return `👟 TENIS DISPONIBLES – TALLA ${currentSize}`;
-
-}
-
-
-/* =========================================================
    MENSAJE FINAL
 ========================================================= */
 
@@ -3485,52 +3509,14 @@ function getShareText(batchIndex){
         generatedBatches.length;
 
 
-    const isFirst =
-        batchIndex === 0;
-
-
     const isLast =
         batchIndex ===
         totalBatches - 1;
 
 
     /*
-     * Un solo lote:
-     *
-     * mensaje inicial
-     * +
-     * mensaje final
-     */
-
-    if(
-        isFirst &&
-        isLast
-    ){
-
-        return `${getInitialShareMessage()}
-
-${getFinalShareMessage()}`;
-
-    }
-
-
-    /*
-     * Primer lote:
-     * solamente mensaje inicial.
-     */
-
-    if(
-        isFirst
-    ){
-
-        return getInitialShareMessage();
-
-    }
-
-
-    /*
-     * Último lote:
-     * solamente mensaje final.
+     * ÚNICAMENTE EL ÚLTIMO LOTE
+     * lleva el mensaje.
      */
 
     if(
@@ -3543,7 +3529,7 @@ ${getFinalShareMessage()}`;
 
 
     /*
-     * Lotes intermedios:
+     * Todos los demás lotes:
      * solamente imágenes.
      */
 
@@ -3562,10 +3548,6 @@ function updateMainShareButton(){
         getFirstPendingBatchIndex();
 
 
-    /*
-     * No hay lotes.
-     */
-
     if(
         generatedBatches.length === 0
     ){
@@ -3581,10 +3563,6 @@ function updateMainShareButton(){
     }
 
 
-    /*
-     * Todos compartidos.
-     */
-
     if(
         pendingIndex === -1
     ){
@@ -3599,10 +3577,6 @@ function updateMainShareButton(){
 
     }
 
-
-    /*
-     * Hay un lote pendiente.
-     */
 
     shareBtn.disabled =
         false;
@@ -3646,10 +3620,6 @@ async function shareBatch(
     }
 
 
-    /*
-     * Web Share no disponible.
-     */
-
     if(
         !navigator.share
     ){
@@ -3662,13 +3632,6 @@ async function shareBatch(
 
     }
 
-
-    /*
-     * El lote tiene máximo 8 archivos.
-     *
-     * Comprobamos exactamente ESTE lote,
-     * no todos los archivos.
-     */
 
     if(
         navigator.canShare
@@ -3713,19 +3676,14 @@ async function shareBatch(
 
 
     /*
-     * IMPORTANTE:
-     *
-     * El mensaje se determina de forma
-     * síncrona antes de llamar a navigator.share().
-     *
-     * Lote 1:
-     *   mensaje inicial + imágenes
+     * El primer lote:
+     * solamente imágenes.
      *
      * Lotes intermedios:
-     *   solamente imágenes
+     * solamente imágenes.
      *
      * Último lote:
-     *   mensaje final + imágenes
+     * imágenes + mensaje final.
      */
 
     const shareText =
@@ -3735,13 +3693,6 @@ async function shareBatch(
 
 
     try{
-
-        /*
-         * ESTE es el punto importante:
-         *
-         * navigator.share() se ejecuta directamente
-         * por el clic del botón.
-         */
 
         button.disabled =
             true;
@@ -3766,11 +3717,8 @@ async function shareBatch(
 
 
         /*
-         * Solo agregamos "text" cuando
-         * este lote realmente tiene mensaje.
-         *
-         * De esta forma los lotes intermedios
-         * llevan únicamente las imágenes.
+         * Solamente el último lote recibe
+         * el texto.
          */
 
         if(
@@ -3788,11 +3736,6 @@ async function shareBatch(
         );
 
 
-        /*
-         * Si navigator.share() termina correctamente,
-         * marcamos el lote como compartido.
-         */
-
         batch.shared =
             true;
 
@@ -3801,21 +3744,11 @@ async function shareBatch(
             "✓ Lote compartido";
 
 
-        /*
-         * Actualizamos visualmente
-         * todo el lote.
-         */
-
         renderBatches();
 
 
         updateMainShareButton();
 
-
-        /*
-         * Llevar la vista al siguiente lote pendiente,
-         * si existe.
-         */
 
         const nextPending =
             getFirstPendingBatchIndex();
@@ -3866,13 +3799,6 @@ async function shareBatch(
         );
 
 
-        /*
-         * IMPORTANTE:
-         *
-         * Si el usuario cancela,
-         * NO lo marcamos como compartido.
-         */
-
         if(
             error &&
             error.name ===
@@ -3896,12 +3822,6 @@ async function shareBatch(
 
         }
 
-
-        /*
-         * Si Chrome vuelve a indicar
-         * que el lote es demasiado grande,
-         * mantenemos el lote pendiente.
-         */
 
         button.disabled =
             false;
@@ -3948,24 +3868,6 @@ shareBtn.addEventListener(
 
         }
 
-
-        /*
-         * IMPORTANTE:
-         *
-         * Esta función se llama directamente
-         * desde el clic del botón inferior.
-         */
-
-        const batch =
-            generatedBatches[
-                pendingIndex
-            ];
-
-
-        /*
-         * Buscar el botón visual
-         * correspondiente al lote.
-         */
 
         const buttons =
             batchesContainer
