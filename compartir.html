@@ -4,273 +4,416 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BeniConfort | Compartir por talla</title>
+<title>BeniConfort | Compartir catálogo</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+:root{
+  --black:#111;
+  --ink:#171717;
+  --muted:#707070;
+  --line:#e5e5e5;
+  --soft:#f5f5f3;
+  --green:#16864a;
+  --red:#b00020;
+  --yellow:#d49a00;
+}
+
 *{
   box-sizing:border-box;
 }
 
-body{
+html,body{
   margin:0;
+  padding:0;
   background:#f5f5f3;
-  color:#111;
+  color:var(--ink);
   font-family:Arial,Helvetica,sans-serif;
 }
 
-header{
-  background:#111;
-  color:#fff;
-  padding:18px;
-  position:sticky;
-  top:0;
-  z-index:20;
+body{
+  padding:20px;
 }
 
-.header-inner{
+.container{
   max-width:1000px;
-  margin:auto;
+  margin:0 auto;
+}
+
+/* HEADER */
+
+.header{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
+}
+
+.header-top{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   gap:15px;
 }
 
 .logo{
-  font-size:21px;
+  font-size:22px;
   font-weight:900;
   letter-spacing:2px;
 }
 
-.estado{
+.connection{
   font-size:11px;
-  opacity:.75;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:7px;
 }
 
-main{
-  max-width:1000px;
-  margin:auto;
-  padding:20px 15px 50px;
+.connection-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#aaa;
 }
 
-.panel{
+.connection-dot.ok{
+  background:var(--green);
+}
+
+.connection-dot.error{
+  background:var(--red);
+}
+
+.connection-dot.loading{
+  background:var(--yellow);
+}
+
+/* STATUS */
+
+.status{
   background:#fff;
   border-radius:16px;
-  padding:18px;
-  margin-bottom:18px;
-  box-shadow:0 3px 15px rgba(0,0,0,.07);
+  padding:25px;
+  text-align:center;
+  margin-bottom:16px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
 }
 
-h1{
-  margin:0 0 7px;
-  font-size:28px;
+.status h2{
+  margin:0 0 8px;
+  font-size:18px;
 }
 
-h2{
-  margin:0 0 15px;
-  font-size:20px;
-}
-
-.sub{
-  color:#666;
+.status p{
+  margin:0;
+  color:var(--muted);
   font-size:13px;
-  line-height:1.5;
 }
 
-.tallas{
+/* TALLAS */
+
+.size-box{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
+}
+
+.size-title{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.sizes{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
 }
 
-.talla{
+.size-btn{
   border:1px solid #ccc;
   background:#fff;
-  border-radius:10px;
-  padding:11px 15px;
-  font-weight:800;
+  color:#111;
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:14px;
+  font-weight:900;
   cursor:pointer;
 }
 
-.talla.activa{
+.size-btn:hover{
+  background:#f3f3f3;
+}
+
+.size-btn.active{
   background:#111;
   color:#fff;
   border-color:#111;
 }
 
-.contador{
-  margin-top:15px;
-  font-size:13px;
-  color:#555;
+/* ACTION BAR */
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
 }
 
-.productos{
+.selected-info{
+  font-size:13px;
+  font-weight:800;
+}
+
+.action-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+button{
+  font:inherit;
+}
+
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.btn-light{
+  background:#eee;
+  color:#111;
+}
+
+.btn-green{
+  background:#16864a;
+  color:#fff;
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+/* PRODUCTS */
+
+.products{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:15px;
 }
 
-.producto{
+.card{
   background:#fff;
-  border:2px solid #e3e3e3;
   border-radius:16px;
   overflow:hidden;
+  border:2px solid transparent;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
   cursor:pointer;
-  transition:.15s;
 }
 
-.producto.seleccionado{
+.card.selected{
   border-color:#111;
-  box-shadow:0 0 0 2px #111;
 }
 
-.producto-imagen{
+.image-box{
+  position:relative;
   width:100%;
-  height:220px;
-  background:#f4f4f2;
+  aspect-ratio:1/1;
+  background:#f5f5f3;
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
 }
 
-.producto-imagen img{
+.image-box img{
   width:100%;
   height:100%;
   object-fit:contain;
+  display:block;
 }
 
-.producto-info{
+.image-error{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#b00020;
+  word-break:break-word;
+}
+
+.check{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid #aaa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  font-weight:900;
+}
+
+.card.selected .check{
+  background:#111;
+  border-color:#111;
+  color:#fff;
+}
+
+.card-info{
   padding:15px;
 }
 
-.checkline{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.checkline input{
-  width:21px;
-  height:21px;
-}
-
-.tipo{
+.type{
   display:inline-block;
   background:#111;
   color:#fff;
   padding:6px 8px;
   border-radius:5px;
-  font-size:9px;
+  font-size:8px;
   font-weight:900;
+  letter-spacing:1px;
   text-transform:uppercase;
   margin-bottom:9px;
 }
 
-.marca{
+.brand{
   font-size:10px;
-  font-weight:900;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
   color:#555;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
 
-.nombre{
-  font-size:21px;
-  font-weight:900;
+.name{
   margin-top:4px;
-}
-
-.datos{
-  margin-top:10px;
-  font-size:12px;
-  line-height:1.6;
-}
-
-.precio{
+  font-size:20px;
+  line-height:1.05;
   font-weight:900;
 }
 
-.botones{
-  display:grid;
-  gap:10px;
-}
-
-button.accion{
-  width:100%;
-  border:0;
-  border-radius:12px;
-  padding:16px;
-  font-size:16px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-.generar{
-  background:#2563eb;
-  color:white;
-}
-
-.compartir{
-  background:#16a34a;
-  color:white;
-}
-
-.secundario{
-  background:#e5e7eb;
-  color:#111;
-}
-
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
-
-.resultado{
-  font-size:13px;
-  line-height:1.6;
-}
-
-.ok{
-  color:#15803d;
-  font-weight:900;
-}
-
-.error{
-  color:#b91c1c;
-  font-weight:900;
-}
-
-.archivo{
-  background:#f4f4f2;
-  border-radius:10px;
-  padding:10px;
+.meta{
   margin-top:8px;
+  font-size:11px;
+  font-weight:800;
 }
 
-.oculto{
+.prices{
+  display:flex;
+  gap:7px;
+  margin-top:12px;
+}
+
+.price{
+  flex:1;
+  background:#f5f5f3;
+  border-radius:8px;
+  padding:8px;
+}
+
+.price small{
+  display:block;
+  font-size:7px;
+  color:#777;
+  text-transform:uppercase;
+  font-weight:800;
+}
+
+.price strong{
+  display:block;
+  margin-top:3px;
+  font-size:15px;
+}
+
+/* GENERATING */
+
+.generating{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
   display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
 }
 
-@media(max-width:600px){
+.generating-box{
+  background:#fff;
+  border-radius:16px;
+  padding:30px;
+  width:min(90%,350px);
+  text-align:center;
+}
 
-  main{
-    padding:15px 10px 40px;
+.spinner{
+  width:35px;
+  height:35px;
+  border:4px solid #ddd;
+  border-top-color:#111;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 15px;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.empty{
+  background:#fff;
+  border-radius:16px;
+  padding:50px 20px;
+  text-align:center;
+  color:#777;
+}
+
+@media(max-width:700px){
+
+  body{
+    padding:10px;
   }
 
-  h1{
-    font-size:24px;
-  }
-
-  .productos{
+  .products{
     grid-template-columns:1fr;
   }
 
-  .producto-imagen{
-    height:260px;
+  .header-top{
+    align-items:flex-start;
+  }
+
+  .actions{
+    align-items:stretch;
+  }
+
+  .action-buttons{
+    width:100%;
+  }
+
+  .action-buttons .btn{
+    flex:1;
   }
 }
 </style>
@@ -278,143 +421,146 @@ button:disabled{
 
 <body>
 
-<header>
+<div class="container">
 
-  <div class="header-inner">
+  <div class="header">
 
-    <div class="logo">
-      BENICONFORT
-    </div>
+    <div class="header-top">
 
-    <div class="estado" id="estadoConexion">
-      Conectando...
+      <div class="logo">
+        BENICONFORT
+      </div>
+
+      <div class="connection">
+
+        <span
+          id="connectionDot"
+          class="connection-dot loading">
+        </span>
+
+        <span id="connectionText">
+          Conectando...
+        </span>
+
+      </div>
+
     </div>
 
   </div>
 
-</header>
+
+  <div id="status" class="status">
+
+    <h2>Cargando inventario...</h2>
+
+    <p>
+      Consultando modelos disponibles.
+    </p>
+
+  </div>
 
 
-<main>
+  <div id="mainContent" style="display:none;">
 
-  <section class="panel">
+    <div class="size-box">
 
-    <h1>Compartir productos</h1>
+      <div class="size-title">
+        Selecciona una talla
+      </div>
 
-    <div class="sub">
-      Selecciona una talla, marca los modelos que quieres mostrar
-      y genera imágenes reales para compartir por WhatsApp.
+      <div
+        id="sizes"
+        class="sizes">
+      </div>
+
     </div>
 
-  </section>
 
+    <div class="actions">
 
-  <!-- TALLAS -->
+      <div
+        id="selectedInfo"
+        class="selected-info">
 
-  <section class="panel">
+        0 modelos seleccionados
 
-    <h2>1. Selecciona la talla</h2>
+      </div>
 
-    <div class="tallas" id="tallas">
-      Cargando tallas...
+      <div class="action-buttons">
+
+        <button
+          id="selectAllBtn"
+          class="btn btn-light">
+
+          Seleccionar todos
+
+        </button>
+
+        <button
+          id="clearBtn"
+          class="btn btn-light">
+
+          Limpiar
+
+        </button>
+
+        <button
+          id="shareBtn"
+          class="btn btn-green"
+          disabled>
+
+          Compartir
+
+        </button>
+
+      </div>
+
     </div>
 
-    <div class="contador" id="contador">
-      Cargando inventario...
-    </div>
-
-  </section>
-
-
-  <!-- PRODUCTOS -->
-
-  <section class="panel">
-
-    <h2>2. Selecciona los modelos</h2>
 
     <div
-      id="productos"
-      class="productos"
-    >
-      Selecciona una talla.
+      id="products"
+      class="products">
     </div>
 
-  </section>
+  </div>
+
+</div>
 
 
-  <!-- ACCIONES -->
+<div
+  id="generating"
+  class="generating">
 
-  <section class="panel">
+  <div class="generating-box">
 
-    <h2>3. Generar y compartir</h2>
+    <div class="spinner"></div>
 
-    <div class="contador">
-      Seleccionados:
-      <strong id="cantidadSeleccionados">0</strong>
-    </div>
+    <h3>
+      Preparando imágenes...
+    </h3>
 
-    <div class="botones">
+    <p
+      id="generatingText"
+      style="font-size:12px;color:#666;">
 
-      <button
-        class="accion generar"
-        id="btnGenerar"
-        onclick="generarImagenes()"
-        disabled
-      >
-        🖼️ GENERAR IMÁGENES
-      </button>
+      Generando archivos reales.
 
-      <button
-        class="accion compartir"
-        id="btnCompartir"
-        onclick="compartirImagenes()"
-        disabled
-      >
-        📤 COMPARTIR IMÁGENES
-      </button>
+    </p>
 
-      <button
-        class="accion secundario"
-        onclick="seleccionarTodos()"
-      >
-        ☑️ SELECCIONAR TODOS
-      </button>
+  </div>
 
-      <button
-        class="accion secundario"
-        onclick="quitarTodos()"
-      >
-        ⬜ QUITAR SELECCIÓN
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- RESULTADO -->
-
-  <section class="panel">
-
-    <h2>Resultado</h2>
-
-    <div
-      id="resultado"
-      class="resultado"
-    >
-      Todavía no se han generado imágenes.
-    </div>
-
-  </section>
-
-</main>
+</div>
 
 
 <script>
 
 /* =========================================================
-   CONFIGURACIÓN SUPABASE
+   CONFIGURACIÓN
+   EXACTAMENTE LA MISMA DEL CATALOGO.HTML
 ========================================================= */
+
+const WHATSAPP_NUMBER = "59173913409";
 
 const SUPABASE_URL =
   "https://lydlyusuanvjjoavbocr.supabase.co";
@@ -422,28 +568,12 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const SIZE_MIN = 34;
+const SIZE_MAX = 45;
 
 
 /* =========================================================
-   VARIABLES
-========================================================= */
-
-let productos = [];
-
-let tallaActual = null;
-
-let productosMostrados = [];
-
-let archivosGenerados = [];
-
-
-/* =========================================================
-   FUNCIONES GENERALES
+   UTILIDADES
 ========================================================= */
 
 function text(v){
@@ -459,24 +589,7 @@ function money(v){
 
   const n = Number(v || 0);
 
-  return "Bs " +
-    n.toLocaleString("es-BO");
-
-}
-
-
-function escapeHtml(value){
-
-  return text(value).replace(
-    /[&<>'"]/g,
-    c => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      "'":"&#39;",
-      '"':"&quot;"
-    }[c])
-  );
+  return `Bs ${n.toLocaleString('es-BO')}`;
 
 }
 
@@ -487,50 +600,47 @@ function normalizeStatus(v){
     text(v).toLowerCase();
 
   if(
-    s === "vendido" ||
-    s === "sold"
+    ["vendido","sold"].includes(s)
   ){
+
     return "sold";
+
   }
 
   if(
-    s === "reservado" ||
-    s === "reserved"
+    ["reservado","reserved"].includes(s)
   ){
+
     return "reserved";
+
   }
 
   return "available";
+
 }
 
 
 /* =========================================================
-   NORMALIZAR PRODUCTO REAL
+   NORMALIZAR PRODUCTO
+   MISMO CÓDIGO DEL CATALOGO
 ========================================================= */
 
 function normalizeProduct(p){
 
   const rawType =
-    text(
-      p.tipo ??
-      p.type
-    );
+    text(p.tipo ?? p.type);
 
   const typeLower =
     rawType.toLowerCase();
-
 
   const type =
     typeLower.includes("americano")
       ? "Americano"
       :
-    (
       typeLower.includes("económico") ||
       typeLower.includes("economico")
-    )
-      ? "Económico"
-      :
-      rawType;
+        ? "Económico"
+        : rawType;
 
 
   let sizesQty =
@@ -542,11 +652,16 @@ function normalizeProduct(p){
     p.tamaños &&
     typeof p.tamaños === "object"
   ){
-    sizesQty = p.tamaños;
+
+    sizesQty =
+      p.tamaños;
+
   }
 
 
-  if(typeof sizesQty === "string"){
+  if(
+    typeof sizesQty === "string"
+  ){
 
     try{
 
@@ -574,17 +689,15 @@ function normalizeProduct(p){
 
   return {
 
-    id:
-      String(
-        p.id ?? ""
-      ),
+    id:String(p.id ?? ""),
 
     type,
 
+    quality:type,
+
     status:
       normalizeStatus(
-        p.estado ??
-        p.status
+        p.estado ?? p.status
       ),
 
     name:
@@ -597,6 +710,12 @@ function normalizeProduct(p){
       text(
         p.marca ??
         p.brand
+      ),
+
+    gender:
+      text(
+        p.género ??
+        p.gender
       ),
 
     img:
@@ -649,7 +768,13 @@ function normalizeProduct(p){
       text(
         p.description ??
         p.desc
-      )
+      ),
+
+    whatsappLink:
+      p.whatsapp_link ??
+      p.WhatsApp_link ??
+      p.whatsappLink ??
+      ""
 
   };
 
@@ -657,27 +782,32 @@ function normalizeProduct(p){
 
 
 /* =========================================================
-   TALLAS DISPONIBLES
+   TALLAS
+   MISMO CÓDIGO DEL CATALOGO
 ========================================================= */
 
 function availableSizes(p){
 
   if(
-    p.type === "Americano"
+    p.quality === "Americanos" ||
+    p.quality === "Americano"
   ){
 
     if(
-      p.status !== "available" ||
+      p.status === "sold" ||
+      p.status === "reserved" ||
       !p.size ||
-      Number(p.stock || 1) <= 0
+      Number(p.stock ?? 1) <= 0
     ){
 
       return [];
 
     }
 
+
     const n =
       Number(p.size);
+
 
     return Number.isFinite(n)
       ? [n]
@@ -689,39 +819,711 @@ function availableSizes(p){
   return Object.keys(
     p.sizesQty || {}
   )
-
   .map(Number)
-
   .filter(
-
     s =>
       Number.isFinite(s) &&
-      Number(
-        p.sizesQty[s]
-      ) > 0 &&
-      p.status === "available"
+      Number(p.sizesQty[s]) > 0 &&
+      p.status !== "sold" &&
+      p.status !== "reserved"
+  );
 
+}
+
+
+function selectableProducts(products){
+
+  return products.filter(
+    p =>
+      p.status !== "sold" &&
+      p.status !== "reserved" &&
+      availableSizes(p).length > 0 &&
+      p.img
+  );
+
+}
+
+
+function productForSize(p,size){
+
+  return availableSizes(p)
+    .includes(
+      Number(size)
+    );
+
+}
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let products = [];
+
+let selectedSize = null;
+
+let selectedProducts =
+  new Set();
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const statusEl =
+  document.getElementById(
+    "status"
+  );
+
+const mainContent =
+  document.getElementById(
+    "mainContent"
+  );
+
+const sizesEl =
+  document.getElementById(
+    "sizes"
+  );
+
+const productsEl =
+  document.getElementById(
+    "products"
+  );
+
+const selectedInfo =
+  document.getElementById(
+    "selectedInfo"
+  );
+
+const shareBtn =
+  document.getElementById(
+    "shareBtn"
+  );
+
+const selectAllBtn =
+  document.getElementById(
+    "selectAllBtn"
+  );
+
+const clearBtn =
+  document.getElementById(
+    "clearBtn"
+  );
+
+
+/* =========================================================
+   ESTADO DE CONEXIÓN
+========================================================= */
+
+function connectionLoading(){
+
+  const dot =
+    document.getElementById(
+      "connectionDot"
+    );
+
+  const txt =
+    document.getElementById(
+      "connectionText"
+    );
+
+  dot.className =
+    "connection-dot loading";
+
+  txt.textContent =
+    "Conectando...";
+
+}
+
+
+function connectionOK(){
+
+  const dot =
+    document.getElementById(
+      "connectionDot"
+    );
+
+  const txt =
+    document.getElementById(
+      "connectionText"
+    );
+
+  dot.className =
+    "connection-dot ok";
+
+  txt.textContent =
+    "Conectado";
+
+}
+
+
+function connectionError(){
+
+  const dot =
+    document.getElementById(
+      "connectionDot"
+    );
+
+  const txt =
+    document.getElementById(
+      "connectionText"
+    );
+
+  dot.className =
+    "connection-dot error";
+
+  txt.textContent =
+    "Error de conexión";
+
+}
+
+
+/* =========================================================
+   CREAR TALLAS
+========================================================= */
+
+function createAvailableSizes(){
+
+  const sizeSet =
+    new Set();
+
+
+  products.forEach(
+    p => {
+
+      availableSizes(p)
+        .forEach(
+          size => {
+
+            if(
+              size >= SIZE_MIN &&
+              size <= SIZE_MAX
+            ){
+
+              sizeSet.add(size);
+
+            }
+
+          }
+        );
+
+    }
+  );
+
+
+  sizesEl.innerHTML = "";
+
+
+  [...sizeSet]
+    .sort(
+      (a,b) => a-b
+    )
+    .forEach(
+      size => {
+
+        const btn =
+          document.createElement(
+            "button"
+          );
+
+        btn.className =
+          "size-btn";
+
+        btn.textContent =
+          size;
+
+        btn.dataset.size =
+          size;
+
+
+        btn.addEventListener(
+          "click",
+          () => {
+
+            selectSize(size);
+
+          }
+        );
+
+
+        sizesEl.appendChild(btn);
+
+      }
+    );
+
+
+  if(!sizeSet.size){
+
+    sizesEl.innerHTML =
+      "<span style='color:#777;font-size:12px'>No hay tallas disponibles.</span>";
+
+  }
+
+}
+
+
+/* =========================================================
+   SELECCIONAR TALLA
+========================================================= */
+
+function selectSize(size){
+
+  selectedSize =
+    Number(size);
+
+  selectedProducts =
+    new Set();
+
+
+  document
+    .querySelectorAll(
+      ".size-btn"
+    )
+    .forEach(
+      btn => {
+
+        btn.classList.toggle(
+          "active",
+          Number(btn.dataset.size)
+            === selectedSize
+        );
+
+      }
+    );
+
+
+  renderProducts();
+
+}
+
+
+/* =========================================================
+   MOSTRAR PRODUCTOS
+========================================================= */
+
+function renderProducts(){
+
+  productsEl.innerHTML = "";
+
+
+  if(selectedSize === null){
+
+    productsEl.innerHTML = `
+      <div
+        class="empty"
+        style="grid-column:1/-1">
+
+        <h3>
+          Selecciona una talla
+        </h3>
+
+        <p>
+          Luego podrás seleccionar
+          los modelos que quieres compartir.
+        </p>
+
+      </div>
+    `;
+
+    updateSelectionInfo();
+
+    return;
+
+  }
+
+
+  const available =
+    products.filter(
+      p =>
+        productForSize(
+          p,
+          selectedSize
+        )
+    );
+
+
+  if(!available.length){
+
+    productsEl.innerHTML = `
+      <div
+        class="empty"
+        style="grid-column:1/-1">
+
+        No hay modelos disponibles
+        para la talla ${selectedSize}.
+
+      </div>
+    `;
+
+    updateSelectionInfo();
+
+    return;
+
+  }
+
+
+  available.forEach(
+    p => {
+
+      const card =
+        document.createElement(
+          "article"
+        );
+
+      card.className =
+        "card";
+
+
+      if(
+        selectedProducts.has(
+          p.id
+        )
+      ){
+
+        card.classList.add(
+          "selected"
+        );
+
+      }
+
+
+      card.innerHTML = `
+
+        <div class="image-box">
+
+          <img
+            src="${escapeHtml(p.img)}"
+            alt="${escapeHtml(p.name)}"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+          >
+
+          <div class="check">
+            ${
+              selectedProducts.has(p.id)
+                ? "✓"
+                : ""
+            }
+          </div>
+
+        </div>
+
+
+        <div class="card-info">
+
+          <div class="type">
+            ${escapeHtml(
+              p.type || "Tenis"
+            )}
+          </div>
+
+          <div class="brand">
+            ${escapeHtml(
+              p.brand || "Marca"
+            )}
+          </div>
+
+          <div class="name">
+            ${escapeHtml(
+              p.name ||
+              "Modelo disponible"
+            )}
+          </div>
+
+          <div class="meta">
+            TALLA ${selectedSize}
+          </div>
+
+          <div class="prices">
+
+            <div class="price">
+
+              <small>
+                Al contado
+              </small>
+
+              <strong>
+                ${money(p.cashPrice)}
+              </strong>
+
+            </div>
+
+            <div class="price">
+
+              <small>
+                Al crédito
+              </small>
+
+              <strong>
+                ${money(p.creditPrice)}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+
+      const img =
+        card.querySelector(
+          "img"
+        );
+
+
+      img.addEventListener(
+        "error",
+        () => {
+
+          img.style.display =
+            "none";
+
+          const box =
+            img.parentElement;
+
+
+          if(
+            !box.querySelector(
+              ".image-error"
+            )
+          ){
+
+            box.insertAdjacentHTML(
+              "beforeend",
+              `
+                <div class="image-error">
+                  No se pudo cargar la imagen.
+                </div>
+              `
+            );
+
+          }
+
+        }
+      );
+
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          toggleProduct(
+            p.id,
+            card
+          );
+
+        }
+      );
+
+
+      productsEl.appendChild(
+        card
+      );
+
+    }
+  );
+
+
+  updateSelectionInfo();
+
+}
+
+
+/* =========================================================
+   SELECCIONAR PRODUCTO
+========================================================= */
+
+function toggleProduct(
+  id,
+  card
+){
+
+  if(
+    selectedProducts.has(id)
+  ){
+
+    selectedProducts.delete(id);
+
+    card.classList.remove(
+      "selected"
+    );
+
+    card.querySelector(
+      ".check"
+    ).textContent = "";
+
+  }else{
+
+    selectedProducts.add(id);
+
+    card.classList.add(
+      "selected"
+    );
+
+    card.querySelector(
+      ".check"
+    ).textContent = "✓";
+
+  }
+
+
+  updateSelectionInfo();
+
+}
+
+
+function updateSelectionInfo(){
+
+  const count =
+    selectedProducts.size;
+
+
+  selectedInfo.textContent =
+    `${count} modelo${count === 1 ? "" : "s"} seleccionado${count === 1 ? "" : "s"}`;
+
+
+  shareBtn.disabled =
+    count === 0;
+
+}
+
+
+/* =========================================================
+   SELECCIONAR TODOS
+========================================================= */
+
+selectAllBtn.addEventListener(
+  "click",
+  () => {
+
+    if(selectedSize === null){
+      return;
+    }
+
+
+    const available =
+      products.filter(
+        p =>
+          productForSize(
+            p,
+            selectedSize
+          )
+      );
+
+
+    available.forEach(
+      p =>
+        selectedProducts.add(
+          p.id
+        )
+    );
+
+
+    renderProducts();
+
+  }
+);
+
+
+/* =========================================================
+   LIMPIAR
+========================================================= */
+
+clearBtn.addEventListener(
+  "click",
+  () => {
+
+    selectedProducts =
+      new Set();
+
+    renderProducts();
+
+  }
+);
+
+
+/* =========================================================
+   ESCAPAR HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return text(value).replace(
+    /[&<>'"]/g,
+    c =>
+      ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        "'":'&#39;',
+        '"':'&quot;'
+      }[c])
   );
 
 }
 
 
 /* =========================================================
-   CARGAR SUPABASE
+   CARGAR INVENTARIO
+   IMPORTANTE:
+   LA CONEXIÓN SE CREA DENTRO DEL TRY
 ========================================================= */
 
-async function cargarProductos(){
+async function loadInventory(){
 
-  const estado =
-    document.getElementById(
-      "estadoConexion"
-    );
+  connectionLoading();
+
+
+  statusEl.style.display =
+    "block";
+
+
+  statusEl.innerHTML = `
+    <h2>
+      Cargando inventario...
+    </h2>
+
+    <p>
+      Consultando modelos disponibles.
+    </p>
+  `;
+
 
   try{
 
-    estado.textContent =
-      "Consultando inventario...";
+    /* -----------------------------------------
+       COMPROBAR SUPABASE
+    ----------------------------------------- */
 
+    if(!window.supabase){
+
+      throw new Error(
+        "La biblioteca de Supabase no terminó de cargar."
+      );
+
+    }
+
+
+    /* -----------------------------------------
+       MISMA CONEXIÓN DEL CATALOGO
+    ----------------------------------------- */
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    console.log(
+      "Supabase inicializado correctamente."
+    );
+
+
+    /* -----------------------------------------
+       MISMA CONSULTA DEL CATALOGO
+    ----------------------------------------- */
 
     const {
       data,
@@ -732,6 +1534,13 @@ async function cargarProductos(){
         .select("*");
 
 
+    console.log(
+      "Respuesta Supabase:",
+      data,
+      error
+    );
+
+
     if(error){
 
       throw error;
@@ -739,54 +1548,90 @@ async function cargarProductos(){
     }
 
 
-    productos =
-      (data || [])
-        .map(normalizeProduct)
-        .filter(
-          p =>
-            p.status ===
-            "available" &&
-            p.img &&
-            availableSizes(p).length
-        );
+    /* -----------------------------------------
+       NORMALIZAR
+    ----------------------------------------- */
+
+    products =
+      selectableProducts(
+        (data || [])
+          .map(
+            normalizeProduct
+          )
+      );
 
 
-    estado.textContent =
-      "● Inventario conectado";
+    console.log(
+      "Total registros:",
+      data
+        ? data.length
+        : 0
+    );
 
 
-    estado.style.color =
-      "#86efac";
+    console.log(
+      "Productos utilizables:",
+      products.length
+    );
 
 
-    crearBotonesTalla();
+    /* -----------------------------------------
+       CONEXIÓN OK
+    ----------------------------------------- */
+
+    connectionOK();
+
+
+    statusEl.style.display =
+      "none";
+
+
+    mainContent.style.display =
+      "block";
+
+
+    /* -----------------------------------------
+       TALLAS
+    ----------------------------------------- */
+
+    createAvailableSizes();
+
+
+    renderProducts();
 
 
   }catch(error){
 
-    console.error(error);
-
-    estado.textContent =
-      "Error de conexión";
-
-    estado.style.color =
-      "#fca5a5";
+    console.error(
+      "ERROR COMPLETO DE SUPABASE:",
+      error
+    );
 
 
-    document.getElementById(
-      "contador"
-    ).innerHTML = `
+    connectionError();
 
-      <span class="error">
-        No se pudo conectar con Supabase.
-      </span>
 
-      <br><br>
+    statusEl.innerHTML = `
 
-      ${escapeHtml(
-        error.message ||
-        error
-      )}
+      <h2>
+        No se pudo cargar el inventario
+      </h2>
+
+      <p style="margin-bottom:12px;">
+        Se produjo un error al conectar
+        con el inventario.
+      </p>
+
+      <p style="
+        font-size:12px;
+        color:#b00020;
+        word-break:break-word;
+      ">
+        ${escapeHtml(
+          error?.message ||
+          String(error)
+        )}
+      </p>
 
     `;
 
@@ -796,486 +1641,10 @@ async function cargarProductos(){
 
 
 /* =========================================================
-   CREAR BOTONES DE TALLA
+   CARGAR IMAGEN PARA CANVAS
 ========================================================= */
 
-function crearBotonesTalla(){
-
-  const todasLasTallas =
-    new Set();
-
-
-  productos.forEach(
-    producto => {
-
-      availableSizes(
-        producto
-      ).forEach(
-        talla =>
-          todasLasTallas.add(
-            talla
-          )
-      );
-
-    }
-  );
-
-
-  const tallas =
-    [...todasLasTallas]
-      .sort(
-        (a,b) =>
-          a - b
-      );
-
-
-  const contenedor =
-    document.getElementById(
-      "tallas"
-    );
-
-
-  if(!tallas.length){
-
-    contenedor.innerHTML =
-      "No hay tallas disponibles.";
-
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    tallas
-      .map(
-        talla => `
-
-          <button
-            class="talla"
-            data-talla="${talla}"
-            onclick="seleccionarTalla(${talla})"
-          >
-            ${talla}
-          </button>
-
-        `
-      )
-      .join("");
-
-
-  seleccionarTalla(
-    tallas[0]
-  );
-
-}
-
-
-/* =========================================================
-   SELECCIONAR TALLA
-========================================================= */
-
-function seleccionarTalla(talla){
-
-  tallaActual =
-    Number(talla);
-
-
-  document
-    .querySelectorAll(".talla")
-    .forEach(
-      boton => {
-
-        boton.classList.toggle(
-          "activa",
-          Number(
-            boton.dataset.talla
-          ) === tallaActual
-        );
-
-      }
-    );
-
-
-  productosMostrados =
-    productos.filter(
-      producto =>
-        availableSizes(
-          producto
-        ).includes(
-          tallaActual
-        )
-    );
-
-
-  renderProductos();
-
-
-  document.getElementById(
-    "contador"
-  ).innerHTML = `
-
-    Talla <strong>
-      ${tallaActual}
-    </strong>:
-
-    <strong>
-      ${productosMostrados.length}
-    </strong>
-    modelos disponibles.
-
-  `;
-
-}
-
-
-/* =========================================================
-   MOSTRAR PRODUCTOS
-========================================================= */
-
-function renderProductos(){
-
-  const contenedor =
-    document.getElementById(
-      "productos"
-    );
-
-
-  if(!productosMostrados.length){
-
-    contenedor.innerHTML =
-      "No hay modelos disponibles en esta talla.";
-
-    actualizarCantidad();
-
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    productosMostrados
-      .map(
-        (p,index) => {
-
-          const monthly =
-            p.initial > 0 &&
-            p.creditPrice >
-            p.initial
-
-              ? (
-                  p.creditPrice -
-                  p.initial
-                ) / 2
-
-              : 0;
-
-
-          return `
-
-            <article
-              class="producto"
-              id="producto-${index}"
-              onclick="alternarProducto(${index})"
-            >
-
-              <div class="producto-imagen">
-
-                <img
-                  src="${escapeHtml(p.img)}"
-                  alt="${escapeHtml(p.name)}"
-                  crossorigin="anonymous"
-                  onerror="
-                    this.style.display='none';
-                    this.parentElement.innerHTML=
-                    '<span class=error>No se pudo cargar la imagen</span>';
-                  "
-                >
-
-              </div>
-
-
-              <div class="producto-info">
-
-                <div class="checkline">
-
-                  <input
-                    type="checkbox"
-                    id="check-${index}"
-                    onclick="
-                      event.stopPropagation();
-                      alternarProducto(${index});
-                    "
-                  >
-
-                  <span>
-                    Seleccionar
-                  </span>
-
-                </div>
-
-
-                <div class="tipo">
-                  ${escapeHtml(
-                    p.type ||
-                    "Tenis"
-                  )}
-                </div>
-
-
-                <div class="marca">
-                  ${escapeHtml(
-                    p.brand ||
-                    "Marca"
-                  )}
-                </div>
-
-
-                <div class="nombre">
-                  ${escapeHtml(
-                    p.name ||
-                    "Modelo"
-                  )}
-                </div>
-
-
-                <div class="datos">
-
-                  <strong>
-                    Talla ${tallaActual}
-                  </strong>
-
-                  <br>
-
-                  Al contado:
-                  <span class="precio">
-                    ${money(p.cashPrice)}
-                  </span>
-
-                  <br>
-
-                  Al crédito:
-                  <span class="precio">
-                    ${money(p.creditPrice)}
-                  </span>
-
-                  ${
-                    p.initial > 0
-                    ? `
-                      <br>
-                      Inicial:
-                      <span class="precio">
-                        ${money(p.initial)}
-                      </span>
-                    `
-                    : ""
-                  }
-
-                  ${
-                    monthly > 0
-                    ? `
-                      <br>
-                      2 pagos de:
-                      <span class="precio">
-                        ${money(monthly)}
-                      </span>
-                    `
-                    : ""
-                  }
-
-                </div>
-
-              </div>
-
-            </article>
-
-          `;
-
-        }
-      )
-      .join("");
-
-
-  actualizarCantidad();
-
-}
-
-
-/* =========================================================
-   SELECCIONAR / DESELECCIONAR PRODUCTO
-========================================================= */
-
-function alternarProducto(index){
-
-  const producto =
-    document.getElementById(
-      "producto-" +
-      index
-    );
-
-
-  const checkbox =
-    document.getElementById(
-      "check-" +
-      index
-    );
-
-
-  checkbox.checked =
-    !checkbox.checked;
-
-
-  producto.classList.toggle(
-    "seleccionado",
-    checkbox.checked
-  );
-
-
-  actualizarCantidad();
-
-}
-
-
-function obtenerSeleccionados(){
-
-  return productosMostrados
-    .filter(
-      (_,index) => {
-
-        const checkbox =
-          document.getElementById(
-            "check-" +
-            index
-          );
-
-        return checkbox &&
-               checkbox.checked;
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   CONTADOR
-========================================================= */
-
-function actualizarCantidad(){
-
-  const cantidad =
-    obtenerSeleccionados()
-      .length;
-
-
-  document.getElementById(
-    "cantidadSeleccionados"
-  ).textContent =
-    cantidad;
-
-
-  document.getElementById(
-    "btnGenerar"
-  ).disabled =
-    cantidad === 0;
-
-
-  document.getElementById(
-    "btnCompartir"
-  ).disabled =
-    archivosGenerados.length === 0;
-
-}
-
-
-/* =========================================================
-   SELECCIONAR TODOS
-========================================================= */
-
-function seleccionarTodos(){
-
-  productosMostrados
-    .forEach(
-      (_,index) => {
-
-        const checkbox =
-          document.getElementById(
-            "check-" +
-            index
-          );
-
-        const producto =
-          document.getElementById(
-            "producto-" +
-            index
-          );
-
-        if(checkbox){
-
-          checkbox.checked =
-            true;
-
-          producto.classList.add(
-            "seleccionado"
-          );
-
-        }
-
-      }
-    );
-
-
-  actualizarCantidad();
-
-}
-
-
-/* =========================================================
-   QUITAR TODOS
-========================================================= */
-
-function quitarTodos(){
-
-  productosMostrados
-    .forEach(
-      (_,index) => {
-
-        const checkbox =
-          document.getElementById(
-            "check-" +
-            index
-          );
-
-        const producto =
-          document.getElementById(
-            "producto-" +
-            index
-          );
-
-        if(checkbox){
-
-          checkbox.checked =
-            false;
-
-          producto.classList.remove(
-            "seleccionado"
-          );
-
-        }
-
-      }
-    );
-
-
-  actualizarCantidad();
-
-}
-
-
-/* =========================================================
-   CARGAR IMAGEN REAL
-========================================================= */
-
-function cargarImagenReal(url){
+function loadImage(url){
 
   return new Promise(
     (resolve,reject) => {
@@ -1288,22 +1657,22 @@ function cargarImagenReal(url){
         "anonymous";
 
 
-      img.onload = () => {
-
-        resolve(img);
-
-      };
+      img.referrerPolicy =
+        "no-referrer";
 
 
-      img.onerror = () => {
+      img.onload =
+        () => resolve(img);
 
-        reject(
-          new Error(
-            "No se pudo cargar la imagen desde R2. Posible problema de CORS."
-          )
-        );
 
-      };
+      img.onerror =
+        () =>
+          reject(
+            new Error(
+              "No se pudo cargar la imagen: " +
+              url
+            )
+          );
 
 
       img.src =
@@ -1316,17 +1685,16 @@ function cargarImagenReal(url){
 
 
 /* =========================================================
-   CREAR JPG REAL
+   GENERAR JPG REAL
 ========================================================= */
 
-async function crearJPG(
-  producto
+async function generateProductImage(
+  product,
+  size
 ){
 
-  const img =
-    await cargarImagenReal(
-      producto.img
-    );
+  const WIDTH = 1200;
+  const HEIGHT = 1500;
 
 
   const canvas =
@@ -1336,10 +1704,10 @@ async function crearJPG(
 
 
   canvas.width =
-    1200;
+    WIDTH;
 
   canvas.height =
-    1500;
+    HEIGHT;
 
 
   const ctx =
@@ -1348,7 +1716,7 @@ async function crearJPG(
     );
 
 
-  /* Fondo */
+  /* FONDO */
 
   ctx.fillStyle =
     "#ffffff";
@@ -1356,531 +1724,327 @@ async function crearJPG(
   ctx.fillRect(
     0,
     0,
-    canvas.width,
-    canvas.height
+    WIDTH,
+    HEIGHT
   );
 
 
-  /* Imagen */
+  /* CABECERA */
 
-  const margen =
-    70;
+  ctx.fillStyle =
+    "#111111";
 
-  const ancho =
-    1060;
+  ctx.font =
+    "900 42px Arial";
 
-  const alto =
-    850;
+  ctx.fillText(
+    "BENICONFORT",
+    70,
+    85
+  );
+
+
+  ctx.font =
+    "700 20px Arial";
+
+  ctx.fillStyle =
+    "#777777";
+
+  ctx.fillText(
+    "TENIS DISPONIBLES",
+    70,
+    125
+  );
+
+
+  /* IMAGEN REAL */
+
+  const img =
+    await loadImage(
+      product.img
+    );
+
+
+  const areaX = 70;
+  const areaY = 170;
+  const areaW = 1060;
+  const areaH = 720;
 
 
   const ratio =
     Math.min(
-      ancho / img.width,
-      alto / img.height
+      areaW / img.naturalWidth,
+      areaH / img.naturalHeight
     );
 
 
-  const w =
-    img.width *
+  const drawW =
+    img.naturalWidth *
     ratio;
 
 
-  const h =
-    img.height *
+  const drawH =
+    img.naturalHeight *
     ratio;
 
 
-  const x =
-    (canvas.width - w) / 2;
+  const drawX =
+    areaX +
+    (areaW - drawW) / 2;
 
 
-  const y =
-    60 +
-    (alto - h) / 2;
-
-
-  ctx.fillStyle =
-    "#f5f5f3";
-
-  ctx.fillRect(
-    margen,
-    60,
-    ancho,
-    alto
-  );
+  const drawY =
+    areaY +
+    (areaH - drawH) / 2;
 
 
   ctx.drawImage(
     img,
-    x,
-    y,
-    w,
-    h
+    drawX,
+    drawY,
+    drawW,
+    drawH
   );
 
 
-  /* Línea */
+  /* DIVISOR */
 
   ctx.fillStyle =
     "#111111";
 
   ctx.fillRect(
     70,
-    960,
+    925,
     1060,
     4
   );
 
 
-  /* Marca */
-
-  ctx.font =
-    "bold 30px Arial";
+  /* MARCA */
 
   ctx.fillStyle =
     "#555555";
 
+  ctx.font =
+    "900 25px Arial";
+
   ctx.fillText(
     (
-      producto.brand ||
+      product.brand ||
       "BENICONFORT"
     ).toUpperCase(),
-    75,
-    1020
+    70,
+    985
   );
 
 
-  /* Nombre */
-
-  ctx.font =
-    "bold 54px Arial";
+  /* NOMBRE */
 
   ctx.fillStyle =
     "#111111";
 
+  ctx.font =
+    "900 55px Arial";
+
+
+  const productName =
+    product.name ||
+    "Modelo disponible";
+
+
   ctx.fillText(
-    producto.name ||
-    "Tenis",
-    75,
-    1090
+    productName,
+    70,
+    1060
   );
 
 
-  /* Tipo */
+  /* TALLA */
 
   ctx.font =
-    "bold 30px Arial";
+    "900 30px Arial";
 
   ctx.fillText(
-    (
-      producto.type ||
-      "TENIS"
-    ).toUpperCase(),
-    75,
-    1140
+    `TALLA ${size}`,
+    70,
+    1115
   );
 
 
-  /* Talla */
+  /* PRECIOS */
 
   ctx.font =
-    "bold 45px Arial";
+    "700 22px Arial";
+
+  ctx.fillStyle =
+    "#777777";
 
   ctx.fillText(
-    "TALLA " +
-    tallaActual,
-    75,
-    1210
+    "AL CONTADO",
+    70,
+    1190
+  );
+
+  ctx.fillText(
+    "AL CRÉDITO",
+    600,
+    1190
   );
 
 
-  /* Precios */
+  ctx.fillStyle =
+    "#111111";
 
   ctx.font =
-    "34px Arial";
+    "900 42px Arial";
 
   ctx.fillText(
-    "Contado: " +
-    money(
-      producto.cashPrice
-    ),
-    75,
-    1270
+    money(product.cashPrice),
+    70,
+    1240
+  );
+
+  ctx.fillText(
+    money(product.creditPrice),
+    600,
+    1240
   );
 
 
-  ctx.fillText(
-    "Crédito: " +
-    money(
-      producto.creditPrice
-    ),
-    75,
-    1320
-  );
+  /* PLAN DE CRÉDITO */
+
+  if(
+    product.initial > 0 &&
+    product.creditPrice >
+      product.initial
+  ){
+
+    const monthly =
+      Math.max(
+        0,
+        (
+          product.creditPrice -
+          product.initial
+        ) / 2
+      );
 
 
-  /* Inicial */
+    ctx.fillStyle =
+      "#f1f1ee";
 
-  if(producto.initial > 0){
-
-    ctx.fillText(
-      "Inicial: " +
-      money(
-        producto.initial
-      ),
-      520,
-      1270
+    ctx.fillRect(
+      70,
+      1280,
+      1060,
+      105
     );
 
 
-    const monthly =
-      producto.creditPrice >
-      producto.initial
+    ctx.fillStyle =
+      "#111111";
 
-        ? (
-            producto.creditPrice -
-            producto.initial
-          ) / 2
-
-        : 0;
+    ctx.font =
+      "700 21px Arial";
 
 
-    if(monthly > 0){
-
-      ctx.fillText(
-        "2 pagos de " +
-        money(monthly),
-        520,
-        1320
-      );
-
-    }
+    ctx.fillText(
+      `Inicial ${money(product.initial)}  ·  Luego 2 pagos mensuales de ${money(monthly)}`,
+      95,
+      1330
+    );
 
   }
 
 
-  /* Pie */
-
-  ctx.font =
-    "bold 32px Arial";
-
-  ctx.fillText(
-    "BENICONFORT",
-    75,
-    1400
-  );
-
-
-  ctx.font =
-    "24px Arial";
+  /* PIE */
 
   ctx.fillStyle =
-    "#555555";
+    "#777777";
+
+  ctx.font =
+    "700 18px Arial";
 
   ctx.fillText(
     "Entregas a domicilio en Trinidad",
-    75,
-    1440
+    70,
+    1450
   );
 
 
-  /* Convertir a JPG */
+  /* CREAR ARCHIVO JPG */
 
-  const blob =
-    await new Promise(
-      resolve =>
-        canvas.toBlob(
-          resolve,
-          "image/jpeg",
-          0.90
-        )
-    );
+  return new Promise(
+    (resolve,reject) => {
 
+      canvas.toBlob(
+        blob => {
 
-  if(!blob){
+          if(!blob){
 
-    throw new Error(
-      "No se pudo convertir la imagen a JPG."
-    );
+            reject(
+              new Error(
+                "No se pudo crear el archivo JPG."
+              )
+            );
 
-  }
+            return;
 
-
-  const nombre =
-    (
-      producto.brand ||
-      "tenis"
-    )
-    .replace(
-      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+/g,
-      "-"
-    )
-    .toLowerCase();
+          }
 
 
-  const modelo =
-    (
-      producto.name ||
-      "modelo"
-    )
-    .replace(
-      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+/g,
-      "-"
-    )
-    .toLowerCase();
+          const safeName =
+            (
+              product.name ||
+              "tenis"
+            )
+            .replace(
+              /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,
+              "-"
+            )
+            .replace(
+              /^-+|-+$/g,
+              ""
+            );
 
 
-  return new File(
-    [blob],
-    nombre +
-    "-" +
-    modelo +
-    "-talla-" +
-    tallaActual +
-    ".jpg",
-    {
-      type:"image/jpeg",
-      lastModified:
-        Date.now()
-    }
-  );
-
-}
+          const file =
+            new File(
+              [blob],
+              `BeniConfort-Talla-${size}-${safeName}.jpg`,
+              {
+                type:
+                  "image/jpeg"
+              }
+            );
 
 
-/* =========================================================
-   GENERAR IMÁGENES
-========================================================= */
+          resolve(file);
 
-async function generarImagenes(){
+        },
 
-  const seleccionados =
-    obtenerSeleccionados();
+        "image/jpeg",
 
+        0.90
 
-  if(!seleccionados.length){
-
-    alert(
-      "Selecciona al menos un modelo."
-    );
-
-    return;
-
-  }
-
-
-  archivosGenerados =
-    [];
-
-
-  const resultado =
-    document.getElementById(
-      "resultado"
-    );
-
-
-  resultado.innerHTML =
-    "⏳ Generando imágenes reales...";
-
-
-  document.getElementById(
-    "btnGenerar"
-  ).disabled =
-    true;
-
-
-  try{
-
-    for(
-      const producto
-      of seleccionados
-    ){
-
-      const archivo =
-        await crearJPG(
-          producto
-        );
-
-
-      archivosGenerados.push(
-        archivo
       );
 
     }
-
-
-    resultado.innerHTML = `
-
-      <div class="ok">
-        ✅ Se generaron
-        ${archivosGenerados.length}
-        imagen(es) JPG reales.
-      </div>
-
-      <br>
-
-      ${archivosGenerados
-        .map(
-          (archivo,index) => `
-
-            <div class="archivo">
-
-              <strong>
-                ${index + 1}.
-                ${escapeHtml(
-                  archivo.name
-                )}
-              </strong>
-
-              <br>
-
-              ${(archivo.size / 1024)
-                .toFixed(1)}
-              KB
-
-            </div>
-
-          `
-        )
-        .join("")
-      }
-
-    `;
-
-
-    document.getElementById(
-      "btnCompartir"
-    ).disabled =
-      false;
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    resultado.innerHTML = `
-
-      <div class="error">
-        ❌ No se pudo generar la imagen.
-      </div>
-
-      <br>
-
-      ${escapeHtml(
-        error.message ||
-        error
-      )}
-
-      <br><br>
-
-      Si el mensaje menciona
-      <strong>CORS</strong>,
-      tendremos que configurar CORS
-      en Cloudflare R2.
-
-    `;
-
-  }
-
-
-  document.getElementById(
-    "btnGenerar"
-  ).disabled =
-    false;
+  );
 
 }
 
 
 /* =========================================================
-   COMPARTIR
+   COMPARTIR VARIAS IMÁGENES REALES
 ========================================================= */
 
-async function compartirImagenes(){
-
-  if(
-    !archivosGenerados.length
-  ){
-
-    alert(
-      "Primero genera las imágenes."
-    );
-
-    return;
-
-  }
-
-
-  if(!navigator.share){
-
-    alert(
-      "Este navegador no soporta compartir archivos."
-    );
-
-    return;
-
-  }
-
-
-  if(!navigator.canShare){
-
-    alert(
-      "Este navegador no permite comprobar archivos."
-    );
-
-    return;
-
-  }
-
-
-  const puede =
-    navigator.canShare({
-      files:
-        archivosGenerados
-    });
-
-
-  if(!puede){
-
-    alert(
-      "Android no permite compartir estos archivos juntos."
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    await navigator.share({
-
-      files:
-        archivosGenerados,
-
-      title:
-        "Tenis BeniConfort"
-
-    });
-
-
-    document.getElementById(
-      "resultado"
-    ).innerHTML += `
-
-      <div class="ok">
-        <br>
-        ✅ Imágenes compartidas correctamente.
-      </div>
-
-    `;
-
-
-  }catch(error){
+shareBtn.addEventListener(
+  "click",
+  async () => {
 
     if(
-      error.name ===
-      "AbortError"
+      selectedProducts.size === 0 ||
+      selectedSize === null
     ){
 
       return;
@@ -1888,36 +2052,152 @@ async function compartirImagenes(){
     }
 
 
-    console.error(error);
+    const selected =
+      products.filter(
+        p =>
+          selectedProducts.has(
+            p.id
+          ) &&
+          productForSize(
+            p,
+            selectedSize
+          )
+      );
 
 
-    document.getElementById(
-      "resultado"
-    ).innerHTML += `
+    const generating =
+      document.getElementById(
+        "generating"
+      );
 
-      <div class="error">
 
-        <br>
-        ❌ Error al compartir:
-        ${escapeHtml(
+    const generatingText =
+      document.getElementById(
+        "generatingText"
+      );
+
+
+    generating.style.display =
+      "flex";
+
+
+    const archivos = [];
+
+
+    try{
+
+      for(
+        let i = 0;
+        i < selected.length;
+        i++
+      ){
+
+        generatingText.textContent =
+          `Preparando imagen ${i + 1} de ${selected.length}...`;
+
+
+        const file =
+          await generateProductImage(
+            selected[i],
+            selectedSize
+          );
+
+
+        archivos.push(
+          file
+        );
+
+      }
+
+
+      if(!archivos.length){
+
+        throw new Error(
+          "No se generaron imágenes."
+        );
+
+      }
+
+
+      if(
+        !navigator.share
+      ){
+
+        throw new Error(
+          "Este dispositivo o navegador no permite compartir archivos."
+        );
+
+      }
+
+
+      if(
+        navigator.canShare &&
+        !navigator.canShare({
+          files: archivos
+        })
+      ){
+
+        throw new Error(
+          "El navegador no permite compartir estos archivos."
+        );
+
+      }
+
+
+      generatingText.textContent =
+        "Abriendo WhatsApp y otras aplicaciones...";
+
+
+      await navigator.share({
+
+        files:
+          archivos,
+
+        title:
+          "Tenis BeniConfort",
+
+        text:
+          `Tenis disponibles talla ${selectedSize}`
+
+      });
+
+
+    }catch(error){
+
+      console.error(
+        "ERROR AL COMPARTIR:",
+        error
+      );
+
+
+      if(
+        error.name !==
+        "AbortError"
+      ){
+
+        alert(
           error.message ||
-          error
-        )}
+          "No se pudieron compartir las imágenes."
+        );
 
-      </div>
+      }
 
-    `;
+    }finally{
+
+      generating.style.display =
+        "none";
+
+    }
 
   }
-
-}
+);
 
 
 /* =========================================================
-   INICIO
+   INICIAR
 ========================================================= */
 
-cargarProductos();
+loadInventory();
 
 </script>
 
