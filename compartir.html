@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -2530,57 +2529,25 @@ async function generateJpg(
 
     /*
      * =====================================================
-     * ENCABEZADO
-     * =====================================================
-     */
-
-    ctx.textAlign =
-        "center";
-
-    ctx.fillStyle =
-        "#111827";
-
-    ctx.font =
-        "bold 46px Arial";
-
-    ctx.fillText(
-        "BeniConfort",
-        width / 2,
-        58
-    );
-
-
-    ctx.fillStyle =
-        "#6b7280";
-
-    ctx.font =
-        "bold 20px Arial";
-
-    ctx.fillText(
-        "TENIS DISPONIBLE",
-        width / 2,
-        91
-    );
-
-
-    /*
-     * =====================================================
      * IMAGEN PRINCIPAL
+     *
+     * Ahora ocupa prácticamente todo el protagonismo.
+     * No se coloca ningún texto encima de la fotografía.
      * =====================================================
      */
 
     const imageAreaLeft =
-        35;
+        25;
 
     const imageAreaTop =
-        115;
+        20;
 
     const imageAreaWidth =
         width -
-        70;
+        50;
 
     const imageAreaHeight =
-        795;
+        875;
 
 
     const naturalWidth =
@@ -2670,23 +2637,28 @@ async function generateJpg(
     /*
      * =====================================================
      * DIVISOR
+     *
+     * Un poco más marcado que antes,
+     * pero sin hacerlo grueso.
      * =====================================================
      */
 
     ctx.fillStyle =
-        "#e5e7eb";
+        "#111827";
 
     ctx.fillRect(
-        50,
-        935,
-        980,
-        2
+        45,
+        925,
+        990,
+        4
     );
 
 
     /*
      * =====================================================
-     * INFORMACIÓN
+     * INFORMACIÓN DEL PRODUCTO
+     *
+     * Solo la información realmente importante.
      * =====================================================
      */
 
@@ -2715,8 +2687,8 @@ async function generateJpg(
         ctx,
         product.name || "Tenis",
         infoLeft,
-        988,
-        650,
+        980,
+        690,
         "bold 31px Arial",
         "#111827"
     );
@@ -2738,38 +2710,8 @@ async function generateJpg(
     ctx.fillText(
         `TALLA ${currentSize}`,
         infoRight,
-        988
+        980
     );
-
-
-    /*
-     * MARCA
-     */
-
-    if(
-        product.brand
-    ){
-
-        ctx.textAlign =
-            "left";
-
-        ctx.font =
-            "20px Arial";
-
-        ctx.fillStyle =
-            "#6b7280";
-
-        drawFittedText(
-            ctx,
-            product.brand,
-            infoLeft,
-            1018,
-            450,
-            "20px Arial",
-            "#6b7280"
-        );
-
-    }
 
 
     /*
@@ -2788,7 +2730,7 @@ async function generateJpg(
     ctx.fillText(
         `CONTADO  ${money(product.cashPrice)}`,
         infoLeft,
-        1068
+        1040
     );
 
 
@@ -2802,7 +2744,7 @@ async function generateJpg(
     ctx.fillText(
         `CRÉDITO  ${money(product.creditPrice)}`,
         infoRight,
-        1068
+        1040
     );
 
 
@@ -2826,64 +2768,10 @@ async function generateJpg(
         ctx.fillText(
             `INICIAL ${money(product.initial)}`,
             width / 2,
-            1115
+            1095
         );
 
     }
-
-
-    /*
-     * FRASE
-     */
-
-    ctx.textAlign =
-        "center";
-
-    ctx.font =
-        "20px Arial";
-
-    ctx.fillStyle =
-        "#4b5563";
-
-    ctx.fillText(
-        "Usted elige cómo pagar el resto.",
-        width / 2,
-        1162
-    );
-
-
-    /*
-     * ENTREGA
-     */
-
-    ctx.font =
-        "bold 20px Arial";
-
-    ctx.fillStyle =
-        "#111827";
-
-    ctx.fillText(
-        "🚚 Entregas a domicilio en Trinidad",
-        width / 2,
-        1220
-    );
-
-
-    /*
-     * MARCA FINAL
-     */
-
-    ctx.font =
-        "16px Arial";
-
-    ctx.fillStyle =
-        "#9ca3af";
-
-    ctx.fillText(
-        "BeniConfort",
-        width / 2,
-        1270
-    );
 
 
     /*
@@ -3559,6 +3447,112 @@ function getFirstPendingBatchIndex(){
 
 
 /* =========================================================
+   MENSAJE INICIAL
+========================================================= */
+
+function getInitialShareMessage(){
+
+    return `👟 TENIS DISPONIBLES – TALLA ${currentSize}`;
+
+}
+
+
+/* =========================================================
+   MENSAJE FINAL
+========================================================= */
+
+function getFinalShareMessage(){
+
+    return `💳 COMPRA A CRÉDITO
+
+Cancela la inicial y el saldo restante puedes pagarlo de la manera que te resulte más cómoda: semanal, quincenal o mensual.
+
+🚚 ENTREGA A DOMICILIO EN TRINIDAD
+
+Te llevamos tu pedido directamente a tu domicilio.
+No contamos con tienda física; coordinamos la entrega contigo.`;
+
+}
+
+
+/* =========================================================
+   TEXTO QUE CORRESPONDE A CADA LOTE
+========================================================= */
+
+function getShareText(batchIndex){
+
+    const totalBatches =
+        generatedBatches.length;
+
+
+    const isFirst =
+        batchIndex === 0;
+
+
+    const isLast =
+        batchIndex ===
+        totalBatches - 1;
+
+
+    /*
+     * Un solo lote:
+     *
+     * mensaje inicial
+     * +
+     * mensaje final
+     */
+
+    if(
+        isFirst &&
+        isLast
+    ){
+
+        return `${getInitialShareMessage()}
+
+${getFinalShareMessage()}`;
+
+    }
+
+
+    /*
+     * Primer lote:
+     * solamente mensaje inicial.
+     */
+
+    if(
+        isFirst
+    ){
+
+        return getInitialShareMessage();
+
+    }
+
+
+    /*
+     * Último lote:
+     * solamente mensaje final.
+     */
+
+    if(
+        isLast
+    ){
+
+        return getFinalShareMessage();
+
+    }
+
+
+    /*
+     * Lotes intermedios:
+     * solamente imágenes.
+     */
+
+    return "";
+
+}
+
+
+/* =========================================================
    ACTUALIZAR BOTÓN PRINCIPAL
 ========================================================= */
 
@@ -3718,6 +3712,28 @@ async function shareBatch(
     }
 
 
+    /*
+     * IMPORTANTE:
+     *
+     * El mensaje se determina de forma
+     * síncrona antes de llamar a navigator.share().
+     *
+     * Lote 1:
+     *   mensaje inicial + imágenes
+     *
+     * Lotes intermedios:
+     *   solamente imágenes
+     *
+     * Último lote:
+     *   mensaje final + imágenes
+     */
+
+    const shareText =
+        getShareText(
+            batchIndex
+        );
+
+
     try{
 
         /*
@@ -3738,18 +3754,38 @@ async function shareBatch(
             true;
 
 
-        await navigator.share({
+        const shareData = {
 
             files:
                 batch.files,
 
             title:
-                "BeniConfort",
+                "BeniConfort"
 
-            text:
-                `Productos disponibles · Talla ${currentSize}`
+        };
 
-        });
+
+        /*
+         * Solo agregamos "text" cuando
+         * este lote realmente tiene mensaje.
+         *
+         * De esta forma los lotes intermedios
+         * llevan únicamente las imágenes.
+         */
+
+        if(
+            shareText
+        ){
+
+            shareData.text =
+                shareText;
+
+        }
+
+
+        await navigator.share(
+            shareData
+        );
 
 
         /*
@@ -4046,4 +4082,3 @@ loadInventory();
 
 </body>
 </html>
-```
