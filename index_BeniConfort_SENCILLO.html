@@ -1,496 +1,1357 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>BeniConfort | Catálogo</title>
-<style>
-:root{
-  --ink:#171717;
-  --muted:#6b7280;
-  --line:#e5e7eb;
-  --soft:#f7f7f5;
-  --green:#25D366;
-  --green-dark:#128C7E;
-  --back:#e9eef5;
-  --notice:#effaf3;
-  --notice-border:#b8dfc7;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;background:#f5f3ee;color:var(--ink);
-  font-family:Arial,Helvetica,sans-serif;
-}
-button{font:inherit}
-.app{min-height:100vh;padding-bottom:78px;background:#f5f3ee}
-header{
-  padding:22px 18px 8px;text-align:center;background:#f5f3ee;
-}
-.logo{
-  font-size:25px;font-weight:900;letter-spacing:-.6px;
-}
-.logo span{font-weight:500}
-.page{display:none;padding:8px 16px 24px;max-width:760px;margin:auto}
-.page.active{display:block}
-h1{
-  margin:12px 0 18px;text-align:center;
-  font-size:27px;line-height:1.15;
-}
-.subtitle{
-  text-align:center;color:var(--muted);font-size:15px;margin:-7px 0 20px;
-}
-.sizes{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
-  max-width:500px;margin:0 auto;
-}
-.size-btn{
-  border:1px solid #ddd;background:#fff;border-radius:16px;
-  padding:19px 8px;font-size:22px;font-weight:800;
-  box-shadow:0 3px 10px rgba(0,0,0,.06);
-  cursor:pointer;
-}
-.size-btn:active{transform:scale(.98)}
-.size-btn.unavailable{background:#f3f3f3;color:#a7a7a7;text-decoration:line-through;cursor:not-allowed;box-shadow:none}
-.loading{text-align:center;color:var(--muted);padding:30px 10px;font-size:15px}
-.error-box{text-align:center;border:1px solid #eee;border-radius:16px;padding:25px 15px;color:#555}
-.size-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.size-choice{border:1px solid #ddd;background:#fff;border-radius:10px;padding:10px 14px;font-weight:900;cursor:pointer}.size-choice:hover{background:#f2f2f2}
-.notice{
-  max-width:650px;margin:6px auto 25px;
-  padding:22px 18px;border:3px solid var(--notice-border);
-  border-radius:19px;background:var(--notice);
-  box-shadow:0 7px 22px rgba(20,100,50,.10);
-  animation:noticePulse 2.8s ease-in-out infinite;
-}
-.notice-title{text-align:center;font-weight:900;font-size:21px;margin-bottom:8px;letter-spacing:.2px}
-.notice-text{text-align:center;font-size:16px;line-height:1.5}
-.notice-text strong{font-weight:900}
-@keyframes noticePulse{
-  0%,100%{transform:scale(1);box-shadow:0 7px 22px rgba(20,100,50,.10)}
-  50%{transform:scale(1.012);box-shadow:0 10px 30px rgba(20,100,50,.20)}
-}
-.back{
-  display:inline-flex;align-items:center;gap:7px;
-  border:0;background:var(--back);color:#25324a;
-  border-radius:12px;padding:12px 17px;
-  font-weight:900;font-size:16px;cursor:pointer;
-  box-shadow:0 2px 7px rgba(0,0,0,.08);
-  margin:4px 0 13px;
-}
-.back:active{transform:scale(.98)}
-.results-title{font-size:23px;margin:4px 0 16px}
-.grid{display:grid;gap:16px}
-.card{
-  border:1px solid #ddd6c9;border-radius:19px;overflow:hidden;
-  background:#fffdf9;box-shadow:0 7px 20px rgba(75,63,45,.10);
-}
-.photo-wrap{position:relative;width:100%}
-.photo{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f1f1f1}
-.offer{position:absolute;left:12px;top:12px;background:#fff;border-radius:12px;padding:8px 12px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:flex;flex-direction:column;line-height:1.05}.offer span{font-size:11px;font-weight:900;letter-spacing:.5px}.offer b{font-size:19px;margin-top:3px}
-.card-body{padding:15px}
-.tag{
-  font-size:12px;font-weight:800;color:#777;text-transform:uppercase;
-  letter-spacing:.5px;
-}
-.name{font-size:20px;font-weight:900;margin:5px 0 12px}
-.prices{
-  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px
-}
-.pricebox{
-  border:1px solid var(--line);border-radius:12px;padding:10px
-}
-.pricebox small{display:block;color:var(--muted);font-size:12px}
-.pricebox b{font-size:19px}
-.initial{background:#f0f7f2;border:2px solid #b8dfc7;border-radius:12px;padding:11px 12px;margin-bottom:12px;font-size:15px;display:flex;align-items:center;justify-content:space-between}.initial span{font-weight:900;font-size:14px}.initial b{font-size:20px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.btn{
-  border:0;border-radius:12px;padding:13px 10px;font-weight:900;cursor:pointer
-}
-.detail{background:#f1f3f5}
-.choose{background:#111;color:#fff}
-.info-box{
-  border:1px solid var(--line);border-radius:16px;padding:17px;margin:12px 0;
-  line-height:1.5
-}
-.info-box h3{margin:0 0 7px;font-size:18px}
-.info-box p{margin:0;color:#444;font-size:15px}
-.chosen-empty{
-  text-align:center;color:var(--muted);padding:35px 10px
-}
-.chosen-list{display:grid;gap:12px}
-.chosen-item{
-  display:flex;gap:12px;align-items:center;border:1px solid var(--line);
-  border-radius:15px;padding:10px;background:#fff
-}
-.chosen-item img{width:76px;height:76px;object-fit:cover;border-radius:11px}
-.chosen-item strong{display:block;font-size:16px;margin-bottom:4px}
-.chosen-item span{color:var(--muted);font-size:14px}
-.remove{
-  margin-left:auto;border:0;background:#f1f1f1;border-radius:10px;
-  padding:8px 10px;cursor:pointer
-}
-.try-text{
-  text-align:center;background:#f7f8fa;border-radius:16px;
-  padding:16px;margin:16px 0;line-height:1.45
-}
-.more{
-  width:100%;border:0;background:#111;color:#fff;border-radius:14px;
-  padding:15px;font-weight:900;font-size:16px;cursor:pointer
-}
-.whatsapp{
-  position:fixed;right:17px;bottom:88px;width:57px;height:57px;
-  border-radius:50%;background:var(--green);display:flex;
-  align-items:center;justify-content:center;z-index:20;
-  box-shadow:0 5px 16px rgba(0,0,0,.22);
-  text-decoration:none;
-}
-.whatsapp svg{width:31px;height:31px;fill:#fff}
-.nav{
-  position:fixed;left:0;right:0;bottom:0;height:68px;background:#fff;
-  border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1fr;
-  z-index:30;
-}
-.nav button{
-  border:0;background:#fff;color:#777;font-size:12px;font-weight:800;
-  cursor:pointer;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:3px
-}
-.nav button.active{color:#111}
-.nav .ico{font-size:24px;line-height:1}
-.modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.58);display:none;
-  align-items:flex-end;z-index:50;padding:0
-}
-.modal.show{display:flex}
-.modal-card{
-  width:100%;max-height:90vh;overflow:auto;background:#fff;
-  border-radius:22px 22px 0 0;padding:20px
-}
-.modal-card img{width:100%;max-width:520px;display:block;margin:auto;border-radius:16px}
-.modal-card h2{font-size:24px;margin:16px 0 8px}
-.close{float:right;border:0;background:#eee;border-radius:50%;width:38px;height:38px;font-size:21px;cursor:pointer}.pay-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.pay-btn{border:1px solid #ddd;background:#fff;border-radius:11px;padding:11px 6px;font-weight:900;cursor:pointer}.pay-btn.selected-plan{background:#111;color:#fff;border-color:#111}.plan{margin-top:12px;padding:12px;border-radius:12px;background:#f7f7f7}.plan b{font-size:18px}.credit-benefit{margin-top:12px;padding:11px;border-radius:11px;background:#fff7df;border:1px solid #ead38a;line-height:1.4}.plan-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e5e5e5}.plan-row:last-child{border-bottom:0}
-.toast{
-  position:fixed;left:50%;bottom:84px;transform:translateX(-50%);
-  background:#111;color:#fff;padding:11px 15px;border-radius:12px;
-  font-size:14px;display:none;z-index:70
-}
-.toast.show{display:block}
-@media(min-width:650px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .sizes{grid-template-columns:repeat(4,1fr)}
-}
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-<div class="app">
-<header><div class="logo">Beni<span>Confort</span></div></header>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Juan Pérez — Plomero Profesional en Santa Cruz | Emergencias 24h</title>
+<meta name="description" content="Plomero profesional en Santa Cruz. 15 años de experiencia. Emergencias 24/7. Escríbeme por WhatsApp y te respondo en minutos." />
+<meta name="theme-color" content="#050810" />
 
-<section id="home" class="page active">
-  <div class="notice">
-    <div class="notice-title">👟 ELIGE SIN COMPROMISO</div>
-    <div class="notice-text">
-      Selecciona los modelos que te gusten y
-      <strong>te los llevamos a domicilio para que te los pruebes sin compromiso.</strong>
-    </div>
-  </div>
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Juan Pérez — Plomero Profesional en Santa Cruz" />
+<meta property="og:description" content="15 años · 1.800+ trabajos · Emergencias 24h" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1200" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>" />
 
-  <h1>¿Qué talla buscas?</h1>
-  <div id="sizes" class="sizes"></div>
-</section>
-
-<section id="catalog" class="page">
-  <button class="back" onclick="goHome()">← ATRÁS</button>
-  <h2 class="results-title" id="catalogTitle">Modelos disponibles</h2>
-  <div id="productGrid" class="grid"></div>
-</section>
-
-<section id="info" class="page">
-  <button class="back" onclick="goHome()">← ATRÁS</button>
-  <h1>ℹ️ Más información</h1>
-  <div class="info-box"><h3>💳 ¿Cómo funciona el crédito?</h3><p>El precio de crédito y la inicial aparecen directamente en cada modelo.</p><p style="margin-top:8px">El crédito se paga en <strong>2 cuotas mensuales</strong>.</p></div>
-  <div class="info-box"><h3>🚚 Delivery</h3><p>Hacemos delivery gratuito en Trinidad.</p></div>
-  <div class="info-box"><h3>👟 ¿Puedo probarme los modelos?</h3><p>Sí. Selecciona los modelos que te gusten y te los llevamos a domicilio para que puedas probártelos sin compromiso.</p></div>
-  <div class="info-box"><h3>📍 ¿Dónde están ubicados?</h3><p>BeniConfort no cuenta con una tienda física. Coordinamos la entrega a domicilio.</p></div>
-  <div class="info-box"><h3>🎨 Colores y tallas</h3><p>Los colores son los que aparecen en las imágenes del catálogo. Las tallas disponibles dependen de los modelos publicados.</p></div>
-  <div class="info-box"><h3>👟 ¿Son nuevos?</h3><p>Tenemos modelos económicos nuevos y modelos americanos con distintos niveles de uso. Cada publicación muestra su información.</p></div>
-</section>
-
-<section id="chosen" class="page">
-  <button class="back" onclick="goBackToCatalog()">← ATRÁS</button>
-  <h1>🛍 Quiero probármelos</h1>
-  <div class="try-text">Te llevamos estos modelos a domicilio para que puedas <strong>probártelos sin compromiso.</strong></div>
-  <div id="chosenList" class="chosen-list"></div>
-  <div id="chosenActions" style="display:none;margin-top:16px">
-    <button class="more" onclick="goBackToCatalog()">ELEGIR MÁS MODELOS</button>
-    <a id="tryWhatsapp" href="#" target="_blank" class="more" style="display:block;text-align:center;text-decoration:none;margin-top:10px;background:#25D366;color:#fff">QUIERO PROBARME ESTOS MODELOS</a>
-  </div>
-</section>
-
-<nav class="nav">
-  <button id="navHome" class="active" onclick="goHome()"><span class="ico">⌂</span>Inicio</button>
-  <button id="navInfo" onclick="showPage('info')"><span class="ico">ⓘ</span>Más información</button>
-  <button id="navChosen" onclick="showChosen()"><span id="chosenNavIcon" class="chosen-nav-icon"><span class="ico">🛍</span><span id="chosenBadge" class="chosen-badge">0</span></span>Elegidos</button>
-</nav>
-</div>
-
-<a id="floatingWhatsapp" class="whatsapp" href="#" target="_blank" aria-label="WhatsApp">
-  <svg viewBox="0 0 32 32" aria-hidden="true">
-    <path d="M19.11 17.18c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.13-.42-2.16-1.34-.8-.71-1.34-1.59-1.5-1.86-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27s.97 2.63 1.11 2.81c.14.18 1.91 2.92 4.63 4.09.65.28 1.16.45 1.56.58.66.21 1.26.18 1.74.11.53-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32zM16.01 3.2c-7.07 0-12.8 5.73-12.8 12.8 0 2.25.59 4.37 1.62 6.21L3.1 28.9l6.86-1.7a12.75 12.75 0 0 0 6.05 1.52c7.07 0 12.8-5.73 12.8-12.8S23.08 3.2 16.01 3.2zm0 23.31c-1.95 0-3.76-.53-5.32-1.45l-.38-.23-4.07 1.01 1.03-3.97-.25-.41a10.55 10.55 0 1 1 8.99 5.05z"/>
-  </svg>
-</a>
-
-<div id="toast" class="toast">Modelo elegido</div>
-
-<div id="modal" class="modal" onclick="closeModal(event)">
-  <div class="modal-card">
-    <button class="close" onclick="closeModal()">×</button>
-    <div id="modalContent"></div>
-  </div>
-</div>
-
-<script>
-const WHATSAPP_NUMBER = "59173913409";
-const SUPABASE_URL = "https://lydlyusuanvjjoavbocr.supabase.co";
-const SUPABASE_KEY = "sb_publishable_CO9yXE5Kj0dpqebMA2_d7Q_DpQKkQpq";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let products=[];
-let currentSize=null;
-let selected=[];
-let currentPage="home";
-
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
-function money(n){return "Bs "+Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:0,maximumFractionDigits:2});}
-function wa(text=""){return "https://wa.me/"+WHATSAPP_NUMBER+(text?"?text="+encodeURIComponent(text):"");}
-
-document.getElementById("floatingWhatsapp").href=wa();
-
-function normalizeProduct(p){
-  const rawType=String(p.tipo??p.type??"").trim();
-  const type=rawType.toLowerCase().startsWith("americano")?"Americano":rawType.toLowerCase().startsWith("econ")?"Económico":rawType;
-  const rawStatus=String(p.estado??p.status??"").trim().toLowerCase();
-  const status=rawStatus==="activo"||rawStatus==="disponible"?"available":rawStatus==="reservado"?"reserved":rawStatus==="vendido"?"sold":rawStatus;
-  let sizesQty={};
-  if(p.tamaños&&typeof p.tamaños==="object"&&!Array.isArray(p.tamaños)) sizesQty=p.tamaños;
-  else if(p.sizesQty&&typeof p.sizesQty==="object") sizesQty=p.sizesQty;
-  return {
-    ...p,
-    id:String(p.id),
-    type,
-    quality:type,
-    status,
-    name:String(p.nombre??p.name??""),
-    brand:String(p.marca??p.brand??""),
-    gender:String(p.género??p.gender??""),
-    img:String(p.image_url??p.image??""),
-    cashPrice:Number(p.precio_efectivo??p.price??0),
-    creditPrice:Number(p.precio_crédito??p.precio_credito??p.price??0),
-    initial:Number(p.initial_payment??p.initial??0),
-    stock:Number(p.stock??0),
-    size:p.size??"",
-    sizesQty,
-    tag:p.promoción??p.tag??"",
-    desc:String(p.description??p.desc??""),
-    whatsappLink:p.whatsapp_link??p.WhatsApp_link??p.whatsappLink??""
-  };
-}
-
-async function loadProducts(){
-  const {data,error}=await supabaseClient.from("productos").select("*");
-  if(error){console.error(error);return {error};}
-  return {data:(data||[]).map(normalizeProduct)};
-}
-
-function availableSizes(p){
-  if(p.quality==="Americanos"||p.quality==="Americano"){
-    return (p.status==="sold"||p.status==="reserved"||!p.size||Number(p.stock??1)<=0)?[]:[Number(p.size)];
-  }
-  return Object.keys(p.sizesQty||{}).map(Number).filter(s=>Number.isFinite(s)&&Number(p.sizesQty[s])>0&&p.status!=="sold"&&p.status!=="reserved");
-}
-function totalStock(p){
-  if(p.quality==="Americanos"||p.quality==="Americano") return (p.status==="available"?Number(p.stock??1):0);
-  return Object.values(p.sizesQty||{}).reduce((a,b)=>a+Number(b||0),0);
-}
-function selectableProducts(){return products.filter(p=>p.status!=="sold"&&p.status!=="reserved"&&totalStock(p)>0&&p.img);}
-
-function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  const page=document.getElementById(id); if(page) page.classList.add("active");
-  currentPage=id;
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  if(id==="home")document.getElementById("navHome").classList.add("active");
-  if(id==="info")document.getElementById("navInfo").classList.add("active");
-  if(id==="chosen")document.getElementById("navChosen").classList.add("active");
-  document.getElementById("floatingWhatsapp").style.display=id==="chosen"?"none":"flex";
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-function goHome(){currentSize=null;showPage("home");}
-
-function renderSizeButtons(){
-  const box=document.getElementById("sizes");
-  const actual=[...new Set(products.flatMap(availableSizes).filter(Number.isFinite))];
-  const range=new Set(actual);
-  for(let s=34;s<=45;s++)range.add(s);
-  const sizes=[...range].sort((a,b)=>a-b);
-  box.innerHTML=`<button class="size-btn" onclick="openAll()">TODOS</button>`+sizes.map(s=>{
-    const available=products.some(p=>availableSizes(p).includes(s));
-    return available?`<button class="size-btn" onclick="openSize(${s})">${s}</button>`:`<button class="size-btn unavailable" disabled title="Agotado">${s}</button>`;
-  }).join("");
-}
-function openSize(size){currentSize=Number(size);document.getElementById("catalogTitle").textContent="Modelos en talla "+size;renderProducts();showPage("catalog");}
-function openAll(){currentSize="ALL";document.getElementById("catalogTitle").textContent="Todos los modelos";renderProducts();showPage("catalog");}
-function goBackToCatalog(){if(currentSize!==null){renderProducts();showPage("catalog");}else showPage("home");}
-function goBackFromInfo(){showPage("home");}
-
-function renderProducts(){
-  const grid=document.getElementById("productGrid");
-  let list=selectableProducts();
-  if(currentSize!=="ALL")list=list.filter(p=>availableSizes(p).includes(Number(currentSize)));
-  if(!list.length){grid.innerHTML='<div class="chosen-empty">No hay modelos disponibles en esta talla por ahora.</div>';return;}
-  grid.innerHTML=list.map(p=>{
-    const sizes=availableSizes(p);
-    const identity=esc(p.brand||p.name);
-    const sizeText=currentSize!=="ALL"?`Talla ${esc(currentSize)}`:`Tallas ${sizes.join(", ")}`;
-    const isChosen=selected.some(x=>String(x.id)===String(p.id));
-    const offer=Number(p.tag||0)>0?`<div class="offer"><span>OFERTA</span><b>${money(p.tag)}</b></div>`:"";
-    const chooseAction=(currentSize==="ALL"&&sizes.length>1)?`chooseFromAll('${esc(p.id)}')`:`chooseProduct('${esc(p.id)}',${currentSize})`;
-    return `<article class="card">
-      <div class="photo-wrap"><img class="photo" src="${esc(p.img)}" alt="${identity}">${offer}</div>
-      <div class="card-body">
-        <div class="tag">${esc(p.type)} · ${sizeText}</div>
-        <div class="name">${identity}</div>
-        <div class="prices"><div class="pricebox"><small>CONTADO</small><b>${money(p.cashPrice)}</b></div><div class="pricebox"><small>CRÉDITO</small><b>${money(p.creditPrice)}</b></div></div>
-        <div class="initial"><span>INICIAL</span><b>${money(p.initial)}</b></div>
-        <div class="actions"><button class="btn detail" onclick="openDetail('${esc(p.id)}')">FORMA DE PAGO</button><button class="btn choose" onclick="${chooseAction}">${isChosen?"ELEGIDO ✓":"ELEGIR"}</button></div>
-      </div></article>`;
-  }).join("");
-}
-
-function chooseFromAll(id){
-  const p=products.find(x=>String(x.id)===String(id));
-  if(!p)return;
-  const sizes=availableSizes(p);
-  if(sizes.length===1){chooseProduct(id,sizes[0]);return;}
-  document.getElementById("modalContent").innerHTML=`<h2>Elige tu talla</h2><p>${esc(p.brand||p.name)}</p><div class="size-list">${sizes.map(s=>`<button class="size-choice" onclick="chooseProduct('${esc(id)}',${s});closeModal()">Talla ${s}</button>`).join("")}</div>`;
-  document.getElementById("modal").classList.add("show");
-}
-function chooseProduct(id,sizeOverride){
-  const p=products.find(x=>String(x.id)===String(id));if(!p)return;
-  const sizes=availableSizes(p);
-  const size=sizeOverride&&sizeOverride!=="ALL"?Number(sizeOverride):(currentSize!=="ALL"?Number(currentSize):(sizes.length===1?sizes[0]:null));
-  if(!size){chooseFromAll(id);return;}
-  if(!selected.some(x=>String(x.id)===String(id)&&Number(x.size)===size))selected.push({...p,size});
-  updateChosenBadge();renderChosen();showToast("Modelo elegido ✓");showChosen();
-}
-function updateChosenBadge(){const icon=document.getElementById("chosenNavIcon"),badge=document.getElementById("chosenBadge"),count=selected.length;badge.textContent=count;icon.classList.toggle("has-items",count>0);}
-function renderChosen(){
-  updateChosenBadge();
-  const list=document.getElementById("chosenList"),actions=document.getElementById("chosenActions");
-  if(!selected.length){list.innerHTML='<div class="chosen-empty">Todavía no has elegido ningún modelo.</div>';actions.style.display="none";return;}
-  list.innerHTML=selected.map((p,i)=>`<div class="chosen-item"><img src="${esc(p.img)}" alt="${esc(p.brand||p.name)}"><div><strong>${esc(p.brand||p.name)}</strong><span>Talla ${esc(p.size)} · ${esc(p.type)}</span></div><button class="remove" onclick="removeChosen(${i})">Quitar</button></div>`).join("");
-  actions.style.display="block";
-  const lines=selected.map((p,i)=>[
-    `${i+1}. ${p.brand||p.name}, talla ${p.size}`,
-    `💵 Contado: ${money(p.cashPrice)}`,
-    `💳 Crédito: ${money(p.creditPrice)}`,
-    `💰 Inicial: ${money(p.initial)}`,
-    `Imagen: ${p.img||"No disponible"}`
-  ].join("\n")).join("\n\n");
-  document.getElementById("tryWhatsapp").href=wa(`Hola BeniConfort 👋\n\nQuisiera probarme estos modelos:\n\n${lines}`);
-}
-function removeChosen(i){selected.splice(i,1);updateChosenBadge();renderChosen();if(currentPage==="catalog")renderProducts();}
-function showChosen(){renderChosen();showPage("chosen");}
-
-function buildInstallments(balance,n){
-  if(n<=0)return[]; if(balance<=0)return Array(n).fill(0);
-  let base=Math.round((balance/n)/10)*10;if(base<=0)base=10;
-  let last=balance-base*(n-1);
-  if(last<0){base=Math.floor((balance/n)/10)*10;if(base<0)base=0;last=balance-base*(n-1);}
-  return Array.from({length:n},(_,i)=>i===n-1?last:base);
-}
-function formatInstallments(amounts){
-  if(!amounts?.length)return `Cuota: ${money(0)}`;
-  const groups=[];amounts.forEach(a=>{const last=groups[groups.length-1];if(last&&Number(last.amount)===Number(a))last.count++;else groups.push({amount:a,count:1});});
-  return groups.map(g=>g.count===1?`1 cuota de ${money(g.amount)}`:`${g.count} cuotas de ${money(g.amount)}`).join(" + ");
-}
-function creditCalc(p){
-  const total=Number(p.creditPrice||0);
-  const initial=Number(p.initial||0);
-  const balance=Math.max(0,total-initial);
-  const installments=buildInstallments(balance,2);
-  return {total,initial,balance,installments};
-}
-
-function updateCreditResult(){
-  const box=document.getElementById("creditResult"),p=window._paymentProduct;
-  if(!box||!p)return;
-  const c=creditCalc(p);
-  box.innerHTML=`
-    <div class="plan">
-      <div><strong>2 cuotas mensuales</strong></div>
-      <div style="margin-top:6px">Saldo: <b>${money(c.balance)}</b></div>
-      <div style="margin-top:8px">${formatInstallments(c.installments)}</div>
-      ${Number(p.creditPrice)>Number(p.cashPrice) ? `
-        <div class="credit-benefit">
-          🎁 <strong>BENEFICIO ESPECIAL</strong><br>
-          Si cancelas tu crédito en el primer mes, pagas el <strong>precio de contado: ${money(p.cashPrice)}</strong>.
-        </div>
-      ` : ""}
-    </div>`;
-}
-
-function openDetail(id){
-  const p=products.find(x=>String(x.id)===String(id));
-  if(!p)return;
-  window._paymentProduct=p;
-  document.getElementById("modalContent").innerHTML=`
-    <img src="${esc(p.img)}" alt="${esc(p.brand||p.name)}">
-    <h2>Forma de pago</h2>
-    <p><strong>${esc(p.brand||p.name)}</strong> · ${esc(p.type)}</p>
-    <div class="info-box">
-      <h3>💵 Al contado</h3>
-      <p><strong>${money(p.cashPrice)}</strong></p>
-    </div>
-    <div class="info-box">
-      <h3>💳 A crédito</h3>
-      <p>Precio a crédito: <strong>${money(p.creditPrice)}</strong></p>
-      <p>Inicial: <strong>${money(p.initial)}</strong></p>
-      <div id="creditResult"></div>
-    </div>
-    <button class="more" onclick="chooseFromPayment('${esc(p.id)}')">ELEGIR ESTE MODELO</button>`;
-  document.getElementById("modal").classList.add("show");
-  updateCreditResult();
-}
-function chooseFromPayment(id){
-  document.getElementById("modal").classList.remove("show");
-  chooseProduct(id,currentSize!=="ALL"?Number(currentSize):0);
-}
-function closeModal(e){if(!e||e.target===document.getElementById("modal")||e.target.classList.contains("close"))document.getElementById("modal").classList.remove("show");}
-function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1200);}
-
-async function init(){
-  document.getElementById("sizes").innerHTML='<div class="loading" style="grid-column:1/-1">Cargando tallas...</div>';
-  const result=await loadProducts();
-  if(result.error){document.getElementById("sizes").innerHTML='<div class="error-box" style="grid-column:1/-1">No se pudo cargar el catálogo. Revisa la conexión e inténtalo nuevamente.</div>';return;}
-  products=result.data||[];renderSizeButtons();renderChosen();
-}
-init();
-
-function tryWhatsapp(){
-  if(!selected.length){
-    alert("Primero elige los modelos que te gusten.");
-    return;
-  }
-  const lines=selected.map((p,i)=>[
-    `${i+1}. ${p.brand||p.name}, talla ${p.size}`,
-    `💵 Contado: ${money(p.cashPrice)}`,
-    `💳 Crédito: ${money(p.creditPrice)}`,
-    `💰 Inicial: ${money(p.initial)}`,
-    `Imagen: ${p.img||"No disponible"}`
-  ].join("\n")).join("\n\n");
-  const url=wa(`Hola BeniConfort 👋\n\nQuisiera probarme estos modelos:\n\n${lines}`);
-  window.open(url,"_blank");
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Plumber",
+  "name": "Juan Pérez — Plomero Profesional",
+  "telephone": "+591739130409",
+  "areaServed": "Santa Cruz, Bolivia",
+  "url": "https://tudominio.com/",
+  "priceRange": "$$",
+  "aggregateRating": {"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"187"}
 }
 </script>
+
+<style>
+  /* ============= TOKENS ============= */
+  :root{
+    --bg:#050810;
+    --bg-2:#0a0f1c;
+    --bg-3:#111c33;
+    --fg:#f8fafc;
+    --muted:#94a3b8;
+    --brand:#22c55e;
+    --brand-2:#16a34a;
+    --brand-glow:rgba(34,197,94,.6);
+    --accent:#3b82f6;
+    --accent-glow:rgba(59,130,246,.5);
+    --purple:#a855f7;
+    --gold:#fbbf24;
+    --card:rgba(17,28,51,.7);
+    --border:rgba(255,255,255,.08);
+    --border-light:rgba(255,255,255,.15);
+    --radius:20px;
+    --radius-sm:14px;
+    --max:1240px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    line-height:1.65;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    cursor:none; /* cursor personalizado en desktop */
+  }
+  @media (max-width:860px){ body{cursor:auto} }
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  ul{list-style:none}
+  button{font-family:inherit;cursor:none;border:none;background:none;color:inherit}
+  @media (max-width:860px){ button{cursor:pointer} }
+
+  .container{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+  /* ============= CURSOR PERSONALIZADO ============= */
+  .cursor-dot,
+  .cursor-ring{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:9999;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    transition:opacity .2s;
+  }
+  .cursor-dot{
+    width:8px;height:8px;background:var(--brand);
+    box-shadow:0 0 12px var(--brand);
+  }
+  .cursor-ring{
+    width:44px;height:44px;
+    border:1.5px solid rgba(34,197,94,.5);
+    transition:width .25s, height .25s, border-color .25s;
+  }
+  .cursor-ring.hover{
+    width:70px;height:70px;border-color:var(--brand);
+    background:rgba(34,197,94,.08);
+  }
+  @media (max-width:860px){
+    .cursor-dot,.cursor-ring{display:none}
+  }
+
+  /* ============= BARRA PROGRESO SCROLL ============= */
+  .progress-bar{
+    position:fixed;top:0;left:0;height:3px;width:0;
+    background:linear-gradient(90deg,var(--brand),var(--accent),var(--purple));
+    z-index:1000;
+    box-shadow:0 0 20px var(--brand-glow);
+    transition:width .1s linear;
+  }
+
+  /* ============= NAV ============= */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:16px 0;
+    background:rgba(5,8,16,.6);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s, background .3s, padding .3s;
+  }
+  .nav.scrolled{
+    border-bottom-color:var(--border);
+    background:rgba(5,8,16,.9);
+    padding:12px 0;
+  }
+
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .logo{
+    display:flex;align-items:center;gap:12px;
+    font-weight:800;font-size:1.15rem;letter-spacing:-.02em;
+  }
+  .logo-mark{
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(135deg,var(--brand),var(--accent));
+    display:grid;place-items:center;font-size:22px;
+    box-shadow:0 8px 24px -6px var(--brand-glow);
+    animation:rotate3d 8s linear infinite;
+  }
+  @keyframes rotate3d{
+    0%,100%{transform:rotateY(0) rotateX(0)}
+    50%{transform:rotateY(180deg) rotateX(20deg)}
+  }
+  .nav-links{display:flex;gap:36px}
+  .nav-links a{
+    color:var(--muted);font-size:.92rem;font-weight:500;
+    transition:color .2s;position:relative;
+  }
+  .nav-links a:hover{color:var(--fg)}
+  .nav-links a::after{
+    content:"";position:absolute;bottom:-8px;left:0;right:0;
+    height:2px;background:linear-gradient(90deg,var(--brand),var(--accent));
+    border-radius:2px;
+    transform:scaleX(0);transition:transform .3s;transform-origin:left;
+  }
+  .nav-links a:hover::after{transform:scaleX(1)}
+
+  .nav-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--brand);color:#fff;
+    padding:12px 20px;border-radius:12px;
+    font-weight:600;font-size:.9rem;
+    transition:background .2s, transform .2s, box-shadow .2s;
+    position:relative;
+  }
+  .nav-cta:hover{
+    background:var(--brand-2);transform:translateY(-2px);
+    box-shadow:0 12px 30px -8px var(--brand-glow);
+  }
+  .nav-cta svg{width:16px;height:16px}
+
+  @media (max-width:960px){
+    .nav-links{display:none}
+  }
+
+  /* ============= HERO ============= */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;align-items:center;
+    padding:140px 0 100px;
+    overflow:hidden;
+  }
+
+  /* Fondo aurora — manchas que respiran */
+  .aurora{
+    position:absolute;inset:0;z-index:0;overflow:hidden;
+    filter:blur(80px);
+  }
+  .aurora-blob{
+    position:absolute;
+    border-radius:50%;
+    opacity:.35;
+    animation:auroraMove 20s ease-in-out infinite;
+  }
+  .aurora-blob:nth-child(1){
+    width:500px;height:500px;
+    background:var(--brand);
+    top:-10%;left:-10%;
+    animation-delay:0s;
+  }
+  .aurora-blob:nth-child(2){
+    width:600px;height:600px;
+    background:var(--accent);
+    top:30%;right:-15%;
+    animation-delay:-7s;
+  }
+  .aurora-blob:nth-child(3){
+    width:400px;height:400px;
+    background:var(--purple);
+    bottom:-15%;left:30%;
+    animation-delay:-14s;
+  }
+  @keyframes auroraMove{
+    0%,100%{transform:translate(0,0) scale(1)}
+    33%{transform:translate(60px,-40px) scale(1.15)}
+    66%{transform:translate(-40px,50px) scale(.9)}
+  }
+
+  /* Grid overlay */
+  .grid-overlay{
+    position:absolute;inset:0;z-index:1;
+    background-image:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(ellipse at center, black 30%, transparent 70%);
+    -webkit-mask-image:radial-gradient(ellipse at center, black 30%, transparent 70%);
+  }
+
+  /* Canvas de partículas conectadas */
+  #particles{
+    position:absolute;inset:0;z-index:2;
+    pointer-events:none;
+  }
+
+  /* Glow que sigue al mouse en el hero */
+  .mouse-glow{
+    position:absolute;z-index:2;
+    width:600px;height:600px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(34,197,94,.15), transparent 60%);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    transition:opacity .3s;
+    opacity:0;
+  }
+
+  .hero-inner{
+    position:relative;z-index:3;
+    display:grid;grid-template-columns:1.15fr 1fr;gap:60px;align-items:center;
+  }
+  @media (max-width:960px){
+    .hero-inner{grid-template-columns:1fr;gap:48px}
+  }
+
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    background:rgba(34,197,94,.1);
+    border:1px solid rgba(34,197,94,.35);
+    color:var(--brand);
+    padding:8px 16px;border-radius:999px;
+    font-size:.82rem;font-weight:600;
+    margin-bottom:28px;
+    letter-spacing:.02em;
+    backdrop-filter:blur(10px);
+  }
+  .hero-eyebrow::before{
+    content:"";width:8px;height:8px;border-radius:50%;background:var(--brand);
+    box-shadow:0 0 16px var(--brand);
+    animation:latir 1.8s infinite;
+  }
+  @keyframes latir{
+    0%,100%{transform:scale(1);opacity:1}
+    50%{transform:scale(1.6);opacity:.5}
+  }
+
+  .hero h1{
+    font-size:clamp(2.4rem,6vw,4.4rem);
+    line-height:1;font-weight:800;
+    letter-spacing:-.035em;
+    margin-bottom:28px;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(135deg,var(--brand) 0%, #60a5fa 50%, var(--purple) 100%);
+    background-size:200% 200%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:gradShift 4s ease infinite;
+    display:inline-block;
+  }
+  @keyframes gradShift{
+    0%,100%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+  }
+
+  /* Typewriter subtitle */
+  .hero-sub{
+    font-size:clamp(1rem,1.4vw,1.18rem);
+    color:var(--muted);max-width:580px;
+    margin-bottom:40px;line-height:1.7;
+    min-height:3.4em;
+  }
+  .typewriter{
+    border-right:2px solid var(--brand);
+    padding-right:4px;
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{
+    0%,50%{border-color:var(--brand)}
+    51%,100%{border-color:transparent}
+  }
+
+  .hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:48px}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    padding:18px 30px;border-radius:14px;
+    font-weight:700;font-size:1rem;
+    transition:transform .15s, box-shadow .2s, background .2s;
+    white-space:nowrap;
+    will-change:transform;
+  }
+  .btn svg{width:20px;height:20px;flex-shrink:0}
+  .btn-primary{
+    background:var(--brand);color:#fff;
+    box-shadow:0 12px 40px -8px var(--brand-glow);
+    position:relative;
+  }
+  .btn-primary::before{
+    content:"";position:absolute;inset:0;border-radius:14px;
+    background:var(--brand);opacity:.5;z-index:-1;
+    animation:pulsoBtn 2.2s ease-out infinite;
+  }
+  @keyframes pulsoBtn{
+    0%{transform:scale(1);opacity:.6}
+    100%{transform:scale(1.25);opacity:0}
+  }
+  .btn-primary:hover{
+    background:var(--brand-2);
+    box-shadow:0 16px 50px -8px var(--brand-glow);
+  }
+  .btn-ghost{
+    background:rgba(255,255,255,.05);color:var(--fg);
+    border:1px solid var(--border-light);
+    backdrop-filter:blur(10px);
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,.1);border-color:var(--brand)}
+
+  /* Contadores */
+  .hero-stats{
+    display:flex;gap:40px;flex-wrap:wrap;
+    padding-top:40px;border-top:1px solid var(--border);
+  }
+  .stat{position:relative}
+  .stat-num{
+    font-size:2.4rem;font-weight:800;
+    letter-spacing:-.03em;line-height:1;
+    background:linear-gradient(135deg,var(--fg),var(--muted));
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .stat-num .grad{
+    background:linear-gradient(135deg,var(--brand),#60a5fa);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .stat-label{color:var(--muted);font-size:.85rem;margin-top:6px}
+
+  /* Hero visual */
+  .hero-visual{
+    position:relative;
+    aspect-ratio:4/5;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:
+      0 40px 100px -20px rgba(0,0,0,.8),
+      0 0 80px -20px var(--brand-glow);
+    border:1px solid var(--border-light);
+    animation:entradaHero 1.2s cubic-bezier(.2,.8,.2,1) .3s both;
+  }
+  @keyframes entradaHero{
+    from{opacity:0;transform:scale(.9) translateY(40px) rotateY(-10deg)}
+    to{opacity:1;transform:scale(1) translateY(0) rotateY(0)}
+  }
+  .hero-visual img{width:100%;height:100%;object-fit:cover}
+  .hero-visual::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(5,8,16,.7), transparent 50%);
+  }
+  .hero-badge{
+    position:absolute;bottom:24px;left:24px;right:24px;z-index:2;
+    background:rgba(10,15,28,.85);
+    backdrop-filter:blur(24px);
+    border:1px solid var(--border-light);
+    border-radius:16px;padding:16px 20px;
+    display:flex;align-items:center;gap:14px;
+    animation:flotarBadge 4s ease-in-out infinite;
+  }
+  @keyframes flotarBadge{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+  }
+  .hero-badge .avatar{
+    width:52px;height:52px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--brand);
+    box-shadow:0 0 20px var(--brand-glow);
+  }
+  .hero-badge-name{font-weight:700;font-size:.95rem}
+  .hero-badge-role{color:var(--muted);font-size:.8rem}
+  .hero-badge-stars{color:var(--gold);font-size:.9rem;letter-spacing:1px}
+
+  @media (max-width:960px){
+    .hero-visual{max-width:400px;margin:0 auto;aspect-ratio:3/4}
+  }
+
+  /* ============= MARQUEE ============= */
+  .marquee{
+    padding:32px 0;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+    background:rgba(10,15,28,.5);
+  }
+  .marquee-track{
+    display:flex;gap:60px;
+    animation:marquee 30s linear infinite;
+    white-space:nowrap;
+    width:max-content;
+  }
+  .marquee-item{
+    display:flex;align-items:center;gap:12px;
+    color:var(--muted);font-size:1.1rem;font-weight:600;
+    letter-spacing:-.01em;
+  }
+  .marquee-item::before{
+    content:"★";color:var(--brand);font-size:1rem;
+  }
+  @keyframes marquee{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+  .marquee:hover .marquee-track{animation-play-state:paused}
+
+  /* ============= SECCIONES ============= */
+  section{padding:120px 0;position:relative}
+  @media (max-width:768px){section{padding:80px 0}}
+
+  .section-eyebrow{
+    display:inline-block;
+    color:var(--brand);font-weight:600;
+    font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .section-title{
+    font-size:clamp(2rem,4vw,3rem);
+    font-weight:800;line-height:1.05;letter-spacing:-.03em;
+    margin-bottom:20px;max-width:760px;
+  }
+  .section-lead{
+    color:var(--muted);font-size:1.08rem;
+    max-width:640px;margin-bottom:64px;line-height:1.7;
+  }
+
+  /* ============= SERVICIOS 3D TILT ============= */
+  .services{background:var(--bg-2);position:relative;overflow:hidden}
+  .services::before{
+    content:"";position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:800px;height:800px;
+    background:radial-gradient(circle, rgba(59,130,246,.08), transparent 60%);
+    pointer-events:none;
+  }
+
+  .services-grid{
+    display:grid;gap:24px;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    perspective:1200px;
+    position:relative;z-index:1;
+  }
+  .service{
+    background:linear-gradient(135deg, rgba(17,28,51,.9), rgba(10,15,28,.9));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:36px 32px;
+    transition:border-color .3s, box-shadow .3s;
+    position:relative;
+    overflow:hidden;
+    transform-style:preserve-3d;
+    will-change:transform;
+  }
+  .service::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--brand),var(--accent),var(--purple));
+    transform:scaleX(0);transform-origin:left;
+    transition:transform .4s;
+  }
+  .service:hover{border-color:var(--border-light);box-shadow:0 30px 60px -20px rgba(34,197,94,.3)}
+  .service:hover::before{transform:scaleX(1)}
+
+  .service-icon{
+    width:64px;height:64px;border-radius:16px;
+    background:linear-gradient(135deg, rgba(34,197,94,.2), rgba(59,130,246,.2));
+    border:1px solid rgba(34,197,94,.3);
+    display:grid;place-items:center;font-size:30px;
+    margin-bottom:24px;
+    transition:transform .3s;
+  }
+  .service:hover .service-icon{transform:scale(1.1) rotate(-5deg)}
+  .service h3{font-size:1.25rem;margin-bottom:12px;letter-spacing:-.01em}
+  .service p{color:var(--muted);font-size:.95rem;line-height:1.65;margin-bottom:20px}
+  .service-link{
+    color:var(--brand);font-weight:600;font-size:.9rem;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:gap .2s;
+  }
+  .service-link:hover{gap:14px}
+
+  /* ============= FEATURES ============= */
+  .features{background:var(--bg)}
+  .features-grid{
+    display:grid;gap:64px;
+    grid-template-columns:1fr 1fr;align-items:center;
+  }
+  @media (max-width:860px){.features-grid{grid-template-columns:1fr;gap:40px}}
+
+  .features-visual{
+    aspect-ratio:1;
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid var(--border);
+    position:relative;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
+  }
+  .features-visual img{width:100%;height:100%;object-fit:cover}
+  .features-visual::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg, rgba(34,197,94,.15), transparent 50%);
+  }
+
+  .feature-list{display:grid;gap:26px}
+  .feature{display:flex;gap:18px;align-items:flex-start}
+  .feature-check{
+    flex-shrink:0;width:40px;height:40px;border-radius:12px;
+    background:linear-gradient(135deg, rgba(34,197,94,.2), rgba(34,197,94,.1));
+    border:1px solid rgba(34,197,94,.4);
+    display:grid;place-items:center;
+    color:var(--brand);font-weight:800;font-size:1.1rem;
+    box-shadow:0 0 20px -5px var(--brand-glow);
+  }
+  .feature h4{font-size:1.08rem;margin-bottom:6px;letter-spacing:-.01em}
+  .feature p{color:var(--muted);font-size:.93rem;line-height:1.65}
+
+  /* ============= GALERÍA ============= */
+  .gallery{background:var(--bg-2)}
+  .gallery-grid{
+    display:grid;gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  }
+  .gallery-item{
+    aspect-ratio:1;
+    border-radius:var(--radius-sm);
+    overflow:hidden;
+    position:relative;
+    cursor:none;
+    border:1px solid var(--border);
+    transition:transform .4s, box-shadow .4s;
+  }
+  @media (max-width:860px){ .gallery-item{cursor:pointer} }
+  .gallery-item:hover{transform:scale(1.03);box-shadow:0 30px 60px -20px var(--brand-glow)}
+  .gallery-item img{
+    width:100%;height:100%;object-fit:cover;
+    transition:transform .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .gallery-item:hover img{transform:scale(1.15)}
+  .gallery-item::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(5,8,16,.9), transparent 60%);
+    opacity:.6;transition:opacity .3s;
+  }
+  .gallery-item:hover::after{opacity:1}
+  .gallery-caption{
+    position:absolute;bottom:20px;left:20px;right:20px;
+    color:var(--fg);font-weight:600;font-size:.92rem;
+    transform:translateY(10px);opacity:0;
+    transition:transform .4s, opacity .4s;z-index:2;
+  }
+  .gallery-item:hover .gallery-caption{transform:translateY(0);opacity:1}
+
+  /* ============= TESTIMONIOS ============= */
+  .testimonials{background:var(--bg)}
+  .testimonials-grid{
+    display:grid;gap:24px;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  }
+  .testimonial{
+    background:linear-gradient(135deg, rgba(17,28,51,.8), rgba(10,15,28,.8));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+    transition:transform .3s, border-color .3s;
+  }
+  .testimonial:hover{transform:translateY(-6px);border-color:var(--border-light)}
+  .testimonial-stars{color:var(--gold);letter-spacing:2px;font-size:1rem;margin-bottom:18px}
+  .testimonial-quote{
+    font-size:1rem;line-height:1.7;
+    margin-bottom:24px;color:var(--fg);
+  }
+  .testimonial-quote::before{
+    content:"“";font-size:2rem;color:var(--brand);
+    line-height:0;vertical-align:-.4em;margin-right:4px;
+  }
+  .testimonial-author{display:flex;align-items:center;gap:14px}
+  .testimonial-author img{
+    width:48px;height:48px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--border-light);
+  }
+  .testimonial-name{font-weight:700;font-size:.92rem}
+  .testimonial-role{color:var(--muted);font-size:.82rem}
+
+  /* ============= FAQ ============= */
+  .faq{background:var(--bg-2)}
+  .faq-list{max-width:820px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--border)}
+  .faq-question{
+    width:100%;text-align:left;
+    padding:26px 0;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    font-size:1.05rem;font-weight:600;
+    transition:color .2s;
+  }
+  .faq-question:hover{color:var(--brand)}
+  .faq-icon{
+    flex-shrink:0;width:32px;height:32px;border-radius:10px;
+    background:rgba(255,255,255,.05);border:1px solid var(--border);
+    display:grid;place-items:center;
+    transition:transform .3s, background .3s, border-color .3s;
+    font-size:16px;font-weight:700;
+  }
+  .faq-item.open .faq-icon{
+    transform:rotate(45deg);background:var(--brand);color:#fff;
+    border-color:var(--brand);box-shadow:0 0 20px var(--brand-glow);
+  }
+  .faq-answer{
+    max-height:0;overflow:hidden;
+    transition:max-height .4s ease, padding .3s;
+    color:var(--muted);font-size:.95rem;line-height:1.7;
+  }
+  .faq-item.open .faq-answer{max-height:400px;padding-bottom:26px}
+
+  /* ============= CTA FINAL ============= */
+  .cta-final{
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(34,197,94,.15), transparent 60%),
+      radial-gradient(ellipse at 70% 70%, rgba(59,130,246,.15), transparent 60%),
+      var(--bg);
+    padding:140px 0;
+    text-align:center;
+    position:relative;overflow:hidden;
+  }
+  @media (max-width:768px){.cta-final{padding:90px 0}}
+
+  .cta-final::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(ellipse at center, black 20%, transparent 70%);
+    -webkit-mask-image:radial-gradient(ellipse at center, black 20%, transparent 70%);
+  }
+
+  .cta-final h2{
+    position:relative;
+    font-size:clamp(2rem,4.5vw,3.4rem);
+    font-weight:800;line-height:1.05;
+    letter-spacing:-.03em;margin-bottom:24px;
+    max-width:780px;margin-left:auto;margin-right:auto;
+  }
+  .cta-final p{
+    position:relative;
+    color:var(--muted);font-size:1.12rem;
+    max-width:600px;margin:0 auto 44px;
+  }
+  .cta-final .hero-actions{justify-content:center;position:relative}
+
+  /* ============= FOOTER ============= */
+  footer{
+    background:var(--bg-2);
+    border-top:1px solid var(--border);
+    padding:72px 0 36px;
+  }
+  .footer-grid{
+    display:grid;gap:48px;
+    grid-template-columns:2fr 1fr 1fr;
+    margin-bottom:56px;
+  }
+  @media (max-width:768px){.footer-grid{grid-template-columns:1fr;gap:36px}}
+  .footer-brand p{color:var(--muted);font-size:.92rem;margin-top:16px;max-width:360px;line-height:1.7}
+  .footer-col h5{
+    font-size:.85rem;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.1em;
+    margin-bottom:18px;font-weight:600;
+  }
+  .footer-col a{
+    display:block;color:var(--fg);font-size:.92rem;
+    padding:7px 0;transition:color .2s, transform .2s;
+  }
+  .footer-col a:hover{color:var(--brand);transform:translateX(4px)}
+  .footer-bottom{
+    border-top:1px solid var(--border);
+    padding-top:36px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+    color:var(--muted);font-size:.85rem;
+  }
+
+  /* ============= WHATSAPP FLOTANTE ============= */
+  .whatsapp-float{
+    position:fixed;bottom:24px;right:24px;z-index:90;
+    width:64px;height:64px;border-radius:50%;
+    background:var(--brand);color:#fff;
+    display:grid;place-items:center;
+    box-shadow:0 16px 40px -6px var(--brand-glow);
+    transition:transform .2s, background .2s;
+  }
+  .whatsapp-float:hover{background:var(--brand-2);transform:scale(1.1) rotate(8deg)}
+  .whatsapp-float svg{width:32px;height:32px}
+  .whatsapp-float::after{
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:var(--brand);opacity:.4;z-index:-1;
+    animation:pulsoBtn 2s ease-out infinite;
+  }
+
+  /* ============= REVEAL ============= */
+  .reveal{opacity:0;transform:translateY(40px) scale(.96);filter:blur(6px);transition:opacity 1s cubic-bezier(.2,.8,.2,1), transform 1s cubic-bezier(.2,.8,.2,1), filter 1s cubic-bezier(.2,.8,.2,1)}
+  .reveal.visible{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+
+  /* ============= ACCESIBILIDAD ============= */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+    .reveal{opacity:1;transform:none;filter:none}
+    html{scroll-behavior:auto}
+    .cursor-dot,.cursor-ring{display:none}
+    body{cursor:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor personalizado -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Barra de progreso scroll -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ============= NAV ============= -->
+<nav class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">🔧</div>
+      <span>Juan Pérez</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#trabajos">Trabajos</a></li>
+      <li><a href="#testimonios">Testimonios</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="nav-cta" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20necesito%20un%20plomero" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.03 0C5.42 0 .05 5.37.05 11.98c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62a11.94 11.94 0 0 0 5.85 1.49h.01c6.61 0 11.98-5.37 11.98-11.98 0-3.2-1.25-6.21-3.5-8.41z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+</nav>
+
+<!-- ============= HERO ============= -->
+<section class="hero" id="inicio">
+  <div class="aurora">
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+  </div>
+  <div class="grid-overlay"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="mouse-glow" id="mouseGlow"></div>
+
+  <div class="container hero-inner">
+    <div>
+      <div class="hero-eyebrow">Disponible ahora · Santa Cruz</div>
+      <h1>Tu problema de plomería, <span class="grad">resuelto hoy</span>.</h1>
+      <p class="hero-sub">
+        <span class="typewriter" id="typewriter"></span>
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary magnetic" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20necesito%20un%20plomero" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.03 0C5.42 0 .05 5.37.05 11.98c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62a11.94 11.94 0 0 0 5.85 1.49h.01c6.61 0 11.98-5.37 11.98-11.98 0-3.2-1.25-6.21-3.5-8.41z"/></svg>
+          Escribir por WhatsApp
+        </a>
+        <a class="btn btn-ghost magnetic" href="#servicios">
+          Ver servicios
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num"><span class="grad" data-count="15" data-suffix="+">0+</span></div>
+          <div class="stat-label">Años de experiencia</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num"><span class="grad" data-count="1800" data-suffix="+">0+</span></div>
+          <div class="stat-label">Trabajos realizados</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num"><span class="grad" data-count="4.9" data-decimal="1" data-suffix="★">0★</span></div>
+          <div class="stat-label">187 reseñas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80" alt="Plomero profesional trabajando">
+      <div class="hero-badge">
+        <img class="avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Juan Pérez">
+        <div style="flex:1">
+          <div class="hero-badge-name">Juan Pérez</div>
+          <div class="hero-badge-role">Plomero certificado</div>
+        </div>
+        <div class="hero-badge-stars">★★★★★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= MARQUEE ============= -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="marquee-item">Emergencias 24/7</span>
+    <span class="marquee-item">Garantía escrita</span>
+    <span class="marquee-item">Precio antes de empezar</span>
+    <span class="marquee-item">Llego el mismo día</span>
+    <span class="marquee-item">15 años de experiencia</span>
+    <span class="marquee-item">Trabajo limpio</span>
+    <span class="marquee-item">Emergencias 24/7</span>
+    <span class="marquee-item">Garantía escrita</span>
+    <span class="marquee-item">Precio antes de empezar</span>
+    <span class="marquee-item">Llego el mismo día</span>
+    <span class="marquee-item">15 años de experiencia</span>
+    <span class="marquee-item">Trabajo limpio</span>
+  </div>
+</div>
+
+<!-- ============= SERVICIOS ============= -->
+<section class="services" id="servicios">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-eyebrow">Servicios</span>
+      <h2 class="section-title">Todo lo que tu hogar necesita, en un solo lugar</h2>
+      <p class="section-lead">Desde una fuga pequeña hasta una instalación completa. Con garantía por escrito en cada trabajo.</p>
+    </div>
+
+    <div class="services-grid">
+      <article class="service tilt reveal">
+        <div class="service-icon">🚿</div>
+        <h3>Reparación de fugas</h3>
+        <p>Detección precisa sin romper paredes de más. Reparamos la fuga y te mostramos qué pasó.</p>
+        <a class="service-link" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20tengo%20una%20fuga" target="_blank" rel="noopener">Consultar →</a>
+      </article>
+      <article class="service tilt reveal">
+        <div class="service-icon">🔧</div>
+        <h3>Instalaciones nuevas</h3>
+        <p>Grifería, tubería, calentadores y sanitarios. Instalación limpia, materiales de primera calidad.</p>
+        <a class="service-link" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20quiero%20una%20instalacion" target="_blank" rel="noopener">Consultar →</a>
+      </article>
+      <article class="service tilt reveal">
+        <div class="service-icon">🚨</div>
+        <h3>Emergencias 24/7</h3>
+        <p>Inundaciones, fugas graves, atascos. Llego ese mismo día, sin excusas ni esperas.</p>
+        <a class="service-link" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20es%20una%20emergencia" target="_blank" rel="noopener">Llamar ahora →</a>
+      </article>
+      <article class="service tilt reveal">
+        <div class="service-icon">🚽</div>
+        <h3>Destape de tuberías</h3>
+        <p>Inodoros, lavamanos, cocina. Con equipo profesional y sin químicos agresivos.</p>
+        <a class="service-link" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20necesito%20destapar" target="_blank" rel="noopener">Consultar →</a>
+      </article>
+      <article class="service tilt reveal">
+        <div class="service-icon">🔥</div>
+        <h3>Calentadores</h3>
+        <p>Instalación, mantenimiento y reparación de calentadores a gas y eléctricos.</p>
+        <a class="service-link" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20necesito%20con%20el%20calentador" target="_blank" rel="noopener">Consultar →</a>
+      </article>
+      <article class="service tilt reveal">
+        <div class="service-icon">🏠</div>
+        <h3>Revisión completa</h3>
+        <p>Inspección general de toda la instalación. Detecto problemas antes de que sean emergencias.</p>
+        <a class="service-link" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20quiero%20una%20revision" target="_blank" rel="noopener">Consultar →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============= FEATURES ============= -->
+<section class="features">
+  <div class="container">
+    <div class="features-grid">
+      <div class="features-visual reveal">
+        <img src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&q=80" alt="Herramientas profesionales">
+      </div>
+      <div class="reveal">
+        <span class="section-eyebrow">¿Por qué yo?</span>
+        <h2 class="section-title">No es solo destapar. Es resolver bien la primera vez.</h2>
+        <p class="section-lead">Trabajo limpio, precio transparente y garantía por escrito. Eso no lo encuentras en cualquier plomero.</p>
+        <div class="feature-list">
+          <div class="feature">
+            <div class="feature-check">✓</div>
+            <div><h4>Llego el mismo día</h4><p>Si me escribes antes de las 5 pm, estoy en tu casa hoy. Emergencias a cualquier hora.</p></div>
+          </div>
+          <div class="feature">
+            <div class="feature-check">✓</div>
+            <div><h4>Precio antes de empezar</h4><p>Te digo cuánto va a costar antes de tocar nada. Sin sorpresas al final.</p></div>
+          </div>
+          <div class="feature">
+            <div class="feature-check">✓</div>
+            <div><h4>Garantía escrita</h4><p>30 días de garantía. Si algo falla, vuelvo sin cobrar. Así de simple.</p></div>
+          </div>
+          <div class="feature">
+            <div class="feature-check">✓</div>
+            <div><h4>Dejo todo limpio</h4><p>Al terminar, tu casa queda como estaba. Ni una gota, ni un residuo.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= GALERÍA ============= -->
+<section class="gallery" id="trabajos">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-eyebrow">Trabajos recientes</span>
+      <h2 class="section-title">Algunos de mis últimos trabajos</h2>
+      <p class="section-lead">Fotos reales de trabajos terminados. Toca cualquiera para ver el detalle.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal">
+        <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80" alt="Baño remodelado">
+        <div class="gallery-caption">Baño remodelado · Equipetrol</div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80" alt="Tubería">
+        <div class="gallery-caption">Instalación de tubería · Centro</div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=600&q=80" alt="Grifería">
+        <div class="gallery-caption">Grifería nueva · Las Palmas</div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80" alt="Fuga">
+        <div class="gallery-caption">Reparación de fuga · Urbarí</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= TESTIMONIOS ============= -->
+<section class="testimonials" id="testimonios">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-eyebrow">Testimonios</span>
+      <h2 class="section-title">Lo que dicen los clientes</h2>
+      <p class="section-lead">Más de 180 reseñas reales. Promedio 4.9 de 5 estrellas.</p>
+    </div>
+    <div class="testimonials-grid">
+      <article class="testimonial reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">Llamé a las 9 de la noche por una fuga grave y en 40 minutos ya estaba en casa. Resolvió todo, dejó limpio y me cobró lo que había dicho por WhatsApp.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="María">
+          <div><div class="testimonial-name">María Fernández</div><div class="testimonial-role">Equipetrol</div></div>
+        </div>
+      </article>
+      <article class="testimonial reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">Trabajo impecable. Instaló el calentador en menos de dos horas y me explicó cómo mantenerlo. Muy profesional.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="Carlos">
+          <div><div class="testimonial-name">Carlos Roca</div><div class="testimonial-role">Las Palmas</div></div>
+        </div>
+      </article>
+      <article class="testimonial reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">Ya lo llamé tres veces por cosas distintas y siempre cumple. Ese es el plomero que quieres tener en tu lista de contactos.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80" alt="Ana">
+          <div><div class="testimonial-name">Ana Salvatierra</div><div class="testimonial-role">Urbarí</div></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============= FAQ ============= -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <span class="section-eyebrow">Preguntas frecuentes</span>
+      <h2 class="section-title" style="margin-left:auto;margin-right:auto">Antes de escribirme</h2>
+      <p class="section-lead" style="margin-left:auto;margin-right:auto">Lo que más me preguntan, respondido aquí.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">¿Cuánto cobras por revisar?<span class="faq-icon">+</span></button>
+        <div class="faq-answer">La revisión es gratuita si aceptas el trabajo. Si decides no hacerlo, se cobra solo el desplazamiento (B/30 dentro de la ciudad).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">¿Qué formas de pago aceptas?<span class="faq-icon">+</span></button>
+        <div class="faq-answer">Efectivo, transferencia, QR y Tigo Money. Pagas al terminar, no antes. Nunca pido adelantos.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">¿Cuánto demora llegar?<span class="faq-icon">+</span></button>
+        <div class="faq-answer">En horario normal, entre 30 minutos y 2 horas según la zona. Emergencias nocturnas similar.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">¿Das garantía?<span class="faq-icon">+</span></button>
+        <div class="faq-answer">Sí, 30 días en todos los trabajos. Si algo falla, vuelvo sin cobrar. No cubre daños por mal uso.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">¿Trabajas fines de semana?<span class="faq-icon">+</span></button>
+        <div class="faq-answer">Sí. Todos los días, incluidos domingos y feriados. Emergencias 24/7 sin recargo dentro de la ciudad.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= CTA FINAL ============= -->
+<section class="cta-final">
+  <div class="container">
+    <h2>¿Tienes una fuga, un atasco, o algo que no funciona?</h2>
+    <p>Escríbeme ahora por WhatsApp y te doy un diagnóstico en minutos. Sin compromiso.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary magnetic" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20necesito%20ayuda" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.03 0C5.42 0 .05 5.37.05 11.98c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62a11.94 11.94 0 0 0 5.85 1.49h.01c6.61 0 11.98-5.37 11.98-11.98 0-3.2-1.25-6.21-3.5-8.41z"/></svg>
+        Escribir por WhatsApp
+      </a>
+      <a class="btn btn-ghost magnetic" href="tel:+591739130409">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Llamar: 739 130 40 9
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============= FOOTER ============= -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-mark">🔧</div>
+          <span>Juan Pérez</span>
+        </div>
+        <p>Plomero profesional en Santa Cruz de la Sierra. 15 años resolviendo problemas de plomería con garantía y precio justo.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Servicios</h5>
+        <a href="#servicios">Reparación de fugas</a>
+        <a href="#servicios">Instalaciones</a>
+        <a href="#servicios">Emergencias 24/7</a>
+        <a href="#servicios">Calentadores</a>
+      </div>
+      <div class="footer-col">
+        <h5>Contacto</h5>
+        <a href="https://wa.me/591739130409" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="tel:+591739130409">+591 739 130 40 9</a>
+        <a href="mailto:juan@plomero.com">juan@plomero.com</a>
+        <a href="#">Santa Cruz, Bolivia</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© <span id="year"></span> Juan Pérez — Plomero. Todos los derechos reservados.</div>
+      <div>Hecho con dedicación en Santa Cruz 🇧🇴</div>
+    </div>
+  </div>
+</footer>
+
+<a class="whatsapp-float" href="https://wa.me/591739130409?text=Hola%20Juan%2C%20necesito%20un%20plomero" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.03 0C5.42 0 .05 5.37.05 11.98c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62a11.94 11.94 0 0 0 5.85 1.49h.01c6.61 0 11.98-5.37 11.98-11.98 0-3.2-1.25-6.21-3.5-8.41z"/></svg>
+</a>
+
+<script>
+/* ========== CONFIG ========== */
+const WHATSAPP = "591739130409";
+/* ===================== */
+
+const isTouch = matchMedia("(hover: none)").matches;
+const prefersReduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Año
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ========== 1. CURSOR PERSONALIZADO + GLOW ========== */
+if (!isTouch && !prefersReduced) {
+  const dot = document.getElementById("cursorDot");
+  const ring = document.getElementById("cursorRing");
+  const glow = document.getElementById("mouseGlow");
+  let mx = innerWidth/2, my = innerHeight/2;
+  let rx = mx, ry = my;
+
+  document.addEventListener("mousemove", (e) => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+    if (glow && e.target.closest(".hero")) {
+      const rect = glow.parentElement.getBoundingClientRect();
+      glow.style.left = (mx - rect.left) + "px";
+      glow.style.top  = (my - rect.top) + "px";
+      glow.style.opacity = 1;
+    } else if (glow) {
+      glow.style.opacity = 0;
+    }
+  });
+
+  function animRing(){
+    rx += (mx - rx) * 0.15;
+    ry += (my - ry) * 0.15;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll("a, button, .gallery-item, .service").forEach(el => {
+    el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+    el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+  });
+}
+
+/* ========== 2. BARRA DE PROGRESO SCROLL ========== */
+const progress = document.getElementById("progressBar");
+window.addEventListener("scroll", () => {
+  const h = document.documentElement.scrollHeight - innerHeight;
+  progress.style.width = (scrollY / h * 100) + "%";
+}, { passive: true });
+
+/* ========== 3. NAV SCROLL ========== */
+const nav = document.getElementById("nav");
+window.addEventListener("scroll", () => {
+  nav.classList.toggle("scrolled", scrollY > 40);
+}, { passive: true });
+
+/* ========== 4. SCROLL REVEAL ========== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add("visible");
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: "0px 0px -60px 0px" });
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+/* ========== 5. TYPEWRITER ========== */
+if (!prefersReduced) {
+  const text = "15 años resolviendo fugas, instalaciones y emergencias en toda la ciudad. Llego el mismo día, con garantía escrita y precio justo.";
+  const el = document.getElementById("typewriter");
+  let i = 0;
+  function escribir() {
+    if (i < text.length) {
+      el.textContent = text.slice(0, i+1);
+      i++;
+      setTimeout(escribir, 35);
+    }
+  }
+  setTimeout(escribir, 800);
+} else {
+  document.getElementById("typewriter").textContent = "15 años resolviendo fugas, instalaciones y emergencias en toda la ciudad.";
+}
+
+/* ========== 6. CONTADORES ANIMADOS ========== */
+function animarContador(el){
+  const target = parseFloat(el.dataset.count);
+  const suffix = el.dataset.suffix || "";
+  const decimal = parseInt(el.dataset.decimal || 0);
+  const duration = 1800;
+  const start = performance.now();
+
+  function tick(now){
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = target * eased;
+    el.textContent = (decimal ? val.toFixed(decimal) : Math.floor(val)) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = (decimal ? target.toFixed(decimal) : target) + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
+const counters = document.querySelectorAll("[data-count]");
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting){
+      animarContador(e.target);
+      counterObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObserver.observe(c));
+
+/* ========== 7. RED DE PARTÍCULAS ========== */
+if (!prefersReduced) {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  let W, H, particles = [];
+  let mouse = { x: -1000, y: -1000 };
+
+  const isMobile = innerWidth < 640;
+  const CANTIDAD = isMobile ? 30 : 70;
+  const DIST = isMobile ? 100 : 140;
+  const MOUSE_DIST = 180;
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width;
+    H = canvas.height = rect.height;
+  }
+
+  function crear(){
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: 1 + Math.random() * 2
+    };
+  }
+
+  function init(){
+    resize();
+    particles = Array.from({length: CANTIDAD}, crear);
+  }
+
+  canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  canvas.addEventListener("mouseleave", () => {
+    mouse.x = -1000; mouse.y = -1000;
+  });
+
+  function loop(){
+    ctx.clearRect(0, 0, W, H);
+
+    // Dibuja partículas
+    for (const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+
+      // Atracción al mouse
+      const dxm = p.x - mouse.x;
+      const dym = p.y - mouse.y;
+      const dm = Math.hypot(dxm, dym);
+      if (dm < MOUSE_DIST){
+        const fuerza = (MOUSE_DIST - dm) / MOUSE_DIST;
+        p.x += (dxm / dm) * fuerza * 1.5;
+        p.y += (dym / dm) * fuerza * 1.5;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(34, 197, 94, 0.9)";
+      ctx.fill();
+    }
+
+    // Dibuja líneas entre partículas cercanas
+    for (let i = 0; i < particles.length; i++){
+      for (let j = i + 1; j < particles.length; j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.hypot(dx, dy);
+        if (d < DIST){
+          const op = (1 - d / DIST) * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(34, 197, 94, ${op})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Líneas al mouse
+    if (mouse.x > 0){
+      for (const p of particles){
+        const d = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+        if (d < MOUSE_DIST){
+          const op = (1 - d / MOUSE_DIST) * 0.6;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(96, 165, 250, ${op})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("resize", init);
+  init();
+  loop();
+}
+
+/* ========== 8. TARJETAS 3D TILT ========== */
+if (!isTouch && !prefersReduced) {
+  document.querySelectorAll(".tilt").forEach(card => {
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(1000px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateY(-6px)`;
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
+
+/* ========== 9. BOTONES MAGNÉTICOS ========== */
+if (!isTouch && !prefersReduced) {
+  document.querySelectorAll(".magnetic").forEach(btn => {
+    btn.addEventListener("mousemove", (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px) translateY(-2px)`;
+    });
+    btn.addEventListener("mouseleave", () => {
+      btn.style.transform = "";
+    });
+  });
+}
+
+/* ========== 10. FAQ ========== */
+document.querySelectorAll(".faq-question").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains("open");
+    document.querySelectorAll(".faq-item").forEach(i => i.classList.remove("open"));
+    if (!wasOpen) item.classList.add("open");
+  });
+});
+</script>
+
 </body>
 </html>
