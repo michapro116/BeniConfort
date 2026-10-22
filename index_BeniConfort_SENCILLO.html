@@ -553,4 +553,103 @@
     btn.type = 'button';
     btn.className = 'style-btn';
     btn.dataset.style = key;
-    btn.style
+    btn.style.setProperty('--btn-accent', 'hsl(' + s.hue + ', 80%, 60%)');
+    btn.style.setProperty('--btn-accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
+
+    btn.innerHTML =
+      '<div class="name"><span class="dot"></span>' + s.label + '</div>' +
+      '<div class="desc">' + s.desc + '</div>' +
+      '<div class="test-row">' +
+        '<button class="test-btn" type="button" data-test="1">1 golpe</button>' +
+        '<button class="test-btn" type="button" data-test="3">3 golpes</button>' +
+      '</div>';
+
+    // El botón principal selecciona; los de prueba solo tocan el sonido
+    btn.addEventListener('click', function(e){
+      if (e.target.closest('.test-btn')) return;
+      selectStyle(key);
+    });
+
+    btn.querySelectorAll('.test-btn').forEach(function(t){
+      t.addEventListener('click', function(e){
+        e.stopPropagation();
+        ensureAudio();
+        var count = parseInt(t.dataset.test, 10);
+        playTest(s, count);
+      });
+    });
+
+    if (s.category === 'fem') femBox.appendChild(btn);
+    else premBox.appendChild(btn);
+  });
+
+  function playTest(cfg, count){
+    // Aplicar reverb de este estilo antes de tocar
+    applyReverb(cfg);
+    for (var i = 0; i < count; i++){
+      (function(idx){
+        setTimeout(function(){
+          var pan = PAN_CYCLE[idx % PAN_CYCLE.length] * cfg.panAmount;
+          playKeyTap(cfg, pan);
+        }, idx * 160);
+      })(i);
+    }
+  }
+
+  function applyReverb(cfg){
+    if (!actx) return;
+    if (cfg.reverbWet !== currentReverbWet || Math.abs(cfg.reverbDecay - currentReverbDecay) > 0.1){
+      currentReverbWet = cfg.reverbWet;
+      currentReverbDecay = cfg.reverbDecay;
+      reverbWet.gain.setTargetAtTime(currentReverbWet, actx.currentTime, 0.05);
+      rebuildReverb(currentReverbDecay);
+    }
+  }
+
+  function selectStyle(key){
+    currentStyle = key;
+    var s = STYLES[key];
+
+    document.querySelectorAll('.style-btn').forEach(function(b){
+      b.classList.toggle('on', b.dataset.style === key);
+    });
+    document.documentElement.style.setProperty('--accent', 'hsl(' + s.hue + ', 80%, 60%)');
+    document.documentElement.style.setProperty('--accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
+    stage.style.borderColor = 'hsla(' + s.hue + ', 80%, 60%, .3)';
+
+    ensureAudio();
+    applyReverb(s);
+    typeText(display, s.sample, key);
+  }
+
+  /* =========================================================
+     CONTROLES
+     ========================================================= */
+  document.getElementById('replay').addEventListener('click', function(){
+    if (!currentStyle) return;
+    ensureAudio();
+    applyReverb(STYLES[currentStyle]);
+    typeText(display, STYLES[currentStyle].sample, currentStyle);
+  });
+
+  var soundToggle = document.getElementById('soundToggle');
+  var soundLabel = document.getElementById('soundLabel');
+  soundToggle.addEventListener('click', function(){
+    soundOn = !soundOn;
+    soundToggle.classList.toggle('on', soundOn);
+    soundLabel.textContent = soundOn ? 'Sonido ON' : 'Sonido OFF';
+    if (soundOn) ensureAudio();
+  });
+
+  var volumeSlider = document.getElementById('volume');
+  volumeSlider.addEventListener('input', function(){
+    volume = volumeSlider.value / 100;
+    if (master) master.gain.setTargetAtTime(volume, actx.currentTime, 0.02);
+  });
+
+  ensureAudio();
+
+})();
+</script>
+</body>
+</html>
