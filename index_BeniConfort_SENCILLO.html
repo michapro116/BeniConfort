@@ -3,501 +3,667 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>VoxShop — Catálogo con búsqueda por voz</title>
+<title>Letras que suenan — Tipografía con sonido</title>
 <meta name="theme-color" content="#0a0806">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0a0806; --ink:#f5efe2; --dim:#a39880; --line:rgba(212,175,55,.18);
-    --gold:#d4af37; --gold-l:#ffe9a8;
+    --bg:#0a0806;
+    --ink:#f5efe2;
+    --dim:#a39880;
+    --line:rgba(212,175,55,.18);
+    --gold:#d4af37;
+    --gold-l:#ffe9a8;
     --grad:linear-gradient(135deg,#8c6d1f,#d4af37 40%,#ffe9a8 55%,#d4af37 70%,#8c6d1f);
+    --accent:#d4af37;
+    --accent-soft:rgba(212,175,55,.14);
+    --ease:cubic-bezier(.2,.8,.2,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{-webkit-text-size-adjust:100%}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{
-    background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
-    font-weight:300;line-height:1.6;padding-bottom:40px;min-height:100svh;
-    background-image:radial-gradient(800px 500px at 50% -10%,rgba(212,175,55,.08),transparent 70%);
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-weight:300;line-height:1.6;min-height:100svh;
+    background-image:
+      radial-gradient(900px 600px at 50% -20%,rgba(212,175,55,.10),transparent 70%),
+      radial-gradient(700px 500px at 90% 100%,rgba(140,109,31,.08),transparent 70%);
+    transition:background-image .8s var(--ease);
   }
-  .mono{font-family:'IBM Plex Mono',monospace}
-  .serif{font-family:'Fraunces',Georgia,serif;letter-spacing:-.02em}
-
-  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400}
+  .serif{font-family:'Fraunces',Georgia,serif;font-weight:400;letter-spacing:-.02em;line-height:1.1}
 
   /* Header */
-  .hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;max-width:1100px;margin:0 auto}
-  .brand{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:'Fraunces',serif;font-size:1.15rem;letter-spacing:.3em;font-weight:500;color:var(--ink);padding-left:.3em}
-  .brand .dot{width:8px;height:8px;border-radius:50% 50% 50% 0;background:var(--grad);transform:rotate(-45deg);box-shadow:0 0 14px var(--gold)}
-  .cart{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 20px;max-width:1100px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-family:'Fraunces',serif;font-size:1.1rem;letter-spacing:.28em;font-weight:500;padding-left:.28em}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--grad);box-shadow:0 0 14px var(--gold);animation:breathe 3s ease-in-out infinite}
+  @keyframes breathe{50%{transform:scale(1.3);box-shadow:0 0 22px var(--gold)}}
+  .hdr-right{display:flex;gap:8px;align-items:center}
+  .chip-btn{
+    display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px;border-radius:999px;
+    background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--dim);
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+    cursor:pointer;transition:border-color .3s,color .3s,background .3s;
+  }
+  .chip-btn:hover{border-color:rgba(212,175,55,.5);color:var(--ink)}
+  .chip-btn.on{background:var(--accent-soft);border-color:rgba(212,175,55,.5);color:var(--gold-l)}
 
   /* Hero */
-  .hero{text-align:center;padding:20px 16px 34px}
-  .hero h1{font-family:'Fraunces',serif;font-size:clamp(2rem,8vw,3.2rem);line-height:1.02;font-weight:400;letter-spacing:-.025em;margin-bottom:12px}
-  .hero h1 em{font-style:italic;background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
+  .hero{max-width:1000px;margin:0 auto;padding:30px 22px 40px;text-align:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;margin-bottom:22px;
+    background:rgba(255,255,255,.04);border:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:#d8cdb4;
+  }
+  .eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold-l);box-shadow:0 0 12px var(--gold-l)}
+  .hero h1{
+    font-family:'Fraunces',serif;font-weight:400;
+    font-size:clamp(2rem,7vw,3.6rem);line-height:1.06;letter-spacing:-.025em;margin-bottom:16px;
+    min-height:3.4em;display:flex;flex-direction:column;justify-content:center;
+  }
+  .hero h1 em{font-style:italic}
+  .hero h1 em span{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
   @keyframes flow{to{background-position:220% center}}
-  .hero p{color:var(--dim);font-size:.92rem;max-width:44ch;margin:0 auto}
+  .hero p{color:var(--dim);font-size:.94rem;max-width:50ch;margin:0 auto}
 
-  /* Botón de voz */
-  .voice-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:26px auto 10px;max-width:520px}
-  .voice-btn{
-    position:relative;width:112px;height:112px;border-radius:50%;border:0;cursor:pointer;
-    background:var(--grad);background-size:220% auto;color:#141007;
-    display:grid;place-items:center;
-    box-shadow:0 22px 60px -20px rgba(212,175,55,.9),0 0 0 1px rgba(212,175,55,.35) inset;
-    transition:transform .25s,box-shadow .35s,background-position .7s;
+  /* Cursor de escritura */
+  .tw-cursor{
+    display:inline-block;width:2px;height:1em;background:var(--accent);
+    vertical-align:-.12em;margin-left:2px;
+    animation:blink 1s steps(2) infinite;
+    box-shadow:0 0 10px var(--accent);
+  }
+  .tw-cursor.done{animation:blink 1.2s steps(2) infinite;opacity:.35}
+  @keyframes blink{50%{opacity:0}}
+
+  /* Stage */
+  .stage-section{max-width:900px;margin:0 auto;padding:0 22px 60px}
+
+  /* Selector de estilos */
+  .styles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:26px}
+  @media(min-width:680px){.styles{grid-template-columns:repeat(4,1fr);gap:12px}}
+  .style-btn{
+    position:relative;text-align:left;padding:14px 16px;border-radius:14px;cursor:pointer;
+    background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--ink);
+    font-family:'Inter',sans-serif;transition:transform .3s var(--ease),border-color .3s,background .3s,box-shadow .3s;
     -webkit-tap-highlight-color:transparent;
   }
-  .voice-btn:hover{background-position:120% center;transform:scale(1.04)}
-  .voice-btn:active{transform:scale(.96)}
-  .voice-btn svg{width:42px;height:42px;stroke:#141007;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .voice-btn .ripple{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(255,233,168,.5);opacity:0;pointer-events:none}
-  .voice-btn.listening{animation:pulseBtn 1.6s ease-in-out infinite}
-  .voice-btn.listening .ripple{animation:rippleOut 1.8s ease-out infinite}
-  .voice-btn.listening .ripple.d2{animation-delay:.6s}
-  .voice-btn.listening .ripple.d3{animation-delay:1.2s}
-  @keyframes pulseBtn{0%,100%{box-shadow:0 22px 60px -20px rgba(212,175,55,.9),0 0 0 0 rgba(255,77,109,.7)}50%{box-shadow:0 22px 60px -20px rgba(212,175,55,.9),0 0 0 22px rgba(255,77,109,0)}}
-  @keyframes rippleOut{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
-  .voice-label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);text-align:center}
-  .voice-label b{color:var(--gold-l);font-weight:400}
+  .style-btn:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.4);background:rgba(255,255,255,.05)}
+  .style-btn.on{
+    background:var(--btn-accent-soft,rgba(212,175,55,.14));
+    border-color:var(--btn-accent,var(--gold));
+    box-shadow:0 12px 30px -14px var(--btn-accent,var(--gold));
+  }
+  .style-btn .name{
+    font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;letter-spacing:-.01em;
+    display:flex;align-items:center;gap:8px;margin-bottom:4px;
+  }
+  .style-btn .name .dot{width:7px;height:7px;border-radius:50%;background:var(--btn-accent,var(--gold));box-shadow:0 0 10px var(--btn-accent,var(--gold));flex:none}
+  .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4}
 
-  /* Transcript en vivo */
-  .transcript{
-    min-height:52px;margin:14px auto 0;max-width:600px;padding:14px 20px;
-    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;
-    font-family:'IBM Plex Mono',monospace;font-size:.82rem;line-height:1.5;
-    color:var(--dim);text-align:center;
-    opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;
+  /* Escenario */
+  .stage{
+    position:relative;padding:42px 32px;border-radius:20px;min-height:280px;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008)),
+      radial-gradient(400px 200px at 50% 0%,var(--accent-soft),transparent 70%);
+    border:1px solid rgba(212,175,55,.2);
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .6s,background .6s;
+    overflow:hidden;
   }
-  .transcript.on{opacity:1;transform:none}
-  .transcript b{color:var(--gold-l);font-weight:400}
-  .transcript .heard{color:var(--ink)}
-
-  /* Fallback texto */
-  .fallback{display:flex;gap:8px;margin:16px auto 0;max-width:520px}
-  .fallback input{
-    flex:1;min-height:48px;padding:0 16px;border-radius:12px;
-    background:rgba(0,0,0,.4);border:1px solid var(--line);color:var(--ink);
-    font-family:'Inter',sans-serif;font-size:16px;font-weight:300;
+  .stage::before{
+    content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
   }
-  .fallback input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15)}
-  .fallback button{
-    min-height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--line);
-    background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;
-    font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-  }
-
-  /* Barra de filtros activos */
-  .filters-bar{
-    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
-    margin:22px auto 6px;max-width:680px;min-height:34px;
-  }
-  .chip{
-    display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 14px;border-radius:999px;
-    background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.4);
-    font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--gold-l);
-  }
-  .chip button{
-    background:none;border:0;color:var(--gold-l);cursor:pointer;font-size:1rem;line-height:1;
-    padding:0;opacity:.7;width:18px;height:18px;display:grid;place-items:center;border-radius:50%;
-  }
-  .chip button:hover{background:rgba(255,233,168,.15);opacity:1}
-  .chip-clear{background:rgba(255,255,255,.06);border-color:var(--line);color:var(--dim);cursor:pointer;padding:6px 14px}
-
-  /* Contador */
-  .count{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:8px 0 22px}
-  .count b{color:var(--gold-l);font-weight:400}
-
-  /* Grid productos */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px;padding-bottom:40px}
-  .prod{
-    position:relative;border-radius:16px;overflow:hidden;
-    border:1px solid var(--line);background:#0d0a07;
-    transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
-    animation:fadeIn .4s ease both;
-  }
-  .prod:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.5);box-shadow:0 24px 60px -30px rgba(212,175,55,.7)}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}}
-  .prod .img{
-    aspect-ratio:1;display:grid;place-items:center;font-size:3.4rem;position:relative;
-    background:linear-gradient(160deg,var(--c1,#1a1a2e),var(--c2,#0d0a07));
-  }
-  .prod .img::after{
-    content:'';position:absolute;inset:0;
-    background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.18),transparent 55%);
-    pointer-events:none;
-  }
-  .prod .info{padding:12px 12px 14px}
-  .prod .brand-mini{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-  .prod .name{font-family:'Fraunces',serif;font-size:.98rem;font-weight:500;line-height:1.2;margin-bottom:8px;color:var(--ink)}
-  .prod .price{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--gold-l);margin-bottom:8px}
-  .prod .tags{display:flex;flex-wrap:wrap;gap:4px}
-  .tag{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--dim);border:1px solid rgba(255,255,255,.05)}
-  .tag.match{background:rgba(212,175,55,.22);color:var(--gold-l);border-color:rgba(212,175,55,.4)}
-
-  /* Vacío */
-  .empty{text-align:center;padding:56px 20px;grid-column:1/-1}
-  .empty .ico{font-size:3rem;margin-bottom:14px;opacity:.5}
-  .empty h3{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:8px}
-  .empty p{color:var(--dim);font-size:.88rem;max-width:40ch;margin:0 auto 16px}
-  .empty button{
-    min-height:44px;padding:0 22px;border-radius:999px;border:1px solid var(--line);
-    background:transparent;color:var(--ink);cursor:pointer;
-    font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
-  }
-  .empty button:hover{border-color:var(--gold);color:var(--gold-l)}
-
-  /* Aviso no soportado */
-  .warn{
-    max-width:520px;margin:12px auto 0;padding:11px 16px;border-radius:12px;
-    background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.35);
-    font-size:.78rem;color:#ffb3c1;text-align:center;line-height:1.5;
+  .stage-display{
+    position:relative;z-index:1;
+    font-family:'Fraunces',serif;font-weight:400;font-style:normal;
+    font-size:clamp(1.15rem,3.4vw,1.7rem);line-height:1.45;letter-spacing:-.01em;
+    color:var(--ink);text-align:center;max-width:100%;word-break:break-word;
+    min-height:1.5em;
+    transition:font-family .5s;
   }
 
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+  /* Controles */
+  .controls{display:flex;align-items:center;gap:14px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    min-height:46px;padding:0 22px;border-radius:999px;border:1px solid transparent;cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    transition:transform .25s var(--ease),background .3s,border-color .3s,box-shadow .3s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .btn-gold{background:var(--grad);background-size:220% auto;color:#141007;box-shadow:0 12px 36px -16px rgba(212,175,55,.9)}
+  .btn-gold:hover{background-position:120% center;transform:translateY(-2px)}
+  .btn-ghost{border-color:var(--line);color:var(--ink);background:rgba(255,255,255,.03)}
+  .btn-ghost:hover{border-color:rgba(212,175,55,.5);background:rgba(212,175,55,.08)}
+  .btn:active{transform:scale(.97)}
+  .volume-wrap{display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+  .volume-wrap svg{width:16px;height:16px;stroke:var(--dim);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .volume-wrap input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100px;height:3px;border-radius:99px;
+    background:rgba(212,175,55,.25);outline:none;
+  }
+  .volume-wrap input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;
+    background:var(--gold-l);cursor:pointer;box-shadow:0 0 12px var(--gold);
+  }
+  .volume-wrap input[type=range]::-moz-range-thumb{
+    width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;border:0;
+    box-shadow:0 0 12px var(--gold);
+  }
+
+  /* Tarjetas explicativas */
+  .explainer{max-width:1100px;margin:0 auto;padding:20px 22px 80px}
+  .explainer-head{max-width:600px;margin-bottom:36px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:14px;
+  }
+  .kicker::before{content:'';width:24px;height:1px;background:var(--gold);opacity:.6}
+  .explainer h2{font-family:'Fraunces',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px}
+  .explainer h2 em{font-style:italic}
+  .explainer-head p{color:var(--dim);font-size:.92rem;max-width:56ch}
+  .cards{display:grid;gap:14px}
+  @media(min-width:720px){.cards{grid-template-columns:repeat(2,1fr);gap:16px}}
+  .card{
+    padding:26px 24px;border-radius:16px;
+    background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.008));
+    border:1px solid var(--line);
+  }
+  .card .num{
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.3em;
+    color:var(--gold);margin-bottom:14px;display:block;
+  }
+  .card h3{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:500;margin-bottom:10px;letter-spacing:-.01em}
+  .card p{color:var(--dim);font-size:.88rem;line-height:1.7}
+  .card p b{color:var(--gold-l);font-weight:400}
+
+  /* Footer */
+  .foot{text-align:center;padding:40px 22px 50px;border-top:1px solid var(--line);max-width:1100px;margin:0 auto}
+  .foot p{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,185,150,.5);line-height:2}
+  .foot .d{color:var(--gold);margin:0 8px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition-duration:.01ms!important}
+    .tw-cursor{animation:none;opacity:.5}
+  }
 </style>
 </head>
 <body>
 
 <header class="hdr">
-  <a href="#" class="brand"><span class="dot"></span>VOXSHOP</a>
-  <div class="cart">Calzado</div>
+  <a href="#" class="brand"><span class="dot"></span>SONOR</a>
+  <div class="hdr-right">
+    <button class="chip-btn on" id="soundToggle" type="button" aria-label="Activar o desactivar sonido">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9a5 5 0 0 1 0 6"/></svg>
+      <span id="soundLabel">Sonido ON</span>
+    </button>
+  </div>
 </header>
 
 <section class="hero">
-  <h1 class="serif">Busca <em>hablando</em></h1>
-  <p>Toca el micrófono y di lo que quieres. Por ejemplo: <strong style="color:var(--gold-l)">«quiero tenis negros talla cuarenta y uno»</strong></p>
+  <span class="eyebrow">Tipografía que se escucha</span>
+  <h1 class="serif" id="heroTitle"></h1>
+  <p>El mismo texto, cuatro personalidades distintas. Toca cada estilo y escucha cómo cambia la marca.</p>
 </section>
 
-<div class="wrap">
-  <div class="voice-wrap">
-    <button class="voice-btn" id="voiceBtn" type="button" aria-label="Buscar por voz">
-      <span class="ripple"></span><span class="ripple d2"></span><span class="ripple d3"></span>
-      <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg>
-    </button>
-    <p class="voice-label" id="voiceLabel">Toca y <b>habla</b></p>
+<main class="stage-section">
+  <div class="styles" id="styles"></div>
+
+  <div class="stage" id="stage">
+    <div class="stage-display" id="display"></div>
   </div>
 
-  <div class="transcript" id="transcript" role="status" aria-live="polite"></div>
+  <div class="controls">
+    <button class="btn btn-gold" id="replay" type="button">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"/><path d="M3 3v6h6M21 21v-6h-6"/></svg>
+      Repetir
+    </button>
+    <div class="volume-wrap">
+      <svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15 9a4 4 0 0 1 0 6"/></svg>
+      <input type="range" id="volume" min="0" max="100" value="70" aria-label="Volumen">
+    </div>
+  </div>
+</main>
 
-  <form class="fallback" id="fallback" autocomplete="off">
-    <input type="text" id="textInput" placeholder="…o escribe: tenis talla 41" aria-label="Buscar escribiendo">
-    <button type="submit">Buscar</button>
-  </form>
+<section class="explainer">
+  <div class="explainer-head">
+    <span class="kicker">Cómo se hace bien</span>
+    <h2>El sonido es la <em>marca</em></h2>
+    <p>Poner sonido es fácil. Poner el sonido <em>correcto</em> es otra cosa. Estas son las reglas que separan un detalle de lujo de una molestia.</p>
+  </div>
 
-  <div class="filters-bar" id="filtersBar"></div>
-  <p class="count" id="count"></p>
-  <div class="grid" id="grid"></div>
-</div>
+  <div class="cards">
+    <article class="card">
+      <span class="num">01 / COHERENCIA</span>
+      <h3>El sonido va con la marca</h3>
+      <p>No existe "un sonido de escribir". Existe <b>el sonido de esta marca escribiendo</b>. Una clínica estética no suena como un estudio de arquitectura. Elige (o diseña) el que represente tu negocio.</p>
+    </article>
+    <article class="card">
+      <span class="num">02 / SUBTILEZA</span>
+      <h3>Si lo notas, está muy fuerte</h3>
+      <p>El sonido tiene que ser un <b>detalle</b>, no un protagonista. Volumen bajo por defecto. Que el visitante lo descubra, no que lo sufra. Un buen sonido de web no se oye: se <em>siente</em>.</p>
+    </article>
+    <article class="card">
+      <span class="num">03 / VARIACIÓN</span>
+      <h3>Nunca el mismo sonido dos veces</h3>
+      <p>Si cada letra suena idéntica, el cerebro lo detecta como una máquina y se vuelve molesto. La solución: <b>pitch, volumen y probabilidad ligeramente distintos</b> en cada tecla. Eso es lo que lo hace sonar humano.</p>
+    </article>
+    <article class="card">
+      <span class="num">04 / CONTROL</span>
+      <h3>Siempre un botón de silencio</h3>
+      <p>Hay gente que navega de noche, en el bus, con audífonos. Que tu página tenga sonido es tu decisión; que lo puedan apagar debe ser <b>un derecho suyo</b>. Un mute visible, siempre, sin esconderlo.</p>
+    </article>
+    <article class="card">
+      <span class="num">05 / SINCRONÍA</span>
+      <h3>El sonido va con la letra, no aparte</h3>
+      <p>El error más común es poner un loop de fondo. Lo correcto es que <b>cada letra que aparece dispare su propio sonido</b>. Así el oído y el ojo van sincronizados y el efecto se siente mágico, no decorativo.</p>
+    </article>
+    <article class="card">
+      <span class="num">06 / ACCESIBILIDAD</span>
+      <h3>Respeta a quien no quiere estímulos</h3>
+      <p>Hay personas con sensibilidad auditiva o vestibular. Usa <b><span class="mono">prefers-reduced-motion</span></b> para bajar la intensidad o eliminar animaciones. Nunca sonido automático sin interacción previa: los navegadores de todos modos lo bloquean.</p>
+    </article>
+  </div>
+</section>
+
+<footer class="foot">
+  <p>Hecho a mano con HTML, CSS y JavaScript<span class="d">◆</span>Web Audio API<span class="d">◆</span>Sin archivos de audio</p>
+</footer>
 
 <script>
 (function(){
   'use strict';
 
   /* =========================================================
-     CATÁLOGO (en un negocio real esto vendría de productos.json)
+     AUDIO: sintetizador de teclas (sin archivos MP3)
      ========================================================= */
-  var PRODUCTS = [
-    { id:1,  name:'Air Zoom Pegasus', brand:'Nike',     category:'tenis',     gender:'hombre', colors:['negro','blanco'],   sizes:[39,40,41,42,43,44], price:850,  emoji:'👟', c1:'#1a1a2e', c2:'#0d0a07' },
-    { id:2,  name:'Ultraboost 22',    brand:'Adidas',   category:'tenis',     gender:'hombre', colors:['azul','negro'],    sizes:[40,41,42,43],       price:1100, emoji:'👟', c1:'#0f3460', c2:'#0d0a07' },
-    { id:3,  name:'Cloud Runner',     brand:'On',       category:'tenis',     gender:'mujer',  colors:['rosa','blanco'],   sizes:[36,37,38,39],       price:980,  emoji:'👟', c1:'#533483', c2:'#0d0a07' },
-    { id:4,  name:'Stan Smith',       brand:'Adidas',   category:'tenis',     gender:'unisex', colors:['blanco','verde'],  sizes:[38,39,40,41,42,43,44], price:720, emoji:'👟', c1:'#2d6a4f', c2:'#0d0a07' },
-    { id:5,  name:'Chuck Taylor',     brand:'Converse', category:'tenis',     gender:'unisex', colors:['negro','blanco','rojo'], sizes:[37,38,39,40,41,42,43,44], price:550, emoji:'👟', c1:'#7a0c0c', c2:'#0d0a07' },
-    { id:6,  name:'Chelsea Boot',     brand:'Clarks',   category:'botas',     gender:'hombre', colors:['cafe','negro'],    sizes:[40,41,42,43,44],    price:1350, emoji:'👢', c1:'#5d3a1a', c2:'#0d0a07' },
-    { id:7,  name:'Heels Classic',    brand:'Aldo',     category:'tacones',   gender:'mujer',  colors:['negro','rojo'],    sizes:[35,36,37,38,39],    price:890,  emoji:'👠', c1:'#7a0c0c', c2:'#0d0a07' },
-    { id:8,  name:'Sandalia Verano',  brand:'Havaianas', category:'sandalias', gender:'mujer',  colors:['dorado','plateado'], sizes:[35,36,37,38,39,40], price:320, emoji:'🩴', c1:'#b8860b', c2:'#0d0a07' },
-    { id:9,  name:'Trail Runner',     brand:'Salomon',  category:'tenis',     gender:'hombre', colors:['verde','negro'],   sizes:[41,42,43,44,45],    price:1250, emoji:'👟', c1:'#2d6a4f', c2:'#0d0a07' },
-    { id:10, name:'Slip-On Clásico',  brand:'Vans',     category:'tenis',     gender:'unisex', colors:['negro','blanco','azul'], sizes:[38,39,40,41,42,43,44], price:620, emoji:'👟', c1:'#1b263b', c2:'#0d0a07' },
-    { id:11, name:'Oxford Elegante',  brand:'Clarks',   category:'zapatos',   gender:'hombre', colors:['cafe','negro'],    sizes:[39,40,41,42,43,44], price:1450, emoji:'👞', c1:'#5d3a1a', c2:'#0d0a07' },
-    { id:12, name:'Bailarina',        brand:'Zara',     category:'zapatos',   gender:'mujer',  colors:['beige','negro'],   sizes:[35,36,37,38,39],    price:480,  emoji:'👞', c1:'#a68a64', c2:'#0d0a07' }
-  ];
+  var actx = null, master = null;
+  var soundOn = true;
+  var volume = 0.7;
+  var currentStyle = 'mechanical';
 
-  /* =========================================================
-     PARSER: el verdadero cerebro de la búsqueda por voz
-     ========================================================= */
+  function ensureAudio(){
+    if (actx){
+      if (actx.state === 'suspended') actx.resume();
+      return true;
+    }
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    actx = new AC();
+    master = actx.createGain();
+    master.gain.value = volume;
+    master.connect(actx.destination);
 
-  // Quita tildes y pasa a minúsculas para comparar
-  function norm(s){
-    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    // Reverb corto (impulso generado en tiempo real)
+    var len = actx.sampleRate * 1.1;
+    var impulse = actx.createBuffer(2, len, actx.sampleRate);
+    for (var ch = 0; ch < 2; ch++){
+      var data = impulse.getChannelData(ch);
+      for (var i = 0; i < len; i++){
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+      }
+    }
+    var verb = actx.createConvolver();
+    verb.buffer = impulse;
+    var wet = actx.createGain();
+    wet.gain.value = 0.16;
+    master.connect(verb);
+    verb.connect(wet);
+    wet.connect(actx.destination);
+
+    return true;
   }
 
-  // Convierte "cuarenta y uno", "cuarenta y un", "41" o "treinta y cinco" a número
-  var TENS = { veinte:20, treinta:30, cuarenta:40, cincuenta:50 };
-  var UNITS = { uno:1, un:1, dos:2, tres:3, cuatro:4, cinco:5, seis:6, siete:7, ocho:8, nueve:9 };
-  var ONEWORD = {
-    veintiuno:21, veintiun:21, veintidos:22, veintitres:23, veinticuatro:24,
-    veinticinco:25, veintiseis:26, veintisiete:27, veintiocho:28, veintinueve:29
+  /* ---- MECÁNICA: máquina de escribir de los 50 ---- */
+  function playMechanical(){
+    if (!soundOn || !actx) return;
+    var t = actx.currentTime;
+    var rnd = Math.random();
+
+    // Golpe: ruido filtrado
+    var len = 0.05;
+    var buf = actx.createBuffer(1, Math.floor(actx.sampleRate * len), actx.sampleRate);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < d.length; i++){
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+    }
+    var src = actx.createBufferSource();
+    src.buffer = buf;
+    var bp = actx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 2200 + rnd * 1000;
+    bp.Q.value = 1.5;
+    var g1 = actx.createGain();
+    g1.gain.value = 0.55;
+    src.connect(bp); bp.connect(g1); g1.connect(master);
+    src.start(t);
+
+    // Golpe grave debajo
+    var osc = actx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180 + rnd * 40, t);
+    osc.frequency.exponentialRampToValueAtTime(70, t + 0.04);
+    var g2 = actx.createGain();
+    g2.gain.setValueAtTime(0.35, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    osc.connect(g2); g2.connect(master);
+    osc.start(t); osc.stop(t + 0.06);
+  }
+
+  /* ---- SUAVE: cristal, luz, susurro ---- */
+  function playSoft(){
+    if (!soundOn || !actx) return;
+    var t = actx.currentTime;
+    var rnd = Math.random();
+
+    // Tick principal, muy corto
+    var osc = actx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 1300 + rnd * 600;
+    var g = actx.createGain();
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.20, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    osc.connect(g); g.connect(master);
+    osc.start(t); osc.stop(t + 0.1);
+
+    // Shimmer
+    var osc2 = actx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = 3200 + rnd * 800;
+    var g2 = actx.createGain();
+    g2.gain.setValueAtTime(0.05, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    osc2.connect(g2); g2.connect(master);
+    osc2.start(t); osc2.stop(t + 0.06);
+  }
+
+  /* ---- DIGITAL: terminal, sistema ---- */
+  function playDigital(){
+    if (!soundOn || !actx) return;
+    var t = actx.currentTime;
+    var notes = [880, 988, 1047, 1175, 1319, 1568];
+    var osc = actx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = notes[Math.floor(Math.random() * notes.length)];
+    var lp = actx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 4000;
+    var g = actx.createGain();
+    g.gain.setValueAtTime(0.13, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+    osc.connect(lp); lp.connect(g); g.connect(master);
+    osc.start(t); osc.stop(t + 0.05);
+  }
+
+  /* ---- PAPEL: lápiz sobre hoja ---- */
+  function playPaper(){
+    if (!soundOn || !actx) return;
+    var t = actx.currentTime;
+    var len = 0.04;
+    var buf = actx.createBuffer(1, Math.floor(actx.sampleRate * len), actx.sampleRate);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < d.length; i++){
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+    }
+    var src = actx.createBufferSource();
+    src.buffer = buf;
+    var lp = actx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 2800 + Math.random() * 2000;
+    var g = actx.createGain();
+    g.gain.value = 0.26;
+    src.connect(lp); lp.connect(g); g.connect(master);
+    src.start(t);
+  }
+
+  /* ---- CAMPANA al final de frase ---- */
+  function playBell(){
+    if (!soundOn || !actx) return;
+    var t = actx.currentTime;
+    var freqs = [1200, 1800, 2400];
+    freqs.forEach(function(f, i){
+      var osc = actx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      var g = actx.createGain();
+      g.gain.setValueAtTime(0.08 / (i + 1), t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.5 + i * 0.15);
+      osc.connect(g); g.connect(master);
+      osc.start(t); osc.stop(t + 0.7);
+    });
+  }
+
+  var players = {
+    mechanical: playMechanical,
+    soft: playSoft,
+    digital: playDigital,
+    paper: playPaper
   };
 
-  function extractNumber(text){
-    // número directo (ej. "41")
-    var m = text.match(/\b(\d{1,3})\b/);
-    if (m) return parseInt(m[1], 10);
-    // "veinticinco", etc.
-    m = text.match(/\b(veintiuno|veintiun|veintidos|veintitres|veinticuatro|veinticinco|veintiseis|veintisiete|veintiocho|veintinueve)\b/);
-    if (m) return ONEWORD[m[1]];
-    // "cuarenta y uno"
-    m = text.match(/\b(veinte|treinta|cuarenta|cincuenta)(?:\s+y\s+(uno|un|dos|tres|cuatro|cinco|seis|siete|ocho|nueve))?\b/);
-    if (m){
-      var t = TENS[m[1]] || 0;
-      var u = m[2] ? (UNITS[m[2]] || 0) : 0;
-      return t + u;
-    }
-    return null;
-  }
+  /* =========================================================
+     MÁQUINA DE ESCRIBIR
+     ========================================================= */
+  var typingTimer = null;
 
-  var COLORS = ['negro','negra','blanco','blanca','rojo','roja','azul','verde','rosa','rosado','gris','cafe','beige','dorado','plateado','morado','violeta','amarillo','naranja','celeste','marron'];
+  function typewrite(el, text, styleKey, onDone){
+    if (typingTimer){ clearTimeout(typingTimer); typingTimer = null; }
+    el.innerHTML = '';
 
-  function extractColor(text){
-    for (var i=0;i<COLORS.length;i++){
-      if (new RegExp('\\b' + COLORS[i] + 's?\\b').test(text)){
-        // singular
-        return COLORS[i].replace(/a$/,'o').replace(/s$/,'');
+    var textNode = document.createTextNode('');
+    var cursor = document.createElement('span');
+    cursor.className = 'tw-cursor';
+    el.appendChild(textNode);
+    el.appendChild(cursor);
+
+    var play = players[styleKey] || playMechanical;
+    var probability = {
+      mechanical: 0.85,
+      soft: 0.55,
+      digital: 0.9,
+      paper: 0.65
+    }[styleKey] || 0.7;
+
+    var i = 0;
+    function step(){
+      if (i >= text.length){
+        cursor.classList.add('done');
+        if (onDone) onDone();
+        return;
       }
+      var ch = text[i];
+      textNode.textContent += ch;
+
+      // Sonido
+      if (ch !== ' '){
+        if (Math.random() < probability) play();
+      }
+
+      // Campana al final de frase
+      if (ch === '.' || ch === '!' || ch === '?'){
+        setTimeout(function(){ playBell(); }, 60);
+      }
+
+      i++;
+
+      // Timing variable
+      var delay = {
+        mechanical: 62,
+        soft: 78,
+        digital: 48,
+        paper: 72
+      }[styleKey] || 60;
+      delay += (Math.random() - 0.5) * 30;
+      if ('.!?'.indexOf(ch) !== -1) delay += 260;
+      else if (',;:'.indexOf(ch) !== -1) delay += 140;
+      else if (ch === ' ') delay += 30;
+
+      typingTimer = setTimeout(step, Math.max(14, delay));
     }
-    return null;
-  }
-
-  var CATS = ['tenis','zapatillas','zapatos','sandalias','botas','tacones','deportivos','casuales','formales'];
-  function extractCategory(text){
-    for (var i=0;i<CATS.length;i++){
-      if (new RegExp('\\b' + CATS[i] + '\\b').test(text)) return CATS[i];
-    }
-    return null;
-  }
-
-  function extractGender(text){
-    if (/\b(hombre|caballero|masculino|varon)\b/.test(text)) return 'hombre';
-    if (/\b(mujer|dama|femenin|senora|chica)\b/.test(text)) return 'mujer';
-    if (/\b(nino|nina|infantil|chico|chica)\b/.test(text)) return 'unisex';
-    return null;
-  }
-
-  // Traduce "tenis"→"tenis", "zapatillas"→"tenis", etc. para que coincida con el catálogo
-  function normalizeCategory(cat){
-    if (!cat) return null;
-    if (cat === 'zapatillas' || cat === 'deportivos') return 'tenis';
-    if (cat === 'formales' || cat === 'casuales') return 'zapatos';
-    return cat;
-  }
-
-  function parseQuery(rawText){
-    var t = norm(rawText);
-    var q = { raw: rawText, size:null, color:null, category:null, gender:null };
-    q.size = extractNumber(t);
-    q.color = extractColor(t);
-    q.category = normalizeCategory(extractCategory(t));
-    q.gender = extractGender(t);
-    return q;
+    step();
   }
 
   /* =========================================================
-     FILTRO
+     ESTILOS
      ========================================================= */
-  function filterProducts(query){
-    return PRODUCTS.filter(function(p){
-      if (query.size && p.sizes.indexOf(query.size) === -1) return false;
-      if (query.color && p.colors.indexOf(query.color) === -1) return false;
-      if (query.category && p.category !== query.category) return false;
-      if (query.gender && p.gender !== query.gender && p.gender !== 'unisex') return false;
-      return true;
+  var STYLES = {
+    mechanical: {
+      label: 'Mecánica',
+      desc: 'Máquina de los 50',
+      accent: '#d4af37',
+      soft: 'rgba(212,175,55,.14)',
+      sample: 'Una marca clásica no grita. Deja huella con el peso exacto de cada letra.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    soft: {
+      label: 'Suave',
+      desc: 'Cristal y susurro',
+      accent: '#f6a5c0',
+      soft: 'rgba(246,165,192,.14)',
+      sample: 'Hay una belleza que solo aparece cuando bajas el volumen. Y se siente.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    digital: {
+      label: 'Digital',
+      desc: 'Terminal y código',
+      accent: '#38e8ff',
+      soft: 'rgba(56,232,255,.14)',
+      sample: 'System online. Cada tecla es una decisión. Cada decisión, un resultado.',
+      font: "'IBM Plex Mono', monospace"
+    },
+    paper: {
+      label: 'Papel',
+      desc: 'Lápiz sobre hoja',
+      accent: '#ffe9a8',
+      soft: 'rgba(255,233,168,.14)',
+      sample: 'Escribo porque hay ideas que solo existen cuando las pongo en fila.',
+      font: "'Fraunces', Georgia, serif"
+    }
+  };
+
+  var stylesBox = document.getElementById('styles');
+  var display = document.getElementById('display');
+  var stage = document.getElementById('stage');
+  var heroTitle = document.getElementById('heroTitle');
+
+  Object.keys(STYLES).forEach(function(key){
+    var s = STYLES[key];
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'style-btn' + (key === currentStyle ? ' on' : '');
+    btn.dataset.style = key;
+    btn.style.setProperty('--btn-accent', s.accent);
+    btn.style.setProperty('--btn-accent-soft', s.soft);
+    btn.innerHTML =
+      '<div class="name"><span class="dot"></span>' + s.label + '</div>' +
+      '<div class="desc">' + s.desc + '</div>';
+    btn.addEventListener('click', function(){
+      selectStyle(key);
     });
+    stylesBox.appendChild(btn);
+  });
+
+  function selectStyle(key){
+    currentStyle = key;
+    var s = STYLES[key];
+
+    // UI
+    document.querySelectorAll('.style-btn').forEach(function(b){
+      b.classList.toggle('on', b.dataset.style === key);
+    });
+    document.documentElement.style.setProperty('--accent', s.accent);
+    document.documentElement.style.setProperty('--accent-soft', s.soft);
+    stage.style.borderColor = s.soft;
+    display.style.fontFamily = s.font;
+
+    // Audio (primera interacción)
+    ensureAudio();
+
+    // Escribir texto nuevo
+    typewrite(display, s.sample, key);
   }
 
   /* =========================================================
-     RENDER
+     HERO: se escribe solo al cargar (con sonido al primer toque)
      ========================================================= */
-  var grid = document.getElementById('grid');
-  var countEl = document.getElementById('count');
-  var filtersBar = document.getElementById('filtersBar');
-  var state = { query:{} };
+  function typeHero(){
+    heroTitle.innerHTML = '';
+    var line1 = document.createElement('div');
+    var line2 = document.createElement('div');
+    var em = document.createElement('em');
+    heroTitle.appendChild(line1);
+    heroTitle.appendChild(line2);
+    line2.appendChild(em);
 
-  function render(){
-    var q = state.query;
-    var results = filterProducts(q);
-    grid.innerHTML = '';
+    var text1 = 'Letras que ';
+    var text2a = 'se ';
+    var text2b = 'escuchan.';
 
-    // contador
-    if (Object.keys(q).some(function(k){ return k !== 'raw' && q[k]; })){
-      countEl.innerHTML = 'Encontré <b>' + results.length + '</b> ' + (results.length === 1 ? 'producto' : 'productos');
-    } else {
-      countEl.innerHTML = '<b>' + results.length + '</b> productos en el catálogo';
+    // Escribimos las 3 partes en secuencia, sin sonido (aún no hay gesto)
+    function typeInto(node, text, speed, done){
+      var i = 0;
+      function step(){
+        if (i >= text.length){ if (done) done(); return; }
+        node.textContent += text[i];
+        i++;
+        setTimeout(step, speed + (Math.random() - 0.5) * 40);
+      }
+      step();
     }
 
-    // chips de filtros activos
-    filtersBar.innerHTML = '';
-    var chips = [];
-    if (q.category) chips.push({ k:'category', label:q.category });
-    if (q.color) chips.push({ k:'color', label:q.color });
-    if (q.gender) chips.push({ k:'gender', label:q.gender });
-    if (q.size) chips.push({ k:'size', label:'talla ' + q.size });
-
-    chips.forEach(function(c){
-      var el = document.createElement('span');
-      el.className = 'chip';
-      el.innerHTML = c.label + ' <button type="button" aria-label="Quitar filtro">×</button>';
-      el.querySelector('button').addEventListener('click', function(){
-        delete state.query[c.k];
-        render();
+    typeInto(line1, text1, 55, function(){
+      typeInto(em, text2a, 55, function(){
+        typeInto(em, text2b, 55, function(){});
       });
-      filtersBar.appendChild(el);
-    });
-    if (chips.length){
-      var clear = document.createElement('button');
-      clear.type = 'button';
-      clear.className = 'chip chip-clear';
-      clear.textContent = 'Limpiar todo';
-      clear.addEventListener('click', function(){ state.query = {}; render(); });
-      filtersBar.appendChild(clear);
-    }
-
-    // sin resultados
-    if (!results.length){
-      var emp = document.createElement('div');
-      emp.className = 'empty';
-      emp.innerHTML = '<div class="ico">🔍</div><h3 class="serif">Nada por aquí</h3>' +
-        '<p>No encontré productos con esos criterios. Prueba con otros filtros.</p>';
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = 'Ver todo el catálogo';
-      btn.addEventListener('click', function(){ state.query = {}; render(); });
-      emp.appendChild(btn);
-      grid.appendChild(emp);
-      return;
-    }
-
-    // tarjetas
-    results.forEach(function(p){
-      var card = document.createElement('div');
-      card.className = 'prod';
-      var matches = [];
-      if (q.color && p.colors.indexOf(q.color) !== -1) matches.push(q.color);
-      card.innerHTML =
-        '<div class="img" style="--c1:' + p.c1 + ';--c2:' + p.c2 + '">' + p.emoji + '</div>' +
-        '<div class="info">' +
-          '<div class="brand-mini">' + p.brand + '</div>' +
-          '<div class="name">' + p.name + '</div>' +
-          '<div class="price">Bs. ' + p.price + '</div>' +
-          '<div class="tags">' +
-            '<span class="tag' + (q.category === p.category ? ' match' : '') + '">' + p.category + '</span>' +
-            '<span class="tag' + (q.gender === p.gender || p.gender === 'unisex' && q.gender ? ' match' : '') + '">' + p.gender + '</span>' +
-            '<span class="tag' + (q.size && p.sizes.indexOf(q.size) !== -1 ? ' match' : '') + '">' + (q.size || p.sizes[0]) + '–' + p.sizes[p.sizes.length-1] + '</span>' +
-          '</div>' +
-        '</div>';
-      grid.appendChild(card);
     });
   }
 
   /* =========================================================
-     RECONOCIMIENTO DE VOZ
+     CONTROLES
      ========================================================= */
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var voiceBtn = document.getElementById('voiceBtn');
-  var voiceLabel = document.getElementById('voiceLabel');
-  var transcriptEl = document.getElementById('transcript');
-  var fallback = document.getElementById('fallback');
-  var textInput = document.getElementById('textInput');
+  var replay = document.getElementById('replay');
+  replay.addEventListener('click', function(){
+    ensureAudio();
+    var s = STYLES[currentStyle];
+    typewrite(display, s.sample, currentStyle);
+  });
 
-  function showTranscript(html, on){
-    transcriptEl.innerHTML = html;
-    transcriptEl.classList.toggle('on', !!on);
-  }
+  var soundToggle = document.getElementById('soundToggle');
+  var soundLabel = document.getElementById('soundLabel');
+  soundToggle.addEventListener('click', function(){
+    soundOn = !soundOn;
+    soundToggle.classList.toggle('on', soundOn);
+    soundLabel.textContent = soundOn ? 'Sonido ON' : 'Sonido OFF';
+    if (soundOn) ensureAudio();
+  });
 
-  function applyText(text){
-    showTranscript('Escuché: <span class="heard">«' + text + '»</span>', true);
-    var q = parseQuery(text);
-    state.query = q;
-    render();
-
-    // feedback de lo interpretado
-    var parts = [];
-    if (q.category) parts.push(q.category);
-    if (q.color) parts.push(q.color);
-    if (q.gender) parts.push(q.gender);
-    if (q.size) parts.push('talla ' + q.size);
-
-    if (parts.length){
-      showTranscript('Escuché: <span class="heard">«' + text + '»</span><br><b>→ ' + parts.join(' · ') + '</b>', true);
-    } else {
-      showTranscript('Escuché: <span class="heard">«' + text + '»</span><br>No detecté criterios claros. Prueba: <b>«tenis negros talla 41»</b>', true);
-    }
-  }
-
-  if (!SR){
-    // Navegador sin soporte
-    var warn = document.createElement('div');
-    warn.className = 'warn';
-    warn.textContent = 'Tu navegador no soporta reconocimiento de voz. Usa el campo de texto (o el micrófono del teclado del celular).';
-    document.querySelector('.voice-wrap').appendChild(warn);
-    voiceBtn.style.display = 'none';
-    voiceLabel.textContent = 'Búsqueda por texto';
-  } else {
-    var recog = new SR();
-    recog.lang = 'es-419';        // español latinoamericano
-    recog.continuous = false;
-    recog.interimResults = true;
-    recog.maxAlternatives = 1;
-
-    var listening = false;
-
-    voiceBtn.addEventListener('click', function(){
-      if (listening){ recog.stop(); return; }
-      try { recog.start(); } catch(e){}
-    });
-
-    recog.onstart = function(){
-      listening = true;
-      voiceBtn.classList.add('listening');
-      voiceLabel.innerHTML = 'Escuchando… <b>habla ahora</b>';
-      showTranscript('🎤 Escuchando…', true);
-    };
-
-    recog.onresult = function(e){
-      var interim = '', final = '';
-      for (var i = e.resultIndex; i < e.results.length; i++){
-        var txt = e.results[i][0].transcript;
-        if (e.results[i].isFinal) final += txt; else interim += txt;
-      }
-      if (interim){
-        showTranscript('🎤 <span class="heard">' + interim + '…</span>', true);
-      }
-      if (final){
-        applyText(final.trim());
-      }
-    };
-
-    recog.onerror = function(e){
-      listening = false;
-      voiceBtn.classList.remove('listening');
-      voiceLabel.innerHTML = 'Toca y <b>habla</b>';
-      var msg = 'No pude escucharte.';
-      if (e.error === 'not-allowed') msg = 'Permiso de micrófono denegado. Actívalo en tu navegador.';
-      else if (e.error === 'no-speech') msg = 'No escuché nada. Intenta de nuevo.';
-      else if (e.error === 'audio-capture') msg = 'No hay micrófono disponible.';
-      else if (e.error === 'network') msg = 'Sin conexión para el reconocimiento.';
-      showTranscript('<b>' + msg + '</b>', true);
-    };
-
-    recog.onend = function(){
-      listening = false;
-      voiceBtn.classList.remove('listening');
-      voiceLabel.innerHTML = 'Toca y <b>habla</b>';
-    };
-  }
-
-  // Fallback por texto
-  fallback.addEventListener('submit', function(e){
-    e.preventDefault();
-    var v = textInput.value.trim();
-    if (v) applyText(v);
+  var volumeSlider = document.getElementById('volume');
+  volumeSlider.addEventListener('input', function(){
+    volume = volumeSlider.value / 100;
+    if (master) master.gain.value = volume;
   });
 
   /* =========================================================
-     INICIAL
+     INICIO
      ========================================================= */
-  render();
+  typeHero();
+
+  // Primer clic en cualquier parte activa el audio (política del navegador)
+  var activated = false;
+  document.addEventListener('pointerdown', function once(){
+    if (activated) return;
+    activated = true;
+    ensureAudio();
+  }, {once:true});
+
 })();
 </script>
 </body>
