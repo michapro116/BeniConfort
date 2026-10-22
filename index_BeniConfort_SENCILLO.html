@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b12">
 <title>UrbanStep — Catálogo interactivo</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
 :root{--bg:#070a11;--panel:#0d1320;--panel2:#101a2a;--line:rgba(150,180,225,.16);--text:#f5f7fb;--muted:#8e9bb0;--cyan:#38e8ff;--blue:#4387ff;--purple:#a45bff;--green:#16d99a;--pink:#ff4b9a;--gold:#ffc857;--radius:22px;--shadow:0 24px 70px rgba(0,0,0,.38)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 75% -5%,rgba(60,89,180,.18),transparent 38%),radial-gradient(ellipse at 8% 30%,rgba(0,213,255,.07),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.wrap{width:min(1240px,calc(100% - 40px));margin:auto}
@@ -26,203 +25,10 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
 /* FAQ interactiva — función 4 */
 .faq-section{padding:28px 0 76px;scroll-margin-top:90px}.faq-shell{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:start;border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,42px);background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow)}.faq-intro h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.05;letter-spacing:-1.2px;margin:15px 0 12px}.faq-intro p{color:var(--muted);margin:0 0 20px}.faq-contact{display:inline-flex;align-items:center;gap:9px;padding:12px 16px;border-radius:14px;border:1px solid #16d99a55;background:#16d99a12;color:#9df4d5;font-weight:800}.faq-list{display:grid;gap:10px}.faq-item{border:1px solid var(--line);border-radius:16px;background:#ffffff04;overflow:hidden;transition:border-color .2s,background .2s}.faq-item.open{border-color:#38e8ff55;background:#38e8ff08}.faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;border:0;background:transparent;color:var(--text);padding:17px 18px;font-weight:800}.faq-question span:first-child{display:flex;align-items:center;gap:12px}.faq-number{display:grid;place-items:center;flex:0 0 29px;height:29px;border-radius:10px;color:var(--cyan);background:#38e8ff13;font-size:.75rem}.faq-plus{font-size:1.4rem;color:var(--cyan);transition:transform .25s}.faq-item.open .faq-plus{transform:rotate(45deg)}.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}.faq-item.open .faq-answer{grid-template-rows:1fr}.faq-answer-inner{overflow:hidden}.faq-answer p{margin:0;padding:0 18px 18px 59px;color:#aebbd0;font-size:.92rem}.faq-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.faq-quick button{border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:#ffffff06;color:#cbd8e9;font-size:.8rem}.faq-quick button:hover{border-color:var(--cyan);color:var(--cyan)}@media(max-width:760px){.faq-shell{grid-template-columns:1fr;gap:22px}.faq-intro h2{max-width:500px}.faq-answer p{padding-left:18px}.faq-section{padding-bottom:52px}}
 
-/* ============================================================
-   MÓDULO DE UBICACIÓN — UrbanStep
-   ============================================================ */
-.ubication-section{padding:60px 0 80px;scroll-margin-top:90px}
-.ubication-shell{
-  display:grid;
-  grid-template-columns:1fr 1.1fr;
-  gap:36px;
-  align-items:stretch;
-  border:1px solid var(--line);
-  border-radius:28px;
-  padding:clamp(22px,3.5vw,40px);
-  background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);
-  box-shadow:var(--shadow);
-  position:relative;
-  overflow:hidden;
-}
-.ubication-shell::before{
-  content:"";
-  position:absolute;
-  top:-120px;right:-80px;
-  width:380px;height:380px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(56,232,255,.10),transparent 65%);
-  pointer-events:none;
-}
-.ubication-info{display:flex;flex-direction:column;gap:18px;position:relative;z-index:2}
-.ubication-info h2{
-  font-size:clamp(1.7rem,2.8vw,2.4rem);
-  line-height:1.08;letter-spacing:-1.1px;margin:14px 0 4px;
-}
-.ubication-info h2 span{
-  background:linear-gradient(90deg,var(--cyan),#8194ff 70%,#d17aff);
-  background-clip:text;color:transparent;
-}
-.ubication-info > p{
-  color:#aebbd0;font-size:.95rem;margin:0 0 4px;max-width:420px;
-}
-.ubication-address{
-  display:flex;align-items:flex-start;gap:12px;
-  padding:16px 18px;
-  border-radius:16px;
-  border:1px solid #38e8ff30;
-  background:#38e8ff08;
-  font-size:.92rem;color:#dce8f6;line-height:1.5;
-}
-.ubication-address svg{flex:0 0 22px;width:22px;height:22px;color:var(--cyan);margin-top:1px}
-.ubication-address strong{display:block;font-weight:800;color:white;margin-bottom:2px;font-size:.98rem}
-.ubication-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
-.ubication-btn{
-  display:inline-flex;align-items:center;gap:9px;
-  border:0;border-radius:14px;
-  padding:13px 20px;
-  font-weight:800;font-size:.85rem;
-  transition:transform .2s,filter .2s,box-shadow .2s;
-  text-decoration:none;
-}
-.ubication-btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.ubication-btn-primary{
-  background:linear-gradient(100deg,var(--cyan),#4e9dff 55%,#a45bff);
-  color:#051018;
-  box-shadow:0 8px 28px #38e8ff22;
-}
-.ubication-btn-secondary{
-  border:1px solid #25d36655;
-  background:#25d36612;
-  color:#9df4d5;
-}
-.ubication-btn svg{width:18px;height:18px}
-.ubication-map-frame{
-  position:relative;
-  border-radius:22px;
-  overflow:hidden;
-  border:2px solid transparent;
-  background:linear-gradient(145deg,#0d1522,#0a0e18) padding-box,
-             linear-gradient(135deg,rgba(56,232,255,.55),rgba(164,91,255,.35),rgba(56,232,255,.2)) border-box;
-  box-shadow:0 0 0 1px rgba(56,232,255,.12), 0 18px 50px rgba(0,0,0,.55), 0 0 40px rgba(56,232,255,.08);
-  min-height:360px;
-  transition:box-shadow .3s;
-}
-.ubication-map-frame:hover{
-  box-shadow:0 0 0 1px rgba(56,232,255,.25), 0 22px 60px rgba(0,0,0,.6), 0 0 55px rgba(56,232,255,.14);
-}
-#urbanstep-map{
-  width:100%;height:100%;min-height:360px;
-  background:#0a0e18;
-}
-.ubication-map-frame .leaflet-control-attribution{
-  background:rgba(7,10,17,.8);color:#8e9bb0;font-size:.68rem;
-  padding:2px 6px;border-radius:6px 0 0 0;
-}
-.ubication-map-frame .leaflet-control-attribution a{color:#38e8ff}
-.ubication-map-frame .leaflet-control-zoom{
-  border:1px solid rgba(150,180,225,.2);border-radius:10px;overflow:hidden;
-  box-shadow:0 4px 18px rgba(0,0,0,.4);
-}
-.ubication-map-frame .leaflet-control-zoom a{
-  background:rgba(8,13,23,.92);color:#dce8f6;border-bottom:1px solid rgba(150,180,225,.12);
-  width:34px;height:34px;line-height:34px;font-size:1rem;
-  transition:background .2s,color .2s;
-}
-.ubication-map-frame .leaflet-control-zoom a:hover{background:#38e8ff18;color:#38e8ff}
-.ubication-map-frame .leaflet-control-zoom a:last-child{border-bottom:0}
-.ubication-map-hint{
-  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
-  z-index:500;
-  font-size:.7rem;color:#b8c7db;
-  background:rgba(8,13,23,.85);backdrop-filter:blur(10px);
-  border:1px solid rgba(150,180,225,.2);
-  border-radius:999px;
-  padding:6px 14px;
-  pointer-events:none;
-  white-space:nowrap;
-  transition:opacity .3s;
-  display:flex;align-items:center;gap:6px;
-}
-.ubication-map-hint svg{width:13px;height:13px;color:var(--cyan)}
-.ubication-map-frame.map-active .ubication-map-hint{opacity:0}
-.ubication-badge{
-  position:absolute;top:14px;left:14px;z-index:500;
-  display:flex;align-items:center;gap:7px;
-  font-size:.68rem;font-weight:800;
-  color:#9df4d5;
-  background:rgba(8,13,23,.88);backdrop-filter:blur(12px);
-  border:1px solid rgba(22,217,154,.35);
-  border-radius:999px;
-  padding:7px 13px;
-  pointer-events:none;
-}
-.ubication-badge .dot{width:6px;height:6px}
-.ubication-custom-marker{
-  width:38px;height:38px;border-radius:12px;
-  background:linear-gradient(135deg,var(--cyan),var(--purple));
-  display:grid;place-items:center;
-  box-shadow:0 4px 18px rgba(56,232,255,.45),0 0 0 5px rgba(56,232,255,.14);
-  border:2px solid rgba(255,255,255,.9);
-}
-.ubication-custom-marker svg{width:20px;height:20px;color:#061018}
-.ubication-popup{font-family:inherit;color:#e9fbff}
-.ubication-popup .leaflet-popup-content-wrapper{
-  background:linear-gradient(145deg,#131d2e,#080d17);
-  border:1px solid rgba(56,232,255,.3);
-  border-radius:14px;color:#e9fbff;
-  box-shadow:0 12px 40px rgba(0,0,0,.6);
-}
-.ubication-popup .leaflet-popup-tip{background:#080d17;border:1px solid rgba(56,232,255,.25)}
-.ubication-popup .leaflet-popup-content{margin:12px 16px;font-size:.85rem;line-height:1.5}
-.ubication-popup b{color:var(--cyan);font-size:.92rem}
-.ubication-popup .popup-address{color:#8e9bb0;font-size:.78rem;margin-top:2px}
-.ubication-popup .leaflet-popup-close-button{color:#8e9bb0}
-.ubication-popup .leaflet-popup-close-button:hover{color:white}
-
-@media(max-width:860px){
-  .ubication-shell{grid-template-columns:1fr;gap:24px;padding:22px}
-  .ubication-map-frame{min-height:280px}
-  #urbanstep-map{min-height:280px}
-  .ubication-info > p{max-width:100%}
-  .ubication-actions{flex-direction:column}
-  .ubication-btn{justify-content:center;width:100%}
-}
-@media(max-width:480px){
-  .ubication-section{padding:34px 0 50px}
-  .ubication-shell{border-radius:22px;padding:18px}
-  .ubication-address{font-size:.85rem;padding:13px 14px}
-  .ubication-map-frame{min-height:240px;border-radius:16px}
-  #urbanstep-map{min-height:240px}
-  .ubication-map-hint{font-size:.63rem;padding:5px 10px;bottom:8px}
-  .ubication-badge{font-size:.6rem;padding:5px 10px;top:10px;left:10px}
-}
-
-/* ============================================================
-   FUNCIÓN 2 · Escritura animada con sonido original
-   (sin controles visibles, conserva estilos heredados)
-   ============================================================ */
-[data-typing]{min-height:1em}
-.tw-char,
-.tw-br{
-  display:inline-block;
-  opacity:0;
-  filter:blur(2px);
-  transform:scale(.65);
-  transform-origin:50% 80%;
-  animation:letterIn 380ms cubic-bezier(.18,.78,.22,1) forwards;
-}
-/* Los caracteres dentro de <span> con gradiente heredan su color transparente
-   y el background-clip:text, de modo que el degradado se conserva intacto. */
-h1 .tw-char, h2 .tw-char{color:inherit}
-@keyframes letterIn{
-  0%{opacity:0;filter:blur(2px);transform:scale(.65);text-shadow:0 0 0 transparent}
-  58%{opacity:1;filter:blur(0);transform:scale(1.08);text-shadow:0 0 25px rgba(56,232,255,.55)}
-  100%{opacity:1;filter:blur(0);transform:scale(1);text-shadow:0 0 0 transparent}
-}
-.tw-br{width:0}
-.tw-br br{display:inline}
-@media(prefers-reduced-motion:reduce){
-  .tw-char,.tw-br{animation-duration:.01ms!important;filter:none;transform:none;opacity:1}
-}
+/* ===== Animación de letras del h1 (hero). No altera el estado final. ===== */
+.tw-char{display:inline-block;opacity:0;filter:blur(2px);transform:scale(.65);transform-origin:50% 80%;animation:twLetterIn 380ms cubic-bezier(.18,.78,.22,1) forwards}
+@keyframes twLetterIn{0%{opacity:0;filter:blur(2px);transform:scale(.65);text-shadow:0 0 0 transparent}58%{opacity:1;filter:blur(0);transform:scale(1.08);text-shadow:0 0 25px rgba(56,232,255,.52)}100%{opacity:1;filter:blur(0);transform:scale(1);text-shadow:0 0 0 transparent}}
+@media(prefers-reduced-motion:reduce){.tw-char{animation:none!important;opacity:1!important;filter:none!important;transform:none!important}}
 </style>
 </head>
 <body>
@@ -245,7 +51,7 @@ h1 .tw-char, h2 .tw-char{color:inherit}
   <div class="hero-panel">
     <div class="hero-copy">
       <span class="eyebrow"><span class="dot"></span> Colección seleccionada</span>
-      <h1 data-typing="Estilo que te mueve." aria-label="Estilo que te mueve.">Estilo que<br><span>te mueve.</span></h1>
+      <h1 id="heroTitle">Estilo que<br><span>te mueve.</span></h1>
       <p>Encuentra ese par que va contigo. Diseños icónicos, comodidad para cada día y una experiencia de compra diferente.</p>
       <button class="primary" id="goCatalog">Explorar catálogo&nbsp; ↗</button>
     </div>
@@ -270,56 +76,6 @@ h1 .tw-char, h2 .tw-char{color:inherit}
   </div>
   <div class="product-grid" id="productGrid" aria-live="polite"></div>
 </section>
-
-<!-- ============================================================
-     MÓDULO DE UBICACIÓN — UrbanStep
-     ============================================================ -->
-<section class="wrap ubication-section" id="ubicacion" aria-labelledby="ubication-title">
-  <div class="ubication-shell">
-    <div class="ubication-info">
-      <span class="eyebrow"><span class="dot"></span> Encuéntranos</span>
-      <h2 id="ubication-title" data-typing="Ven a probarte tu próximo par." aria-label="Ven a probarte tu próximo par.">Ven a probarte<br><span>tu próximo par.</span></h2>
-      <p>Te esperamos para que sientas la comodidad, compares modelos y elijas el que va contigo. Un espacio pensado para los que viven el estilo en cada paso.</p>
-
-      <div class="ubication-address">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <path d="M12 21s-7-6.1-7-11a7 7 0 1 1 14 0c0 4.9-7 11-7 11Z"/>
-          <circle cx="12" cy="10" r="2.8"/>
-        </svg>
-        <span>
-          <strong>LAS MISIONES CALLE 3</strong>
-          UrbanStep · Las Misiones, Santa Cruz de la Sierra
-        </span>
-      </div>
-
-      <div class="ubication-actions">
-        <a class="ubication-btn ubication-btn-primary" href="https://www.google.com/maps/dir/?api=1&destination=-14.807244289408008,-64.91814006208574" target="_blank" rel="noopener noreferrer" aria-label="Abrir ruta en Google Maps hacia UrbanStep">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M3 11 22 2l-9 19-2-8-8-2Z"/>
-          </svg>
-          Cómo llegar
-        </a>
-        <a class="ubication-btn ubication-btn-secondary" id="ubicationWhatsApp" href="#" target="_blank" rel="noopener noreferrer" aria-label="Consultar por WhatsApp la ubicación">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-            <path d="M21 11.5a8.5 8.5 0 0 1-12.8 7.4L3 21l2.2-5.4A8.5 8.5 0 1 1 21 11.5Z"/>
-            <path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5l1.5-2-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2-1.5 1.5Z"/>
-          </svg>
-          Consultar por WhatsApp
-        </a>
-      </div>
-    </div>
-
-    <div class="ubication-map-frame" id="ubicationMapFrame">
-      <span class="ubication-badge"><span class="dot"></span> UrbanStep · Las Misiones</span>
-      <div id="urbanstep-map" role="application" aria-label="Mapa interactivo con la ubicación de UrbanStep en Las Misiones Calle 3"></div>
-      <span class="ubication-map-hint" id="ubicationMapHint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.1-7-11a7 7 0 1 1 14 0c0 4.9-7 11-7 11Z"/><circle cx="12" cy="10" r="2.8"/></svg>
-        Toca el mapa para explorar
-      </span>
-    </div>
-  </div>
-</section>
-
 <section class="wrap faq-section" id="preguntas">
  <div class="faq-shell">
   <div class="faq-intro">
@@ -365,9 +121,6 @@ h1 .tw-char, h2 .tw-char{color:inherit}
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalName">
   <div class="modal"><button class="modal-close" id="closeModal" aria-label="Cerrar">✕</button><div class="modal-image"><img id="modalImg" src="" alt=""></div><div class="modal-content"><span class="tag purple" id="modalTag">Destacado</span><h3 id="modalName">Producto</h3><div class="rating" id="modalRating"></div><p id="modalDescription"></p><div class="modal-price" id="modalPrice"></div><div class="sizes-label"><span>Selecciona tu talla</span><span>Guía de tallas</span></div><div class="modal-sizes" id="modalSizes"></div><button class="primary" id="modalAdd" style="width:100%">Agregar a mi selección</button></div></div>
 </div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
 <script>
 const products = [
  {id:1,brand:"Nike",name:"Air Force 1 Essential",category:"Urbano · Unisex",price:89.99,old:0,rating:4.8,reviews:124,tag:"Más vendido",tagClass:"",color:"#38a8ff",image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=85",colors:["#f4f6f8","#161b24","#d64b36"],sizes:[38,39,40,41,42,43],desc:"Un clásico urbano de líneas limpias, pensado para combinar con todo. Ideal para looks diarios y fines de semana."},
@@ -466,6 +219,7 @@ $("checkoutForm").addEventListener("submit",e=>{
  const url=`https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent(message)}`;window.open(url,"_blank","noopener,noreferrer");
 });
 $("menuBtn").addEventListener("click",()=>toast("Demo: aquí se puede abrir un menú móvil con categorías y contacto."));
+// Buscador por voz: convierte frases en filtros de catálogo.
 const voiceButton = $("voiceSearchBtn");
 const voiceStatus = $("voiceStatus");
 const voiceBtnText = $("voiceBtnText");
@@ -478,11 +232,18 @@ function voiceMessage(message, type="") {
 function applyVoiceQuery(rawText) {
   const original = rawText.trim();
   const normalized = original.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const brandNames = [["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"], ["new balance", "New Balance"], ["balance", "New Balance"]];
+  const brandNames = [
+    ["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"],
+    ["new balance", "New Balance"], ["balance", "New Balance"]
+  ];
   const foundBrand = brandNames.find(([term]) => normalized.includes(term));
-  const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\s*(3[5-9]|4[0-6])\b/) || normalized.match(/\b(3[5-9]|4[0-6])\b/);
+  const sizeMatch = normalized.match(/(?:talla|numero|del|en)\s*(3[5-9]|4[0-6])\b/) || normalized.match(/\b(3[5-9]|4[0-6])\b/);
   const size = sizeMatch ? sizeMatch[1] : "";
-  const cleaned = normalized.replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ").replace(/\b(3[5-9]|4[0-6])\b/g, " ").replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ").replace(/\s+/g, " ").trim();
+  const cleaned = normalized
+    .replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ")
+    .replace(/\b(3[5-9]|4[0-6])\b/g, " ")
+    .replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ")
+    .replace(/\s+/g, " ").trim();
   state.brand = foundBrand ? foundBrand[1] : "";
   state.size = size;
   state.search = cleaned;
@@ -524,6 +285,7 @@ if (!SpeechRecognition) {
     try { recognition.start(); } catch (_) { voiceMessage("El micrófono ya está activo. Termina de hablar o vuelve a intentarlo.", "listening"); }
   });
 }
+// Microinteracción premium: inclinación 3D muy sutil según la posición del puntero.
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 if (canHover) {
   $("productGrid").addEventListener("pointermove", e => {
@@ -542,6 +304,7 @@ if (canHover) {
   });
 }
 
+// Preguntas frecuentes interactivas: acordeón accesible y accesos rápidos.
 const faqItems = [...document.querySelectorAll('.faq-item')];
 faqItems.forEach((item) => {
  const trigger = item.querySelector('.faq-question');
@@ -558,159 +321,25 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
  item.classList.add('open'); item.querySelector('.faq-question').setAttribute('aria-expanded','true');
  item.scrollIntoView({behavior:'smooth',block:'center'});
 }));
-
-// ============================================================
-// MÓDULO DE UBICACIÓN — Inicialización del mapa Leaflet
-// ============================================================
-(function initLocationModule(){
-  const LAT = -14.807244289408008;
-  const LNG = -64.91814006208574;
-  const NEGOCIO = "UrbanStep";
-  const DIRECCION = "LAS MISIONES CALLE 3";
-  const WHATSAPP_NUMERO = "591XXXXXXXXX";
-
-  const waLink = document.getElementById("ubicationWhatsApp");
-  if (waLink) {
-    if (/^\d{10,15}$/.test(WHATSAPP_NUMERO) && !WHATSAPP_NUMERO.includes("X")) {
-      waLink.href = "https://wa.me/" + WHATSAPP_NUMERO + "?text=" + encodeURIComponent("Hola, quisiera saber cómo llegar a UrbanStep en Las Misiones Calle 3.");
-    } else {
-      waLink.href = "#";
-      waLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Configura el número de WhatsApp del negocio en el código (variable WHATSAPP_NUMERO del módulo de ubicación).");
-      });
-    }
-  }
-
-  if (typeof L === "undefined") {
-    console.warn("Leaflet no se cargó correctamente.");
-    return;
-  }
-
-  const mapContainer = document.getElementById("urbanstep-map");
-  const mapFrame = document.getElementById("ubicationMapFrame");
-  const mapHint = document.getElementById("ubicationMapHint");
-  if (!mapContainer || !mapFrame) return;
-
-  const map = L.map("urbanstep-map", {
-    center: [LAT, LNG],
-    zoom: 17,
-    zoomControl: true,
-    scrollWheelZoom: false,
-    dragging: false,
-    touchZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    tap: false
-  });
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
-  }).addTo(map);
-
-  const customIcon = L.divIcon({
-    className: "ubication-marker-wrapper",
-    html: '<div class="ubication-custom-marker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16c4-1 6-4 8-8l3 3 6 2 1 4H3z"/><path d="M7 16h12M10 12l2 2M13 11l2 2"/></svg></div>',
-    iconSize: [38, 38],
-    iconAnchor: [19, 38],
-    popupAnchor: [0, -38]
-  });
-
-  const marker = L.marker([LAT, LNG], {
-    icon: customIcon,
-    title: NEGOCIO + " — " + DIRECCION,
-    alt: "Ubicación de " + NEGOCIO
-  }).addTo(map);
-
-  marker.bindPopup(
-    '<div class="ubication-popup">' +
-      '<b>' + NEGOCIO + '</b>' +
-      '<div class="popup-address">' + DIRECCION + '</div>' +
-    '</div>',
-    { closeButton: true, autoClose: false, closeOnClick: false, className: "ubication-popup" }
-  );
-
-  marker.openPopup();
-
-  let mapActive = false;
-  function activateMap() {
-    if (mapActive) return;
-    mapActive = true;
-    map.dragging.enable();
-    map.touchZoom.enable();
-    map.doubleClickZoom.enable();
-    map.scrollWheelZoom.enable();
-    mapFrame.classList.add("map-active");
-    if (mapHint) mapHint.style.opacity = "0";
-  }
-  function deactivateMap() {
-    if (!mapActive) return;
-    mapActive = false;
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    mapFrame.classList.remove("map-active");
-    if (mapHint) mapHint.style.opacity = "";
-  }
-  mapFrame.addEventListener("click", (e) => { if (!mapActive) activateMap(); });
-  const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-  if (!isTouchDevice) {
-    mapFrame.addEventListener("mouseenter", () => {
-      if (!mapActive) {
-        map.scrollWheelZoom.enable();
-        mapFrame.classList.add("map-active");
-        if (mapHint) mapHint.style.opacity = "0";
-      }
-    });
-    mapFrame.addEventListener("mouseleave", () => {
-      map.scrollWheelZoom.disable();
-      if (!mapActive) {
-        mapFrame.classList.remove("map-active");
-        if (mapHint) mapHint.style.opacity = "";
-      }
-    });
-  }
-  marker.on("click", () => marker.openPopup());
-  window.addEventListener("resize", () => { setTimeout(() => map.invalidateSize(), 200); });
-})();
-
 const faqWhatsApp = document.getElementById('faqWhatsApp');
-if (faqWhatsApp) {
-  const url = 'https://wa.me/' + '591XXXXXXXXX' + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
-  faqWhatsApp.href = url;
-  faqWhatsApp.addEventListener('click', (e) => {
-    if (url.includes('XXXXXXXXX')) {
-      e.preventDefault();
-      alert('Configura el número de WhatsApp del negocio en el código HTML.');
-    }
-  });
-}
+if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
 
-/* ============================================================
-   FUNCIÓN 2 · Escritura animada con sonido original
-   Modalidad B: repetir según scroll
-   - Se animan solo los elementos con [data-typing]
-   - El motor de audio es idéntico al de referencia
-   - Los caracteres se insertan dentro del DOM original (conserva
-     <br>, <span> con gradiente, tipografía, tamaños y colores)
-   - Sin controles visibles de audio
-   ============================================================ */
-(function TypingSoundEffect(){
+/* ===================================================================
+   Animación de letras + sonido de teclado para #heroTitle
+   ("Estilo que" + <br> + "te mueve.")
+   - Usa la animación y el sonido del HTML de referencia.
+   - NO altera el estado final: las letras vuelven a ser texto normal.
+   - Se ejecuta una sola vez, al entrar en viewport.
+   =================================================================== */
+(function () {
   'use strict';
+  const h1 = document.getElementById('heroTitle');
+  if (!h1) return;
 
-  const ACCENT = '#38e8ff';
-  const root = document.documentElement;
-  root.style.setProperty('--accent', ACCENT);
-
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  // ---- MOTOR DE AUDIO ORIGINAL (idéntico, sin controles) ----
+  // === Audio (idéntico al HTML de referencia) ===
   let audioContext = null, master = null, reverbSend = null, reverbWet = null, convolver = null;
-  let muted = false;
-  const VOLUME = 0.9; // más perceptible que 0.7 original, sin saturar
+  let volume = 0.7, muted = false, panIndex = 0;
+  const PAN_CYCLE = [0.2, -0.15, 0.3, -0.2, 0.1, -0.25];
 
   function createNoiseBuffer(ctx, duration) {
     const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
@@ -719,7 +348,6 @@ if (faqWhatsApp) {
     for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
     return buffer;
   }
-
   function initAudio() {
     if (audioContext) {
       if (audioContext.state === 'suspended') audioContext.resume();
@@ -729,9 +357,8 @@ if (faqWhatsApp) {
     if (!AudioCtx) return;
     audioContext = new AudioCtx();
     master = audioContext.createGain();
-    master.gain.value = muted ? 0 : VOLUME;
+    master.gain.value = muted ? 0 : volume;
     master.connect(audioContext.destination);
-
     const impulseLength = Math.floor(audioContext.sampleRate * 0.45);
     const impulse = audioContext.createBuffer(2, impulseLength, audioContext.sampleRate);
     for (let channel = 0; channel < 2; channel++) {
@@ -750,202 +377,137 @@ if (faqWhatsApp) {
     convolver.connect(reverbWet);
     reverbWet.connect(master);
   }
-
-  let panIndex = 0;
-  const PAN_CYCLE = [0.2, -0.15, 0.3, -0.2, 0.1, -0.25];
-
   function playKeyTap() {
     if (muted || !audioContext || !master || audioContext.state !== 'running') return;
-
     const ctx = audioContext;
     const now = ctx.currentTime;
-
     const pitchVar = 0.92 + Math.random() * 0.16;
     const volVar = 0.82 + Math.random() * 0.22;
     const durVar = 0.90 + Math.random() * 0.18;
-
     const panner = ctx.createStereoPanner();
     panner.pan.setValueAtTime(PAN_CYCLE[panIndex % 6] * 0.42, now);
     panIndex++;
     panner.connect(master);
     panner.connect(reverbSend);
-
     const noiseDur = 0.009 * durVar;
     const noise = ctx.createBufferSource();
     noise.buffer = createNoiseBuffer(ctx, noiseDur);
-
     const filter = ctx.createBiquadFilter();
     filter.type = 'bandpass';
     filter.frequency.setValueAtTime((2850 + Math.random() * 500) * pitchVar, now);
     filter.Q.setValueAtTime(1.15, now);
-
     const noiseGain = ctx.createGain();
     const peak = 0.105 * volVar;
     noiseGain.gain.setValueAtTime(0.0001, now);
     noiseGain.gain.linearRampToValueAtTime(peak, now + 0.0012);
     noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDur);
-
     noise.connect(filter);
     filter.connect(noiseGain);
     noiseGain.connect(panner);
     noise.start(now);
     noise.stop(now + noiseDur);
-
     const tone = ctx.createOscillator();
     tone.type = 'sine';
     const toneFreq = 720 + Math.random() * 180;
     tone.frequency.setValueAtTime(toneFreq, now);
     tone.frequency.exponentialRampToValueAtTime(toneFreq * 0.72, now + 0.014 * durVar);
-
     const toneGain = ctx.createGain();
     toneGain.gain.setValueAtTime(0.0001, now);
     toneGain.gain.linearRampToValueAtTime(0.022 * volVar, now + 0.001);
     toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014 * durVar);
-
     tone.connect(toneGain);
     toneGain.connect(panner);
     tone.start(now);
     tone.stop(now + 0.016 * durVar);
-
     setTimeout(() => { try { panner.disconnect(); } catch (_) {} }, 100);
   }
 
-  // Desbloqueo de audio en el primer gesto (política del navegador)
+  // El audio solo se crea tras un gesto del usuario (políticas de navegador).
   document.addEventListener('pointerdown', () => {
     initAudio();
     if (audioContext && audioContext.state === 'suspended') audioContext.resume();
   }, { once: true });
 
-  // ---- ANIMACIÓN SOBRE EL DOM ORIGINAL ----
-  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  // Envuelve los caracteres de cada nodo de texto respetando <br> y estilos heredados.
-  function collectCharWrappers(el) {
-    const wrappers = [];
-    function walk(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent;
-        if (!text) return;
-        const frag = document.createDocumentFragment();
-        for (const ch of text) {
-          const w = document.createElement('span');
-          w.className = 'tw-char';
-          w.setAttribute('aria-hidden', 'true');
-          if (ch === ' ') { w.innerHTML = '&nbsp;'; }
-          else { w.textContent = ch; }
-          frag.appendChild(w);
-          wrappers.push(w);
-        }
-        node.parentNode.replaceChild(frag, node);
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        if (node.tagName === 'BR') {
-          const w = document.createElement('span');
-          w.className = 'tw-br';
-          w.setAttribute('aria-hidden', 'true');
-          w.innerHTML = '<br>';
-          node.parentNode.replaceChild(w, node);
-          wrappers.push(w);
-        } else {
-          [...node.childNodes].forEach(walk);
-        }
-      }
-    }
-    walk(el);
-    return wrappers;
-  }
-
-  async function typeElement(el) {
-    const originalHTML = el.dataset.typingOriginalHtml || el.innerHTML;
-    if (!el.dataset.typingOriginalHtml) el.dataset.typingOriginalHtml = originalHTML;
-
-    // Cancela ejecución previa
-    if (el._typingToken) el._typingToken.cancelled = true;
-    const token = { cancelled: false };
-    el._typingToken = token;
-
-    // Reserva de altura para evitar saltos de layout
-    el.innerHTML = originalHTML;
-    el.style.visibility = 'hidden';
-    const reservedHeight = el.offsetHeight;
-    el.style.visibility = '';
-    el.innerHTML = originalHTML;
-
-    // Texto plano para aria-label
-    const plain = el.dataset.typing || el.textContent.replace(/\s+/g, ' ').trim();
-    el.setAttribute('aria-label', plain);
-
-    // Construye wrappers invisibles; la animación CSS los revela en cascada
-    const wrappers = collectCharWrappers(el);
-    wrappers.forEach(w => { w.style.animationPlayState = 'paused'; w.style.animationDelay = '0s'; });
-    el.style.minHeight = reservedHeight + 'px';
-
-    initAudio();
-    if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
-
-    // Reproduce en cascada con el mismo ritmo que el original
-    let visualIndex = 0;
-    for (let i = 0; i < wrappers.length; i++) {
-      if (token.cancelled) return;
-      const w = wrappers[i];
-      const ch = w.textContent || '\u00a0';
-      const isSpace = /\s|\u00a0/.test(ch);
-      const isPunct = /[.,!?;:]/u.test(ch);
-      const isBr = w.classList.contains('tw-br');
-
-      // Revela este carácter ahora (reactiva su animación CSS)
-      w.style.animationDelay = (visualIndex * 0.001) + 's';
-      w.style.animationPlayState = 'running';
-
-      if (!isSpace && !isPunct && !isBr && Math.random() < 0.88) playKeyTap();
-
-      let delay = 62 + (Math.random() * 40 - 20);
-      if (/[.!?]/u.test(ch)) delay += 240;
-      else if (/[,;:]/u.test(ch)) delay += 120;
-      else if (isSpace) delay = 62 * 0.5;
-      if (isBr) delay = 62 * 0.5;
-      if (reducedMotion.matches) delay = Math.min(delay, 8);
-      await sleep(delay);
-      visualIndex++;
-    }
-    if (token.cancelled) return;
-
-    // Al terminar: restaurar HTML original (mantiene <br> y <span> con gradiente)
-    await sleep(300);
-    if (token.cancelled) return;
-    el.innerHTML = originalHTML;
-    el.style.minHeight = '';
-  }
-
-  function resetElement(el) {
-    if (el._typingToken) el._typingToken.cancelled = true;
-    const originalHTML = el.dataset.typingOriginalHtml;
-    if (originalHTML) el.innerHTML = originalHTML;
-    el.style.minHeight = '';
-  }
-
-  const targets = [...document.querySelectorAll('[data-typing]')];
-  if (!targets.length) return;
-
-  // MODALIDAD B: animar al entrar, resetear al salir
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const el = entry.target;
-      if (entry.isIntersecting) {
-        if (!el._typingRunning) {
-          el._typingRunning = true;
-          typeElement(el).finally(() => { el._typingRunning = false; });
-        }
+  // Envuelve cada nodo de texto del h1 en spans por carácter,
+  // preservando el <br> y el <span> con degradado.
+  function wrapTextNode(node) {
+    const text = node.nodeValue;
+    if (!text) return [];
+    const frag = document.createDocumentFragment();
+    const spans = [];
+    for (const ch of text) {
+      const s = document.createElement('span');
+      s.className = 'tw-char';
+      if (ch === ' ' || ch === '\u00a0') {
+        s.style.whiteSpace = 'pre';
+        s.textContent = '\u00a0';
       } else {
-        resetElement(el);
+        s.textContent = ch;
       }
-    });
-  }, { threshold: 0.55 });
+      frag.appendChild(s);
+      spans.push(s);
+    }
+    node.parentNode.replaceChild(frag, node);
+    return spans;
+  }
 
-  targets.forEach(el => io.observe(el));
+  function collectChars(root) {
+    const spans = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+    for (const tn of textNodes) spans.push(...wrapTextNode(tn));
+    return spans;
+  }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && audioContext && audioContext.state === 'suspended') audioContext.resume();
-  });
+  let started = false;
+  async function run() {
+    if (started) return;
+    started = true;
+    if (reducedMotion) return; // Sin animación: se deja el texto tal cual.
+
+    const spans = collectChars(h1);
+    if (!spans.length) return;
+
+    // Inicialmente ocultas (opacity:0 vía CSS de .tw-char).
+    // Forzamos un frame para que la animación se aplique al añadir la clase.
+    // La animación CSS se dispara al aplicar la clase .tw-char; aquí la
+    // "activamos" escalonadamente por JS respetando pausas por puntuación.
+    for (let i = 0; i < spans.length; i++) {
+      const s = spans[i];
+      s.style.animation = 'none';
+      // Forzar reinicio
+      void s.offsetWidth;
+      s.style.animation = '';
+      if (!reducedMotion && Math.random() < 0.88) playKeyTap();
+      const ch = s.textContent;
+      const isSpace = ch === '\u00a0';
+      const isPunct = /[.,!?;:]/.test(ch);
+      let delay = 62 + (Math.random() * 40 - 20);
+      if (/[.!?]/.test(ch)) delay += 240;
+      else if (/[,;:]/.test(ch)) delay += 120;
+      else if (isSpace) delay = 31;
+      await sleep(delay);
+    }
+  }
+
+  if ('IntersectionObserver' in window && !reducedMotion) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          io.disconnect();
+          run();
+        }
+      });
+    }, { threshold: 0.35 });
+    io.observe(h1);
+  } else if (!reducedMotion) {
+    // Fallback: iniciar al cargar.
+    window.addEventListener('load', run, { once: true });
+  }
 })();
 </script>
 </body>
