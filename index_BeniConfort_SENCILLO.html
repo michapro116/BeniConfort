@@ -3,1013 +3,501 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CHROMA — Líquido, luz y matemática</title>
-<meta name="description" content="CHROMA: un laboratorio visual interactivo hecho solo con HTML, CSS y JavaScript. Fluido dorado, arte generativo, micrófono y laberintos vivos.">
+<title>VoxShop — Catálogo con búsqueda por voz</title>
 <meta name="theme-color" content="#0a0806">
-<meta property="og:title" content="CHROMA — Líquido, luz y matemática">
-<meta property="og:description" content="Un laboratorio visual que se deforma bajo tu dedo.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23ffe9a8'/%3E%3Cstop offset='.5' stop-color='%23d4af37'/%3E%3Cstop offset='1' stop-color='%238c6d1f'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230a0806'/%3E%3Cpath d='M32 10c8 6 14 12 14 22s-6 16-14 22c-8-6-14-12-14-22S24 16 32 10z' fill='url(%23g)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0a0806;
-    --ink:#f5efe2;
-    --dim:#a39880;
-    --line:rgba(212,175,55,.15);
-    --gold:#d4af37;
-    --gold-l:#ffe9a8;
-    --gold-d:#8c6d1f;
-    --grad:linear-gradient(135deg,#8c6d1f,#d4af37 25%,#ffe9a8 50%,#d4af37 75%,#8c6d1f);
-    --r:20px;
-    --ease:cubic-bezier(.2,.8,.2,1);
+    --bg:#0a0806; --ink:#f5efe2; --dim:#a39880; --line:rgba(212,175,55,.18);
+    --gold:#d4af37; --gold-l:#ffe9a8;
+    --grad:linear-gradient(135deg,#8c6d1f,#d4af37 40%,#ffe9a8 55%,#d4af37 70%,#8c6d1f);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%}
   body{
-    background:var(--bg);color:var(--ink);
-    font-family:'Inter',system-ui,-apple-system,sans-serif;
-    font-weight:300;line-height:1.65;overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
+    background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+    font-weight:300;line-height:1.6;padding-bottom:40px;min-height:100svh;
+    background-image:radial-gradient(800px 500px at 50% -10%,rgba(212,175,55,.08),transparent 70%);
   }
-  body::before{
-    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:
-      radial-gradient(900px 600px at 20% -10%, rgba(212,175,55,.07), transparent 70%),
-      radial-gradient(700px 500px at 90% 100%, rgba(140,109,31,.08), transparent 70%);
-  }
-  img{max-width:100%;display:block}
-  a{color:inherit}
-  ::selection{background:rgba(212,175,55,.35);color:#fff}
-  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:300}
-  .serif{font-family:'Fraunces',Georgia,serif;font-weight:300;line-height:1.05;letter-spacing:-.015em}
-  .gold-text{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 8s linear infinite}
-  @keyframes flow{to{background-position:220% center}}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .serif{font-family:'Fraunces',Georgia,serif;letter-spacing:-.02em}
 
-  .grain{
-    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
 
   /* Header */
-  .hdr{
-    position:fixed;top:0;left:0;right:0;z-index:70;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 20px;transition:background .4s,backdrop-filter .4s,border-color .4s,padding .4s;
-    border-bottom:1px solid transparent;
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;max-width:1100px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:'Fraunces',serif;font-size:1.15rem;letter-spacing:.3em;font-weight:500;color:var(--ink);padding-left:.3em}
+  .brand .dot{width:8px;height:8px;border-radius:50% 50% 50% 0;background:var(--grad);transform:rotate(-45deg);box-shadow:0 0 14px var(--gold)}
+  .cart{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+
+  /* Hero */
+  .hero{text-align:center;padding:20px 16px 34px}
+  .hero h1{font-family:'Fraunces',serif;font-size:clamp(2rem,8vw,3.2rem);line-height:1.02;font-weight:400;letter-spacing:-.025em;margin-bottom:12px}
+  .hero h1 em{font-style:italic;background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
+  @keyframes flow{to{background-position:220% center}}
+  .hero p{color:var(--dim);font-size:.92rem;max-width:44ch;margin:0 auto}
+
+  /* Botón de voz */
+  .voice-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:26px auto 10px;max-width:520px}
+  .voice-btn{
+    position:relative;width:112px;height:112px;border-radius:50%;border:0;cursor:pointer;
+    background:var(--grad);background-size:220% auto;color:#141007;
+    display:grid;place-items:center;
+    box-shadow:0 22px 60px -20px rgba(212,175,55,.9),0 0 0 1px rgba(212,175,55,.35) inset;
+    transition:transform .25s,box-shadow .35s,background-position .7s;
+    -webkit-tap-highlight-color:transparent;
   }
-  .hdr.solid{background:rgba(10,8,6,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom-color:var(--line);padding:11px 20px}
-  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:'Fraunces',serif;font-size:1.2rem;font-weight:500;letter-spacing:.3em;padding-left:.3em}
-  .brand .drop{
-    width:9px;height:9px;background:var(--grad);background-size:200% auto;border-radius:50% 50% 50% 0;
-    transform:rotate(-45deg);box-shadow:0 0 16px rgba(212,175,55,.9);animation:flow 6s linear infinite;
+  .voice-btn:hover{background-position:120% center;transform:scale(1.04)}
+  .voice-btn:active{transform:scale(.96)}
+  .voice-btn svg{width:42px;height:42px;stroke:#141007;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .voice-btn .ripple{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(255,233,168,.5);opacity:0;pointer-events:none}
+  .voice-btn.listening{animation:pulseBtn 1.6s ease-in-out infinite}
+  .voice-btn.listening .ripple{animation:rippleOut 1.8s ease-out infinite}
+  .voice-btn.listening .ripple.d2{animation-delay:.6s}
+  .voice-btn.listening .ripple.d3{animation-delay:1.2s}
+  @keyframes pulseBtn{0%,100%{box-shadow:0 22px 60px -20px rgba(212,175,55,.9),0 0 0 0 rgba(255,77,109,.7)}50%{box-shadow:0 22px 60px -20px rgba(212,175,55,.9),0 0 0 22px rgba(255,77,109,0)}}
+  @keyframes rippleOut{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+  .voice-label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);text-align:center}
+  .voice-label b{color:var(--gold-l);font-weight:400}
+
+  /* Transcript en vivo */
+  .transcript{
+    min-height:52px;margin:14px auto 0;max-width:600px;padding:14px 20px;
+    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;
+    font-family:'IBM Plex Mono',monospace;font-size:.82rem;line-height:1.5;
+    color:var(--dim);text-align:center;
+    opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;
   }
-  .hdr-right{display:flex;gap:8px;align-items:center}
+  .transcript.on{opacity:1;transform:none}
+  .transcript b{color:var(--gold-l);font-weight:400}
+  .transcript .heard{color:var(--ink)}
+
+  /* Fallback texto */
+  .fallback{display:flex;gap:8px;margin:16px auto 0;max-width:520px}
+  .fallback input{
+    flex:1;min-height:48px;padding:0 16px;border-radius:12px;
+    background:rgba(0,0,0,.4);border:1px solid var(--line);color:var(--ink);
+    font-family:'Inter',sans-serif;font-size:16px;font-weight:300;
+  }
+  .fallback input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15)}
+  .fallback button{
+    min-height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  }
+
+  /* Barra de filtros activos */
+  .filters-bar{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+    margin:22px auto 6px;max-width:680px;min-height:34px;
+  }
   .chip{
-    display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px;border-radius:999px;
-    background:rgba(255,255,255,.04);border:1px solid var(--line);
-    font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
-    cursor:pointer;transition:border-color .3s,color .3s,background .3s;-webkit-tap-highlight-color:transparent;
+    display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 14px;border-radius:999px;
+    background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.4);
+    font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold-l);
   }
-  .chip:hover{border-color:rgba(212,175,55,.5);color:var(--ink);background:rgba(212,175,55,.08)}
-  .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
-  .chip .dot.rec{background:#ff4d6d;box-shadow:0 0 12px #ff4d6d;animation:blink 1s ease-in-out infinite}
-  @keyframes blink{50%{opacity:.3}}
-
-  /* HERO */
-  .hero{position:relative;min-height:100svh;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;padding:110px 20px 100px}
-  #fluid{position:absolute;inset:0;z-index:0;width:100%;height:100%;display:block;touch-action:none}
-  .hero-inner{position:relative;z-index:3;text-align:center;max-width:960px;pointer-events:none}
-  .hero-inner > *{pointer-events:auto}
-  .tag{
-    display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;margin-bottom:24px;
-    background:rgba(10,8,6,.6);backdrop-filter:blur(10px);border:1px solid var(--line);
-    font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:#d8cdb4;
+  .chip button{
+    background:none;border:0;color:var(--gold-l);cursor:pointer;font-size:1rem;line-height:1;
+    padding:0;opacity:.7;width:18px;height:18px;display:grid;place-items:center;border-radius:50%;
   }
-  .tag::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold-l);box-shadow:0 0 12px var(--gold-l)}
-  h1.title{
-    font-family:'Fraunces',serif;font-weight:300;font-style:normal;
-    font-size:clamp(3.4rem,17vw,10rem);line-height:.86;letter-spacing:-.045em;margin-bottom:10px;
-  }
-  h1.title em{font-style:italic;font-weight:400}
-  .sub{max-width:46ch;margin:22px auto 0;color:#c9bda3;font-size:clamp(.94rem,2.6vw,1.04rem);line-height:1.75}
-  .hint{
-    position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;
-    font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,185,150,.6);
-    display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center;
-  }
-  .hint::after{content:'';width:1px;height:42px;background:linear-gradient(to bottom,var(--gold),transparent);animation:cue 2.6s ease-in-out infinite}
-  @keyframes cue{0%,100%{opacity:.2;transform:scaleY(.55)}50%{opacity:1;transform:scaleY(1)}}
+  .chip button:hover{background:rgba(255,233,168,.15);opacity:1}
+  .chip-clear{background:rgba(255,255,255,.06);border-color:var(--line);color:var(--dim);cursor:pointer;padding:6px 14px}
 
-  /* Secciones */
-  .sec{position:relative;z-index:2;max-width:1160px;margin:0 auto;padding:96px 22px}
-  .sec-head{max-width:700px;margin-bottom:52px}
-  .kicker{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
-  .kicker::before{content:'';width:26px;height:1px;background:var(--gold);opacity:.6}
-  .sec h2{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(2.1rem,7vw,3.6rem);line-height:1.05;letter-spacing:-.025em;margin-bottom:18px}
-  .sec h2 em{font-style:italic;font-weight:400}
-  .sec p.lead{color:var(--dim);font-size:clamp(.94rem,2.5vw,1.04rem);max-width:60ch;line-height:1.78}
+  /* Contador */
+  .count{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:8px 0 22px}
+  .count b{color:var(--gold-l);font-weight:400}
 
-  .rev{opacity:0;transform:translateY(32px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
-  .rev.in{opacity:1;transform:none}
-
-  /* Galería de arte generativo */
-  .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-  @media(min-width:800px){.gallery{grid-template-columns:repeat(4,1fr);gap:18px}}
-  .canvas-card{
-    position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;cursor:pointer;
+  /* Grid productos */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px;padding-bottom:40px}
+  .prod{
+    position:relative;border-radius:16px;overflow:hidden;
     border:1px solid var(--line);background:#0d0a07;
-    transition:transform .5s var(--ease),border-color .4s,box-shadow .5s;
-    -webkit-tap-highlight-color:transparent;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
+    animation:fadeIn .4s ease both;
   }
-  .canvas-card:hover{transform:translateY(-4px) scale(1.015);border-color:rgba(212,175,55,.5);box-shadow:0 24px 60px -30px rgba(212,175,55,.7)}
-  .canvas-card canvas{width:100%;height:100%;display:block}
-  .canvas-card .label{
-    position:absolute;bottom:10px;left:12px;right:12px;
-    font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;
-    color:rgba(245,239,226,.7);text-shadow:0 1px 6px rgba(0,0,0,.9);pointer-events:none;
-    display:flex;justify-content:space-between;align-items:center;
+  .prod:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.5);box-shadow:0 24px 60px -30px rgba(212,175,55,.7)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}}
+  .prod .img{
+    aspect-ratio:1;display:grid;place-items:center;font-size:3.4rem;position:relative;
+    background:linear-gradient(160deg,var(--c1,#1a1a2e),var(--c2,#0d0a07));
   }
-  .canvas-card .label b{color:var(--gold-l);font-weight:400}
+  .prod .img::after{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.18),transparent 55%);
+    pointer-events:none;
+  }
+  .prod .info{padding:12px 12px 14px}
+  .prod .brand-mini{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .prod .name{font-family:'Fraunces',serif;font-size:.98rem;font-weight:500;line-height:1.2;margin-bottom:8px;color:var(--ink)}
+  .prod .price{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--gold-l);margin-bottom:8px}
+  .prod .tags{display:flex;flex-wrap:wrap;gap:4px}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--dim);border:1px solid rgba(255,255,255,.05)}
+  .tag.match{background:rgba(212,175,55,.22);color:var(--gold-l);border-color:rgba(212,175,55,.4)}
 
-  /* Texto arena */
-  .sand-wrap{position:relative;padding:80px 22px;text-align:center;overflow:hidden;background:linear-gradient(180deg,transparent,rgba(212,175,55,.03),transparent)}
-  #sand{display:block;max-width:100%;margin:0 auto;touch-action:none;cursor:crosshair}
-  @media(hover:none){#sand{cursor:auto}}
-  .sand-hint{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-top:16px}
-
-  /* Laberinto */
-  .maze-wrap{display:flex;flex-direction:column;align-items:center;gap:20px}
-  #maze{
-    width:min(100%,520px);aspect-ratio:1;border-radius:18px;overflow:hidden;
-    border:1px solid var(--line);background:#0d0a07;display:block;touch-action:none;
+  /* Vacío */
+  .empty{text-align:center;padding:56px 20px;grid-column:1/-1}
+  .empty .ico{font-size:3rem;margin-bottom:14px;opacity:.5}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:8px}
+  .empty p{color:var(--dim);font-size:.88rem;max-width:40ch;margin:0 auto 16px}
+  .empty button{
+    min-height:44px;padding:0 22px;border-radius:999px;border:1px solid var(--line);
+    background:transparent;color:var(--ink);cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
   }
-  .maze-controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:9px;
-    min-height:46px;padding:0 22px;border-radius:999px;border:1px solid transparent;
-    font-family:'Inter',sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
-    text-decoration:none;cursor:pointer;transition:transform .3s var(--ease),background .3s,border-color .3s,box-shadow .35s;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .btn-gold{background:var(--grad);background-size:220% auto;color:#141007;box-shadow:0 12px 36px -16px rgba(212,175,55,.9)}
-  .btn-gold:hover{background-position:120% center;transform:translateY(-2px)}
-  .btn-ghost{border-color:var(--line);color:var(--ink);background:rgba(255,255,255,.03)}
-  .btn-ghost:hover{border-color:rgba(212,175,55,.6);background:rgba(212,175,55,.08)}
-  .btn:active{transform:scale(.97)}
+  .empty button:hover{border-color:var(--gold);color:var(--gold-l)}
 
-  /* Visualizador de audio */
-  .viz-wrap{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:#0d0a07;aspect-ratio:16/9}
-  #viz{width:100%;height:100%;display:block}
-  .viz-overlay{
-    position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;
-    background:radial-gradient(circle at center,rgba(10,8,6,.4),rgba(10,8,6,.85));
-    transition:opacity .5s;
+  /* Aviso no soportado */
+  .warn{
+    max-width:520px;margin:12px auto 0;padding:11px 16px;border-radius:12px;
+    background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.35);
+    font-size:.78rem;color:#ffb3c1;text-align:center;line-height:1.5;
   }
-  .viz-overlay.off{opacity:0;pointer-events:none}
-  .viz-overlay p{max-width:44ch;color:var(--dim);font-size:.9rem;margin-bottom:20px}
-  .viz-overlay b{color:var(--gold-l);font-weight:400}
 
-  /* Contadores / datos curiosos */
-  .facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:36px}
-  @media(min-width:760px){.facts{grid-template-columns:repeat(4,1fr)}}
-  .fact{background:#0d0a07;padding:28px 16px;text-align:center}
-  .fact b{
-    display:block;font-family:'Fraunces',serif;font-weight:400;
-    font-size:clamp(1.9rem,6vw,2.6rem);line-height:1;margin-bottom:8px;
-    background:var(--grad);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-  }
-  .fact span{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-
-  /* Footer */
-  .foot{position:relative;z-index:2;text-align:center;padding:70px 22px 46px;border-top:1px solid var(--line)}
-  .foot .brand{justify-content:center;margin-bottom:16px}
-  .foot p{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,185,150,.5);line-height:2}
-  .foot .d{color:var(--gold);margin:0 8px}
-
-  /* Easter egg */
-  .egg{
-    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);z-index:200;
-    width:min(500px,88vw);padding:36px 26px;border-radius:24px;text-align:center;
-    background:rgba(13,10,7,.97);border:1px solid rgba(212,175,55,.5);
-    box-shadow:0 40px 120px -30px rgba(212,175,55,.6),0 0 0 1px rgba(212,175,55,.15) inset;
-    opacity:0;pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease);
-  }
-  .egg.on{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
-  .egg .big{font-family:'Fraunces',serif;font-style:italic;font-size:1.9rem;line-height:1.2;margin-bottom:14px;background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 6s linear infinite}
-  .egg p{font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.12em;color:var(--dim);line-height:2}
-  .egg button{margin-top:20px;min-height:42px;padding:0 22px;border-radius:999px;border:1px solid rgba(212,175,55,.5);background:transparent;color:var(--gold-l);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
-  .egg button:hover{background:rgba(212,175,55,.12)}
-
-  .toast{
-    position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);z-index:90;
-    padding:11px 18px;border-radius:14px;background:rgba(13,10,7,.92);backdrop-filter:blur(14px);
-    border:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.14em;
-    color:#d8cdb4;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;white-space:nowrap;
-  }
-  .toast.on{opacity:1;transform:translate(-50%,0)}
-
-  @media(prefers-reduced-motion:reduce){
-    *{animation:none!important;transition-duration:.01ms!important}
-    html{scroll-behavior:auto}
-    .rev{opacity:1;transform:none}
-  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 
-<div class="grain" aria-hidden="true"></div>
-
-<header class="hdr" id="hdr">
-  <a href="#hero" class="brand"><span class="drop"></span>CHROMA</a>
-  <div class="hdr-right">
-    <button class="chip" id="micChip" type="button"><span class="dot" id="micDot"></span><span id="micLabel">Micrófono</span></button>
-  </div>
+<header class="hdr">
+  <a href="#" class="brand"><span class="dot"></span>VOXSHOP</a>
+  <div class="cart">Calzado</div>
 </header>
 
-<main>
-  <!-- HERO CON FLUIDO -->
-  <section class="hero" id="hero">
-    <canvas id="fluid" aria-hidden="true"></canvas>
-    <div class="hero-inner">
-      <span class="tag">Laboratorio visual · 100% código</span>
-      <h1 class="title">Líquido,<br><em class="gold-text">luz</em> y matemática</h1>
-      <p class="sub">Un fluido dorado que se deforma bajo tu dedo. Arte que no existe hasta que lo miras. Un sintetizador que escucha el mundo. Todo, en un archivo de texto.</p>
-    </div>
-    <div class="hint">Arrastra el dedo sobre el fluido</div>
-  </section>
+<section class="hero">
+  <h1 class="serif">Busca <em>hablando</em></h1>
+  <p>Toca el micrófono y di lo que quieres. Por ejemplo: <strong style="color:var(--gold-l)">«quiero tenis negros talla cuarenta y uno»</strong></p>
+</section>
 
-  <!-- GALERÍA GENERATIVA -->
-  <section class="sec" id="galeria">
-    <div class="sec-head rev">
-      <span class="kicker">Arte generativo</span>
-      <h2>Cuadros que <em>nunca</em> existieron antes</h2>
-      <p class="lead">Cada uno se dibuja con matemática pura al cargar la página. No hay imágenes, no hay archivos: hay fórmulas. Toca cualquiera para regenerarlo con otra semilla.</p>
-    </div>
+<div class="wrap">
+  <div class="voice-wrap">
+    <button class="voice-btn" id="voiceBtn" type="button" aria-label="Buscar por voz">
+      <span class="ripple"></span><span class="ripple d2"></span><span class="ripple d3"></span>
+      <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg>
+    </button>
+    <p class="voice-label" id="voiceLabel">Toca y <b>habla</b></p>
+  </div>
 
-    <div class="gallery" id="gallery"></div>
+  <div class="transcript" id="transcript" role="status" aria-live="polite"></div>
 
-    <div class="facts rev">
-      <div class="fact"><b id="factFrames">0</b><span>Frames por segundo</span></div>
-      <div class="fact"><b id="factParticles">0</b><span>Partículas vivas</span></div>
-      <div class="fact"><b id="factSeeds">0</b><span>Semillas generadas</span></div>
-      <div class="fact"><b id="factTime">0s</b><span>En esta página</span></div>
-    </div>
-  </section>
+  <form class="fallback" id="fallback" autocomplete="off">
+    <input type="text" id="textInput" placeholder="…o escribe: tenis talla 41" aria-label="Buscar escribiendo">
+    <button type="submit">Buscar</button>
+  </form>
 
-  <!-- TEXTO ARENA -->
-  <section class="sand-wrap" id="arena">
-    <div class="rev" style="max-width:700px;margin:0 auto 28px">
-      <span class="kicker" style="justify-content:center;display:flex">Texto vivo</span>
-      <h2 class="serif" style="font-size:clamp(1.8rem,6vw,2.8rem);margin-bottom:16px">Escrito con <span class="gold-text">arena</span> y gravedad</h2>
-      <p class="lead" style="margin:0 auto">Cada letra está hecha de cientos de partículas que caen, se apilan y responden a tu dedo. Arrastra sobre el texto para dispersarlo y verlo reconstruirse.</p>
-    </div>
-    <canvas id="sand" width="900" height="280" aria-label="Texto de arena interactivo"></canvas>
-    <p class="sand-hint">Arrastra sobre las letras · se reconstruyen solas</p>
-  </section>
-
-  <!-- LABERINTO GENERATIVO -->
-  <section class="sec" id="laberinto">
-    <div class="sec-head rev">
-      <span class="kicker">Algoritmo</span>
-      <h2>Un laberinto que se <em>resuelve solo</em></h2>
-      <p class="lead">Generado por backtracking, resuelto con búsqueda en anchura. El mismo algoritmo que usan los GPS, pero aquí se dibuja en vivo, paso a paso. Mueve el dedo por los pasillos.</p>
-    </div>
-
-    <div class="maze-wrap rev">
-      <canvas id="maze" aria-label="Laberinto generativo"></canvas>
-      <div class="maze-controls">
-        <button class="btn btn-gold" id="mazeSolve" type="button">
-          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          Resolver
-        </button>
-        <button class="btn btn-ghost" id="mazeNew" type="button">
-          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"/><path d="M3 3v6h6M21 21v-6h-6"/></svg>
-          Nuevo
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- VISUALIZADOR DE MICRÓFONO -->
-  <section class="sec" id="voz">
-    <div class="sec-head rev">
-      <span class="kicker">Sensores</span>
-      <h2>Tu voz, <em>dibujada</em></h2>
-      <p class="lead">Con la Web Audio API y tu micrófono, el navegador analiza el sonido en tiempo real y lo convierte en geometría. Nada sale de tu dispositivo. Si no hay micrófono, hay una simulación en vivo.</p>
-    </div>
-
-    <div class="viz-wrap rev">
-      <canvas id="viz"></canvas>
-      <div class="viz-overlay" id="vizOverlay">
-        <div>
-          <p>Toca el botón para usar tu <b>micrófono</b>, o espera y verás una <b>simulación</b> de audio.</p>
-          <button class="btn btn-gold" id="vizStart" type="button">
-            <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-            Activar micrófono
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="foot">
-  <a href="#hero" class="brand"><span class="drop"></span>CHROMA</a>
-  <p>
-    Hecho a mano con HTML, CSS y JavaScript<span class="d">◆</span>Sin librerías<span class="d">◆</span>Sin servidor
-    <br>© <span id="year">2026</span> · Un laboratorio en una sola página
-  </p>
-</footer>
-
-<div class="egg" id="egg" role="dialog" aria-modal="true" aria-label="Mensaje secreto">
-  <div class="big">El séptimo cuadro te lo agradece ✦</div>
-  <p>
-    Cada píxel que ves es una fórmula que se repite miles de veces.<br>
-    Esto es lo que pasa cuando le das matemática a alguien con curiosidad.
-  </p>
-  <button id="eggClose" type="button">Cerrar</button>
+  <div class="filters-bar" id="filtersBar"></div>
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script>
 (function(){
   'use strict';
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var isTouch = matchMedia('(hover: none)').matches || 'ontouchstart' in window;
-  var startTime = Date.now();
-  document.getElementById('year').textContent = new Date().getFullYear();
 
-  var toastEl = document.getElementById('toast');
-  function toast(msg){
-    toastEl.textContent = msg;
-    toastEl.classList.add('on');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(function(){ toastEl.classList.remove('on'); }, 2600);
+  /* =========================================================
+     CATÁLOGO (en un negocio real esto vendría de productos.json)
+     ========================================================= */
+  var PRODUCTS = [
+    { id:1,  name:'Air Zoom Pegasus', brand:'Nike',     category:'tenis',     gender:'hombre', colors:['negro','blanco'],   sizes:[39,40,41,42,43,44], price:850,  emoji:'👟', c1:'#1a1a2e', c2:'#0d0a07' },
+    { id:2,  name:'Ultraboost 22',    brand:'Adidas',   category:'tenis',     gender:'hombre', colors:['azul','negro'],    sizes:[40,41,42,43],       price:1100, emoji:'👟', c1:'#0f3460', c2:'#0d0a07' },
+    { id:3,  name:'Cloud Runner',     brand:'On',       category:'tenis',     gender:'mujer',  colors:['rosa','blanco'],   sizes:[36,37,38,39],       price:980,  emoji:'👟', c1:'#533483', c2:'#0d0a07' },
+    { id:4,  name:'Stan Smith',       brand:'Adidas',   category:'tenis',     gender:'unisex', colors:['blanco','verde'],  sizes:[38,39,40,41,42,43,44], price:720, emoji:'👟', c1:'#2d6a4f', c2:'#0d0a07' },
+    { id:5,  name:'Chuck Taylor',     brand:'Converse', category:'tenis',     gender:'unisex', colors:['negro','blanco','rojo'], sizes:[37,38,39,40,41,42,43,44], price:550, emoji:'👟', c1:'#7a0c0c', c2:'#0d0a07' },
+    { id:6,  name:'Chelsea Boot',     brand:'Clarks',   category:'botas',     gender:'hombre', colors:['cafe','negro'],    sizes:[40,41,42,43,44],    price:1350, emoji:'👢', c1:'#5d3a1a', c2:'#0d0a07' },
+    { id:7,  name:'Heels Classic',    brand:'Aldo',     category:'tacones',   gender:'mujer',  colors:['negro','rojo'],    sizes:[35,36,37,38,39],    price:890,  emoji:'👠', c1:'#7a0c0c', c2:'#0d0a07' },
+    { id:8,  name:'Sandalia Verano',  brand:'Havaianas', category:'sandalias', gender:'mujer',  colors:['dorado','plateado'], sizes:[35,36,37,38,39,40], price:320, emoji:'🩴', c1:'#b8860b', c2:'#0d0a07' },
+    { id:9,  name:'Trail Runner',     brand:'Salomon',  category:'tenis',     gender:'hombre', colors:['verde','negro'],   sizes:[41,42,43,44,45],    price:1250, emoji:'👟', c1:'#2d6a4f', c2:'#0d0a07' },
+    { id:10, name:'Slip-On Clásico',  brand:'Vans',     category:'tenis',     gender:'unisex', colors:['negro','blanco','azul'], sizes:[38,39,40,41,42,43,44], price:620, emoji:'👟', c1:'#1b263b', c2:'#0d0a07' },
+    { id:11, name:'Oxford Elegante',  brand:'Clarks',   category:'zapatos',   gender:'hombre', colors:['cafe','negro'],    sizes:[39,40,41,42,43,44], price:1450, emoji:'👞', c1:'#5d3a1a', c2:'#0d0a07' },
+    { id:12, name:'Bailarina',        brand:'Zara',     category:'zapatos',   gender:'mujer',  colors:['beige','negro'],   sizes:[35,36,37,38,39],    price:480,  emoji:'👞', c1:'#a68a64', c2:'#0d0a07' }
+  ];
+
+  /* =========================================================
+     PARSER: el verdadero cerebro de la búsqueda por voz
+     ========================================================= */
+
+  // Quita tildes y pasa a minúsculas para comparar
+  function norm(s){
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
-  /* ============ HEADER ============ */
-  var hdr = document.getElementById('hdr');
-  addEventListener('scroll', function(){
-    hdr.classList.toggle('solid', scrollY > 40);
-  }, {passive:true});
+  // Convierte "cuarenta y uno", "cuarenta y un", "41" o "treinta y cinco" a número
+  var TENS = { veinte:20, treinta:30, cuarenta:40, cincuenta:50 };
+  var UNITS = { uno:1, un:1, dos:2, tres:3, cuatro:4, cinco:5, seis:6, siete:7, ocho:8, nueve:9 };
+  var ONEWORD = {
+    veintiuno:21, veintiun:21, veintidos:22, veintitres:23, veinticuatro:24,
+    veinticinco:25, veintiseis:26, veintisiete:27, veintiocho:28, veintinueve:29
+  };
 
-  /* ============ REVEAL ============ */
-  (function(){
-    var els = document.querySelectorAll('.rev');
-    if (!('IntersectionObserver' in window)){ els.forEach(function(e){ e.classList.add('in'); }); return; }
-    var io = new IntersectionObserver(function(en){
-      en.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, {threshold:0.1, rootMargin:'0px 0px -50px 0px'});
-    els.forEach(function(e){ io.observe(e); });
-  })();
+  function extractNumber(text){
+    // número directo (ej. "41")
+    var m = text.match(/\b(\d{1,3})\b/);
+    if (m) return parseInt(m[1], 10);
+    // "veinticinco", etc.
+    m = text.match(/\b(veintiuno|veintiun|veintidos|veintitres|veinticuatro|veinticinco|veintiseis|veintisiete|veintiocho|veintinueve)\b/);
+    if (m) return ONEWORD[m[1]];
+    // "cuarenta y uno"
+    m = text.match(/\b(veinte|treinta|cuarenta|cincuenta)(?:\s+y\s+(uno|un|dos|tres|cuatro|cinco|seis|siete|ocho|nueve))?\b/);
+    if (m){
+      var t = TENS[m[1]] || 0;
+      var u = m[2] ? (UNITS[m[2]] || 0) : 0;
+      return t + u;
+    }
+    return null;
+  }
 
-  /* ============ FLUIDO DORADO (metaballs + ondas) ============ */
-  (function fluid(){
-    var cv = document.getElementById('fluid');
-    if (!cv) return;
-    var ctx = cv.getContext('2d');
-    var W, H, dpr, blobs = [], ripples = [], raf;
-    var pointer = {x:0, y:0, active:false};
-    var running = true;
+  var COLORS = ['negro','negra','blanco','blanca','rojo','roja','azul','verde','rosa','rosado','gris','cafe','beige','dorado','plateado','morado','violeta','amarillo','naranja','celeste','marron'];
 
-    function resize(){
-      dpr = Math.min(devicePixelRatio || 1, 2);
-      W = cv.clientWidth; H = cv.clientHeight;
-      cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      blobs = [];
-      var n = Math.max(5, Math.min(11, Math.round(W/180)));
-      for (var i=0;i<n;i++){
-        blobs.push({
-          x: W*0.5 + (Math.random()-0.5)*W*0.6,
-          y: H*0.5 + (Math.random()-0.5)*H*0.5,
-          r: 60 + Math.random()*120,
-          vx: (Math.random()-0.5)*0.4,
-          vy: (Math.random()-0.5)*0.4,
-          ph: Math.random()*6.28,
-          hue: Math.random()
-        });
+  function extractColor(text){
+    for (var i=0;i<COLORS.length;i++){
+      if (new RegExp('\\b' + COLORS[i] + 's?\\b').test(text)){
+        // singular
+        return COLORS[i].replace(/a$/,'o').replace(/s$/,'');
       }
     }
+    return null;
+  }
 
-    function draw(t){
-      ctx.clearRect(0,0,W,H);
-
-      // Los blobs siguen al puntero con inercia + derivan solos
-      for (var i=0;i<blobs.length;i++){
-        var b = blobs[i];
-        if (pointer.active){
-          var dx = pointer.x - b.x, dy = pointer.y - b.y;
-          var d = Math.hypot(dx,dy) || 1;
-          var pull = Math.min(0.35, 120/(d + 80));
-          b.vx += (dx/d) * pull;
-          b.vy += (dy/d) * pull;
-        }
-        b.vx += Math.sin(t/1400 + b.ph)*0.06;
-        b.vy += Math.cos(t/1600 + b.ph)*0.06;
-        b.vx *= 0.965; b.vy *= 0.965;
-        b.x += b.vx; b.y += b.vy;
-
-        // rebote suave
-        if (b.x < b.r*0.4) b.vx += 0.3;
-        if (b.x > W - b.r*0.4) b.vx -= 0.3;
-        if (b.y < b.r*0.4) b.vy += 0.3;
-        if (b.y > H - b.r*0.4) b.vy -= 0.3;
-      }
-
-      // Dibujamos con "screen" para efecto de luz líquida
-      ctx.globalCompositeOperation = 'screen';
-      for (var k=0;k<blobs.length;k++){
-        var bl = blobs[k];
-        var pulse = 1 + Math.sin(t/900 + bl.ph)*0.12;
-        var rr = bl.r * pulse;
-        var g = ctx.createRadialGradient(bl.x, bl.y, 0, bl.x, bl.y, rr);
-        var warm = bl.hue < 0.5;
-        g.addColorStop(0, warm ? 'rgba(255,233,168,0.55)' : 'rgba(212,175,55,0.45)');
-        g.addColorStop(0.45, warm ? 'rgba(212,175,55,0.22)' : 'rgba(140,109,31,0.22)');
-        g.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(bl.x, bl.y, rr, 0, 6.2832); ctx.fill();
-      }
-
-      // Ondas del puntero
-      ctx.globalCompositeOperation = 'lighter';
-      for (var r=ripples.length-1;r>=0;r--){
-        var rp = ripples[r];
-        rp.r += 4.5;
-        rp.a *= 0.955;
-        if (rp.a < 0.01 || rp.r > 500){ ripples.splice(r,1); continue; }
-        ctx.strokeStyle = 'rgba(255,233,168,' + rp.a + ')';
-        ctx.lineWidth = 1.4;
-        ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.r, 0, 6.2832); ctx.stroke();
-      }
-
-      ctx.globalCompositeOperation = 'source-over';
-      raf = requestAnimationFrame(draw);
+  var CATS = ['tenis','zapatillas','zapatos','sandalias','botas','tacones','deportivos','casuales','formales'];
+  function extractCategory(text){
+    for (var i=0;i<CATS.length;i++){
+      if (new RegExp('\\b' + CATS[i] + '\\b').test(text)) return CATS[i];
     }
+    return null;
+  }
 
-    function setPointer(x, y){
-      var rect = cv.getBoundingClientRect();
-      pointer.x = x - rect.left; pointer.y = y - rect.top; pointer.active = true;
-    }
-    function addRipple(x, y){
-      var rect = cv.getBoundingClientRect();
-      ripples.push({x:x - rect.left, y:y - rect.top, r:5, a:0.7});
-    }
+  function extractGender(text){
+    if (/\b(hombre|caballero|masculino|varon)\b/.test(text)) return 'hombre';
+    if (/\b(mujer|dama|femenin|senora|chica)\b/.test(text)) return 'mujer';
+    if (/\b(nino|nina|infantil|chico|chica)\b/.test(text)) return 'unisex';
+    return null;
+  }
 
-    cv.addEventListener('mousemove', function(e){ setPointer(e.clientX, e.clientY); }, {passive:true});
-    cv.addEventListener('pointerdown', function(e){ setPointer(e.clientX, e.clientY); addRipple(e.clientX, e.clientY); });
-    cv.addEventListener('touchmove', function(e){ var t = e.touches[0]; if (t) setPointer(t.clientX, t.clientY); }, {passive:true});
-    cv.addEventListener('mouseleave', function(){ pointer.active = false; });
+  // Traduce "tenis"→"tenis", "zapatillas"→"tenis", etc. para que coincida con el catálogo
+  function normalizeCategory(cat){
+    if (!cat) return null;
+    if (cat === 'zapatillas' || cat === 'deportivos') return 'tenis';
+    if (cat === 'formales' || cat === 'casuales') return 'zapatos';
+    return cat;
+  }
 
-    resize();
-    if (!reduce) raf = requestAnimationFrame(draw);
-    else draw(0);
+  function parseQuery(rawText){
+    var t = norm(rawText);
+    var q = { raw: rawText, size:null, color:null, category:null, gender:null };
+    q.size = extractNumber(t);
+    q.color = extractColor(t);
+    q.category = normalizeCategory(extractCategory(t));
+    q.gender = extractGender(t);
+    return q;
+  }
 
-    var rt;
-    addEventListener('resize', function(){
-      clearTimeout(rt);
-      rt = setTimeout(function(){ resize(); if (reduce) draw(0); }, 200);
+  /* =========================================================
+     FILTRO
+     ========================================================= */
+  function filterProducts(query){
+    return PRODUCTS.filter(function(p){
+      if (query.size && p.sizes.indexOf(query.size) === -1) return false;
+      if (query.color && p.colors.indexOf(query.color) === -1) return false;
+      if (query.category && p.category !== query.category) return false;
+      if (query.gender && p.gender !== query.gender && p.gender !== 'unisex') return false;
+      return true;
     });
+  }
 
-    if ('IntersectionObserver' in window && !reduce){
-      new IntersectionObserver(function(es){
-        es.forEach(function(e){
-          if (e.isIntersecting && !running){ running = true; raf = requestAnimationFrame(draw); }
-          else if (!e.isIntersecting && running){ running = false; cancelAnimationFrame(raf); }
-        });
-      }, {threshold:0}).observe(cv);
-    }
-  })();
+  /* =========================================================
+     RENDER
+     ========================================================= */
+  var grid = document.getElementById('grid');
+  var countEl = document.getElementById('count');
+  var filtersBar = document.getElementById('filtersBar');
+  var state = { query:{} };
 
-  /* ============ GALERÍA DE ARTE GENERATIVO ============ */
-  (function gallery(){
-    var box = document.getElementById('gallery');
-    if (!box) return;
-    var seedsEl = document.getElementById('factSeeds');
-    var seedCount = 0;
+  function render(){
+    var q = state.query;
+    var results = filterProducts(q);
+    grid.innerHTML = '';
 
-    var names = ['Ondas', 'Flor', 'Tramas', 'Órbitas', 'Caos', 'Tejido', 'Ecos', 'Cristal'];
-
-    function mulberry32(a){
-      return function(){
-        a |= 0; a = a + 0x6D2B79F5 | 0;
-        var t = Math.imul(a ^ a >>> 15, 1 | a);
-        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-      };
+    // contador
+    if (Object.keys(q).some(function(k){ return k !== 'raw' && q[k]; })){
+      countEl.innerHTML = 'Encontré <b>' + results.length + '</b> ' + (results.length === 1 ? 'producto' : 'productos');
+    } else {
+      countEl.innerHTML = '<b>' + results.length + '</b> productos en el catálogo';
     }
 
-    function paint(cv, seed){
-      var ctx = cv.getContext('2d');
-      var W = cv.width, H = cv.height;
-      var rnd = mulberry32(seed);
-      var hue = 35 + rnd()*25; // dorados
-      ctx.fillStyle = '#0d0a07';
-      ctx.fillRect(0,0,W,H);
+    // chips de filtros activos
+    filtersBar.innerHTML = '';
+    var chips = [];
+    if (q.category) chips.push({ k:'category', label:q.category });
+    if (q.color) chips.push({ k:'color', label:q.color });
+    if (q.gender) chips.push({ k:'gender', label:q.gender });
+    if (q.size) chips.push({ k:'size', label:'talla ' + q.size });
 
-      var kind = Math.floor(rnd()*4);
-      ctx.globalCompositeOperation = 'lighter';
-
-      if (kind === 0){ // ondas
-        var rows = 20 + Math.floor(rnd()*20);
-        for (var i=0;i<rows;i++){
-          ctx.beginPath();
-          var amp = 12 + rnd()*30;
-          var freq = 0.006 + rnd()*0.012;
-          var off = rnd()*H;
-          ctx.strokeStyle = 'hsla(' + (hue + rnd()*20) + ',85%,' + (45 + rnd()*25) + '%,' + (0.15 + rnd()*0.35) + ')';
-          ctx.lineWidth = 0.6 + rnd()*1.6;
-          for (var x=0;x<=W;x+=3){
-            var y = off + Math.sin(x*freq + i*0.4)*amp;
-            if (x === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-          }
-          ctx.stroke();
-        }
-      } else if (kind === 1){ // flor radial
-        var petals = 6 + Math.floor(rnd()*10);
-        var cx = W/2, cy = H/2;
-        for (var p=0;p<200;p++){
-          var a = rnd()*6.2832;
-          var rr = Math.pow(rnd(), 1.6) * (W*0.46);
-          var x2 = cx + Math.cos(a)*rr;
-          var y2 = cy + Math.sin(a)*rr;
-          var sz = 1 + rnd()*3.5;
-          ctx.fillStyle = 'hsla(' + (hue + Math.sin(a*petals)*18) + ',90%,' + (50 + rr/W*40) + '%,' + (0.2 + rnd()*0.6) + ')';
-          ctx.beginPath(); ctx.arc(x2, y2, sz, 0, 6.2832); ctx.fill();
-        }
-      } else if (kind === 2){ // tramas
-        var step = 8 + rnd()*10;
-        for (var yy=0; yy<H; yy+=step){
-          for (var xx=0; xx<W; xx+=step){
-            var d = Math.hypot(xx - W/2, yy - H/2) / (W*0.6);
-            var v = Math.abs(Math.sin(d*8 - rnd()*0.2));
-            if (v > 0.55){
-              ctx.fillStyle = 'hsla(' + hue + ',85%,' + (40 + v*35) + '%,' + (v*0.5) + ')';
-              ctx.beginPath(); ctx.arc(xx, yy, step*0.3*v, 0, 6.2832); ctx.fill();
-            }
-          }
-        }
-      } else { // órbitas
-        for (var o=0;o<40;o++){
-          var ox = W/2 + (rnd()-0.5)*W*0.4;
-          var oy = H/2 + (rnd()-0.5)*H*0.4;
-          var orr = 8 + rnd()*60;
-          ctx.strokeStyle = 'hsla(' + (hue + rnd()*25) + ',90%,' + (45 + rnd()*30) + '%,' + (0.2 + rnd()*0.4) + ')';
-          ctx.lineWidth = 0.5 + rnd()*1.4;
-          ctx.beginPath(); ctx.arc(ox, oy, orr, 0, 6.2832); ctx.stroke();
-        }
-      }
-
-      // viñeta
-      ctx.globalCompositeOperation = 'source-over';
-      var vg = ctx.createRadialGradient(W/2,H/2,W*0.2,W/2,H/2,W*0.75);
-      vg.addColorStop(0,'rgba(0,0,0,0)');
-      vg.addColorStop(1,'rgba(0,0,0,0.55)');
-      ctx.fillStyle = vg; ctx.fillRect(0,0,W,H);
+    chips.forEach(function(c){
+      var el = document.createElement('span');
+      el.className = 'chip';
+      el.innerHTML = c.label + ' <button type="button" aria-label="Quitar filtro">×</button>';
+      el.querySelector('button').addEventListener('click', function(){
+        delete state.query[c.k];
+        render();
+      });
+      filtersBar.appendChild(el);
+    });
+    if (chips.length){
+      var clear = document.createElement('button');
+      clear.type = 'button';
+      clear.className = 'chip chip-clear';
+      clear.textContent = 'Limpiar todo';
+      clear.addEventListener('click', function(){ state.query = {}; render(); });
+      filtersBar.appendChild(clear);
     }
 
-    names.forEach(function(name, i){
+    // sin resultados
+    if (!results.length){
+      var emp = document.createElement('div');
+      emp.className = 'empty';
+      emp.innerHTML = '<div class="ico">🔍</div><h3 class="serif">Nada por aquí</h3>' +
+        '<p>No encontré productos con esos criterios. Prueba con otros filtros.</p>';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Ver todo el catálogo';
+      btn.addEventListener('click', function(){ state.query = {}; render(); });
+      emp.appendChild(btn);
+      grid.appendChild(emp);
+      return;
+    }
+
+    // tarjetas
+    results.forEach(function(p){
       var card = document.createElement('div');
-      card.className = 'canvas-card';
-      var cv = document.createElement('canvas');
-      var size = 260;
-      cv.width = cv.height = size * (Math.min(devicePixelRatio||1, 2));
-      card.appendChild(cv);
-      var label = document.createElement('div');
-      label.className = 'label';
-      label.innerHTML = '<span>' + name + '</span><b>#' + String(i+1).padStart(2,'0') + '</b>';
-      card.appendChild(label);
-
-      var seed = (Date.now() + i * 977) >>> 0;
-      paint(cv, seed);
-      seedCount++;
-
-      card.addEventListener('click', function(){
-        seed = (seed * 16807 + i) >>> 0;
-        paint(cv, seed);
-        seedCount++;
-        if (seedsEl) seedsEl.textContent = seedCount;
-        if (i === 6){
-          var box2 = document.getElementById('egg');
-          box2.classList.add('on');
-        }
-      });
-
-      box.appendChild(card);
+      card.className = 'prod';
+      var matches = [];
+      if (q.color && p.colors.indexOf(q.color) !== -1) matches.push(q.color);
+      card.innerHTML =
+        '<div class="img" style="--c1:' + p.c1 + ';--c2:' + p.c2 + '">' + p.emoji + '</div>' +
+        '<div class="info">' +
+          '<div class="brand-mini">' + p.brand + '</div>' +
+          '<div class="name">' + p.name + '</div>' +
+          '<div class="price">Bs. ' + p.price + '</div>' +
+          '<div class="tags">' +
+            '<span class="tag' + (q.category === p.category ? ' match' : '') + '">' + p.category + '</span>' +
+            '<span class="tag' + (q.gender === p.gender || p.gender === 'unisex' && q.gender ? ' match' : '') + '">' + p.gender + '</span>' +
+            '<span class="tag' + (q.size && p.sizes.indexOf(q.size) !== -1 ? ' match' : '') + '">' + (q.size || p.sizes[0]) + '–' + p.sizes[p.sizes.length-1] + '</span>' +
+          '</div>' +
+        '</div>';
+      grid.appendChild(card);
     });
+  }
 
-    if (seedsEl) seedsEl.textContent = seedCount;
-  })();
+  /* =========================================================
+     RECONOCIMIENTO DE VOZ
+     ========================================================= */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var voiceBtn = document.getElementById('voiceBtn');
+  var voiceLabel = document.getElementById('voiceLabel');
+  var transcriptEl = document.getElementById('transcript');
+  var fallback = document.getElementById('fallback');
+  var textInput = document.getElementById('textInput');
 
-  /* ============ TEXTO ARENA ============ */
-  (function sand(){
-    var cv = document.getElementById('sand');
-    if (!cv) return;
-    var ctx = cv.getContext('2d');
-    var W = cv.width, H = cv.height;
+  function showTranscript(html, on){
+    transcriptEl.innerHTML = html;
+    transcriptEl.classList.toggle('on', !!on);
+  }
+
+  function applyText(text){
+    showTranscript('Escuché: <span class="heard">«' + text + '»</span>', true);
+    var q = parseQuery(text);
+    state.query = q;
+    render();
+
+    // feedback de lo interpretado
     var parts = [];
-    var text = 'CHROMA';
-    var dragging = false, mx = 0, my = 0;
+    if (q.category) parts.push(q.category);
+    if (q.color) parts.push(q.color);
+    if (q.gender) parts.push(q.gender);
+    if (q.size) parts.push('talla ' + q.size);
 
-    // Renderizamos el texto en un canvas offscreen para muestrear los píxeles
-    var off = document.createElement('canvas');
-    off.width = W; off.height = H;
-    var octx = off.getContext('2d');
-    octx.fillStyle = '#fff';
-    octx.font = 'bold 190px Fraunces, Georgia, serif';
-    octx.textAlign = 'center';
-    octx.textBaseline = 'middle';
-    octx.fillText(text, W/2, H/2);
-
-    var data = octx.getImageData(0, 0, W, H).data;
-    var step = 3; // muestreo
-    for (var y=0; y<H; y+=step){
-      for (var x=0; x<W; x+=step){
-        var idx = (y*W + x) * 4;
-        if (data[idx+3] > 128){
-          parts.push({
-            hx: x, hy: y,              // posición hogar
-            x: x, y: y,
-            vx: 0, vy: 0,
-            r: 0.7 + Math.random()*1.1,
-            a: 0.5 + Math.random()*0.5
-          });
-        }
-      }
+    if (parts.length){
+      showTranscript('Escuché: <span class="heard">«' + text + '»</span><br><b>→ ' + parts.join(' · ') + '</b>', true);
+    } else {
+      showTranscript('Escuché: <span class="heard">«' + text + '»</span><br>No detecté criterios claros. Prueba: <b>«tenis negros talla 41»</b>', true);
     }
+  }
 
-    var factP = document.getElementById('factParticles');
-    if (factP) factP.textContent = parts.length.toLocaleString('es');
+  if (!SR){
+    // Navegador sin soporte
+    var warn = document.createElement('div');
+    warn.className = 'warn';
+    warn.textContent = 'Tu navegador no soporta reconocimiento de voz. Usa el campo de texto (o el micrófono del teclado del celular).';
+    document.querySelector('.voice-wrap').appendChild(warn);
+    voiceBtn.style.display = 'none';
+    voiceLabel.textContent = 'Búsqueda por texto';
+  } else {
+    var recog = new SR();
+    recog.lang = 'es-419';        // español latinoamericano
+    recog.continuous = false;
+    recog.interimResults = true;
+    recog.maxAlternatives = 1;
 
-    var lastT = 0;
-    function loop(t){
-      var dt = Math.min((t - lastT) / 16.6, 3); lastT = t;
+    var listening = false;
 
-      ctx.fillStyle = 'rgba(10,8,6,0.22)';
-      ctx.fillRect(0,0,W,H);
-
-      ctx.fillStyle = '#ffe9a8';
-      for (var i=0;i<parts.length;i++){
-        var p = parts[i];
-        var dx = p.hx - p.x, dy = p.hy - p.y;
-        // gravedad / muelle hacia el hogar
-        p.vx += dx * 0.008 * dt;
-        p.vy += dy * 0.008 * dt + 0.06 * dt;
-
-        // repulsión del dedo
-        if (dragging){
-          var ddx = p.x - mx, ddy = p.y - my;
-          var d2 = ddx*ddx + ddy*ddy;
-          if (d2 < 3600 && d2 > 1){
-            var d = Math.sqrt(d2);
-            var f = (60 - d) / 60;
-            p.vx += (ddx/d) * f * 3.5 * dt;
-            p.vy += (ddy/d) * f * 3.5 * dt;
-          }
-        }
-
-        p.vx *= 0.92; p.vy *= 0.92;
-        p.x += p.vx * dt; p.y += p.vy * dt;
-
-        ctx.globalAlpha = p.a;
-        ctx.fillRect(p.x, p.y, p.r, p.r);
-      }
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(loop);
-    }
-
-    function pos(e){
-      var r = cv.getBoundingClientRect();
-      mx = (e.clientX - r.left) * (W / r.width);
-      my = (e.clientY - r.top) * (H / r.height);
-    }
-    cv.addEventListener('pointerdown', function(e){ dragging = true; pos(e); cv.setPointerCapture(e.pointerId); });
-    cv.addEventListener('pointermove', function(e){ if (dragging) pos(e); });
-    cv.addEventListener('pointerup', function(){ dragging = false; });
-    cv.addEventListener('pointercancel', function(){ dragging = false; });
-
-    requestAnimationFrame(loop);
-  })();
-
-  /* ============ LABERINTO GENERATIVO ============ */
-  (function maze(){
-    var cv = document.getElementById('maze');
-    if (!cv) return;
-    var ctx = cv.getContext('2d');
-    var dpr = Math.min(devicePixelRatio||1, 2);
-    var N = 21; // impar
-    var grid, cellW, cellH, W, H;
-    var path = [], solving = false, solveStep = 0;
-    var player = {x:0, y:0};
-
-    function resize(){
-      var rect = cv.getBoundingClientRect();
-      W = rect.width; H = rect.height;
-      cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      cellW = W / N; cellH = H / N;
-    }
-
-    function generate(){
-      grid = [];
-      for (var y=0;y<N;y++){
-        grid[y] = [];
-        for (var x=0;x<N;x++) grid[y][x] = 1; // 1 muro, 0 camino
-      }
-      // backtracking
-      var stack = [{x:1, y:1}];
-      grid[1][1] = 0;
-      var dirs = [[0,-2],[2,0],[0,2],[-2,0]];
-      while (stack.length){
-        var cur = stack[stack.length-1];
-        var ns = [];
-        for (var i=0;i<4;i++){
-          var nx = cur.x + dirs[i][0], ny = cur.y + dirs[i][1];
-          if (nx > 0 && ny > 0 && nx < N-1 && ny < N-1 && grid[ny][nx] === 1) ns.push({x:nx, y:ny, dx:dirs[i][0]/2, dy:dirs[i][1]/2});
-        }
-        if (ns.length){
-          var n = ns[Math.floor(Math.random()*ns.length)];
-          grid[cur.y + n.dy][cur.x + n.dx] = 0;
-          grid[n.y][n.x] = 0;
-          stack.push({x:n.x, y:n.y});
-        } else stack.pop();
-      }
-      grid[N-2][N-2] = 0;
-      path = []; solving = false;
-      player = {x:1, y:1};
-      draw();
-    }
-
-    function bfs(){
-      var start = {x:1,y:1}, goal = {x:N-2,y:N-2};
-      var q = [start], seen = {};
-      seen[start.x + ',' + start.y] = null;
-      while (q.length){
-        var c = q.shift();
-        if (c.x === goal.x && c.y === goal.y){
-          var out = [], cur = c;
-          while (cur){ out.push(cur); cur = seen[cur.x + ',' + cur.y]; }
-          return out.reverse();
-        }
-        [[0,-1],[1,0],[0,1],[-1,0]].forEach(function(d){
-          var nx = c.x + d[0], ny = c.y + d[1];
-          var k = nx + ',' + ny;
-          if (nx >= 0 && ny >= 0 && nx < N && ny < N && grid[ny][nx] === 0 && !(k in seen)){
-            seen[k] = c;
-            q.push({x:nx, y:ny});
-          }
-        });
-      }
-      return [];
-    }
-
-    function draw(){
-      ctx.fillStyle = '#0d0a07';
-      ctx.fillRect(0,0,W,H);
-
-      // celdas
-      for (var y=0;y<N;y++){
-        for (var x=0;x<N;x++){
-          if (grid[y][x] === 1){
-            ctx.fillStyle = 'rgba(212,175,55,0.14)';
-            ctx.fillRect(x*cellW, y*cellH, cellW-0.6, cellH-0.6);
-          }
-        }
-      }
-
-      // camino resuelto
-      if (solving && path.length){
-        ctx.strokeStyle = 'rgba(255,233,168,0.85)';
-        ctx.lineWidth = Math.max(2, cellW*0.22);
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        for (var i=0;i<=solveStep && i<path.length;i++){
-          var p = path[i];
-          var px = p.x*cellW + cellW/2;
-          var py = p.y*cellH + cellH/2;
-          if (i === 0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-        }
-        ctx.stroke();
-        if (solveStep < path.length-1) solveStep++;
-        else solving = false;
-      }
-
-      // jugador
-      ctx.fillStyle = '#ffe9a8';
-      ctx.shadowColor = '#ffe9a8';
-      ctx.shadowBlur = 18;
-      ctx.beginPath();
-      ctx.arc(player.x*cellW + cellW/2, player.y*cellH + cellH/2, Math.max(3, cellW*0.28), 0, 6.2832);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    function loop(){
-      if (solving) draw();
-      requestAnimationFrame(loop);
-    }
-
-    // movimiento del dedo por los pasillos
-    function moveTo(gx, gy){
-      if (grid[gy] && grid[gy][gx] === 0 && Math.abs(gx-player.x) + Math.abs(gy-player.y) === 1){
-        player = {x:gx, y:gy};
-      }
-    }
-    function handlePos(clientX, clientY){
-      var r = cv.getBoundingClientRect();
-      var gx = Math.floor((clientX - r.left) / r.width * N);
-      var gy = Math.floor((clientY - r.top) / r.height * N);
-      moveTo(gx, gy);
-    }
-    cv.addEventListener('pointermove', function(e){ handlePos(e.clientX, e.clientY); });
-    cv.addEventListener('pointerdown', function(e){ handlePos(e.clientX, e.clientY); });
-    addEventListener('keydown', function(e){
-      var d = {ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key];
-      if (d) moveTo(player.x + d[0], player.y + d[1]);
+    voiceBtn.addEventListener('click', function(){
+      if (listening){ recog.stop(); return; }
+      try { recog.start(); } catch(e){}
     });
 
-    document.getElementById('mazeSolve').addEventListener('click', function(){
-      path = bfs();
-      solveStep = 0;
-      solving = true;
-      toast('Resolviendo con BFS…');
-    });
-    document.getElementById('mazeNew').addEventListener('click', function(){
-      generate();
-      toast('Nuevo laberinto generado');
-    });
+    recog.onstart = function(){
+      listening = true;
+      voiceBtn.classList.add('listening');
+      voiceLabel.innerHTML = 'Escuchando… <b>habla ahora</b>';
+      showTranscript('🎤 Escuchando…', true);
+    };
 
-    var rt;
-    addEventListener('resize', function(){
-      clearTimeout(rt);
-      rt = setTimeout(function(){ resize(); draw(); }, 200);
-    });
-
-    resize();
-    generate();
-    requestAnimationFrame(loop);
-  })();
-
-  /* ============ VISUALIZADOR DE AUDIO ============ */
-  (function visualizer(){
-    var cv = document.getElementById('viz');
-    if (!cv) return;
-    var ctx = cv.getContext('2d');
-    var overlay = document.getElementById('vizOverlay');
-    var btn = document.getElementById('vizStart');
-    var micChip = document.getElementById('micChip');
-    var micLabel = document.getElementById('micLabel');
-    var micDot = document.getElementById('micDot');
-
-    var W, H, dpr, raf;
-    var analyser = null, source = null, actx = null, dataArr = null;
-    var simulated = true;
-    var t0 = performance.now();
-
-    function resize(){
-      dpr = Math.min(devicePixelRatio || 1, 2);
-      var r = cv.getBoundingClientRect();
-      W = r.width; H = r.height;
-      cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-    }
-
-    function fakeData(t){
-      var arr = new Uint8Array(96);
-      for (var i=0;i<arr.length;i++){
-        var f = i / arr.length;
-        arr[i] = 60 + 140 * Math.abs(Math.sin(t/900 + f*8)) * (0.4 + 0.6*Math.sin(t/2200 + i*0.2));
+    recog.onresult = function(e){
+      var interim = '', final = '';
+      for (var i = e.resultIndex; i < e.results.length; i++){
+        var txt = e.results[i][0].transcript;
+        if (e.results[i].isFinal) final += txt; else interim += txt;
       }
-      return arr;
-    }
-
-    function draw(){
-      var t = performance.now() - t0;
-      ctx.fillStyle = 'rgba(13,10,7,0.28)';
-      ctx.fillRect(0,0,W,H);
-
-      var data = (simulated || !analyser) ? fakeData(t) : new Uint8Array(analyser.frequencyBinCount);
-
-      if (!simulated && analyser) analyser.getByteFrequencyData(data);
-
-      var bars = 96;
-      var step = Math.floor(data.length / bars) || 1;
-      var bw = W / bars;
-
-      for (var i=0;i<bars;i++){
-        var v = data[i*step] / 255;
-        var h = v * H * 0.75;
-        var x = i * bw;
-        var y = H - h;
-        var g = ctx.createLinearGradient(0, y, 0, H);
-        g.addColorStop(0, 'rgba(255,233,168,0.95)');
-        g.addColorStop(0.5, 'rgba(212,175,55,0.7)');
-        g.addColorStop(1, 'rgba(140,109,31,0.25)');
-        ctx.fillStyle = g;
-        ctx.fillRect(x + bw*0.18, y, bw*0.64, h);
-
-        // reflejo
-        ctx.fillStyle = 'rgba(255,233,168,' + (v*0.12) + ')';
-        ctx.fillRect(x + bw*0.18, H - h - 8, bw*0.64, 6);
+      if (interim){
+        showTranscript('🎤 <span class="heard">' + interim + '…</span>', true);
       }
-
-      // línea superior
-      ctx.strokeStyle = 'rgba(255,233,168,0.4)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (var j=0;j<W;j+=4){
-        var vv = data[Math.floor(j / W * data.length)] / 255;
-        var yy = 20 + vv * 30;
-        if (j === 0) ctx.moveTo(j, yy); else ctx.lineTo(j, yy);
+      if (final){
+        applyText(final.trim());
       }
-      ctx.stroke();
+    };
 
-      raf = requestAnimationFrame(draw);
-    }
+    recog.onerror = function(e){
+      listening = false;
+      voiceBtn.classList.remove('listening');
+      voiceLabel.innerHTML = 'Toca y <b>habla</b>';
+      var msg = 'No pude escucharte.';
+      if (e.error === 'not-allowed') msg = 'Permiso de micrófono denegado. Actívalo en tu navegador.';
+      else if (e.error === 'no-speech') msg = 'No escuché nada. Intenta de nuevo.';
+      else if (e.error === 'audio-capture') msg = 'No hay micrófono disponible.';
+      else if (e.error === 'network') msg = 'Sin conexión para el reconocimiento.';
+      showTranscript('<b>' + msg + '</b>', true);
+    };
 
-    function startMic(){
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-        toast('Tu navegador no permite micrófono');
-        return;
-      }
-      navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
-        var AC = window.AudioContext || window.webkitAudioContext;
-        if (!actx) actx = new AC();
-        if (actx.state === 'suspended') actx.resume();
-        source = actx.createMediaStreamSource(stream);
-        analyser = actx.createAnalyser();
-        analyser.fftSize = 512;
-        source.connect(analyser);
-        simulated = false;
-        overlay.classList.add('off');
-        micLabel.textContent = 'Escuchando';
-        micDot.classList.add('rec');
-        toast('Micrófono activo · habla o haz ruido');
-      }).catch(function(){
-        toast('No se pudo acceder al micrófono');
-      });
-    }
+    recog.onend = function(){
+      listening = false;
+      voiceBtn.classList.remove('listening');
+      voiceLabel.innerHTML = 'Toca y <b>habla</b>';
+    };
+  }
 
-    btn.addEventListener('click', startMic);
-    micChip.addEventListener('click', function(){
-      if (simulated) startMic();
-      else {
-        // parar
-        if (source && source.mediaStream) source.mediaStream.getTracks().forEach(function(t){ t.stop(); });
-        analyser = null; source = null; simulated = true;
-        micLabel.textContent = 'Micrófono';
-        micDot.classList.remove('rec');
-        overlay.classList.remove('off');
-        toast('Micrófono desactivado');
-      }
-    });
+  // Fallback por texto
+  fallback.addEventListener('submit', function(e){
+    e.preventDefault();
+    var v = textInput.value.trim();
+    if (v) applyText(v);
+  });
 
-    resize();
-    addEventListener('resize', function(){ resize(); });
-    raf = requestAnimationFrame(draw);
-
-    if ('IntersectionObserver' in window){
-      new IntersectionObserver(function(es){
-        es.forEach(function(e){
-          if (e.isIntersecting && !raf) raf = requestAnimationFrame(draw);
-          else if (!e.isIntersecting && raf){ cancelAnimationFrame(raf); raf = null; }
-        });
-      }, {threshold:0}).observe(cv);
-    }
-  })();
-
-  /* ============ DATOS EN VIVO ============ */
-  (function facts(){
-    var fFrames = document.getElementById('factFrames');
-    var fTime = document.getElementById('factTime');
-    var frames = 0, t0 = performance.now();
-    (function loop(){
-      frames++;
-      var now = performance.now();
-      if (now - t0 >= 1000){
-        if (fFrames) fFrames.textContent = frames;
-        frames = 0; t0 = now;
-      }
-      requestAnimationFrame(loop);
-    })();
-    setInterval(function(){
-      if (fTime) fTime.textContent = Math.floor((Date.now() - startTime) / 1000) + 's';
-    }, 1000);
-  })();
-
-  /* ============ EASTER EGG ============ */
-  (function egg(){
-    var box = document.getElementById('egg');
-    document.getElementById('eggClose').addEventListener('click', function(){ box.classList.remove('on'); });
-    box.addEventListener('click', function(e){ if (e.target === box) box.classList.remove('on'); });
-  })();
-
+  /* =========================================================
+     INICIAL
+     ========================================================= */
+  render();
 })();
 </script>
 </body>
