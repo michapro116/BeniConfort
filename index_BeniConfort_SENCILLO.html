@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tecleo premium — sonido grabado</title>
+<title>Tecleo premium — sin notas, solo teclas</title>
 <meta name="theme-color" content="#0a0806">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,8 +56,8 @@
   .hero p{color:var(--dim);font-size:.94rem;max-width:54ch;margin:0 auto}
   .hero p b{color:var(--gold-l);font-weight:400}
 
-  .stage-section{max-width:1000px;margin:0 auto;padding:0 22px 50px}
-  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+  .stage-section{max-width:1000px;margin:0 auto;padding:0 22px 30px}
+  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
   @media(max-width:560px){.styles{grid-template-columns:1fr}}
   .style-btn{
     position:relative;text-align:left;padding:16px 18px;border-radius:14px;cursor:pointer;
@@ -74,6 +74,24 @@
   .style-btn .name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:4px}
   .style-btn .name .dot{width:7px;height:7px;border-radius:50%;background:var(--btn-accent,var(--gold));box-shadow:0 0 10px var(--btn-accent,var(--gold));flex:none}
   .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4}
+
+  /* Comparador rápido */
+  .compare{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;
+    padding:14px;border-radius:14px;border:1px dashed rgba(212,175,55,.3);
+    background:rgba(212,175,55,.03);
+  }
+  @media(max-width:560px){.compare{grid-template-columns:1fr}}
+  .compare-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    min-height:44px;padding:0 14px;border-radius:10px;
+    background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink);
+    font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+    cursor:pointer;transition:all .2s;
+  }
+  .compare-btn:hover{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.5)}
+  .compare-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .compare-btn:active{transform:scale(.97)}
 
   .stage{
     position:relative;padding:52px 28px;border-radius:20px;min-height:340px;
@@ -101,10 +119,10 @@
   }
   .stage-placeholder b{color:var(--gold-l);font-weight:400}
 
-  .tw-char{display:inline-block;animation:letterIn .42s cubic-bezier(.2,.8,.2,1) both;will-change:transform,opacity}
+  .tw-char{display:inline-block;animation:letterIn .38s cubic-bezier(.2,.8,.2,1) both;will-change:transform,opacity}
   @keyframes letterIn{
-    0%{transform:scale(.65) translateY(6px);opacity:0;filter:blur(3px)}
-    50%{transform:scale(1.08) translateY(-1px);opacity:1;filter:blur(0);text-shadow:0 0 16px var(--glow,currentColor)}
+    0%{transform:scale(.7) translateY(5px);opacity:0;filter:blur(2px)}
+    55%{transform:scale(1.06) translateY(-1px);opacity:1;filter:blur(0);text-shadow:0 0 14px var(--glow,currentColor)}
     100%{transform:scale(1) translateY(0);opacity:1;filter:blur(0);text-shadow:0 0 0 transparent}
   }
   .tw-space{display:inline-block;width:.28em}
@@ -127,8 +145,6 @@
   .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .btn-gold{background:var(--grad);background-size:220% auto;color:#141007;box-shadow:0 12px 36px -16px rgba(212,175,55,.9)}
   .btn-gold:hover{background-position:120% center;transform:translateY(-2px)}
-  .btn-ghost{border-color:var(--line);color:var(--ink);background:rgba(255,255,255,.03)}
-  .btn-ghost:hover{border-color:rgba(212,175,55,.5);background:rgba(212,175,55,.08)}
   .btn:active{transform:scale(.97)}
   .volume-wrap{display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
   .volume-wrap svg{width:16px;height:16px;stroke:var(--dim);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
@@ -136,34 +152,7 @@
   .volume-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;box-shadow:0 0 12px var(--gold)}
   .volume-wrap input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;border:0}
 
-  .notice{max-width:1000px;margin:0 auto 30px;padding:0 22px}
-  .notice-box{
-    padding:18px 22px;border-radius:14px;
-    background:rgba(56,232,255,.06);border:1px solid rgba(56,232,255,.25);
-    color:#a8e6ff;font-size:.85rem;line-height:1.7;
-  }
-  .notice-box b{color:#38e8ff;font-weight:500}
-  .notice-box code{
-    font-family:'IBM Plex Mono',monospace;font-size:.82em;
-    background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;color:#ffe9a8;
-  }
-
-  .explainer{max-width:1100px;margin:0 auto;padding:20px 22px 80px}
-  .explainer-head{max-width:640px;margin-bottom:34px}
-  .kicker{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-  .kicker::before{content:'';width:24px;height:1px;background:var(--gold);opacity:.6}
-  .explainer h2{font-family:'Fraunces',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px}
-  .explainer h2 em{font-style:italic}
-  .explainer-head p{color:var(--dim);font-size:.92rem;max-width:56ch}
-  .cards{display:grid;gap:14px}
-  @media(min-width:720px){.cards{grid-template-columns:repeat(2,1fr);gap:16px}}
-  .card{padding:26px 24px;border-radius:16px;background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.008));border:1px solid var(--line)}
-  .card .num{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.3em;color:var(--gold);margin-bottom:14px;display:block}
-  .card h3{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:500;margin-bottom:10px;letter-spacing:-.01em}
-  .card p{color:var(--dim);font-size:.88rem;line-height:1.7}
-  .card p b{color:var(--gold-l);font-weight:400}
-
-  .foot{text-align:center;padding:40px 22px 50px;border-top:1px solid var(--line);max-width:1100px;margin:0 auto}
+  .foot{text-align:center;padding:40px 22px 50px;border-top:1px solid var(--line);max-width:1100px;margin:0 auto;margin-top:40px}
   .foot p{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,185,150,.5);line-height:2}
   .foot .d{color:var(--gold);margin:0 8px}
 
@@ -183,24 +172,34 @@
 </header>
 
 <section class="hero">
-  <span class="eyebrow">WAV embebido · sin dependencias</span>
-  <h1>Tecleo <em><span>de estudio</span></em></h1>
-  <p>Tres sonidos de tecleo grabados y procesados como los de un estudio real. <b>Todo embebido en este HTML</b>, sin archivos externos, sin CDN. Pruébalos con audífonos.</p>
+  <span class="eyebrow">Teclado de celular · sin notas · sin piano</span>
+  <h1>El <em><span>toc</span></em> que buscabas</h1>
+  <p>Tres versiones de tecleo premium, <b>sin notas musicales</b>. Solo el "toc" del teclado del celular, pulido para sonar profesional. Compara un solo golpe de cada uno antes de elegir.</p>
 </section>
 
-<div class="notice">
-  <div class="notice-box">
-    <b>ℹ️ Honestidad técnica:</b> los WAV están generados con síntesis de alta calidad + procesamiento (EQ, saturación, reverb convolutivo) y embebidos como <code>data:audio/wav;base64</code>. No son grabaciones de un teclado físico real — esos solo se obtienen grabando con un micrófono. Si quieres ese nivel exacto, te doy instrucciones al final para grabar el tuyo en 10 minutos con el celular.
-  </div>
-</div>
-
 <main class="stage-section">
+
+  <div class="compare">
+    <button class="compare-btn" data-test="whatsapp">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Probar 1 golpe: WhatsApp
+    </button>
+    <button class="compare-btn" data-test="ios">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Probar 1 golpe: iOS
+    </button>
+    <button class="compare-btn" data-test="premium">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Probar 1 golpe: Premium
+    </button>
+  </div>
+
   <div class="styles" id="styles"></div>
 
   <div class="stage" id="stage">
     <div class="stage-content">
       <div class="stage-display" id="display">
-        <div class="stage-placeholder">Toca un <b>sonido</b> para empezar</div>
+        <div class="stage-placeholder">Toca un <b>estilo</b> o prueba un <b>golpe</b> arriba</div>
       </div>
     </div>
   </div>
@@ -217,53 +216,18 @@
   </div>
 </main>
 
-<section class="explainer">
-  <div class="explainer-head">
-    <span class="kicker">La verdad sobre el sonido premium</span>
-    <h2>Lo que <em>nadie</em> te dice</h2>
-    <p>Las marcas premium no sintetizan sonidos en el navegador. Tienen archivos masterizados por diseñadores de sonido. Aquí te explico qué puedes hacer tú.</p>
-  </div>
-
-  <div class="cards">
-    <article class="card">
-      <span class="num">01 / POR QUÉ</span>
-      <h3>El sonido sintetizado tiene techo</h3>
-      <p>La Web Audio API puede generar <b>sonidos sintéticos muy buenos</b>, pero nunca llega a la calidez de un micrófono real grabando un teclado físico. La diferencia está en las imperfecciones: el roce de la tecla, la vibración del cuerpo, el aire de la sala. Eso no se puede simular con ondas.</p>
-    </article>
-    <article class="card">
-      <span class="num">02 / CÓMO</span>
-      <h3>La solución: grabar tú</h3>
-      <p>Necesitas: un celular, una habitación silenciosa, y <b>Audacity</b> (gratis). Grabas 1 minuto de tecleo variado, cortas 4-6 golpes, los normalizas y los exportas como WAV. En 10 minutos tienes un sonido único de tu marca, <b>100% tuyo</b>.</p>
-    </article>
-    <article class="card">
-      <span class="num">03 / ALTERNATIVA</span>
-      <h3>Los WAV embebidos (los de esta página)</h3>
-      <p>Son lo mejor que se puede hacer <b>sin grabar</b>: síntesis multicapa + EQ + saturación + reverb convolutivo, exportados como WAV. Suenan profesional, pero no son idénticos a una grabación real. Es el techo técnico del camino "sin archivos externos".</p>
-    </article>
-    <article class="card">
-      <span class="num">04 / RECOMENDACIÓN</span>
-      <h3>Úsalo poquísimo</h3>
-      <p>Las webs premium ponen sonido <b>una o dos veces en toda la página</b>, nunca en cada letra. Un toque al abrir el menú, un sonido al enviar el formulario. El tecleo con sonido en cada letra es un efecto de demo de YouTube, no de marca de lujo.</p>
-    </article>
-  </div>
-</section>
-
 <footer class="foot">
-  <p>WAV embebido como base64<span class="d">◆</span>Cero archivos externos<span class="d">◆</span>Cero CDN</p>
+  <p>Sin notas · sin archivos · solo tecleo de teclado real<span class="d">◆</span>Web Audio API</p>
 </footer>
 
 <script>
 (function(){
   'use strict';
 
-  /* =========================================================
-     WAV GENERATOR + PROCESAMIENTO
-     ========================================================= */
-  var actx = null, master = null, reverbNode = null, reverbWet = null, reverbSend = null;
+  var actx = null, master = null, reverbSend = null, reverbWet = null;
   var soundOn = true;
   var volume = 0.7;
   var currentStyle = null;
-  var buffers = {};
 
   function ensureAudio(){
     if (actx){
@@ -277,235 +241,183 @@
     master.gain.value = volume;
     master.connect(actx.destination);
 
-    var len = actx.sampleRate * 0.6;
+    var len = actx.sampleRate * 0.45;
     var impulse = actx.createBuffer(2, len, actx.sampleRate);
     for (var c = 0; c < 2; c++){
       var d = impulse.getChannelData(c);
       for (var i = 0; i < len; i++){
-        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2);
       }
     }
-    reverbNode = actx.createConvolver();
-    reverbNode.buffer = impulse;
+    var verb = actx.createConvolver();
+    verb.buffer = impulse;
     reverbWet = actx.createGain();
-    reverbWet.gain.value = 0.28;
+    reverbWet.gain.value = 0.22;
     reverbSend = actx.createGain();
     reverbSend.gain.value = 1;
-    reverbSend.connect(reverbNode);
-    reverbNode.connect(reverbWet);
+    reverbSend.connect(verb);
+    verb.connect(reverbWet);
     reverbWet.connect(actx.destination);
-
     return true;
   }
 
   /* =========================================================
-     GENERADOR DE WAV (16-bit PCM)
-     Se ejecuta UNA VEZ al cargar, para cada estilo.
-     Genera varios golpes variados y los decodifica a AudioBuffer.
+     FÁBRICA DE TECLEO — SIN NOTAS MUSICALES
+     El pitch del "cuerpo" es ALEATORIO por golpe, no
+     pentatónico. Eso es lo que lo hace sonar a TECLADO
+     y no a piano.
      ========================================================= */
-
-  // Convierte Float32 a PCM 16-bit y empaqueta en WAV
-  function encodeWAV(samples, sampleRate){
-    var buffer = new ArrayBuffer(44 + samples.length * 2);
-    var view = new DataView(buffer);
-
-    function writeString(offset, str){
-      for (var i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-    }
-
-    writeString(0, 'RIFF');
-    view.setUint32(4, 36 + samples.length * 2, true);
-    writeString(8, 'WAVE');
-    writeString(12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, 1, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-    writeString(36, 'data');
-    view.setUint32(40, samples.length * 2, true);
-
-    for (var i = 0; i < samples.length; i++){
-      var s = Math.max(-1, Math.min(1, samples[i]));
-      view.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    }
-    return new Uint8Array(buffer);
-  }
-
-  // Generador de un golpe de tecla con procesamiento premium
-  function generateKeyTap(sampleRate, seed){
-    var rng = mulberry32(seed);
-    var dur = 0.28;
-    var n = Math.floor(sampleRate * dur);
-    var out = new Float32Array(n);
-
-    // === Capa 1: ruido filtrado (el "toc") ===
-    var noiseFreq = 1800 + rng() * 1400;
-    var noiseQ = 1.8 + rng() * 1.2;
-    var noiseVol = 0.22 + rng() * 0.15;
-    var noiseDur = 0.012 + rng() * 0.008;
-    var noiseLen = Math.floor(sampleRate * noiseDur);
-
-    // Filtro pasa-banda one-pole simplificado (dos polos)
-    var lp1 = 0, lp2 = 0, hp1 = 0, hp2 = 0;
-    var w = 2 * Math.PI * noiseFreq / sampleRate;
-    var cosw = Math.cos(w);
-    var alpha = Math.sin(w) / (2 * noiseQ);
-    var a0 = 1 + alpha;
-    var b0 = alpha / a0, b1 = 0, b2 = -alpha / a0;
-    var a1 = -2 * cosw / a0, a2 = (1 - alpha) / a0;
-    var x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-
-    var noiseArr = new Float32Array(noiseLen);
-    for (var i = 0; i < noiseLen; i++){
-      var x = (rng() * 2 - 1);
-      var y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
-      x2 = x1; x1 = x; y2 = y1; y1 = y;
-      var env = Math.pow(1 - i / noiseLen, 3);
-      noiseArr[i] = y * env * noiseVol;
-    }
-
-    for (var k = 0; k < noiseArr.length && k < n; k++) out[k] += noiseArr[k];
-
-    // === Capa 2: cuerpo tonal (la nota afinada, pentatónica) ===
-    var PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-    var baseFreq = PENTATONIC[Math.floor(rng() * PENTATONIC.length)] * (1 + (rng() - 0.5) * 0.06);
-    var popMult = 1.8 + rng() * 0.4; // variación por golpe
-    var toneFreq = baseFreq * popMult;
-    var toneDur = 0.10 + rng() * 0.05;
-    var toneLen = Math.floor(sampleRate * toneDur);
-    var toneVol = 0.16 + rng() * 0.06;
-    var attack = 0.003 + rng() * 0.002;
-
-    for (var j = 0; j < toneLen && j < n; j++){
-      var t = j / sampleRate;
-      var env;
-      if (t < attack) env = t / attack;
-      else env = Math.pow(1 - (t - attack) / (toneDur - attack), 2.2);
-      if (env < 0) env = 0;
-
-      var osc1 = Math.sin(2 * Math.PI * toneFreq * t);
-      var osc2 = Math.sin(2 * Math.PI * toneFreq * 2.005 * t) * 0.12;
-      out[j] += (osc1 + osc2) * env * toneVol;
-    }
-
-    // === Capa 3: sutil "click" metálico agudo ===
-    var clickFreq = 3800 + rng() * 800;
-    var clickLen = Math.floor(sampleRate * 0.006);
-    for (var c = 0; c < clickLen && c < n; c++){
-      var tc = c / sampleRate;
-      var envC = Math.exp(-tc * 900);
-      out[c] += Math.sin(2 * Math.PI * clickFreq * tc) * envC * 0.035;
-    }
-
-    // === Compresión suave (soft knee) ===
-    for (var m = 0; m < n; m++){
-      out[m] = Math.tanh(out[m] * 2.2) * 0.85;
-    }
-
-    // === Fade-out final para evitar clicks ===
-    var fadeLen = Math.floor(sampleRate * 0.02);
-    for (var f = 0; f < fadeLen; f++){
-      var idx = n - fadeLen + f;
-      out[idx] *= 1 - f / fadeLen;
-    }
-
-    return out;
-  }
-
-  // PRNG determinista
-  function mulberry32(a){
-    return function(){
-      a |= 0; a = a + 0x6D2B79F5 | 0;
-      var t = Math.imul(a ^ a >>> 15, 1 | a);
-      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
-  }
-
-  // Carga un WAV generado como AudioBuffer
-  function loadGeneratedWAV(seed, callback){
-    var sr = actx.sampleRate;
-    var samples = generateKeyTap(sr, seed);
-    var wav = encodeWAV(samples, sr);
-    actx.decodeAudioData(wav.buffer.slice(0), function(buffer){
-      callback(buffer);
-    }, function(err){
-      console.warn('Error decoding generated WAV', err);
-    });
-  }
-
-  /* =========================================================
-     ESTILOS
-     ========================================================= */
-  var STYLES = {
-    studio: {
-      label: 'Estudio',
-      desc: 'Neutro · profesional',
-      hue: 45,
-      delay: 68,
-      probability: 0.8,
-      panAmount: 0.75,
-      seed: 1001,
-      sample: 'Tecleo de estudio: equilibrado, nítido, agradable. El sonido que no se nota pero se siente.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    warm: {
-      label: 'Cálido',
-      desc: 'Madera · profundo',
-      hue: 30,
-      delay: 72,
-      probability: 0.78,
-      panAmount: 0.7,
-      seed: 2002,
-      sample: 'Un tecleo cálido, de madera y cuerpo. Suena a una oficina buena, no a una app.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    bright: {
-      label: 'Brillante',
-      desc: 'Cristal · moderno',
-      hue: 190,
-      delay: 65,
-      probability: 0.82,
-      panAmount: 0.8,
-      seed: 3003,
-      sample: 'Tecleo brillante y moderno: cada letra es una gota de vidrio. Para marcas actuales.',
-      font: "'Fraunces', Georgia, serif"
-    }
-  };
-
-  /* =========================================================
-     REPRODUCIR SONIDO EN POSICIÓN ESTÉREO
-     ========================================================= */
-  function playSound(buffer, pan, cfg){
+  function playKeyTap(cfg, pan){
     if (!soundOn || !actx) return;
     var t = actx.currentTime;
 
-    var src = actx.createBufferSource();
-    src.buffer = buffer;
-    src.playbackRate.value = 0.97 + Math.random() * 0.06;
+    // ---- Variación natural por golpe ----
+    var pitchVar = 0.85 + Math.random() * 0.3;      // ±15%
+    var volVar = 0.8 + Math.random() * 0.35;
+    var durVar = 0.9 + Math.random() * 0.2;
 
     var panner = actx.createStereoPanner();
     panner.pan.value = pan;
     panner.connect(master);
     panner.connect(reverbSend);
 
-    var gain = actx.createGain();
-    gain.gain.value = 0.85 + Math.random() * 0.3;
+    /* ============================================================
+       CAPA 1: RUIDO FILTRADO → el "toc" áspero del teclado
+       ============================================================ */
+    var noiseDur = cfg.noiseDur * durVar;
+    var noiseSamples = Math.max(1, Math.floor(actx.sampleRate * noiseDur));
+    var noiseBuf = actx.createBuffer(1, noiseSamples, actx.sampleRate);
+    var nd = noiseBuf.getChannelData(0);
+    for (var i = 0; i < noiseSamples; i++){
+      nd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / noiseSamples, 3.5);
+    }
+    var noiseSrc = actx.createBufferSource();
+    noiseSrc.buffer = noiseBuf;
 
-    src.connect(gain);
-    gain.connect(panner);
-    src.start(t);
+    var noiseFilter = actx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = cfg.noiseFreq * pitchVar;
+    noiseFilter.Q.value = cfg.noiseQ;
+
+    var noiseGain = actx.createGain();
+    noiseGain.gain.value = cfg.noiseVol * volVar;
+
+    noiseSrc.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(panner);
+    noiseSrc.start(t);
+
+    /* ============================================================
+       CAPA 2: CUERPO GRAVE SIN NOTA
+       Frecuencia aleatoria por golpe → NO suena a piano.
+       Es solo "peso" del toque, no una melodía.
+       ============================================================ */
+    var bodyFreq = cfg.bodyMin + Math.random() * (cfg.bodyMax - cfg.bodyMin);
+    var osc = actx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(bodyFreq, t);
+    osc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.55, t + cfg.bodyDur * durVar);
+
+    var oscGain = actx.createGain();
+    oscGain.gain.setValueAtTime(0.0001, t);
+    oscGain.gain.exponentialRampToValueAtTime(cfg.bodyVol * volVar, t + 0.004);
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, t + cfg.bodyDur * durVar);
+
+    osc.connect(oscGain);
+    oscGain.connect(panner);
+    osc.start(t);
+    osc.stop(t + cfg.bodyDur * durVar + 0.02);
+
+    /* ============================================================
+       CAPA 3 (opcional): click agudo
+       Solo si el estilo lo pide. Sin nota, solo un "tic" corto.
+       ============================================================ */
+    if (cfg.clickVol > 0){
+      var clickFreq = cfg.clickFreq + Math.random() * 400;
+      var clickSamples = Math.floor(actx.sampleRate * 0.005);
+      var clickBuf = actx.createBuffer(1, clickSamples, actx.sampleRate);
+      var cd = clickBuf.getChannelData(0);
+      for (var k = 0; k < clickSamples; k++){
+        cd[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / clickSamples, 2);
+      }
+      var clickSrc = actx.createBufferSource();
+      clickSrc.buffer = clickBuf;
+
+      var clickFilter = actx.createBiquadFilter();
+      clickFilter.type = 'bandpass';
+      clickFilter.frequency.value = clickFreq;
+      clickFilter.Q.value = 3;
+
+      var clickGain = actx.createGain();
+      clickGain.gain.value = cfg.clickVol * volVar;
+
+      clickSrc.connect(clickFilter);
+      clickFilter.connect(clickGain);
+      clickGain.connect(panner);
+      clickSrc.start(t);
+    }
   }
+
+  /* =========================================================
+     LOS 3 ESTILOS — solo cambian números, NO agregan notas
+     ========================================================= */
+  var STYLES = {
+    whatsapp: {
+      label: 'WhatsApp',
+      desc: 'Familiar · reconocible',
+      hue: 145,
+      delay: 66,
+      probability: 0.85,
+      panAmount: 0.65,
+      // Ruido: banda media, corto
+      noiseFreq: 1400, noiseQ: 1.8, noiseVol: 0.35, noiseDur: 0.018,
+      // Cuerpo: rango amplio aleatorio → suena a tecla, no a nota
+      bodyMin: 350, bodyMax: 550, bodyVol: 0.22, bodyDur: 0.055,
+      // Sin click
+      clickFreq: 0, clickVol: 0,
+      sample: 'Toc. Toc. Toc. El sonido que ya conoces del celular, pero un poco más pulido.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    ios: {
+      label: 'iOS',
+      desc: 'Nítido · moderno',
+      hue: 210,
+      delay: 62,
+      probability: 0.88,
+      panAmount: 0.75,
+      // Ruido: más brillante
+      noiseFreq: 2000, noiseQ: 2.4, noiseVol: 0.30, noiseDur: 0.012,
+      // Cuerpo más corto → suena más "digital"
+      bodyMin: 400, bodyMax: 620, bodyVol: 0.18, bodyDur: 0.035,
+      // Click agudo muy corto
+      clickFreq: 4200, clickVol: 0.05,
+      sample: 'Tecleo nítido de iPhone: corto, limpio, moderno. Cada letra es un cristal diminuto.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    premium: {
+      label: 'Premium',
+      desc: 'Cálido · de estudio',
+      hue: 40,
+      delay: 70,
+      probability: 0.78,
+      panAmount: 0.7,
+      // Ruido más cálido
+      noiseFreq: 1100, noiseQ: 1.4, noiseVol: 0.32, noiseDur: 0.020,
+      // Cuerpo más largo y grave → sensación "de lujo"
+      bodyMin: 280, bodyMax: 450, bodyVol: 0.26, bodyDur: 0.080,
+      // Sin click metálico
+      clickFreq: 0, clickVol: 0,
+      sample: 'Un tecleo cálido y con cuerpo. Suena a oficina de lujo, no a notificación.',
+      font: "'Fraunces', Georgia, serif"
+    }
+  };
 
   /* =========================================================
      MÁQUINA DE ESCRIBIR
      ========================================================= */
   var typingTimer = null;
   var typingToken = 0;
-  var PAN_VARIATION = [0.2, -0.15, 0.35, -0.25, 0.1, -0.3];
+  var PAN_CYCLE = [0.2, -0.15, 0.3, -0.2, 0.1, -0.25];
 
   function typeText(container, text, styleKey){
     typingToken++;
@@ -521,7 +433,7 @@
     container.appendChild(cursor);
 
     var i = 0, total = text.length;
-    var panIndex = 0;
+    var panIdx = 0;
 
     function typeNext(){
       if (myToken !== typingToken) return;
@@ -541,27 +453,24 @@
       var span = document.createElement('span');
       span.className = 'tw-char';
       span.textContent = ch;
-      span.style.setProperty('--glow', 'hsl(' + cfg.hue + ', 85%, ' + (60 + Math.random() * 20) + '%)');
+      span.style.setProperty('--glow', 'hsl(' + cfg.hue + ', 80%, ' + (62 + Math.random() * 15) + '%)');
       container.insertBefore(span, cursor);
 
       if (Math.random() < cfg.probability){
-        var pan = PAN_VARIATION[panIndex % PAN_VARIATION.length] * cfg.panAmount;
-        panIndex++;
-        if (buffers[styleKey] && buffers[styleKey].length){
-          var buf = buffers[styleKey][Math.floor(Math.random() * buffers[styleKey].length)];
-          playSound(buf, pan, cfg);
-        }
+        var pan = PAN_CYCLE[panIdx % PAN_CYCLE.length] * cfg.panAmount;
+        panIdx++;
+        playKeyTap(cfg, pan);
       }
 
       i++;
       var delay = cfg.delay + (Math.random() - 0.5) * 20;
-      if ('.!?'.indexOf(ch) !== -1) delay += 250;
+      if ('.!?'.indexOf(ch) !== -1) delay += 240;
       else if (',;:'.indexOf(ch) !== -1) delay += 120;
 
       typingTimer = setTimeout(typeNext, Math.max(16, delay));
     }
 
-    typingTimer = setTimeout(typeNext, 80);
+    typingTimer = setTimeout(typeNext, 60);
   }
 
   /* =========================================================
@@ -586,24 +495,6 @@
     stylesBox.appendChild(btn);
   });
 
-  // Genera los WAV de un estilo (5 variantes por estilo)
-  function generateStyleBuffers(styleKey, callback){
-    if (buffers[styleKey]){ callback(); return; }
-    var cfg = STYLES[styleKey];
-    buffers[styleKey] = [];
-    var total = 5;
-    var done = 0;
-    for (var k = 0; k < total; k++){
-      (function(k){
-        loadGeneratedWAV(cfg.seed + k * 137, function(buf){
-          buffers[styleKey].push(buf);
-          done++;
-          if (done === total) callback();
-        });
-      })(k);
-    }
-  }
-
   function selectStyle(key){
     currentStyle = key;
     var s = STYLES[key];
@@ -616,13 +507,23 @@
     stage.style.borderColor = 'hsla(' + s.hue + ', 80%, 60%, .3)';
 
     ensureAudio();
-
-    display.innerHTML = '<div class="stage-placeholder">Generando WAV de alta calidad…</div>';
-
-    generateStyleBuffers(key, function(){
-      typeText(display, s.sample, key);
-    });
+    typeText(display, s.sample, key);
   }
+
+  /* =========================================================
+     BOTONES DE "PROBAR 1 GOLPE"
+     ========================================================= */
+  document.querySelectorAll('.compare-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.dataset.test;
+      var cfg = STYLES[key];
+      ensureAudio();
+      // 3 golpes seguidos para que se aprecie bien
+      playKeyTap(cfg, 0);
+      setTimeout(function(){ playKeyTap(cfg, -0.2); }, 140);
+      setTimeout(function(){ playKeyTap(cfg, 0.2); }, 280);
+    });
+  });
 
   /* =========================================================
      CONTROLES
@@ -630,9 +531,7 @@
   document.getElementById('replay').addEventListener('click', function(){
     if (!currentStyle) return;
     ensureAudio();
-    if (buffers[currentStyle]){
-      typeText(display, STYLES[currentStyle].sample, currentStyle);
-    }
+    typeText(display, STYLES[currentStyle].sample, currentStyle);
   });
 
   var soundToggle = document.getElementById('soundToggle');
@@ -649,6 +548,8 @@
     volume = volumeSlider.value / 100;
     if (master) master.gain.setTargetAtTime(volume, actx.currentTime, 0.02);
   });
+
+  ensureAudio();
 
 })();
 </script>
