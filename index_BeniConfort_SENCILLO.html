@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b12">
 <title>UrbanStep — Catálogo interactivo</title>
-<!-- Leaflet CSS (gratuito) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
 :root{--bg:#070a11;--panel:#0d1320;--panel2:#101a2a;--line:rgba(150,180,225,.16);--text:#f5f7fb;--muted:#8e9bb0;--cyan:#38e8ff;--blue:#4387ff;--purple:#a45bff;--green:#16d99a;--pink:#ff4b9a;--gold:#ffc857;--radius:22px;--shadow:0 24px 70px rgba(0,0,0,.38)}
@@ -196,6 +195,58 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   .ubication-map-hint{font-size:.63rem;padding:5px 10px;bottom:8px}
   .ubication-badge{font-size:.6rem;padding:5px 10px;top:10px;left:10px}
 }
+
+/* ============================================================
+   FUNCIÓN 2 · Escritura animada con sonido (estilo original)
+   ============================================================ */
+[data-typing]{min-height:1em}
+.tw-char{
+  display:inline-block;
+  opacity:0;
+  filter:blur(2px);
+  transform:scale(.65);
+  transform-origin:50% 80%;
+  animation:letterIn 380ms cubic-bezier(.18,.78,.22,1) forwards;
+}
+@keyframes letterIn{
+  0%{opacity:0;filter:blur(2px);transform:scale(.65);text-shadow:0 0 0 transparent}
+  58%{opacity:1;filter:blur(0);transform:scale(1.08);text-shadow:0 0 25px rgba(56,232,255,.55)}
+  100%{opacity:1;filter:blur(0);transform:scale(1);text-shadow:0 0 0 transparent}
+}
+.tw-cursor{
+  display:inline-block;
+  width:.075em;
+  height:.88em;
+  margin-left:.08em;
+  vertical-align:-.06em;
+  background:var(--cyan);
+  border-radius:2px;
+  animation:twBlink 850ms steps(1,end) infinite;
+  box-shadow:0 0 18px rgba(56,232,255,.4);
+}
+.tw-cursor.done{opacity:.35;animation:none}
+@keyframes twBlink{50%{opacity:0}}
+.typing-mute{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:45;
+  width:44px;height:44px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:rgba(8,13,23,.85);
+  backdrop-filter:blur(14px);
+  color:var(--cyan);
+  display:grid;place-items:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  transition:transform .2s,border-color .2s,background .2s;
+}
+.typing-mute:hover{transform:translateY(-2px);border-color:var(--cyan);background:#38e8ff14}
+.typing-mute svg{width:19px;height:19px}
+@media(prefers-reduced-motion:reduce){
+  .tw-char{animation-duration:.01ms!important;filter:none;transform:none;opacity:1}
+  .tw-cursor{animation:none}
+}
 </style>
 </head>
 <body>
@@ -218,7 +269,7 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="hero-panel">
     <div class="hero-copy">
       <span class="eyebrow"><span class="dot"></span> Colección seleccionada</span>
-      <h1>Estilo que<br><span>te mueve.</span></h1>
+      <h1 data-typing="Estilo que te mueve." aria-label="Estilo que te mueve.">Estilo que<br><span>te mueve.</span></h1>
       <p>Encuentra ese par que va contigo. Diseños icónicos, comodidad para cada día y una experiencia de compra diferente.</p>
       <button class="primary" id="goCatalog">Explorar catálogo&nbsp; ↗</button>
     </div>
@@ -251,7 +302,7 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="ubication-shell">
     <div class="ubication-info">
       <span class="eyebrow"><span class="dot"></span> Encuéntranos</span>
-      <h2 id="ubication-title">Ven a probarte<br><span>tu próximo par.</span></h2>
+      <h2 id="ubication-title" data-typing="Ven a probarte tu próximo par." aria-label="Ven a probarte tu próximo par.">Ven a probarte<br><span>tu próximo par.</span></h2>
       <p>Te esperamos para que sientas la comodidad, compares modelos y elijas el que va contigo. Un espacio pensado para los que viven el estilo en cada paso.</p>
 
       <div class="ubication-address">
@@ -339,7 +390,6 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="modal"><button class="modal-close" id="closeModal" aria-label="Cerrar">✕</button><div class="modal-image"><img id="modalImg" src="" alt=""></div><div class="modal-content"><span class="tag purple" id="modalTag">Destacado</span><h3 id="modalName">Producto</h3><div class="rating" id="modalRating"></div><p id="modalDescription"></p><div class="modal-price" id="modalPrice"></div><div class="sizes-label"><span>Selecciona tu talla</span><span>Guía de tallas</span></div><div class="modal-sizes" id="modalSizes"></div><button class="primary" id="modalAdd" style="width:100%">Agregar a mi selección</button></div></div>
 </div>
 
-<!-- Leaflet JS (gratuito) -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
@@ -431,7 +481,6 @@ $("closeCheckout").addEventListener("click",closeCheckout);
 $("checkoutBackdrop").addEventListener("click",e=>{if(e.target===$("checkoutBackdrop"))closeCheckout()});
 $("checkoutForm").addEventListener("submit",e=>{
  e.preventDefault();const items=[...state.cart.values()];if(!items.length){toast("Tu selección está vacía");closeCheckout();return}
- // IMPORTANTE: reemplaza este número por el WhatsApp comercial, con código de país y solo dígitos.
  const WHATSAPP_BUSINESS_NUMBER="591XXXXXXXXX";
  if(!/^\d{10,15}$/.test(WHATSAPP_BUSINESS_NUMBER)||WHATSAPP_BUSINESS_NUMBER.includes("X")){toast("Configura el número de WhatsApp del negocio en el código HTML");return}
  const name=$("customerName").value.trim();if(!name){$("customerName").focus();return}
@@ -441,7 +490,6 @@ $("checkoutForm").addEventListener("submit",e=>{
  const url=`https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent(message)}`;window.open(url,"_blank","noopener,noreferrer");
 });
 $("menuBtn").addEventListener("click",()=>toast("Demo: aquí se puede abrir un menú móvil con categorías y contacto."));
-// Buscador por voz: convierte frases en filtros de catálogo.
 const voiceButton = $("voiceSearchBtn");
 const voiceStatus = $("voiceStatus");
 const voiceBtnText = $("voiceBtnText");
@@ -454,18 +502,11 @@ function voiceMessage(message, type="") {
 function applyVoiceQuery(rawText) {
   const original = rawText.trim();
   const normalized = original.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const brandNames = [
-    ["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"],
-    ["new balance", "New Balance"], ["balance", "New Balance"]
-  ];
+  const brandNames = [["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"], ["new balance", "New Balance"], ["balance", "New Balance"]];
   const foundBrand = brandNames.find(([term]) => normalized.includes(term));
   const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\s*(3[5-9]|4[0-6])\b/) || normalized.match(/\b(3[5-9]|4[0-6])\b/);
   const size = sizeMatch ? sizeMatch[1] : "";
-  const cleaned = normalized
-    .replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ")
-    .replace(/\b(3[5-9]|4[0-6])\b/g, " ")
-    .replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ")
-    .replace(/\s+/g, " ").trim();
+  const cleaned = normalized.replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ").replace(/\b(3[5-9]|4[0-6])\b/g, " ").replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ").replace(/\s+/g, " ").trim();
   state.brand = foundBrand ? foundBrand[1] : "";
   state.size = size;
   state.search = cleaned;
@@ -507,7 +548,6 @@ if (!SpeechRecognition) {
     try { recognition.start(); } catch (_) { voiceMessage("El micrófono ya está activo. Termina de hablar o vuelve a intentarlo.", "listening"); }
   });
 }
-// Microinteracción premium: inclinación 3D muy sutil según la posición del puntero.
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 if (canHover) {
   $("productGrid").addEventListener("pointermove", e => {
@@ -526,7 +566,6 @@ if (canHover) {
   });
 }
 
-// Preguntas frecuentes interactivas: acordeón accesible y accesos rápidos.
 const faqItems = [...document.querySelectorAll('.faq-item')];
 faqItems.forEach((item) => {
  const trigger = item.querySelector('.faq-question');
@@ -548,14 +587,12 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
 // MÓDULO DE UBICACIÓN — Inicialización del mapa Leaflet
 // ============================================================
 (function initLocationModule(){
-  // Datos de ubicación exactos proporcionados por el propietario
   const LAT = -14.807244289408008;
   const LNG = -64.91814006208574;
   const NEGOCIO = "UrbanStep";
   const DIRECCION = "LAS MISIONES CALLE 3";
-  const WHATSAPP_NUMERO = "591XXXXXXXXX"; // ← Configura el número real
+  const WHATSAPP_NUMERO = "591XXXXXXXXX";
 
-  // Actualizar enlace de WhatsApp si el número está configurado
   const waLink = document.getElementById("ubicationWhatsApp");
   if (waLink) {
     if (/^\d{10,15}$/.test(WHATSAPP_NUMERO) && !WHATSAPP_NUMERO.includes("X")) {
@@ -569,7 +606,6 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
     }
   }
 
-  // Esperar a que Leaflet esté disponible
   if (typeof L === "undefined") {
     console.warn("Leaflet no se cargó correctamente.");
     return;
@@ -580,13 +616,12 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
   const mapHint = document.getElementById("ubicationMapHint");
   if (!mapContainer || !mapFrame) return;
 
-  // Crear mapa centrado en las coordenadas exactas
   const map = L.map("urbanstep-map", {
     center: [LAT, LNG],
     zoom: 17,
     zoomControl: true,
-    scrollWheelZoom: false,   // evita secuestro del scroll
-    dragging: false,          // desactivado hasta toque explícito
+    scrollWheelZoom: false,
+    dragging: false,
     touchZoom: false,
     doubleClickZoom: false,
     boxZoom: false,
@@ -594,13 +629,11 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
     tap: false
   });
 
-  // Capa de teselas OpenStreetMap (gratuita, con atribución obligatoria)
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
   }).addTo(map);
 
-  // Icono personalizado con el logo de UrbanStep
   const customIcon = L.divIcon({
     className: "ubication-marker-wrapper",
     html: '<div class="ubication-custom-marker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16c4-1 6-4 8-8l3 3 6 2 1 4H3z"/><path d="M7 16h12M10 12l2 2M13 11l2 2"/></svg></div>',
@@ -609,7 +642,6 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
     popupAnchor: [0, -38]
   });
 
-  // Marcador con popup informativo
   const marker = L.marker([LAT, LNG], {
     icon: customIcon,
     title: NEGOCIO + " — " + DIRECCION,
@@ -624,12 +656,9 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
     { closeButton: true, autoClose: false, closeOnClick: false, className: "ubication-popup" }
   );
 
-  // Abrir popup al cargar para dar contexto inmediato
   marker.openPopup();
 
-  // ---- Comportamiento táctil / clic para activar el mapa ----
   let mapActive = false;
-
   function activateMap() {
     if (mapActive) return;
     mapActive = true;
@@ -640,7 +669,6 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
     mapFrame.classList.add("map-active");
     if (mapHint) mapHint.style.opacity = "0";
   }
-
   function deactivateMap() {
     if (!mapActive) return;
     mapActive = false;
@@ -651,17 +679,7 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
     mapFrame.classList.remove("map-active");
     if (mapHint) mapHint.style.opacity = "";
   }
-
-  // En móvil: un toque activa la interacción; un segundo toque fuera no la desactiva
-  // automáticamente para no interrumpir la exploración. El usuario puede tocar de nuevo
-  // el hint o simplemente seguir usando el mapa.
-  mapFrame.addEventListener("click", (e) => {
-    if (!mapActive) {
-      activateMap();
-    }
-  });
-
-  // En escritorio: hover activa scrollWheelZoom, salir lo desactiva
+  mapFrame.addEventListener("click", (e) => { if (!mapActive) activateMap(); });
   const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
   if (!isTouchDevice) {
     mapFrame.addEventListener("mouseenter", () => {
@@ -679,17 +697,10 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
       }
     });
   }
-
-  // Al tocar el marcador, abrir popup
   marker.on("click", () => marker.openPopup());
-
-  // Ajustar tamaño al cambiar orientación
-  window.addEventListener("resize", () => {
-    setTimeout(() => map.invalidateSize(), 200);
-  });
+  window.addEventListener("resize", () => { setTimeout(() => map.invalidateSize(), 200); });
 })();
 
-// Enlace de WhatsApp del FAQ (reutiliza número; se reemplaza por el configurado si existe)
 const faqWhatsApp = document.getElementById('faqWhatsApp');
 if (faqWhatsApp) {
   const url = 'https://wa.me/' + '591XXXXXXXXX' + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
@@ -701,6 +712,290 @@ if (faqWhatsApp) {
     }
   });
 }
+
+/* ============================================================
+   FUNCIÓN 2 · Escritura animada + sonido original (TypingSoundEffect)
+   ------------------------------------------------------------
+   Motor de audio y animación copiados del archivo de referencia.
+   Uso: añade `data-typing="texto plano"` al elemento que quieras animar.
+   El texto plano se usa para escribir carácter a carácter; el HTML original
+   del elemento se restaura al terminar para no perder estilos internos (span, br).
+   ============================================================ */
+(function TypingSoundEffect(){
+  'use strict';
+
+  const ACCENT = '#38e8ff';
+  const root = document.documentElement;
+
+  // Acento visual del cursor/glow adaptado a UrbanStep (no afecta al sonido)
+  if (ACCENT) {
+    root.style.setProperty('--accent', ACCENT);
+    const m = ACCENT.match(/^#([0-9a-f]{6})$/i);
+    if (m) {
+      const n = parseInt(m[1], 16);
+      const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+      const max = Math.max(r, g, b) / 255, min = Math.min(r, g, b) / 255;
+      let h = 0, s = 0, l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > .5 ? d / (2 - max - min) : d / (max + min);
+        if (max === r / 255) h = (g - b) / 255 / d + (g < b ? 6 : 0);
+        else if (max === g / 255) h = (b - r) / 255 / d + 2;
+        else h = (r - g) / 255 / d + 4;
+        h *= 60;
+      }
+      root.style.setProperty('--accent-hue', String(Math.round(h)));
+    }
+  }
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // ---- MOTOR DE AUDIO (idéntico al de referencia) ----
+  let audioContext = null, master = null, reverbSend = null, reverbWet = null, convolver = null;
+  let muted = false;
+  let volume = 0.7;
+
+  function createNoiseBuffer(ctx, duration) {
+    const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
+    const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
+    return buffer;
+  }
+
+  function initAudio() {
+    if (audioContext) {
+      if (audioContext.state === 'suspended') audioContext.resume();
+      return;
+    }
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    audioContext = new AudioCtx();
+    master = audioContext.createGain();
+    master.gain.value = muted ? 0 : volume;
+    master.connect(audioContext.destination);
+
+    const impulseLength = Math.floor(audioContext.sampleRate * 0.45);
+    const impulse = audioContext.createBuffer(2, impulseLength, audioContext.sampleRate);
+    for (let channel = 0; channel < 2; channel++) {
+      const data = impulse.getChannelData(channel);
+      for (let i = 0; i < impulseLength; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / impulseLength, 3.2);
+      }
+    }
+    convolver = audioContext.createConvolver();
+    convolver.buffer = impulse;
+    reverbSend = audioContext.createGain();
+    reverbSend.gain.value = 1;
+    reverbWet = audioContext.createGain();
+    reverbWet.gain.value = 0.07;
+    reverbSend.connect(convolver);
+    convolver.connect(reverbWet);
+    reverbWet.connect(master);
+  }
+
+  let panIndex = 0;
+  const PAN_CYCLE = [0.2, -0.15, 0.3, -0.2, 0.1, -0.25];
+
+  function playKeyTap() {
+    if (muted || !audioContext || !master || audioContext.state !== 'running') return;
+
+    const ctx = audioContext;
+    const now = ctx.currentTime;
+
+    const pitchVar = 0.92 + Math.random() * 0.16;
+    const volVar = 0.82 + Math.random() * 0.22;
+    const durVar = 0.90 + Math.random() * 0.18;
+
+    const panner = ctx.createStereoPanner();
+    panner.pan.setValueAtTime(PAN_CYCLE[panIndex % 6] * 0.42, now);
+    panIndex++;
+    panner.connect(master);
+    panner.connect(reverbSend);
+
+    const noiseDur = 0.009 * durVar;
+    const noise = ctx.createBufferSource();
+    noise.buffer = createNoiseBuffer(ctx, noiseDur);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime((2850 + Math.random() * 500) * pitchVar, now);
+    filter.Q.setValueAtTime(1.15, now);
+
+    const noiseGain = ctx.createGain();
+    const peak = 0.105 * volVar;
+    noiseGain.gain.setValueAtTime(0.0001, now);
+    noiseGain.gain.linearRampToValueAtTime(peak, now + 0.0012);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDur);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(panner);
+    noise.start(now);
+    noise.stop(now + noiseDur);
+
+    const tone = ctx.createOscillator();
+    tone.type = 'sine';
+    const toneFreq = 720 + Math.random() * 180;
+    tone.frequency.setValueAtTime(toneFreq, now);
+    tone.frequency.exponentialRampToValueAtTime(toneFreq * 0.72, now + 0.014 * durVar);
+
+    const toneGain = ctx.createGain();
+    toneGain.gain.setValueAtTime(0.0001, now);
+    toneGain.gain.linearRampToValueAtTime(0.022 * volVar, now + 0.001);
+    toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014 * durVar);
+
+    tone.connect(toneGain);
+    toneGain.connect(panner);
+    tone.start(now);
+    tone.stop(now + 0.016 * durVar);
+
+    setTimeout(() => { try { panner.disconnect(); } catch (_) {} }, 100);
+  }
+
+  // ---- CONTROL DE SILENCIO (discreto) ----
+  const muteBtn = document.createElement('button');
+  muteBtn.className = 'typing-mute';
+  muteBtn.type = 'button';
+  muteBtn.setAttribute('aria-label', 'Silenciar sonido de escritura');
+  muteBtn.setAttribute('aria-pressed', 'false');
+  muteBtn.title = 'Silenciar sonido de escritura';
+  muteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
+  document.body.appendChild(muteBtn);
+
+  function updateMuteUI(){
+    muteBtn.setAttribute('aria-pressed', String(muted));
+    muteBtn.setAttribute('aria-label', muted ? 'Activar sonido de escritura' : 'Silenciar sonido de escritura');
+    muteBtn.title = muted ? 'Activar sonido' : 'Silenciar';
+    muteBtn.innerHTML = muted
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6m0-6-5 6"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
+    if (master) master.gain.setTargetAtTime(muted ? 0 : volume, audioContext.currentTime, 0.015);
+  }
+  try { if (localStorage.getItem('urbanstep-typing-muted') === '1') muted = true; } catch(_) {}
+  muteBtn.addEventListener('click', () => {
+    initAudio();
+    muted = !muted;
+    try { localStorage.setItem('urbanstep-typing-muted', muted ? '1' : '0'); } catch(_) {}
+    updateMuteUI();
+  });
+  updateMuteUI();
+
+  // Desbloqueo de audio en la primera interacción válida (política del navegador)
+  document.addEventListener('pointerdown', () => {
+    initAudio();
+    if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+  }, { once: true });
+
+  // ---- ANIMACIÓN DE ESCRITURA ----
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  async function typeElement(el){
+    const fullText = el.dataset.typing || el.textContent || '';
+    const originalHTML = el.dataset.typingOriginalHtml || el.innerHTML;
+    if (!el.dataset.typingOriginalHtml) el.dataset.typingOriginalHtml = originalHTML;
+
+    // Cancela una animación previa si el elemento ya estaba escribiéndose
+    if (el._typingToken) el._typingToken.cancelled = true;
+    const token = { cancelled: false };
+    el._typingToken = token;
+
+    // Reserva de espacio: usa el HTML original con visibilidad oculta para no colapsar
+    el.innerHTML = originalHTML;
+    el.style.visibility = 'hidden';
+    const reservedHeight = el.offsetHeight;
+    el.style.visibility = '';
+    el.innerHTML = '';
+    el.style.minHeight = reservedHeight + 'px';
+
+    // Cursor decorativo
+    const cursor = document.createElement('span');
+    cursor.className = 'tw-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    el.appendChild(cursor);
+
+    // Accesibilidad: el texto se anuncia una vez, no letra a letra
+    el.setAttribute('aria-label', fullText);
+
+    initAudio();
+    if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
+
+    let lastSpaceIndex = -1;
+    for (let i = 0; i < fullText.length; i++) {
+      if (token.cancelled) return;
+      const char = fullText[i];
+      const isSpace = /\s/u.test(char);
+      const span = document.createElement('span');
+      span.className = 'tw-char';
+      span.setAttribute('aria-hidden', 'true');
+      if (isSpace) {
+        span.textContent = '\u00a0';
+        span.style.whiteSpace = 'pre';
+        // Una sola línea con corte: cuando cambia la palabra, permitimos el salto
+        span.style.display = 'inline-block';
+        span.style.width = '0.28em';
+      } else {
+        span.textContent = char;
+      }
+      // Inserta antes del cursor
+      el.insertBefore(span, cursor);
+
+      const isPunctuation = /[.,!?;:]/u.test(char);
+      if (!isSpace && !isPunctuation && !muted && Math.random() < 0.88) playKeyTap();
+
+      let delay = 62 + (Math.random() * 40 - 20);
+      if (/[.!?]/u.test(char)) delay += 240;
+      else if (/[,;:]/u.test(char)) delay += 120;
+      else if (isSpace) delay = 62 * 0.5;
+      if (reducedMotion.matches) delay = Math.min(delay, 8);
+      await sleep(delay);
+    }
+    if (token.cancelled) return;
+    cursor.classList.add('done');
+
+    // Al terminar, restaura el HTML original (mantiene <br> y <span> con gradiente)
+    await sleep(1400);
+    if (token.cancelled) return;
+    el.innerHTML = originalHTML;
+    el.style.minHeight = '';
+  }
+
+  function resetElement(el){
+    if (el._typingToken) el._typingToken.cancelled = true;
+    const originalHTML = el.dataset.typingOriginalHtml || el.innerHTML;
+    el.innerHTML = originalHTML;
+    el.style.minHeight = '';
+    el.dataset.typingOriginalHtml = originalHTML;
+  }
+
+  // Elementos con data-typing
+  const targets = [...document.querySelectorAll('[data-typing]')];
+  if (!targets.length) return;
+
+  // IntersectionObserver: anima al entrar (y reinicia al salir, según petición del usuario)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const el = entry.target;
+      if (entry.isIntersecting) {
+        // Evita reiniciar si ya terminó y sigue visible
+        if (!el._typingRunning) {
+          el._typingRunning = true;
+          typeElement(el).finally(() => { el._typingRunning = false; });
+        }
+      } else {
+        // Al salir de pantalla, cancela y resetea para que al volver a entrar se repita
+        resetElement(el);
+      }
+    });
+  }, { threshold: 0.55 });
+
+  targets.forEach(el => io.observe(el));
+
+  // Reanudar audio tras interacción (por si el primer pointerdown ocurre antes del initAudio)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && audioContext && audioContext.state === 'suspended') audioContext.resume();
+  });
+})();
 </script>
 </body>
 </html>
