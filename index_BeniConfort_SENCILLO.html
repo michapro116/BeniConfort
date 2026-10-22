@@ -197,10 +197,12 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
 }
 
 /* ============================================================
-   FUNCIÓN 2 · Escritura animada con sonido (estilo original)
+   FUNCIÓN 2 · Escritura animada con sonido original
+   (sin controles visibles, conserva estilos heredados)
    ============================================================ */
 [data-typing]{min-height:1em}
-.tw-char{
+.tw-char,
+.tw-br{
   display:inline-block;
   opacity:0;
   filter:blur(2px);
@@ -208,44 +210,18 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   transform-origin:50% 80%;
   animation:letterIn 380ms cubic-bezier(.18,.78,.22,1) forwards;
 }
+/* Los caracteres dentro de <span> con gradiente heredan su color transparente
+   y el background-clip:text, de modo que el degradado se conserva intacto. */
+h1 .tw-char, h2 .tw-char{color:inherit}
 @keyframes letterIn{
   0%{opacity:0;filter:blur(2px);transform:scale(.65);text-shadow:0 0 0 transparent}
   58%{opacity:1;filter:blur(0);transform:scale(1.08);text-shadow:0 0 25px rgba(56,232,255,.55)}
   100%{opacity:1;filter:blur(0);transform:scale(1);text-shadow:0 0 0 transparent}
 }
-.tw-cursor{
-  display:inline-block;
-  width:.075em;
-  height:.88em;
-  margin-left:.08em;
-  vertical-align:-.06em;
-  background:var(--cyan);
-  border-radius:2px;
-  animation:twBlink 850ms steps(1,end) infinite;
-  box-shadow:0 0 18px rgba(56,232,255,.4);
-}
-.tw-cursor.done{opacity:.35;animation:none}
-@keyframes twBlink{50%{opacity:0}}
-.typing-mute{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:45;
-  width:44px;height:44px;
-  border-radius:50%;
-  border:1px solid var(--line);
-  background:rgba(8,13,23,.85);
-  backdrop-filter:blur(14px);
-  color:var(--cyan);
-  display:grid;place-items:center;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
-  transition:transform .2s,border-color .2s,background .2s;
-}
-.typing-mute:hover{transform:translateY(-2px);border-color:var(--cyan);background:#38e8ff14}
-.typing-mute svg{width:19px;height:19px}
+.tw-br{width:0}
+.tw-br br{display:inline}
 @media(prefers-reduced-motion:reduce){
-  .tw-char{animation-duration:.01ms!important;filter:none;transform:none;opacity:1}
-  .tw-cursor{animation:none}
+  .tw-char,.tw-br{animation-duration:.01ms!important;filter:none;transform:none;opacity:1}
 }
 </style>
 </head>
@@ -714,46 +690,27 @@ if (faqWhatsApp) {
 }
 
 /* ============================================================
-   FUNCIÓN 2 · Escritura animada + sonido original (TypingSoundEffect)
-   ------------------------------------------------------------
-   Motor de audio y animación copiados del archivo de referencia.
-   Uso: añade `data-typing="texto plano"` al elemento que quieras animar.
-   El texto plano se usa para escribir carácter a carácter; el HTML original
-   del elemento se restaura al terminar para no perder estilos internos (span, br).
+   FUNCIÓN 2 · Escritura animada con sonido original
+   Modalidad B: repetir según scroll
+   - Se animan solo los elementos con [data-typing]
+   - El motor de audio es idéntico al de referencia
+   - Los caracteres se insertan dentro del DOM original (conserva
+     <br>, <span> con gradiente, tipografía, tamaños y colores)
+   - Sin controles visibles de audio
    ============================================================ */
 (function TypingSoundEffect(){
   'use strict';
 
   const ACCENT = '#38e8ff';
   const root = document.documentElement;
-
-  // Acento visual del cursor/glow adaptado a UrbanStep (no afecta al sonido)
-  if (ACCENT) {
-    root.style.setProperty('--accent', ACCENT);
-    const m = ACCENT.match(/^#([0-9a-f]{6})$/i);
-    if (m) {
-      const n = parseInt(m[1], 16);
-      const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-      const max = Math.max(r, g, b) / 255, min = Math.min(r, g, b) / 255;
-      let h = 0, s = 0, l = (max + min) / 2;
-      if (max !== min) {
-        const d = max - min;
-        s = l > .5 ? d / (2 - max - min) : d / (max + min);
-        if (max === r / 255) h = (g - b) / 255 / d + (g < b ? 6 : 0);
-        else if (max === g / 255) h = (b - r) / 255 / d + 2;
-        else h = (r - g) / 255 / d + 4;
-        h *= 60;
-      }
-      root.style.setProperty('--accent-hue', String(Math.round(h)));
-    }
-  }
+  root.style.setProperty('--accent', ACCENT);
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // ---- MOTOR DE AUDIO (idéntico al de referencia) ----
+  // ---- MOTOR DE AUDIO ORIGINAL (idéntico, sin controles) ----
   let audioContext = null, master = null, reverbSend = null, reverbWet = null, convolver = null;
   let muted = false;
-  let volume = 0.7;
+  const VOLUME = 0.9; // más perceptible que 0.7 original, sin saturar
 
   function createNoiseBuffer(ctx, duration) {
     const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
@@ -772,7 +729,7 @@ if (faqWhatsApp) {
     if (!AudioCtx) return;
     audioContext = new AudioCtx();
     master = audioContext.createGain();
-    master.gain.value = muted ? 0 : volume;
+    master.gain.value = muted ? 0 : VOLUME;
     master.connect(audioContext.destination);
 
     const impulseLength = Math.floor(audioContext.sampleRate * 0.45);
@@ -853,137 +810,132 @@ if (faqWhatsApp) {
     setTimeout(() => { try { panner.disconnect(); } catch (_) {} }, 100);
   }
 
-  // ---- CONTROL DE SILENCIO (discreto) ----
-  const muteBtn = document.createElement('button');
-  muteBtn.className = 'typing-mute';
-  muteBtn.type = 'button';
-  muteBtn.setAttribute('aria-label', 'Silenciar sonido de escritura');
-  muteBtn.setAttribute('aria-pressed', 'false');
-  muteBtn.title = 'Silenciar sonido de escritura';
-  muteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
-  document.body.appendChild(muteBtn);
-
-  function updateMuteUI(){
-    muteBtn.setAttribute('aria-pressed', String(muted));
-    muteBtn.setAttribute('aria-label', muted ? 'Activar sonido de escritura' : 'Silenciar sonido de escritura');
-    muteBtn.title = muted ? 'Activar sonido' : 'Silenciar';
-    muteBtn.innerHTML = muted
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6m0-6-5 6"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
-    if (master) master.gain.setTargetAtTime(muted ? 0 : volume, audioContext.currentTime, 0.015);
-  }
-  try { if (localStorage.getItem('urbanstep-typing-muted') === '1') muted = true; } catch(_) {}
-  muteBtn.addEventListener('click', () => {
-    initAudio();
-    muted = !muted;
-    try { localStorage.setItem('urbanstep-typing-muted', muted ? '1' : '0'); } catch(_) {}
-    updateMuteUI();
-  });
-  updateMuteUI();
-
-  // Desbloqueo de audio en la primera interacción válida (política del navegador)
+  // Desbloqueo de audio en el primer gesto (política del navegador)
   document.addEventListener('pointerdown', () => {
     initAudio();
     if (audioContext && audioContext.state === 'suspended') audioContext.resume();
   }, { once: true });
 
-  // ---- ANIMACIÓN DE ESCRITURA ----
+  // ---- ANIMACIÓN SOBRE EL DOM ORIGINAL ----
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-  async function typeElement(el){
-    const fullText = el.dataset.typing || el.textContent || '';
+  // Envuelve los caracteres de cada nodo de texto respetando <br> y estilos heredados.
+  function collectCharWrappers(el) {
+    const wrappers = [];
+    function walk(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        if (!text) return;
+        const frag = document.createDocumentFragment();
+        for (const ch of text) {
+          const w = document.createElement('span');
+          w.className = 'tw-char';
+          w.setAttribute('aria-hidden', 'true');
+          if (ch === ' ') { w.innerHTML = '&nbsp;'; }
+          else { w.textContent = ch; }
+          frag.appendChild(w);
+          wrappers.push(w);
+        }
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName === 'BR') {
+          const w = document.createElement('span');
+          w.className = 'tw-br';
+          w.setAttribute('aria-hidden', 'true');
+          w.innerHTML = '<br>';
+          node.parentNode.replaceChild(w, node);
+          wrappers.push(w);
+        } else {
+          [...node.childNodes].forEach(walk);
+        }
+      }
+    }
+    walk(el);
+    return wrappers;
+  }
+
+  async function typeElement(el) {
     const originalHTML = el.dataset.typingOriginalHtml || el.innerHTML;
     if (!el.dataset.typingOriginalHtml) el.dataset.typingOriginalHtml = originalHTML;
 
-    // Cancela una animación previa si el elemento ya estaba escribiéndose
+    // Cancela ejecución previa
     if (el._typingToken) el._typingToken.cancelled = true;
     const token = { cancelled: false };
     el._typingToken = token;
 
-    // Reserva de espacio: usa el HTML original con visibilidad oculta para no colapsar
+    // Reserva de altura para evitar saltos de layout
     el.innerHTML = originalHTML;
     el.style.visibility = 'hidden';
     const reservedHeight = el.offsetHeight;
     el.style.visibility = '';
-    el.innerHTML = '';
+    el.innerHTML = originalHTML;
+
+    // Texto plano para aria-label
+    const plain = el.dataset.typing || el.textContent.replace(/\s+/g, ' ').trim();
+    el.setAttribute('aria-label', plain);
+
+    // Construye wrappers invisibles; la animación CSS los revela en cascada
+    const wrappers = collectCharWrappers(el);
+    wrappers.forEach(w => { w.style.animationPlayState = 'paused'; w.style.animationDelay = '0s'; });
     el.style.minHeight = reservedHeight + 'px';
-
-    // Cursor decorativo
-    const cursor = document.createElement('span');
-    cursor.className = 'tw-cursor';
-    cursor.setAttribute('aria-hidden', 'true');
-    el.appendChild(cursor);
-
-    // Accesibilidad: el texto se anuncia una vez, no letra a letra
-    el.setAttribute('aria-label', fullText);
 
     initAudio();
     if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
 
-    let lastSpaceIndex = -1;
-    for (let i = 0; i < fullText.length; i++) {
+    // Reproduce en cascada con el mismo ritmo que el original
+    let visualIndex = 0;
+    for (let i = 0; i < wrappers.length; i++) {
       if (token.cancelled) return;
-      const char = fullText[i];
-      const isSpace = /\s/u.test(char);
-      const span = document.createElement('span');
-      span.className = 'tw-char';
-      span.setAttribute('aria-hidden', 'true');
-      if (isSpace) {
-        span.textContent = '\u00a0';
-        span.style.whiteSpace = 'pre';
-        // Una sola línea con corte: cuando cambia la palabra, permitimos el salto
-        span.style.display = 'inline-block';
-        span.style.width = '0.28em';
-      } else {
-        span.textContent = char;
-      }
-      // Inserta antes del cursor
-      el.insertBefore(span, cursor);
+      const w = wrappers[i];
+      const ch = w.textContent || '\u00a0';
+      const isSpace = /\s|\u00a0/.test(ch);
+      const isPunct = /[.,!?;:]/u.test(ch);
+      const isBr = w.classList.contains('tw-br');
 
-      const isPunctuation = /[.,!?;:]/u.test(char);
-      if (!isSpace && !isPunctuation && !muted && Math.random() < 0.88) playKeyTap();
+      // Revela este carácter ahora (reactiva su animación CSS)
+      w.style.animationDelay = (visualIndex * 0.001) + 's';
+      w.style.animationPlayState = 'running';
+
+      if (!isSpace && !isPunct && !isBr && Math.random() < 0.88) playKeyTap();
 
       let delay = 62 + (Math.random() * 40 - 20);
-      if (/[.!?]/u.test(char)) delay += 240;
-      else if (/[,;:]/u.test(char)) delay += 120;
+      if (/[.!?]/u.test(ch)) delay += 240;
+      else if (/[,;:]/u.test(ch)) delay += 120;
       else if (isSpace) delay = 62 * 0.5;
+      if (isBr) delay = 62 * 0.5;
       if (reducedMotion.matches) delay = Math.min(delay, 8);
       await sleep(delay);
+      visualIndex++;
     }
     if (token.cancelled) return;
-    cursor.classList.add('done');
 
-    // Al terminar, restaura el HTML original (mantiene <br> y <span> con gradiente)
-    await sleep(1400);
+    // Al terminar: restaurar HTML original (mantiene <br> y <span> con gradiente)
+    await sleep(300);
     if (token.cancelled) return;
     el.innerHTML = originalHTML;
     el.style.minHeight = '';
   }
 
-  function resetElement(el){
+  function resetElement(el) {
     if (el._typingToken) el._typingToken.cancelled = true;
-    const originalHTML = el.dataset.typingOriginalHtml || el.innerHTML;
-    el.innerHTML = originalHTML;
+    const originalHTML = el.dataset.typingOriginalHtml;
+    if (originalHTML) el.innerHTML = originalHTML;
     el.style.minHeight = '';
-    el.dataset.typingOriginalHtml = originalHTML;
   }
 
-  // Elementos con data-typing
   const targets = [...document.querySelectorAll('[data-typing]')];
   if (!targets.length) return;
 
-  // IntersectionObserver: anima al entrar (y reinicia al salir, según petición del usuario)
+  // MODALIDAD B: animar al entrar, resetear al salir
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       const el = entry.target;
       if (entry.isIntersecting) {
-        // Evita reiniciar si ya terminó y sigue visible
         if (!el._typingRunning) {
           el._typingRunning = true;
           typeElement(el).finally(() => { el._typingRunning = false; });
         }
       } else {
-        // Al salir de pantalla, cancela y resetea para que al volver a entrar se repita
         resetElement(el);
       }
     });
@@ -991,7 +943,6 @@ if (faqWhatsApp) {
 
   targets.forEach(el => io.observe(el));
 
-  // Reanudar audio tras interacción (por si el primer pointerdown ocurre antes del initAudio)
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && audioContext && audioContext.state === 'suspended') audioContext.resume();
   });
