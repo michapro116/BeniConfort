@@ -24,6 +24,36 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
 
 /* FAQ interactiva — función 4 */
 .faq-section{padding:28px 0 76px;scroll-margin-top:90px}.faq-shell{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:start;border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,42px);background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow)}.faq-intro h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.05;letter-spacing:-1.2px;margin:15px 0 12px}.faq-intro p{color:var(--muted);margin:0 0 20px}.faq-contact{display:inline-flex;align-items:center;gap:9px;padding:12px 16px;border-radius:14px;border:1px solid #16d99a55;background:#16d99a12;color:#9df4d5;font-weight:800}.faq-list{display:grid;gap:10px}.faq-item{border:1px solid var(--line);border-radius:16px;background:#ffffff04;overflow:hidden;transition:border-color .2s,background .2s}.faq-item.open{border-color:#38e8ff55;background:#38e8ff08}.faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;border:0;background:transparent;color:var(--text);padding:17px 18px;font-weight:800}.faq-question span:first-child{display:flex;align-items:center;gap:12px}.faq-number{display:grid;place-items:center;flex:0 0 29px;height:29px;border-radius:10px;color:var(--cyan);background:#38e8ff13;font-size:.75rem}.faq-plus{font-size:1.4rem;color:var(--cyan);transition:transform .25s}.faq-item.open .faq-plus{transform:rotate(45deg)}.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}.faq-item.open .faq-answer{grid-template-rows:1fr}.faq-answer-inner{overflow:hidden}.faq-answer p{margin:0;padding:0 18px 18px 59px;color:#aebbd0;font-size:.92rem}.faq-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.faq-quick button{border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:#ffffff06;color:#cbd8e9;font-size:.8rem}.faq-quick button:hover{border-color:var(--cyan);color:var(--cyan)}@media(max-width:760px){.faq-shell{grid-template-columns:1fr;gap:22px}.faq-intro h2{max-width:500px}.faq-answer p{padding-left:18px}.faq-section{padding-bottom:52px}}
+
+/* Efecto máquina de escribir — solo en el H1 del hero */
+#heroTitle{min-height:2.05em}
+#heroTitle .type-line{display:inline-block;position:relative;white-space:pre}
+#heroTitle .type-line.accent{background:linear-gradient(90deg,var(--cyan),#8194ff 60%,#d17aff);background-clip:text;-webkit-background-clip:text;color:transparent}
+#heroTitle .type-line.typing::after{
+  content:"";
+  display:inline-block;
+  width:.06em;
+  height:.85em;
+  margin-left:.05em;
+  background:currentColor;
+  vertical-align:-.08em;
+  animation:typeCaret .7s steps(1) infinite;
+}
+@keyframes typeCaret{50%{opacity:0}}
+#heroTitle .type-cursor{
+  display:inline-block;
+  color:var(--cyan);
+  font-weight:400;
+  margin-left:.04em;
+  animation:typeCaret .8s steps(1) infinite;
+  opacity:0;
+}
+#heroTitle .type-cursor.visible{opacity:1}
+#heroTitle .type-cursor.done{animation:none;opacity:1}
+@media(prefers-reduced-motion:reduce){
+  #heroTitle .type-line.typing::after,
+  #heroTitle .type-cursor{animation:none}
+}
 </style>
 </head>
 <body>
@@ -46,7 +76,10 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="hero-panel">
     <div class="hero-copy">
       <span class="eyebrow"><span class="dot"></span> Colección seleccionada</span>
-      <h1>Estilo que<br><span>te mueve.</span></h1>
+      <h1 id="heroTitle" aria-label="Estilo que te mueve.">
+        <span class="type-line" data-text="Estilo que"></span><br>
+        <span class="type-line accent" data-text="te mueve."></span><span class="type-cursor" aria-hidden="true">|</span>
+      </h1>
       <p>Encuentra ese par que va contigo. Diseños icónicos, comodidad para cada día y una experiencia de compra diferente.</p>
       <button class="primary" id="goCatalog">Explorar catálogo&nbsp; ↗</button>
     </div>
@@ -227,19 +260,19 @@ function voiceMessage(message, type="") {
 }
 function applyVoiceQuery(rawText) {
   const original = rawText.trim();
-  const normalized = original.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "");
+  const normalized = original.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const brandNames = [
     ["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"],
     ["new balance", "New Balance"], ["balance", "New Balance"]
   ];
   const foundBrand = brandNames.find(([term]) => normalized.includes(term));
-  const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\\s*(3[5-9]|4[0-6])\\b/) || normalized.match(/\\b(3[5-9]|4[0-6])\\b/);
+  const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\s*(3[5-9]|4[0-6])\b/) || normalized.match(/\b(3[5-9]|4[0-6])\b/);
   const size = sizeMatch ? sizeMatch[1] : "";
   const cleaned = normalized
-    .replace(/\\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\\b/g, " ")
-    .replace(/\\b(3[5-9]|4[0-6])\\b/g, " ")
-    .replace(/\\b(nike|adidas|puma|new balance|balance)\\b/g, " ")
-    .replace(/\\s+/g, " ").trim();
+    .replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ")
+    .replace(/\b(3[5-9]|4[0-6])\b/g, " ")
+    .replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ")
+    .replace(/\s+/g, " ").trim();
   state.brand = foundBrand ? foundBrand[1] : "";
   state.size = size;
   state.search = cleaned;
@@ -320,237 +353,110 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
 const faqWhatsApp = document.getElementById('faqWhatsApp');
 if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
 
-</script>
+// ===== Efecto de escritura en el hero (al entrar en pantalla) =====
+(function initHeroTyping(){
+  const title = document.getElementById('heroTitle');
+  if (!title) return;
 
-<style id="urbanstep-typing-styles">
-/* Función modular 2: solo afecta al texto solicitado. */
-#inicio .hero-copy h1 .tw-char {
-  opacity: 0;
-  filter: blur(1.5px);
-  animation: urbanstepLetterIn 220ms ease-out forwards;
-  animation-play-state: paused;
-}
-@keyframes urbanstepLetterIn {
-  from { opacity: 0; filter: blur(1.5px); }
-  to   { opacity: 1; filter: blur(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  #inicio .hero-copy h1 .tw-char {
-    animation-duration: 1ms;
-    filter: none;
-  }
-}
-</style>
-<script id="urbanstep-typing-sound">
-(() => {
-  'use strict';
+  // Guardamos el HTML final como "fallback" visible desde el inicio
+  const finalHTML = title.innerHTML;
 
-  const target = document.querySelector('#inicio .hero-copy h1');
-  if (!target || target.dataset.typingReady === 'true') return;
-  target.dataset.typingReady = 'true';
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return; // sin animación: se queda el HTML tal cual
 
-  // Se conserva el texto accesible completo; los caracteres visuales no se anuncian individualmente.
-  const originalLabel = 'Estilo que te mueve.';
-  target.setAttribute('aria-label', originalLabel);
-  let audioContext = null, master = null, reverbSend = null, reverbWet = null, convolver = null;
-  let panIndex = 0, gestureReady = false, isVisible = false, hasPlayed = false;
-  let runId = 0, timers = [];
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const PAN_CYCLE = [0.2, -0.15, 0.3, -0.2, 0.1, -0.25];
+  const lines = [...title.querySelectorAll('.type-line')];
+  const cursor = title.querySelector('.type-cursor');
+  if (!lines.length) return;
 
-  // Guarda los nodos originales y envuelve únicamente los caracteres de sus nodos de texto.
-  function wrapTextNodes(node) {
-    for (const child of Array.from(node.childNodes)) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        const text = child.nodeValue;
-        const fragment = document.createDocumentFragment();
-        for (const char of text) {
-          const span = document.createElement('span');
-          span.className = 'tw-char';
-          span.setAttribute('aria-hidden', 'true');
-          span.textContent = char;
-          span.style.animationDelay = '0ms';
-          fragment.appendChild(span);
-        }
-        child.replaceWith(fragment);
-      } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'BR') {
-        wrapTextNodes(child);
-      }
-    }
+  const texts = lines.map(l => l.dataset.text || '');
+
+  let timeouts = [];
+  let running = false;
+  let done = false;
+
+  function clearTimers(){
+    timeouts.forEach(clearTimeout);
+    timeouts = [];
   }
 
-  function createNoiseBuffer(ctx, duration) {
-    const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
-    const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
-    return buffer;
-  }
-
-  // Motor de audio reutilizado del HTML de referencia, sin controles de interfaz.
-  function initAudio() {
-    if (audioContext) {
-      if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
-      return;
-    }
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    try {
-      audioContext = new AudioCtx();
-      master = audioContext.createGain();
-      master.gain.value = 0.82; // Un poco más perceptible que el valor original (0.7).
-      master.connect(audioContext.destination);
-
-      const impulseLength = Math.floor(audioContext.sampleRate * 0.45);
-      const impulse = audioContext.createBuffer(2, impulseLength, audioContext.sampleRate);
-      for (let channel = 0; channel < 2; channel++) {
-        const data = impulse.getChannelData(channel);
-        for (let i = 0; i < impulseLength; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / impulseLength, 3.2);
-        }
-      }
-      convolver = audioContext.createConvolver();
-      convolver.buffer = impulse;
-      reverbSend = audioContext.createGain();
-      reverbSend.gain.value = 1;
-      reverbWet = audioContext.createGain();
-      reverbWet.gain.value = 0.07;
-      reverbSend.connect(convolver);
-      convolver.connect(reverbWet);
-      reverbWet.connect(master);
-    } catch (_) {
-      audioContext = master = reverbSend = reverbWet = convolver = null;
-    }
-  }
-
-  function playKeyTap() {
-    if (!audioContext || !master || audioContext.state !== 'running') return;
-    const ctx = audioContext, now = ctx.currentTime;
-    const pitchVar = 0.92 + Math.random() * 0.16;
-    const volVar = 0.82 + Math.random() * 0.22;
-    const durVar = 0.90 + Math.random() * 0.18;
-    const panner = ctx.createStereoPanner();
-    panner.pan.setValueAtTime(PAN_CYCLE[panIndex % 6] * 0.42, now);
-    panIndex++;
-    panner.connect(master);
-    panner.connect(reverbSend);
-
-    const noiseDur = 0.009 * durVar;
-    const noise = ctx.createBufferSource();
-    noise.buffer = createNoiseBuffer(ctx, noiseDur);
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime((2850 + Math.random() * 500) * pitchVar, now);
-    filter.Q.setValueAtTime(1.15, now);
-    const noiseGain = ctx.createGain();
-    const peak = 0.105 * volVar;
-    noiseGain.gain.setValueAtTime(0.0001, now);
-    noiseGain.gain.linearRampToValueAtTime(peak, now + 0.0012);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDur);
-    noise.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(panner);
-    noise.start(now);
-    noise.stop(now + noiseDur);
-
-    const tone = ctx.createOscillator();
-    tone.type = 'sine';
-    const toneFreq = 720 + Math.random() * 180;
-    tone.frequency.setValueAtTime(toneFreq, now);
-    tone.frequency.exponentialRampToValueAtTime(toneFreq * 0.72, now + 0.014 * durVar);
-    const toneGain = ctx.createGain();
-    toneGain.gain.setValueAtTime(0.0001, now);
-    toneGain.gain.linearRampToValueAtTime(0.022 * volVar, now + 0.001);
-    toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014 * durVar);
-    tone.connect(toneGain);
-    toneGain.connect(panner);
-    tone.start(now);
-    tone.stop(now + 0.016 * durVar);
-    window.setTimeout(() => { try { panner.disconnect(); } catch (_) {} }, 100);
-  }
-
-  function clearTimers() {
-    timers.forEach(window.clearTimeout);
-    timers = [];
-  }
-  const sleep = ms => new Promise(resolve => {
-    const id = window.setTimeout(() => {
-      timers = timers.filter(timer => timer !== id);
-      resolve();
-    }, ms);
-    timers.push(id);
-  });
-
-  async function animateOnce() {
-    const thisRun = ++runId;
-    clearTimers();
-    const chars = Array.from(target.querySelectorAll('.tw-char'));
-    chars.forEach(char => {
-      char.style.animation = 'none';
-      char.style.opacity = '0';
-      char.style.filter = 'blur(1.5px)';
-      // Reinicia la animación sin alterar los estilos tipográficos del texto original.
-      void char.offsetWidth;
-      char.style.animation = '';
-      char.style.animationPlayState = 'running';
+  function resetTitle(){
+    lines.forEach((l) => {
+      l.textContent = '';
+      l.classList.remove('typing');
     });
-
-    for (const char of chars) {
-      if (thisRun !== runId) return;
-      char.style.animationDelay = '0ms';
-      if (char.textContent.trim() && Math.random() < 0.88) playKeyTap();
-      let delay = 62 + (Math.random() * 40 - 20);
-      if (/[.!?]/u.test(char.textContent)) delay += 240;
-      else if (/[,;:]/u.test(char.textContent)) delay += 120;
-      else if (/\s/u.test(char.textContent)) delay = 31;
-      if (reducedMotion.matches) delay = 1;
-      await sleep(delay);
-    }
-    if (thisRun === runId) {
-      chars.forEach(char => {
-        char.style.opacity = '1';
-        char.style.filter = 'none';
-      });
-    }
+    if (cursor) cursor.classList.remove('visible','done');
   }
 
-  function maybeStart() {
-    if (!isVisible || !gestureReady) return;
-    if (hasPlayed) return;
-    hasPlayed = true; // Modalidad predeterminada: una sola reproducción.
-    animateOnce();
-  }
+  function type(){
+    if (running || done) return;
+    running = true;
+    clearTimers();
+    resetTitle();
 
-  // La interacción del visitante habilita el audio según las reglas del navegador.
-  function onFirstGesture() {
-    gestureReady = true;
-    initAudio();
-    if (audioContext && audioContext.state === 'suspended') {
-      audioContext.resume().catch(() => {});
-    }
-    maybeStart();
-    document.removeEventListener('pointerdown', onFirstGesture, true);
-    document.removeEventListener('keydown', onFirstGesture, true);
-  }
-  document.addEventListener('pointerdown', onFirstGesture, true);
-  document.addEventListener('keydown', onFirstGesture, true);
+    if (cursor) cursor.classList.add('visible');
 
-  wrapTextNodes(target);
+    let lineIdx = 0;
+    let charIdx = 0;
+    const speed = 85;
+    const pauseBetween = 420;
 
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        isVisible = entry.isIntersecting && entry.intersectionRatio > 0;
-        maybeStart();
+    function step(){
+      if (lineIdx >= lines.length){
+        if (cursor) cursor.classList.add('done');
+        lines.forEach(l => l.classList.remove('typing'));
+        running = false;
+        done = true;
+        return;
       }
-    }, { threshold: [0, 0.1] });
-    observer.observe(target);
+      const line = lines[lineIdx];
+      const text = texts[lineIdx];
+      line.classList.add('typing');
+
+      if (charIdx < text.length){
+        line.textContent = text.slice(0, charIdx + 1);
+        charIdx++;
+        timeouts.push(setTimeout(step, speed));
+      } else {
+        line.classList.remove('typing');
+        lineIdx++;
+        charIdx = 0;
+        if (lineIdx < lines.length){
+          timeouts.push(setTimeout(step, pauseBetween));
+        } else {
+          step();
+        }
+      }
+    }
+    step();
+  }
+
+  // Dispara la animación la primera vez que el hero se ve bien en pantalla.
+  // Si por cualquier motivo el observer no dispara, el texto sigue visible (fallback).
+  const trigger = () => {
+    // Pequeño delay para asegurar que el navegador ya pintó
+    setTimeout(type, 120);
+  };
+
+  if ('IntersectionObserver' in window){
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !done){
+          observer.disconnect();
+          trigger();
+        }
+      });
+    }, { threshold: 0.15 });
+    observer.observe(title);
+
+    // Seguridad: si a los 1.5s no disparó (p.ej. hero muy alto en móvil), lo forzamos
+    setTimeout(() => {
+      if (!done && !running) trigger();
+    }, 1500);
   } else {
-    isVisible = true;
-    maybeStart();
+    trigger();
   }
 })();
-</script>
 
+</script>
 </body>
 </html>
