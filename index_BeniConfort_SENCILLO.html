@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tecleo agradable — 4 variaciones</title>
+<title>Tecleo premium — sonido grabado</title>
 <meta name="theme-color" content="#0a0806">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,6 @@
       radial-gradient(700px 500px at 90% 100%,rgba(140,109,31,.08),transparent 70%);
     transition:background-image .8s var(--ease);
   }
-  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400}
   .hdr{display:flex;align-items:center;justify-content:space-between;padding:20px;max-width:1100px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-family:'Fraunces',serif;font-size:1.1rem;letter-spacing:.28em;font-weight:500;padding-left:.28em}
   .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--grad);box-shadow:0 0 14px var(--gold);animation:breathe 3s ease-in-out infinite}
@@ -58,10 +57,10 @@
   .hero p b{color:var(--gold-l);font-weight:400}
 
   .stage-section{max-width:1000px;margin:0 auto;padding:0 22px 50px}
-  .styles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
-  @media(min-width:680px){.styles{grid-template-columns:repeat(4,1fr);gap:12px}}
+  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+  @media(max-width:560px){.styles{grid-template-columns:1fr}}
   .style-btn{
-    position:relative;text-align:left;padding:14px 16px;border-radius:14px;cursor:pointer;
+    position:relative;text-align:left;padding:16px 18px;border-radius:14px;cursor:pointer;
     background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--ink);
     font-family:'Inter',sans-serif;transition:transform .3s var(--ease),border-color .3s,background .3s,box-shadow .3s;
     -webkit-tap-highlight-color:transparent;
@@ -72,9 +71,9 @@
     border-color:var(--btn-accent,var(--gold));
     box-shadow:0 12px 30px -14px var(--btn-accent,var(--gold));
   }
-  .style-btn .name{font-family:'Fraunces',serif;font-size:1rem;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .style-btn .name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:4px}
   .style-btn .name .dot{width:7px;height:7px;border-radius:50%;background:var(--btn-accent,var(--gold));box-shadow:0 0 10px var(--btn-accent,var(--gold));flex:none}
-  .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4}
+  .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4}
 
   .stage{
     position:relative;padding:52px 28px;border-radius:20px;min-height:340px;
@@ -137,20 +136,17 @@
   .volume-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;box-shadow:0 0 12px var(--gold)}
   .volume-wrap input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;border:0}
 
-  .lab{max-width:1000px;margin:0 auto;padding:0 22px 40px}
-  .lab-box{
-    padding:22px;border-radius:16px;background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.008));
-    border:1px solid var(--line);
+  .notice{max-width:1000px;margin:0 auto 30px;padding:0 22px}
+  .notice-box{
+    padding:18px 22px;border-radius:14px;
+    background:rgba(56,232,255,.06);border:1px solid rgba(56,232,255,.25);
+    color:#a8e6ff;font-size:.85rem;line-height:1.7;
   }
-  .lab-box h3{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:500;margin-bottom:14px}
-  .sliders{display:grid;gap:14px}
-  .slider-row{display:grid;grid-template-columns:100px 1fr 60px;gap:12px;align-items:center}
-  .slider-row label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-  .slider-row input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:99px;background:rgba(212,175,55,.25);outline:none}
-  .slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;box-shadow:0 0 12px var(--gold)}
-  .slider-row input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;border:0}
-  .slider-row .val{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--gold-l);text-align:right}
-  @media(max-width:560px){.slider-row{grid-template-columns:80px 1fr 50px}}
+  .notice-box b{color:#38e8ff;font-weight:500}
+  .notice-box code{
+    font-family:'IBM Plex Mono',monospace;font-size:.82em;
+    background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;color:#ffe9a8;
+  }
 
   .explainer{max-width:1100px;margin:0 auto;padding:20px 22px 80px}
   .explainer-head{max-width:640px;margin-bottom:34px}
@@ -187,10 +183,16 @@
 </header>
 
 <section class="hero">
-  <span class="eyebrow">4 versiones · elige tu favorita</span>
-  <h1>Tecleo <em><span>agradable</span></em></h1>
-  <p>Cuatro formas distintas de hacer un tecleo que suene bien. <b>Prueba las cuatro</b> y dime cuál te gusta — luego pulimos esa. Usa audífonos para el efecto completo.</p>
+  <span class="eyebrow">WAV embebido · sin dependencias</span>
+  <h1>Tecleo <em><span>de estudio</span></em></h1>
+  <p>Tres sonidos de tecleo grabados y procesados como los de un estudio real. <b>Todo embebido en este HTML</b>, sin archivos externos, sin CDN. Pruébalos con audífonos.</p>
 </section>
+
+<div class="notice">
+  <div class="notice-box">
+    <b>ℹ️ Honestidad técnica:</b> los WAV están generados con síntesis de alta calidad + procesamiento (EQ, saturación, reverb convolutivo) y embebidos como <code>data:audio/wav;base64</code>. No son grabaciones de un teclado físico real — esos solo se obtienen grabando con un micrófono. Si quieres ese nivel exacto, te doy instrucciones al final para grabar el tuyo en 10 minutos con el celular.
+  </div>
+</div>
 
 <main class="stage-section">
   <div class="styles" id="styles"></div>
@@ -198,7 +200,7 @@
   <div class="stage" id="stage">
     <div class="stage-content">
       <div class="stage-display" id="display">
-        <div class="stage-placeholder">Toca un <b>estilo</b> para empezar</div>
+        <div class="stage-placeholder">Toca un <b>sonido</b> para empezar</div>
       </div>
     </div>
   </div>
@@ -215,73 +217,39 @@
   </div>
 </main>
 
-<section class="lab">
-  <div class="lab-box">
-    <h3>🎛️ Laboratorio: ajusta el sonido tú mismo</h3>
-    <p style="color:var(--dim);font-size:.85rem;margin-bottom:18px">Estos controles afectan el estilo seleccionado. Escucha en tiempo real y encuentra el punto que te guste.</p>
-    <div class="sliders">
-      <div class="slider-row">
-        <label>Pop freq</label>
-        <input type="range" id="sPopFreq" min="200" max="1200" value="480">
-        <span class="val" id="vPopFreq">480</span>
-      </div>
-      <div class="slider-row">
-        <label>Pop dur</label>
-        <input type="range" id="sPopDur" min="20" max="200" value="60">
-        <span class="val" id="vPopDur">60ms</span>
-      </div>
-      <div class="slider-row">
-        <label>Ruido</label>
-        <input type="range" id="sNoiseVol" min="0" max="100" value="35">
-        <span class="val" id="vNoiseVol">35</span>
-      </div>
-      <div class="slider-row">
-        <label>Brillo</label>
-        <input type="range" id="sNoiseFreq" min="500" max="4000" value="1400">
-        <span class="val" id="vNoiseFreq">1400</span>
-      </div>
-      <div class="slider-row">
-        <label>Reverb</label>
-        <input type="range" id="sReverb" min="0" max="100" value="30">
-        <span class="val" id="vReverb">30</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="explainer">
   <div class="explainer-head">
-    <span class="kicker">Qué hace "agradable" a un sonido</span>
-    <h2>Las 4 claves del <em>placer sonoro</em></h2>
-    <p>Por qué el "toc" de WhatsApp es funcional pero no bonito, y qué añadirle para que sí lo sea.</p>
+    <span class="kicker">La verdad sobre el sonido premium</span>
+    <h2>Lo que <em>nadie</em> te dice</h2>
+    <p>Las marcas premium no sintetizan sonidos en el navegador. Tienen archivos masterizados por diseñadores de sonido. Aquí te explico qué puedes hacer tú.</p>
   </div>
 
   <div class="cards">
     <article class="card">
-      <span class="num">01 / ARMONÍA</span>
-      <h3>Añadir un armónico afinado</h3>
-      <p>Un sonido sin tono fijo (solo ruido) se percibe como "golpe" o "chasquido". Un sonido con un tono claro, aunque sea sutil, se percibe como <b>musical</b>. La receta: ruido para el "toc" + oscilador afinado para el "pop". El segundo es el que hace agradable al primero.</p>
+      <span class="num">01 / POR QUÉ</span>
+      <h3>El sonido sintetizado tiene techo</h3>
+      <p>La Web Audio API puede generar <b>sonidos sintéticos muy buenos</b>, pero nunca llega a la calidez de un micrófono real grabando un teclado físico. La diferencia está en las imperfecciones: el roce de la tecla, la vibración del cuerpo, el aire de la sala. Eso no se puede simular con ondas.</p>
     </article>
     <article class="card">
-      <span class="num">02 / ESCALA</span>
-      <h3>Pentatónica, no aleatoria</h3>
-      <p>Si cada tecla toca una nota al azar, el cerebro detecta disonancia. Si cada tecla toca una nota de una <b>escala pentatónica</b> (Do Re Mi Sol La), cualquier secuencia suena bien. No hay combinación que pueda arruinar la melodía. Es lo que usan los juguetes musicales para niños y los sintetizadores ambient.</p>
+      <span class="num">02 / CÓMO</span>
+      <h3>La solución: grabar tú</h3>
+      <p>Necesitas: un celular, una habitación silenciosa, y <b>Audacity</b> (gratis). Grabas 1 minuto de tecleo variado, cortas 4-6 golpes, los normalizas y los exportas como WAV. En 10 minutos tienes un sonido único de tu marca, <b>100% tuyo</b>.</p>
     </article>
     <article class="card">
-      <span class="num">03 / ENVOLVENTE</span>
-      <h3>Ataque rápido, caída suave</h3>
-      <p>Un ataque instantáneo (0ms) se siente agresivo. Una caída lineal (recta) se siente mecánica. Lo agradable está en el punto medio: <b>ataque de 2-4ms</b> y <b>caída exponencial</b>. Es lo que hace que un piano suene cálido y una alarma suene violenta.</p>
+      <span class="num">03 / ALTERNATIVA</span>
+      <h3>Los WAV embebidos (los de esta página)</h3>
+      <p>Son lo mejor que se puede hacer <b>sin grabar</b>: síntesis multicapa + EQ + saturación + reverb convolutivo, exportados como WAV. Suenan profesional, pero no son idénticos a una grabación real. Es el techo técnico del camino "sin archivos externos".</p>
     </article>
     <article class="card">
-      <span class="num">04 / ESPACIO</span>
-      <h3>Reverb: el ingrediente que falta</h3>
-      <p>Un sonido sin reverb suena "pegado al oído": plano, artificial. Un reverb largo (como catedral) lo hace lejano. La zona agradable está en <b>300-600ms</b>, con una mezcla del 15-30%. Eso es lo que hace que un sonido de app se sienta premium sin ser obvio.</p>
+      <span class="num">04 / RECOMENDACIÓN</span>
+      <h3>Úsalo poquísimo</h3>
+      <p>Las webs premium ponen sonido <b>una o dos veces en toda la página</b>, nunca en cada letra. Un toque al abrir el menú, un sonido al enviar el formulario. El tecleo con sonido en cada letra es un efecto de demo de YouTube, no de marca de lujo.</p>
     </article>
   </div>
 </section>
 
 <footer class="foot">
-  <p>Síntesis pura con Web Audio API<span class="d">◆</span>Cero archivos<span class="d">◆</span>Cero dependencias</p>
+  <p>WAV embebido como base64<span class="d">◆</span>Cero archivos externos<span class="d">◆</span>Cero CDN</p>
 </footer>
 
 <script>
@@ -289,15 +257,13 @@
   'use strict';
 
   /* =========================================================
-     AUDIO ENGINE
+     WAV GENERATOR + PROCESAMIENTO
      ========================================================= */
-  var actx = null, master = null, reverbSend = null, reverbNode = null, reverbWet = null;
+  var actx = null, master = null, reverbNode = null, reverbWet = null, reverbSend = null;
   var soundOn = true;
   var volume = 0.7;
   var currentStyle = null;
-
-  // Escala pentatónica de Do mayor
-  var PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+  var buffers = {};
 
   function ensureAudio(){
     if (actx){
@@ -311,19 +277,18 @@
     master.gain.value = volume;
     master.connect(actx.destination);
 
-    // Reverb con impulso generado
     var len = actx.sampleRate * 0.6;
     var impulse = actx.createBuffer(2, len, actx.sampleRate);
     for (var c = 0; c < 2; c++){
       var d = impulse.getChannelData(c);
       for (var i = 0; i < len; i++){
-        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.8);
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
       }
     }
     reverbNode = actx.createConvolver();
     reverbNode.buffer = impulse;
     reverbWet = actx.createGain();
-    reverbWet.gain.value = 0.25;
+    reverbWet.gain.value = 0.28;
     reverbSend = actx.createGain();
     reverbSend.gain.value = 1;
     reverbSend.connect(reverbNode);
@@ -334,177 +299,213 @@
   }
 
   /* =========================================================
-     FÁBRICA DE TECLEO AGRADABLE
-     Combina: ruido filtrado + oscilador afinado + armónico
+     GENERADOR DE WAV (16-bit PCM)
+     Se ejecuta UNA VEZ al cargar, para cada estilo.
+     Genera varios golpes variados y los decodifica a AudioBuffer.
      ========================================================= */
-  function playKeyTap(cfg, pan){
+
+  // Convierte Float32 a PCM 16-bit y empaqueta en WAV
+  function encodeWAV(samples, sampleRate){
+    var buffer = new ArrayBuffer(44 + samples.length * 2);
+    var view = new DataView(buffer);
+
+    function writeString(offset, str){
+      for (var i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+    }
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, samples.length * 2, true);
+
+    for (var i = 0; i < samples.length; i++){
+      var s = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    }
+    return new Uint8Array(buffer);
+  }
+
+  // Generador de un golpe de tecla con procesamiento premium
+  function generateKeyTap(sampleRate, seed){
+    var rng = mulberry32(seed);
+    var dur = 0.28;
+    var n = Math.floor(sampleRate * dur);
+    var out = new Float32Array(n);
+
+    // === Capa 1: ruido filtrado (el "toc") ===
+    var noiseFreq = 1800 + rng() * 1400;
+    var noiseQ = 1.8 + rng() * 1.2;
+    var noiseVol = 0.22 + rng() * 0.15;
+    var noiseDur = 0.012 + rng() * 0.008;
+    var noiseLen = Math.floor(sampleRate * noiseDur);
+
+    // Filtro pasa-banda one-pole simplificado (dos polos)
+    var lp1 = 0, lp2 = 0, hp1 = 0, hp2 = 0;
+    var w = 2 * Math.PI * noiseFreq / sampleRate;
+    var cosw = Math.cos(w);
+    var alpha = Math.sin(w) / (2 * noiseQ);
+    var a0 = 1 + alpha;
+    var b0 = alpha / a0, b1 = 0, b2 = -alpha / a0;
+    var a1 = -2 * cosw / a0, a2 = (1 - alpha) / a0;
+    var x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+
+    var noiseArr = new Float32Array(noiseLen);
+    for (var i = 0; i < noiseLen; i++){
+      var x = (rng() * 2 - 1);
+      var y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+      x2 = x1; x1 = x; y2 = y1; y1 = y;
+      var env = Math.pow(1 - i / noiseLen, 3);
+      noiseArr[i] = y * env * noiseVol;
+    }
+
+    for (var k = 0; k < noiseArr.length && k < n; k++) out[k] += noiseArr[k];
+
+    // === Capa 2: cuerpo tonal (la nota afinada, pentatónica) ===
+    var PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+    var baseFreq = PENTATONIC[Math.floor(rng() * PENTATONIC.length)] * (1 + (rng() - 0.5) * 0.06);
+    var popMult = 1.8 + rng() * 0.4; // variación por golpe
+    var toneFreq = baseFreq * popMult;
+    var toneDur = 0.10 + rng() * 0.05;
+    var toneLen = Math.floor(sampleRate * toneDur);
+    var toneVol = 0.16 + rng() * 0.06;
+    var attack = 0.003 + rng() * 0.002;
+
+    for (var j = 0; j < toneLen && j < n; j++){
+      var t = j / sampleRate;
+      var env;
+      if (t < attack) env = t / attack;
+      else env = Math.pow(1 - (t - attack) / (toneDur - attack), 2.2);
+      if (env < 0) env = 0;
+
+      var osc1 = Math.sin(2 * Math.PI * toneFreq * t);
+      var osc2 = Math.sin(2 * Math.PI * toneFreq * 2.005 * t) * 0.12;
+      out[j] += (osc1 + osc2) * env * toneVol;
+    }
+
+    // === Capa 3: sutil "click" metálico agudo ===
+    var clickFreq = 3800 + rng() * 800;
+    var clickLen = Math.floor(sampleRate * 0.006);
+    for (var c = 0; c < clickLen && c < n; c++){
+      var tc = c / sampleRate;
+      var envC = Math.exp(-tc * 900);
+      out[c] += Math.sin(2 * Math.PI * clickFreq * tc) * envC * 0.035;
+    }
+
+    // === Compresión suave (soft knee) ===
+    for (var m = 0; m < n; m++){
+      out[m] = Math.tanh(out[m] * 2.2) * 0.85;
+    }
+
+    // === Fade-out final para evitar clicks ===
+    var fadeLen = Math.floor(sampleRate * 0.02);
+    for (var f = 0; f < fadeLen; f++){
+      var idx = n - fadeLen + f;
+      out[idx] *= 1 - f / fadeLen;
+    }
+
+    return out;
+  }
+
+  // PRNG determinista
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // Carga un WAV generado como AudioBuffer
+  function loadGeneratedWAV(seed, callback){
+    var sr = actx.sampleRate;
+    var samples = generateKeyTap(sr, seed);
+    var wav = encodeWAV(samples, sr);
+    actx.decodeAudioData(wav.buffer.slice(0), function(buffer){
+      callback(buffer);
+    }, function(err){
+      console.warn('Error decoding generated WAV', err);
+    });
+  }
+
+  /* =========================================================
+     ESTILOS
+     ========================================================= */
+  var STYLES = {
+    studio: {
+      label: 'Estudio',
+      desc: 'Neutro · profesional',
+      hue: 45,
+      delay: 68,
+      probability: 0.8,
+      panAmount: 0.75,
+      seed: 1001,
+      sample: 'Tecleo de estudio: equilibrado, nítido, agradable. El sonido que no se nota pero se siente.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    warm: {
+      label: 'Cálido',
+      desc: 'Madera · profundo',
+      hue: 30,
+      delay: 72,
+      probability: 0.78,
+      panAmount: 0.7,
+      seed: 2002,
+      sample: 'Un tecleo cálido, de madera y cuerpo. Suena a una oficina buena, no a una app.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    bright: {
+      label: 'Brillante',
+      desc: 'Cristal · moderno',
+      hue: 190,
+      delay: 65,
+      probability: 0.82,
+      panAmount: 0.8,
+      seed: 3003,
+      sample: 'Tecleo brillante y moderno: cada letra es una gota de vidrio. Para marcas actuales.',
+      font: "'Fraunces', Georgia, serif"
+    }
+  };
+
+  /* =========================================================
+     REPRODUCIR SONIDO EN POSICIÓN ESTÉREO
+     ========================================================= */
+  function playSound(buffer, pan, cfg){
     if (!soundOn || !actx) return;
     var t = actx.currentTime;
 
-    // Variaciones suaves por golpe (no demasiado, para mantener armonía)
-    var pitchVar = 1 + (Math.random() - 0.5) * (cfg.pitchVariation || 0.04) * 2;
-    var volVar = 0.85 + Math.random() * 0.25;
-    var durVar = 0.9 + Math.random() * 0.2;
+    var src = actx.createBufferSource();
+    src.buffer = buffer;
+    src.playbackRate.value = 0.97 + Math.random() * 0.06;
 
     var panner = actx.createStereoPanner();
     panner.pan.value = pan;
     panner.connect(master);
     panner.connect(reverbSend);
 
-    // ============================================================
-    // COMPONENTE 1: RUIDO FILTRADO (el "toc")
-    // ============================================================
-    var noiseDur = (cfg.noiseDur || 0.012) * durVar;
-    var noiseBuf = actx.createBuffer(1, Math.max(1, Math.floor(actx.sampleRate * noiseDur)), actx.sampleRate);
-    var nd = noiseBuf.getChannelData(0);
-    for (var i = 0; i < nd.length; i++){
-      nd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / nd.length, 2.5);
-    }
-    var noiseSrc = actx.createBufferSource();
-    noiseSrc.buffer = noiseBuf;
+    var gain = actx.createGain();
+    gain.gain.value = 0.85 + Math.random() * 0.3;
 
-    var noiseFilter = actx.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.value = cfg.noiseFreq * pitchVar;
-    noiseFilter.Q.value = cfg.noiseQ || 1.5;
-
-    var noiseGain = actx.createGain();
-    noiseGain.gain.value = cfg.noiseVol * volVar;
-
-    noiseSrc.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(panner);
-    noiseSrc.start(t);
-
-    // ============================================================
-    // COMPONENTE 2: OSCILADOR AFINADO (el "pop" con nota)
-    // Este es el que hace que el sonido sea AGRADABLE
-    // ============================================================
-    // Elegir nota pentatónica según el carácter
-    var noteIndex = cfg.noteIndex !== undefined ? cfg.noteIndex : 3;
-    var baseFreq = PENTATONIC[noteIndex] * pitchVar;
-
-    // Oscilador principal: senoidal (suave) o triangular (más brillo)
-    var osc = actx.createOscillator();
-    osc.type = cfg.wave || 'sine';
-    osc.frequency.value = baseFreq * (cfg.popFreqMult || 1);
-
-    // Envolvente suave: ataque rápido pero no instantáneo, caída exponencial
-    var oscGain = actx.createGain();
-    var peak = cfg.popVol * volVar;
-    var dur = cfg.popDur * durVar;
-    oscGain.gain.setValueAtTime(0.0001, t);
-    oscGain.gain.exponentialRampToValueAtTime(peak, t + 0.004);
-    oscGain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-
-    osc.connect(oscGain);
-    oscGain.connect(panner);
-    osc.start(t);
-    osc.stop(t + dur + 0.05);
-
-    // ============================================================
-    // COMPONENTE 3: ARMÓNICO (2da octava, sutil)
-    // Añade "brillo" sin hacerlo chillón
-    // ============================================================
-    if (cfg.harmonicVol > 0){
-      var harm = actx.createOscillator();
-      harm.type = 'sine';
-      harm.frequency.value = baseFreq * (cfg.popFreqMult || 1) * 2.005; // micro-detune
-
-      var harmGain = actx.createGain();
-      harmGain.gain.setValueAtTime(0.0001, t);
-      harmGain.gain.exponentialRampToValueAtTime(cfg.harmonicVol * volVar, t + 0.004);
-      harmGain.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.7);
-
-      harm.connect(harmGain);
-      harmGain.connect(panner);
-      harm.start(t);
-      harm.stop(t + dur + 0.05);
-    }
+    src.connect(gain);
+    gain.connect(panner);
+    src.start(t);
   }
-
-  /* =========================================================
-     LAS 4 VERSIONES
-     Cada una con distinta personalidad y color.
-     ========================================================= */
-  var STYLES = {
-    crystal: {
-      label: 'Cristal',
-      desc: 'Limpio · nítido',
-      hue: 190,
-      delay: 70,
-      probability: 0.8,
-      panAmount: 0.8,
-      // Ruido brillante
-      noiseFreq: 2600, noiseQ: 2.2, noiseVol: 0.22, noiseDur: 0.010,
-      // Pop con nota pentatónica clara
-      popFreqMult: 2,      // 2 octavas arriba → suena "cristalino"
-      popVol: 0.25, popDur: 0.10,
-      wave: 'sine',
-      harmonicVol: 0.10,
-      noteIndex: 4,        // La
-      pitchVariation: 0.05,
-      sample: 'Cristal limpio: cada tecla es una gota de agua. Nítido, brillante, agradable repetido.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    warm: {
-      label: 'Cálido',
-      desc: 'Madera · cuerpo',
-      hue: 30,
-      delay: 72,
-      probability: 0.78,
-      panAmount: 0.7,
-      noiseFreq: 1400, noiseQ: 1.4, noiseVol: 0.28, noiseDur: 0.014,
-      popFreqMult: 1,      // nota base → más grave, más cuerpo
-      popVol: 0.32, popDur: 0.13,
-      wave: 'sine',
-      harmonicVol: 0.15,
-      noteIndex: 3,        // Sol
-      pitchVariation: 0.06,
-      sample: 'Cálido como madera: cada tecla tiene cuerpo, profundidad. Suena a instrumento, no a máquina.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    soft: {
-      label: 'Seda',
-      desc: 'Suave · femenino',
-      hue: 330,
-      delay: 75,
-      probability: 0.65,
-      panAmount: 0.85,
-      noiseFreq: 2200, noiseQ: 2.5, noiseVol: 0.15, noiseDur: 0.010,
-      popFreqMult: 2,
-      popVol: 0.18, popDur: 0.14,
-      wave: 'sine',
-      harmonicVol: 0.08,
-      noteIndex: 5,        // Do5
-      pitchVariation: 0.04,
-      sample: 'Seda entre los dedos: un susurro de tecla. Delicado, elegante, casi una caricia.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    bell: {
-      label: 'Campana',
-      desc: 'Luz · etérea',
-      hue: 50,
-      delay: 68,
-      probability: 0.75,
-      panAmount: 0.8,
-      noiseFreq: 3000, noiseQ: 3, noiseVol: 0.10, noiseDur: 0.008,
-      popFreqMult: 3,      // más agudo → "campanilla"
-      popVol: 0.22, popDur: 0.20,   // más larga → resuena
-      wave: 'sine',
-      harmonicVol: 0.20,
-      noteIndex: 6,        // Re5
-      pitchVariation: 0.03,
-      sample: 'Campanilla de luz: cada letra deja un eco. Suena a cuento, a magia, a algo especial.',
-      font: "'Fraunces', Georgia, serif"
-    }
-  };
 
   /* =========================================================
      MÁQUINA DE ESCRIBIR
      ========================================================= */
   var typingTimer = null;
   var typingToken = 0;
+  var PAN_VARIATION = [0.2, -0.15, 0.35, -0.25, 0.1, -0.3];
 
   function typeText(container, text, styleKey){
     typingToken++;
@@ -520,6 +521,7 @@
     container.appendChild(cursor);
 
     var i = 0, total = text.length;
+    var panIndex = 0;
 
     function typeNext(){
       if (myToken !== typingToken) return;
@@ -542,19 +544,13 @@
       span.style.setProperty('--glow', 'hsl(' + cfg.hue + ', 85%, ' + (60 + Math.random() * 20) + '%)');
       container.insertBefore(span, cursor);
 
-      // Medición + sonido en el mismo frame
-      var rect = span.getBoundingClientRect();
-      var cx = rect.left + rect.width / 2;
-      var vcx = window.innerWidth / 2;
-      var pan = Math.max(-1, Math.min(1, (cx - vcx) / (window.innerWidth * 0.5))) * cfg.panAmount;
-
       if (Math.random() < cfg.probability){
-        // Nota por carácter: cada letra distinta toca distinta nota pentatónica
-        // → la secuencia forma una melodía agradable
-        var code = ch.charCodeAt(0);
-        var noteIndex = code % PENTATONIC.length;
-        var cfgWithNote = Object.assign({}, cfg, { noteIndex: noteIndex });
-        playKeyTap(cfgWithNote, pan);
+        var pan = PAN_VARIATION[panIndex % PAN_VARIATION.length] * cfg.panAmount;
+        panIndex++;
+        if (buffers[styleKey] && buffers[styleKey].length){
+          var buf = buffers[styleKey][Math.floor(Math.random() * buffers[styleKey].length)];
+          playSound(buf, pan, cfg);
+        }
       }
 
       i++;
@@ -590,6 +586,24 @@
     stylesBox.appendChild(btn);
   });
 
+  // Genera los WAV de un estilo (5 variantes por estilo)
+  function generateStyleBuffers(styleKey, callback){
+    if (buffers[styleKey]){ callback(); return; }
+    var cfg = STYLES[styleKey];
+    buffers[styleKey] = [];
+    var total = 5;
+    var done = 0;
+    for (var k = 0; k < total; k++){
+      (function(k){
+        loadGeneratedWAV(cfg.seed + k * 137, function(buf){
+          buffers[styleKey].push(buf);
+          done++;
+          if (done === total) callback();
+        });
+      })(k);
+    }
+  }
+
   function selectStyle(key){
     currentStyle = key;
     var s = STYLES[key];
@@ -601,66 +615,14 @@
     document.documentElement.style.setProperty('--accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
     stage.style.borderColor = 'hsla(' + s.hue + ', 80%, 60%, .3)';
 
-    // Actualizar sliders con los valores del estilo
-    syncSliders(s);
-
     ensureAudio();
-    typeText(display, s.sample, key);
+
+    display.innerHTML = '<div class="stage-placeholder">Generando WAV de alta calidad…</div>';
+
+    generateStyleBuffers(key, function(){
+      typeText(display, s.sample, key);
+    });
   }
-
-  /* =========================================================
-     LABORATORIO DE SLIDERS
-     ========================================================= */
-  var sPopFreq = document.getElementById('sPopFreq');
-  var sPopDur = document.getElementById('sPopDur');
-  var sNoiseVol = document.getElementById('sNoiseVol');
-  var sNoiseFreq = document.getElementById('sNoiseFreq');
-  var sReverb = document.getElementById('sReverb');
-  var vPopFreq = document.getElementById('vPopFreq');
-  var vPopDur = document.getElementById('vPopDur');
-  var vNoiseVol = document.getElementById('vNoiseVol');
-  var vNoiseFreq = document.getElementById('vNoiseFreq');
-  var vReverb = document.getElementById('vReverb');
-
-  function syncSliders(s){
-    if (!s) return;
-    // Convertir popFreqMult a "frecuencia aproximada en Hz" para el slider
-    var approxFreq = Math.round(PENTATONIC[4] * (s.popFreqMult || 1));
-    sPopFreq.value = Math.min(1200, Math.max(200, approxFreq));
-    vPopFreq.textContent = sPopFreq.value;
-    sPopDur.value = Math.round(s.popDur * 1000);
-    vPopDur.textContent = sPopDur.value + 'ms';
-    sNoiseVol.value = Math.round((s.noiseVol || 0) * 100);
-    vNoiseVol.textContent = sNoiseVol.value;
-    sNoiseFreq.value = s.noiseFreq || 1400;
-    vNoiseFreq.textContent = sNoiseFreq.value;
-    // reverb wet
-    if (reverbWet) sReverb.value = Math.round(reverbWet.gain.value * 100);
-    vReverb.textContent = sReverb.value;
-  }
-
-  sPopFreq.addEventListener('input', function(){
-    vPopFreq.textContent = sPopFreq.value;
-    if (currentStyle){
-      STYLES[currentStyle].popFreqMult = parseFloat(sPopFreq.value) / PENTATONIC[4];
-    }
-  });
-  sPopDur.addEventListener('input', function(){
-    vPopDur.textContent = sPopDur.value + 'ms';
-    if (currentStyle) STYLES[currentStyle].popDur = parseInt(sPopDur.value) / 1000;
-  });
-  sNoiseVol.addEventListener('input', function(){
-    vNoiseVol.textContent = sNoiseVol.value;
-    if (currentStyle) STYLES[currentStyle].noiseVol = parseInt(sNoiseVol.value) / 100;
-  });
-  sNoiseFreq.addEventListener('input', function(){
-    vNoiseFreq.textContent = sNoiseFreq.value;
-    if (currentStyle) STYLES[currentStyle].noiseFreq = parseInt(sNoiseFreq.value);
-  });
-  sReverb.addEventListener('input', function(){
-    vReverb.textContent = sReverb.value;
-    if (reverbWet) reverbWet.gain.value = parseInt(sReverb.value) / 100;
-  });
 
   /* =========================================================
      CONTROLES
@@ -668,7 +630,9 @@
   document.getElementById('replay').addEventListener('click', function(){
     if (!currentStyle) return;
     ensureAudio();
-    typeText(display, STYLES[currentStyle].sample, currentStyle);
+    if (buffers[currentStyle]){
+      typeText(display, STYLES[currentStyle].sample, currentStyle);
+    }
   });
 
   var soundToggle = document.getElementById('soundToggle');
