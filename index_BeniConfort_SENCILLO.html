@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tecleo premium — sin notas, solo teclas</title>
+<title>6 tecleos premium — con aire, sin eco</title>
 <meta name="theme-color" content="#0a0806">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
       radial-gradient(700px 500px at 90% 100%,rgba(140,109,31,.08),transparent 70%);
     transition:background-image .8s var(--ease);
   }
-  .hdr{display:flex;align-items:center;justify-content:space-between;padding:20px;max-width:1100px;margin:0 auto}
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:20px;max-width:1200px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-family:'Fraunces',serif;font-size:1.1rem;letter-spacing:.28em;font-weight:500;padding-left:.28em}
   .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--grad);box-shadow:0 0 14px var(--gold);animation:breathe 3s ease-in-out infinite}
   @keyframes breathe{50%{transform:scale(1.3);box-shadow:0 0 22px var(--gold)}}
@@ -53,12 +53,31 @@
   .hero h1 em{font-style:italic}
   .hero h1 em span{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
   @keyframes flow{to{background-position:220% center}}
-  .hero p{color:var(--dim);font-size:.94rem;max-width:54ch;margin:0 auto}
+  .hero p{color:var(--dim);font-size:.94rem;max-width:56ch;margin:0 auto}
   .hero p b{color:var(--gold-l);font-weight:400}
 
-  .stage-section{max-width:1000px;margin:0 auto;padding:0 22px 30px}
-  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-  @media(max-width:560px){.styles{grid-template-columns:1fr}}
+  .stage-section{max-width:1200px;margin:0 auto;padding:0 22px 30px}
+
+  /* Categorías */
+  .category{margin-bottom:32px}
+  .category-head{
+    display:flex;align-items:center;gap:12px;margin-bottom:14px;
+    padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+  .category-head h2{
+    font-family:'Fraunces',serif;font-size:1.1rem;font-weight:500;
+    letter-spacing:-.01em;color:var(--ink);
+  }
+  .category-head .badge{
+    font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;
+    padding:3px 9px;border-radius:99px;background:rgba(212,175,55,.14);color:var(--gold-l);
+    border:1px solid rgba(212,175,55,.3);
+  }
+  .category-head .badge.pink{background:rgba(246,165,192,.14);color:#f6a5c0;border-color:rgba(246,165,192,.3)}
+  .category-head .badge.cyan{background:rgba(56,232,255,.14);color:#38e8ff;border-color:rgba(56,232,255,.3)}
+
+  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:760px){.styles{grid-template-columns:1fr}}
   .style-btn{
     position:relative;text-align:left;padding:16px 18px;border-radius:14px;cursor:pointer;
     background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--ink);
@@ -73,26 +92,26 @@
   }
   .style-btn .name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:4px}
   .style-btn .name .dot{width:7px;height:7px;border-radius:50%;background:var(--btn-accent,var(--gold));box-shadow:0 0 10px var(--btn-accent,var(--gold));flex:none}
-  .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4}
+  .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4;margin-bottom:10px}
 
-  /* Comparador rápido */
-  .compare{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;
-    padding:14px;border-radius:14px;border:1px dashed rgba(212,175,55,.3);
-    background:rgba(212,175,55,.03);
+  /* Botones de prueba rápida */
+  .test-row{
+    display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;
   }
-  @media(max-width:560px){.compare{grid-template-columns:1fr}}
-  .compare-btn{
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    min-height:44px;padding:0 14px;border-radius:10px;
+  .test-btn{
+    display:flex;align-items:center;justify-content:center;gap:5px;
+    min-height:32px;padding:0 8px;border-radius:8px;
     background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink);
-    font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+    font-family:'Inter',sans-serif;font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
     cursor:pointer;transition:all .2s;
+    -webkit-tap-highlight-color:transparent;
   }
-  .compare-btn:hover{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.5)}
-  .compare-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
-  .compare-btn:active{transform:scale(.97)}
+  .test-btn:hover{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.5)}
+  .test-btn:active{transform:scale(.95)}
+  .test-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
 
+  /* Stage */
+  .stage-wrap{max-width:1000px;margin:0 auto;padding:0 22px 40px}
   .stage{
     position:relative;padding:52px 28px;border-radius:20px;min-height:340px;
     background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008)),
@@ -152,7 +171,7 @@
   .volume-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;box-shadow:0 0 12px var(--gold)}
   .volume-wrap input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;border:0}
 
-  .foot{text-align:center;padding:40px 22px 50px;border-top:1px solid var(--line);max-width:1100px;margin:0 auto;margin-top:40px}
+  .foot{text-align:center;padding:40px 22px 50px;border-top:1px solid var(--line);max-width:1200px;margin:40px auto 0}
   .foot p{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,185,150,.5);line-height:2}
   .foot .d{color:var(--gold);margin:0 8px}
 
@@ -172,34 +191,38 @@
 </header>
 
 <section class="hero">
-  <span class="eyebrow">Teclado de celular · sin notas · sin piano</span>
-  <h1>El <em><span>toc</span></em> que buscabas</h1>
-  <p>Tres versiones de tecleo premium, <b>sin notas musicales</b>. Solo el "toc" del teclado del celular, pulido para sonar profesional. Compara un solo golpe de cada uno antes de elegir.</p>
+  <span class="eyebrow">6 tecleos · con aire · sin notas musicales</span>
+  <h1>Tecleo <em><span>premium</span></em></h1>
+  <p>Seis variantes pensadas para distintas marcas. Todas con <b>reverb corta</b> para que el sonido no se sienta seco, pero sin llegar a ser eco. Usa audífonos.</p>
 </section>
 
 <main class="stage-section">
 
-  <div class="compare">
-    <button class="compare-btn" data-test="whatsapp">
-      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Probar 1 golpe: WhatsApp
-    </button>
-    <button class="compare-btn" data-test="ios">
-      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Probar 1 golpe: iOS
-    </button>
-    <button class="compare-btn" data-test="premium">
-      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Probar 1 golpe: Premium
-    </button>
+  <!-- CATEGORÍA 1: FEMENINO / BIENESTAR -->
+  <div class="category">
+    <div class="category-head">
+      <h2>Para páginas de mujer, estética, bienestar</h2>
+      <span class="badge pink">Suave · femenino</span>
+    </div>
+    <div class="styles" id="styles-fem"></div>
   </div>
 
-  <div class="styles" id="styles"></div>
+  <!-- CATEGORÍA 2: PREMIUM / LUJO -->
+  <div class="category">
+    <div class="category-head">
+      <h2>Para páginas premium, lujo, corporativo</h2>
+      <span class="badge">Cálido · exclusivo</span>
+    </div>
+    <div class="styles" id="styles-prem"></div>
+  </div>
 
+</main>
+
+<div class="stage-wrap">
   <div class="stage" id="stage">
     <div class="stage-content">
       <div class="stage-display" id="display">
-        <div class="stage-placeholder">Toca un <b>estilo</b> o prueba un <b>golpe</b> arriba</div>
+        <div class="stage-placeholder">Toca un <b>estilo</b> para escucharlo en una frase completa</div>
       </div>
     </div>
   </div>
@@ -214,17 +237,19 @@
       <input type="range" id="volume" min="0" max="100" value="70" aria-label="Volumen">
     </div>
   </div>
-</main>
+</div>
 
 <footer class="foot">
-  <p>Sin notas · sin archivos · solo tecleo de teclado real<span class="d">◆</span>Web Audio API</p>
+  <p>Sin notas · sin archivos · solo tecleo con reverb<span class="d">◆</span>Web Audio API</p>
 </footer>
 
 <script>
 (function(){
   'use strict';
 
-  var actx = null, master = null, reverbSend = null, reverbWet = null;
+  var actx = null, master = null, reverbSend = null, reverbNode = null, reverbWet = null;
+  var currentReverbDecay = 3.2;
+  var currentReverbWet = 0.30;
   var soundOn = true;
   var volume = 0.7;
   var currentStyle = null;
@@ -241,38 +266,43 @@
     master.gain.value = volume;
     master.connect(actx.destination);
 
-    var len = actx.sampleRate * 0.45;
+    reverbSend = actx.createGain();
+    reverbSend.gain.value = 1;
+    reverbNode = actx.createConvolver();
+    reverbWet = actx.createGain();
+    reverbWet.gain.value = currentReverbWet;
+    reverbSend.connect(reverbNode);
+    reverbNode.connect(reverbWet);
+    reverbWet.connect(actx.destination);
+
+    rebuildReverb(currentReverbDecay);
+
+    return true;
+  }
+
+  // Regenera el impulso de la reverb con un decay distinto
+  function rebuildReverb(decay){
+    if (!actx) return;
+    var len = actx.sampleRate * 0.85;
     var impulse = actx.createBuffer(2, len, actx.sampleRate);
     for (var c = 0; c < 2; c++){
       var d = impulse.getChannelData(c);
       for (var i = 0; i < len; i++){
-        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2);
+        // Curva: ruido con caída exponencial controlada por 'decay'
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
       }
     }
-    var verb = actx.createConvolver();
-    verb.buffer = impulse;
-    reverbWet = actx.createGain();
-    reverbWet.gain.value = 0.22;
-    reverbSend = actx.createGain();
-    reverbSend.gain.value = 1;
-    reverbSend.connect(verb);
-    verb.connect(reverbWet);
-    reverbWet.connect(actx.destination);
-    return true;
+    reverbNode.buffer = impulse;
   }
 
   /* =========================================================
-     FÁBRICA DE TECLEO — SIN NOTAS MUSICALES
-     El pitch del "cuerpo" es ALEATORIO por golpe, no
-     pentatónico. Eso es lo que lo hace sonar a TECLADO
-     y no a piano.
+     FÁBRICA DE TECLEO — sin notas, con reverb
      ========================================================= */
   function playKeyTap(cfg, pan){
     if (!soundOn || !actx) return;
     var t = actx.currentTime;
 
-    // ---- Variación natural por golpe ----
-    var pitchVar = 0.85 + Math.random() * 0.3;      // ±15%
+    var pitchVar = 0.85 + Math.random() * 0.3;
     var volVar = 0.8 + Math.random() * 0.35;
     var durVar = 0.9 + Math.random() * 0.2;
 
@@ -281,9 +311,7 @@
     panner.connect(master);
     panner.connect(reverbSend);
 
-    /* ============================================================
-       CAPA 1: RUIDO FILTRADO → el "toc" áspero del teclado
-       ============================================================ */
+    // CAPA 1: ruido filtrado (el "toc")
     var noiseDur = cfg.noiseDur * durVar;
     var noiseSamples = Math.max(1, Math.floor(actx.sampleRate * noiseDur));
     var noiseBuf = actx.createBuffer(1, noiseSamples, actx.sampleRate);
@@ -307,11 +335,7 @@
     noiseGain.connect(panner);
     noiseSrc.start(t);
 
-    /* ============================================================
-       CAPA 2: CUERPO GRAVE SIN NOTA
-       Frecuencia aleatoria por golpe → NO suena a piano.
-       Es solo "peso" del toque, no una melodía.
-       ============================================================ */
+    // CAPA 2: cuerpo grave SIN NOTA (aleatorio por golpe)
     var bodyFreq = cfg.bodyMin + Math.random() * (cfg.bodyMax - cfg.bodyMin);
     var osc = actx.createOscillator();
     osc.type = 'sine';
@@ -328,10 +352,7 @@
     osc.start(t);
     osc.stop(t + cfg.bodyDur * durVar + 0.02);
 
-    /* ============================================================
-       CAPA 3 (opcional): click agudo
-       Solo si el estilo lo pide. Sin nota, solo un "tic" corto.
-       ============================================================ */
+    // CAPA 3: click agudo opcional
     if (cfg.clickVol > 0){
       var clickFreq = cfg.clickFreq + Math.random() * 400;
       var clickSamples = Math.floor(actx.sampleRate * 0.005);
@@ -359,55 +380,100 @@
   }
 
   /* =========================================================
-     LOS 3 ESTILOS — solo cambian números, NO agregan notas
+     6 ESTILOS
      ========================================================= */
   var STYLES = {
-    whatsapp: {
-      label: 'WhatsApp',
-      desc: 'Familiar · reconocible',
-      hue: 145,
+    // ---------- FEMENINO / BIENESTAR ----------
+    perla: {
+      label: 'Perla',
+      desc: 'Estética · spa',
+      category: 'fem',
+      hue: 330,
+      delay: 68,
+      probability: 0.78,
+      panAmount: 0.75,
+      noiseFreq: 2400, noiseQ: 2.8, noiseVol: 0.20, noiseDur: 0.011,
+      bodyMin: 480, bodyMax: 680, bodyVol: 0.13, bodyDur: 0.045,
+      clickFreq: 3800, clickVol: 0.04,
+      reverbWet: 0.32, reverbDecay: 2.8,
+      sample: 'Suave como una perla. Tecleo limpio, casi un susurro. Para marcas que se sienten ligeras.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    rosa: {
+      label: 'Rosa',
+      desc: 'Moda · femenino',
+      category: 'fem',
+      hue: 350,
+      delay: 72,
+      probability: 0.72,
+      panAmount: 0.85,
+      noiseFreq: 1800, noiseQ: 2.2, noiseVol: 0.22, noiseDur: 0.014,
+      bodyMin: 420, bodyMax: 600, bodyVol: 0.15, bodyDur: 0.060,
+      clickFreq: 3200, clickVol: 0.03,
+      reverbWet: 0.38, reverbDecay: 2.5,
+      sample: 'Cálido como una tarde de rosa. Tecleo con un toque más redondo, más suave, casi acariciado.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    seda: {
+      label: 'Seda',
+      desc: 'Joyas · novias',
+      category: 'fem',
+      hue: 300,
+      delay: 78,
+      probability: 0.65,
+      panAmount: 0.9,
+      noiseFreq: 2800, noiseQ: 3.2, noiseVol: 0.16, noiseDur: 0.010,
+      bodyMin: 520, bodyMax: 720, bodyVol: 0.11, bodyDur: 0.040,
+      clickFreq: 4200, clickVol: 0.04,
+      reverbWet: 0.42, reverbDecay: 2.2,
+      sample: 'Seda entre los dedos. Cada letra es una caricia. Para marcas de joyería, novias y alta costura.',
+      font: "'Fraunces', Georgia, serif"
+    },
+
+    // ---------- PREMIUM / LUJO ----------
+    onyx: {
+      label: 'Ónix',
+      desc: 'Lujo · corporativo',
+      category: 'prem',
+      hue: 40,
       delay: 66,
       probability: 0.85,
-      panAmount: 0.65,
-      // Ruido: banda media, corto
-      noiseFreq: 1400, noiseQ: 1.8, noiseVol: 0.35, noiseDur: 0.018,
-      // Cuerpo: rango amplio aleatorio → suena a tecla, no a nota
-      bodyMin: 350, bodyMax: 550, bodyVol: 0.22, bodyDur: 0.055,
-      // Sin click
+      panAmount: 0.7,
+      noiseFreq: 1200, noiseQ: 1.6, noiseVol: 0.30, noiseDur: 0.018,
+      bodyMin: 300, bodyMax: 460, bodyVol: 0.26, bodyDur: 0.075,
       clickFreq: 0, clickVol: 0,
-      sample: 'Toc. Toc. Toc. El sonido que ya conoces del celular, pero un poco más pulido.',
+      reverbWet: 0.30, reverbDecay: 3.0,
+      sample: 'Un tecleo profundo y con cuerpo. Suena a oficina de lujo, a despacho privado, a decisión importante.',
       font: "'Fraunces', Georgia, serif"
     },
-    ios: {
-      label: 'iOS',
-      desc: 'Nítido · moderno',
-      hue: 210,
+    oro: {
+      label: 'Oro',
+      desc: 'Premium · cálido',
+      category: 'prem',
+      hue: 45,
+      delay: 70,
+      probability: 0.80,
+      panAmount: 0.75,
+      noiseFreq: 1600, noiseQ: 2.0, noiseVol: 0.28, noiseDur: 0.015,
+      bodyMin: 380, bodyMax: 560, bodyVol: 0.20, bodyDur: 0.065,
+      clickFreq: 2800, clickVol: 0.02,
+      reverbWet: 0.36, reverbDecay: 2.6,
+      sample: 'Tecleo con calidez dorada. Ni frío ni seco: equilibrado, con aire, con una pequeña estela.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    platinum: {
+      label: 'Platino',
+      desc: 'Alta gama · minimal',
+      category: 'prem',
+      hue: 200,
       delay: 62,
       probability: 0.88,
-      panAmount: 0.75,
-      // Ruido: más brillante
-      noiseFreq: 2000, noiseQ: 2.4, noiseVol: 0.30, noiseDur: 0.012,
-      // Cuerpo más corto → suena más "digital"
-      bodyMin: 400, bodyMax: 620, bodyVol: 0.18, bodyDur: 0.035,
-      // Click agudo muy corto
-      clickFreq: 4200, clickVol: 0.05,
-      sample: 'Tecleo nítido de iPhone: corto, limpio, moderno. Cada letra es un cristal diminuto.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    premium: {
-      label: 'Premium',
-      desc: 'Cálido · de estudio',
-      hue: 40,
-      delay: 70,
-      probability: 0.78,
-      panAmount: 0.7,
-      // Ruido más cálido
-      noiseFreq: 1100, noiseQ: 1.4, noiseVol: 0.32, noiseDur: 0.020,
-      // Cuerpo más largo y grave → sensación "de lujo"
-      bodyMin: 280, bodyMax: 450, bodyVol: 0.26, bodyDur: 0.080,
-      // Sin click metálico
-      clickFreq: 0, clickVol: 0,
-      sample: 'Un tecleo cálido y con cuerpo. Suena a oficina de lujo, no a notificación.',
+      panAmount: 0.8,
+      noiseFreq: 2200, noiseQ: 2.6, noiseVol: 0.24, noiseDur: 0.012,
+      bodyMin: 440, bodyMax: 640, bodyVol: 0.16, bodyDur: 0.048,
+      clickFreq: 3600, clickVol: 0.05,
+      reverbWet: 0.34, reverbDecay: 2.9,
+      sample: 'Limpio, nítido, moderno. Para marcas de tecnología, arquitectura y diseño que no necesitan gritar.',
       font: "'Fraunces', Georgia, serif"
     }
   };
@@ -476,9 +542,10 @@
   /* =========================================================
      UI
      ========================================================= */
-  var stylesBox = document.getElementById('styles');
   var display = document.getElementById('display');
   var stage = document.getElementById('stage');
+  var femBox = document.getElementById('styles-fem');
+  var premBox = document.getElementById('styles-prem');
 
   Object.keys(STYLES).forEach(function(key){
     var s = STYLES[key];
@@ -486,72 +553,4 @@
     btn.type = 'button';
     btn.className = 'style-btn';
     btn.dataset.style = key;
-    btn.style.setProperty('--btn-accent', 'hsl(' + s.hue + ', 80%, 60%)');
-    btn.style.setProperty('--btn-accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
-    btn.innerHTML =
-      '<div class="name"><span class="dot"></span>' + s.label + '</div>' +
-      '<div class="desc">' + s.desc + '</div>';
-    btn.addEventListener('click', function(){ selectStyle(key); });
-    stylesBox.appendChild(btn);
-  });
-
-  function selectStyle(key){
-    currentStyle = key;
-    var s = STYLES[key];
-
-    document.querySelectorAll('.style-btn').forEach(function(b){
-      b.classList.toggle('on', b.dataset.style === key);
-    });
-    document.documentElement.style.setProperty('--accent', 'hsl(' + s.hue + ', 80%, 60%)');
-    document.documentElement.style.setProperty('--accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
-    stage.style.borderColor = 'hsla(' + s.hue + ', 80%, 60%, .3)';
-
-    ensureAudio();
-    typeText(display, s.sample, key);
-  }
-
-  /* =========================================================
-     BOTONES DE "PROBAR 1 GOLPE"
-     ========================================================= */
-  document.querySelectorAll('.compare-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var key = btn.dataset.test;
-      var cfg = STYLES[key];
-      ensureAudio();
-      // 3 golpes seguidos para que se aprecie bien
-      playKeyTap(cfg, 0);
-      setTimeout(function(){ playKeyTap(cfg, -0.2); }, 140);
-      setTimeout(function(){ playKeyTap(cfg, 0.2); }, 280);
-    });
-  });
-
-  /* =========================================================
-     CONTROLES
-     ========================================================= */
-  document.getElementById('replay').addEventListener('click', function(){
-    if (!currentStyle) return;
-    ensureAudio();
-    typeText(display, STYLES[currentStyle].sample, currentStyle);
-  });
-
-  var soundToggle = document.getElementById('soundToggle');
-  var soundLabel = document.getElementById('soundLabel');
-  soundToggle.addEventListener('click', function(){
-    soundOn = !soundOn;
-    soundToggle.classList.toggle('on', soundOn);
-    soundLabel.textContent = soundOn ? 'Sonido ON' : 'Sonido OFF';
-    if (soundOn) ensureAudio();
-  });
-
-  var volumeSlider = document.getElementById('volume');
-  volumeSlider.addEventListener('input', function(){
-    volume = volumeSlider.value / 100;
-    if (master) master.gain.setTargetAtTime(volume, actx.currentTime, 0.02);
-  });
-
-  ensureAudio();
-
-})();
-</script>
-</body>
-</html>
+    btn.style
