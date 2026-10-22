@@ -353,6 +353,9 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
     let animationStarted = false;
     let animationFinished = false;
     let headingVisible = false;
+    // Si la primera animación ocurrió sin audio por la política del navegador,
+    // repetirla con sonido en cuanto el audio esté habilitado y el título visible.
+    let soundReplayPending = false;
     let sequence = 0;
     let timers = [];
     let chars = [];
@@ -473,7 +476,13 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
     }
 
     function startIfVisible() {
-      if (headingVisible && !animationStarted) runTyping(audioUnlocked);
+      if (!headingVisible) return;
+      if (audioUnlocked && soundReplayPending) {
+        soundReplayPending = false;
+        runTyping(true);
+        return;
+      }
+      if (!animationStarted) runTyping(audioUnlocked);
     }
 
     wrapTextNodes(heading);
@@ -497,9 +506,17 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
       if (gestureHandled) return;
       gestureHandled = true;
       enableAudio().then(ready => {
-        if (!ready) return;
-        // Si el texto ya apareció en silencio, se vuelve a escribir una sola vez con sonido.
-        if (headingVisible && (animationFinished || animationStarted)) {
+        if (!ready) {
+          // Permite reintentar en otra interacción si el navegador aún no habilitó el audio.
+          gestureHandled = false;
+          return;
+        }
+        // La animación inicial puede haberse ejecutado en silencio. Si el título no está
+        // visible ahora, dejamos pendiente el reinicio con sonido para cuando vuelva a verse.
+        if (animationStarted || animationFinished) {
+          soundReplayPending = true;
+          if (headingVisible) startIfVisible();
+        } else if (headingVisible) {
           runTyping(true);
         }
       });
