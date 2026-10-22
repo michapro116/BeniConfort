@@ -25,10 +25,10 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
 /* FAQ interactiva — función 4 */
 .faq-section{padding:28px 0 76px;scroll-margin-top:90px}.faq-shell{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:start;border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,42px);background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow)}.faq-intro h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.05;letter-spacing:-1.2px;margin:15px 0 12px}.faq-intro p{color:var(--muted);margin:0 0 20px}.faq-contact{display:inline-flex;align-items:center;gap:9px;padding:12px 16px;border-radius:14px;border:1px solid #16d99a55;background:#16d99a12;color:#9df4d5;font-weight:800}.faq-list{display:grid;gap:10px}.faq-item{border:1px solid var(--line);border-radius:16px;background:#ffffff04;overflow:hidden;transition:border-color .2s,background .2s}.faq-item.open{border-color:#38e8ff55;background:#38e8ff08}.faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;border:0;background:transparent;color:var(--text);padding:17px 18px;font-weight:800}.faq-question span:first-child{display:flex;align-items:center;gap:12px}.faq-number{display:grid;place-items:center;flex:0 0 29px;height:29px;border-radius:10px;color:var(--cyan);background:#38e8ff13;font-size:.75rem}.faq-plus{font-size:1.4rem;color:var(--cyan);transition:transform .25s}.faq-item.open .faq-plus{transform:rotate(45deg)}.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}.faq-item.open .faq-answer{grid-template-rows:1fr}.faq-answer-inner{overflow:hidden}.faq-answer p{margin:0;padding:0 18px 18px 59px;color:#aebbd0;font-size:.92rem}.faq-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.faq-quick button{border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:#ffffff06;color:#cbd8e9;font-size:.8rem}.faq-quick button:hover{border-color:var(--cyan);color:var(--cyan)}@media(max-width:760px){.faq-shell{grid-template-columns:1fr;gap:22px}.faq-intro h2{max-width:500px}.faq-answer p{padding-left:18px}.faq-section{padding-bottom:52px}}
 
-/* ===== Animación de letras del h1 (hero). No altera el estado final. ===== */
-.tw-char{display:inline-block;opacity:0;filter:blur(2px);transform:scale(.65);transform-origin:50% 80%;animation:twLetterIn 380ms cubic-bezier(.18,.78,.22,1) forwards}
-@keyframes twLetterIn{0%{opacity:0;filter:blur(2px);transform:scale(.65);text-shadow:0 0 0 transparent}58%{opacity:1;filter:blur(0);transform:scale(1.08);text-shadow:0 0 25px rgba(56,232,255,.52)}100%{opacity:1;filter:blur(0);transform:scale(1);text-shadow:0 0 0 transparent}}
-@media(prefers-reduced-motion:reduce){.tw-char{animation:none!important;opacity:1!important;filter:none!important;transform:none!important}}
+/* --- Animación de escritura: solo para el H1 del hero --- */
+.typing-char{display:inline-block;opacity:0;filter:blur(2px);transform:translateZ(0);animation:typingLetterIn 380ms cubic-bezier(.18,.78,.22,1) forwards}
+@keyframes typingLetterIn{0%{opacity:0;filter:blur(2px)}58%{opacity:1;filter:blur(0)}100%{opacity:1;filter:blur(0)}}
+@media(prefers-reduced-motion:reduce){.typing-char{animation-duration:.01ms!important;animation-iteration-count:1!important;opacity:1!important;filter:none!important}}
 </style>
 </head>
 <body>
@@ -51,7 +51,7 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="hero-panel">
     <div class="hero-copy">
       <span class="eyebrow"><span class="dot"></span> Colección seleccionada</span>
-      <h1 id="heroTitle">Estilo que<br><span>te mueve.</span></h1>
+      <h1 id="animatedHeading">Estilo que<br><span>te mueve.</span></h1>
       <p>Encuentra ese par que va contigo. Diseños icónicos, comodidad para cada día y una experiencia de compra diferente.</p>
       <button class="primary" id="goCatalog">Explorar catálogo&nbsp; ↗</button>
     </div>
@@ -210,6 +210,7 @@ $("closeCheckout").addEventListener("click",closeCheckout);
 $("checkoutBackdrop").addEventListener("click",e=>{if(e.target===$("checkoutBackdrop"))closeCheckout()});
 $("checkoutForm").addEventListener("submit",e=>{
  e.preventDefault();const items=[...state.cart.values()];if(!items.length){toast("Tu selección está vacía");closeCheckout();return}
+ // IMPORTANTE: reemplaza este número por el WhatsApp comercial, con código de país y solo dígitos.
  const WHATSAPP_BUSINESS_NUMBER="591XXXXXXXXX";
  if(!/^\d{10,15}$/.test(WHATSAPP_BUSINESS_NUMBER)||WHATSAPP_BUSINESS_NUMBER.includes("X")){toast("Configura el número de WhatsApp del negocio en el código HTML");return}
  const name=$("customerName").value.trim();if(!name){$("customerName").focus();return}
@@ -231,19 +232,19 @@ function voiceMessage(message, type="") {
 }
 function applyVoiceQuery(rawText) {
   const original = rawText.trim();
-  const normalized = original.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const normalized = original.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "");
   const brandNames = [
     ["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"],
     ["new balance", "New Balance"], ["balance", "New Balance"]
   ];
   const foundBrand = brandNames.find(([term]) => normalized.includes(term));
-  const sizeMatch = normalized.match(/(?:talla|numero|del|en)\s*(3[5-9]|4[0-6])\b/) || normalized.match(/\b(3[5-9]|4[0-6])\b/);
+  const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\\s*(3[5-9]|4[0-6])\\b/) || normalized.match(/\\b(3[5-9]|4[0-6])\\b/);
   const size = sizeMatch ? sizeMatch[1] : "";
   const cleaned = normalized
-    .replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ")
-    .replace(/\b(3[5-9]|4[0-6])\b/g, " ")
-    .replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ")
-    .replace(/\s+/g, " ").trim();
+    .replace(/\\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\\b/g, " ")
+    .replace(/\\b(3[5-9]|4[0-6])\\b/g, " ")
+    .replace(/\\b(nike|adidas|puma|new balance|balance)\\b/g, " ")
+    .replace(/\\s+/g, " ").trim();
   state.brand = foundBrand ? foundBrand[1] : "";
   state.size = size;
   state.search = cleaned;
@@ -324,21 +325,24 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
 const faqWhatsApp = document.getElementById('faqWhatsApp');
 if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
 
-/* ===================================================================
-   Animación de letras + sonido de teclado para #heroTitle
-   ("Estilo que" + <br> + "te mueve.")
-   - Usa la animación y el sonido del HTML de referencia.
-   - NO altera el estado final: las letras vuelven a ser texto normal.
-   - Se ejecuta una sola vez, al entrar en viewport.
-   =================================================================== */
-(function () {
+/* ============================================================
+   Animación de escritura con sonido original (módulo n.º 2)
+   - Solo afecta al H1 del hero: "Estilo que<br><span>te mueve.</span>"
+   - Modalidad A: una sola reproducción al entrar en pantalla.
+   - Sonido Web Audio API idéntico al de referencia, con ganancia
+     ligeramente aumentada para mayor percepción.
+   ============================================================ */
+(() => {
   'use strict';
-  const h1 = document.getElementById('heroTitle');
-  if (!h1) return;
 
-  // === Audio (idéntico al HTML de referencia) ===
+  const heading = document.getElementById('animatedHeading');
+  if (!heading) return;
+
+  // --- Motor de audio original (adaptado de la página de referencia) ---
   let audioContext = null, master = null, reverbSend = null, reverbWet = null, convolver = null;
-  let volume = 0.7, muted = false, panIndex = 0;
+  let muted = false; // sin control visible; siempre activo
+  const MASTER_VOLUME = 0.9; // más perceptible que el original (0.7)
+  let panIndex = 0;
   const PAN_CYCLE = [0.2, -0.15, 0.3, -0.2, 0.1, -0.25];
 
   function createNoiseBuffer(ctx, duration) {
@@ -348,6 +352,7 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
     for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
     return buffer;
   }
+
   function initAudio() {
     if (audioContext) {
       if (audioContext.state === 'suspended') audioContext.resume();
@@ -357,8 +362,9 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
     if (!AudioCtx) return;
     audioContext = new AudioCtx();
     master = audioContext.createGain();
-    master.gain.value = muted ? 0 : volume;
+    master.gain.value = MASTER_VOLUME;
     master.connect(audioContext.destination);
+
     const impulseLength = Math.floor(audioContext.sampleRate * 0.45);
     const impulse = audioContext.createBuffer(2, impulseLength, audioContext.sampleRate);
     for (let channel = 0; channel < 2; channel++) {
@@ -377,137 +383,230 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
     convolver.connect(reverbWet);
     reverbWet.connect(master);
   }
+
   function playKeyTap() {
-    if (muted || !audioContext || !master || audioContext.state !== 'running') return;
+    if (!audioContext || !master || audioContext.state !== 'running') return;
     const ctx = audioContext;
     const now = ctx.currentTime;
+
     const pitchVar = 0.92 + Math.random() * 0.16;
     const volVar = 0.82 + Math.random() * 0.22;
     const durVar = 0.90 + Math.random() * 0.18;
+
     const panner = ctx.createStereoPanner();
     panner.pan.setValueAtTime(PAN_CYCLE[panIndex % 6] * 0.42, now);
     panIndex++;
     panner.connect(master);
     panner.connect(reverbSend);
+
     const noiseDur = 0.009 * durVar;
     const noise = ctx.createBufferSource();
     noise.buffer = createNoiseBuffer(ctx, noiseDur);
+
     const filter = ctx.createBiquadFilter();
     filter.type = 'bandpass';
     filter.frequency.setValueAtTime((2850 + Math.random() * 500) * pitchVar, now);
     filter.Q.setValueAtTime(1.15, now);
+
     const noiseGain = ctx.createGain();
     const peak = 0.105 * volVar;
     noiseGain.gain.setValueAtTime(0.0001, now);
     noiseGain.gain.linearRampToValueAtTime(peak, now + 0.0012);
     noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDur);
+
     noise.connect(filter);
     filter.connect(noiseGain);
     noiseGain.connect(panner);
     noise.start(now);
     noise.stop(now + noiseDur);
+
     const tone = ctx.createOscillator();
     tone.type = 'sine';
     const toneFreq = 720 + Math.random() * 180;
     tone.frequency.setValueAtTime(toneFreq, now);
     tone.frequency.exponentialRampToValueAtTime(toneFreq * 0.72, now + 0.014 * durVar);
+
     const toneGain = ctx.createGain();
     toneGain.gain.setValueAtTime(0.0001, now);
     toneGain.gain.linearRampToValueAtTime(0.022 * volVar, now + 0.001);
     toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014 * durVar);
+
     tone.connect(toneGain);
     toneGain.connect(panner);
     tone.start(now);
     tone.stop(now + 0.016 * durVar);
+
     setTimeout(() => { try { panner.disconnect(); } catch (_) {} }, 100);
   }
 
-  // El audio solo se crea tras un gesto del usuario (políticas de navegador).
-  document.addEventListener('pointerdown', () => {
-    initAudio();
-    if (audioContext && audioContext.state === 'suspended') audioContext.resume();
-  }, { once: true });
+  // --- Animación de caracteres respetando estructura y estilos originales ---
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  // Captura la estructura original del H1 antes de modificarla.
+  // Guardamos una lista de "nodos" con su información para reconstruir.
+  const originalNodes = Array.from(heading.childNodes).map(node => ({
+    type: node.nodeType,
+    text: node.textContent,
+    element: node.nodeType === Node.ELEMENT_NODE ? node : null
+  }));
 
-  // Envuelve cada nodo de texto del h1 en spans por carácter,
-  // preservando el <br> y el <span> con degradado.
-  function wrapTextNode(node) {
-    const text = node.nodeValue;
-    if (!text) return [];
-    const frag = document.createDocumentFragment();
-    const spans = [];
-    for (const ch of text) {
-      const s = document.createElement('span');
-      s.className = 'tw-char';
-      if (ch === ' ' || ch === '\u00a0') {
-        s.style.whiteSpace = 'pre';
-        s.textContent = '\u00a0';
-      } else {
-        s.textContent = ch;
+  // Prepara un clon del H1 sin animación para lectores de pantalla.
+  // Añadimos un span accesible oculto visualmente con el texto original completo
+  // y ocultamos los caracteres animados a la accesibilidad.
+  const accessibleText = document.createElement('span');
+  accessibleText.className = 'sr-only';
+  accessibleText.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';
+  accessibleText.textContent = 'Estilo que te mueve.';
+  heading.setAttribute('aria-label', 'Estilo que te mueve.');
+  heading.appendChild(accessibleText);
+
+  // Función para envolver cada carácter en un span animado.
+  // Recorre los nodos originales y reconstruye el contenido dentro del heading,
+  // respetando los elementos con estilo (como el <span> con degradado).
+  function prepareAnimatedContent() {
+    // Limpiamos el heading, pero conservamos el texto accesible.
+    while (heading.firstChild) {
+      heading.removeChild(heading.firstChild);
+    }
+
+    // Reconstruimos los nodos originales, pero envolviendo cada carácter
+    // en un span con la clase typing-char dentro de cada nodo de texto.
+    originalNodes.forEach(record => {
+      if (record.type === Node.TEXT_NODE) {
+        // Texto plano: envolvemos cada carácter.
+        const text = record.text;
+        for (const char of text) {
+          const span = document.createElement('span');
+          span.className = 'typing-char';
+          span.textContent = char === '\n' ? '\n' : char;
+          // Los espacios deben conservar su ancho; los envolvemos igual.
+          if (char === ' ') {
+            span.style.whiteSpace = 'pre';
+          }
+          heading.appendChild(span);
+        }
+      } else if (record.type === Node.ELEMENT_NODE && record.element) {
+        // Elemento con estilo (ej. <span> del degradado): clonamos el elemento
+        // y animamos sus caracteres internos, conservando sus estilos.
+        const el = record.element.cloneNode(false);
+        const childText = record.element.textContent;
+        for (const char of childText) {
+          const span = document.createElement('span');
+          span.className = 'typing-char';
+          span.textContent = char === '\n' ? '\n' : char;
+          if (char === ' ') span.style.whiteSpace = 'pre';
+          el.appendChild(span);
+        }
+        heading.appendChild(el);
       }
-      frag.appendChild(s);
-      spans.push(s);
+    });
+
+    // Añadimos de nuevo el texto accesible (al final, oculto visualmente).
+    heading.appendChild(accessibleText);
+  }
+
+  // Estado de animación
+  let hasAnimated = false;
+  let animationToken = 0;
+
+  function animateHeading() {
+    if (hasAnimated) return;
+    hasAnimated = true;
+
+    // Preparamos el contenido animado si aún no se ha hecho.
+    if (!heading.querySelector('.typing-char')) {
+      prepareAnimatedContent();
     }
-    node.parentNode.replaceChild(frag, node);
-    return spans;
-  }
 
-  function collectChars(root) {
-    const spans = [];
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-    const textNodes = [];
-    while (walker.nextNode()) textNodes.push(walker.currentNode);
-    for (const tn of textNodes) spans.push(...wrapTextNode(tn));
-    return spans;
-  }
+    const chars = heading.querySelectorAll('.typing-char');
+    const token = ++animationToken;
+    let index = 0;
 
-  let started = false;
-  async function run() {
-    if (started) return;
-    started = true;
-    if (reducedMotion) return; // Sin animación: se deja el texto tal cual.
+    // Inicializamos audio en el primer gesto / entrada visible.
+    initAudio();
+    if (audioContext && audioContext.state === 'suspended') {
+      // Intentamos reanudar; si el navegador lo bloquea, se activará al primer toque.
+      audioContext.resume().catch(() => {});
+    }
 
-    const spans = collectChars(h1);
-    if (!spans.length) return;
+    function next() {
+      if (token !== animationToken) return;
+      if (index >= chars.length) return;
 
-    // Inicialmente ocultas (opacity:0 vía CSS de .tw-char).
-    // Forzamos un frame para que la animación se aplique al añadir la clase.
-    // La animación CSS se dispara al aplicar la clase .tw-char; aquí la
-    // "activamos" escalonadamente por JS respetando pausas por puntuación.
-    for (let i = 0; i < spans.length; i++) {
-      const s = spans[i];
-      s.style.animation = 'none';
-      // Forzar reinicio
-      void s.offsetWidth;
-      s.style.animation = '';
-      if (!reducedMotion && Math.random() < 0.88) playKeyTap();
-      const ch = s.textContent;
-      const isSpace = ch === '\u00a0';
-      const isPunct = /[.,!?;:]/.test(ch);
+      const char = chars[index];
+      const charText = char.textContent;
+
+      // Reiniciamos la animación CSS para este carácter.
+      char.style.animation = 'none';
+      // Forzamos reflow.
+      void char.offsetWidth;
+      char.style.animation = '';
+
+      // Reproducimos sonido para caracteres visibles (no espacios, no saltos de línea).
+      if (charText !== ' ' && charText !== '\n' && audioContext && audioContext.state === 'running') {
+        playKeyTap();
+      }
+
+      index++;
+
+      // Retardo variable según carácter (similar al original).
       let delay = 62 + (Math.random() * 40 - 20);
-      if (/[.!?]/.test(ch)) delay += 240;
-      else if (/[,;:]/.test(ch)) delay += 120;
-      else if (isSpace) delay = 31;
-      await sleep(delay);
+      if (/[.!?]/.test(charText)) delay += 240;
+      else if (/[,;:]/.test(charText)) delay += 120;
+      else if (/\s/.test(charText)) delay = 62 * 0.5;
+
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) delay = Math.min(delay, 8);
+
+      setTimeout(next, delay);
     }
+
+    next();
   }
 
-  if ('IntersectionObserver' in window && !reducedMotion) {
-    const io = new IntersectionObserver((entries) => {
+  // --- IntersectionObserver: Modalidad A (una sola reproducción) ---
+  let observer = null;
+  if ('IntersectionObserver' in window) {
+    observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          io.disconnect();
-          run();
+        if (entry.isIntersecting && !hasAnimated) {
+          animateHeading();
+          // Al ser modalidad A, dejamos de observar tras la primera animación.
+          observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.35 });
-    io.observe(h1);
-  } else if (!reducedMotion) {
-    // Fallback: iniciar al cargar.
-    window.addEventListener('load', run, { once: true });
+    }, { threshold: 0.25 });
+    observer.observe(heading);
+  } else {
+    // Fallback: animar cuando la página cargue si no hay IntersectionObserver.
+    window.addEventListener('load', () => setTimeout(animateHeading, 300));
   }
+
+  // --- Gestión del primer gesto para desbloquear audio ---
+  // Si el usuario interactúa antes de que el heading entre en pantalla,
+  // inicializamos el audio. Si ya entró, la animación ya lo habrá hecho.
+  document.addEventListener('pointerdown', () => {
+    initAudio();
+    if (audioContext && audioContext.state === 'suspended') {
+      audioContext.resume().catch(() => {});
+    }
+  }, { once: true });
+
+  // Si el heading ya está visible al cargar, animamos tras un pequeño retardo
+  // para permitir que el navegador procese el layout.
+  window.addEventListener('load', () => {
+    const rect = heading.getBoundingClientRect();
+    const winH = window.innerHeight || document.documentElement.clientHeight;
+    if (rect.top < winH && rect.bottom > 0 && !hasAnimated) {
+      // Pequeño retardo para que el usuario pueda interactuar y desbloquear audio.
+      setTimeout(() => {
+        if (!hasAnimated) {
+          animateHeading();
+          if (observer) observer.unobserve(heading);
+        }
+      }, 350);
+    }
+  });
+
 })();
 </script>
 </body>
