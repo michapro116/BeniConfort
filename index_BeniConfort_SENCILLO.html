@@ -382,7 +382,7 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
         if (!audioContext) {
           audioContext = new AudioContextClass();
           masterGain = audioContext.createGain();
-          masterGain.gain.value = 0.7;
+          masterGain.gain.value = 0.95;
           masterGain.connect(audioContext.destination);
         }
         return audioContext.resume().then(() => {
@@ -399,7 +399,7 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
       const ctx = audioContext;
       const now = ctx.currentTime;
       try {
-        const duration = 0.010;
+        const duration = 0.018;
         const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * duration)), ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
@@ -412,7 +412,7 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
         filter.Q.setValueAtTime(1.15, now);
         const noiseGain = ctx.createGain();
         noiseGain.gain.setValueAtTime(0.0001, now);
-        noiseGain.gain.linearRampToValueAtTime(0.10, now + 0.0012);
+        noiseGain.gain.linearRampToValueAtTime(0.22, now + 0.0012);
         noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
         source.connect(filter);
         filter.connect(noiseGain);
@@ -425,14 +425,14 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
         tone.type = 'sine';
         const frequency = 720 + Math.random() * 180;
         tone.frequency.setValueAtTime(frequency, now);
-        tone.frequency.exponentialRampToValueAtTime(frequency * 0.72, now + 0.014);
+        tone.frequency.exponentialRampToValueAtTime(frequency * 0.72, now + 0.018);
         toneGain.gain.setValueAtTime(0.0001, now);
-        toneGain.gain.linearRampToValueAtTime(0.018, now + 0.001);
-        toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+        toneGain.gain.linearRampToValueAtTime(0.045, now + 0.001);
+        toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
         tone.connect(toneGain);
         toneGain.connect(masterGain);
         tone.start(now);
-        tone.stop(now + 0.015);
+        tone.stop(now + 0.019);
       } catch (_) {}
     }
 
@@ -493,6 +493,7 @@ if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER 
 
     let gestureHandled = false;
     function onFirstGesture() {
+      // Los navegadores bloquean audio automático: el primer toque/clic habilita el sonido.
       if (gestureHandled) return;
       gestureHandled = true;
       enableAudio().then(ready => {
