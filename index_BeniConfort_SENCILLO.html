@@ -24,48 +24,6 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
 
 /* FAQ interactiva — función 4 */
 .faq-section{padding:28px 0 76px;scroll-margin-top:90px}.faq-shell{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:start;border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,42px);background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow)}.faq-intro h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.05;letter-spacing:-1.2px;margin:15px 0 12px}.faq-intro p{color:var(--muted);margin:0 0 20px}.faq-contact{display:inline-flex;align-items:center;gap:9px;padding:12px 16px;border-radius:14px;border:1px solid #16d99a55;background:#16d99a12;color:#9df4d5;font-weight:800}.faq-list{display:grid;gap:10px}.faq-item{border:1px solid var(--line);border-radius:16px;background:#ffffff04;overflow:hidden;transition:border-color .2s,background .2s}.faq-item.open{border-color:#38e8ff55;background:#38e8ff08}.faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;border:0;background:transparent;color:var(--text);padding:17px 18px;font-weight:800}.faq-question span:first-child{display:flex;align-items:center;gap:12px}.faq-number{display:grid;place-items:center;flex:0 0 29px;height:29px;border-radius:10px;color:var(--cyan);background:#38e8ff13;font-size:.75rem}.faq-plus{font-size:1.4rem;color:var(--cyan);transition:transform .25s}.faq-item.open .faq-plus{transform:rotate(45deg)}.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}.faq-item.open .faq-answer{grid-template-rows:1fr}.faq-answer-inner{overflow:hidden}.faq-answer p{margin:0;padding:0 18px 18px 59px;color:#aebbd0;font-size:.92rem}.faq-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.faq-quick button{border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:#ffffff06;color:#cbd8e9;font-size:.8rem}.faq-quick button:hover{border-color:var(--cyan);color:var(--cyan)}@media(max-width:760px){.faq-shell{grid-template-columns:1fr;gap:22px}.faq-intro h2{max-width:500px}.faq-answer p{padding-left:18px}.faq-section{padding-bottom:52px}}
-
-/* ============================================================
-   EFECTO MÁQUINA DE ESCRIBIR — Estilos
-   ============================================================ */
-#heroTitle {
-  position: relative;
-  min-height: 2.1em;
-}
-
-.type-line {
-  display: inline-block;
-  min-height: 1em;
-}
-
-.type-gradient {
-  background: linear-gradient(90deg, var(--cyan), #8194ff 60%, #d17aff);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-.type-cursor {
-  display: inline-block;
-  color: var(--cyan);
-  font-weight: 300;
-  margin-left: 3px;
-  animation: blink 0.9s step-end infinite;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.type-cursor.visible { opacity: 1; }
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .type-cursor { animation: none; opacity: 0; }
-}
 </style>
 </head>
 <body>
@@ -88,7 +46,7 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="hero-panel">
     <div class="hero-copy">
       <span class="eyebrow"><span class="dot"></span> Colección seleccionada</span>
-      <h1 id="heroTitle" aria-label="Estilo que te mueve."><span id="typewriterLine1" class="type-line"></span><br><span id="typewriterLine2" class="type-line type-gradient"></span><span class="type-cursor" id="typeCursor">|</span></h1>
+      <h1>Estilo que<br><span>te mueve.</span></h1>
       <p>Encuentra ese par que va contigo. Diseños icónicos, comodidad para cada día y una experiencia de compra diferente.</p>
       <button class="primary" id="goCatalog">Explorar catálogo&nbsp; ↗</button>
     </div>
@@ -269,19 +227,19 @@ function voiceMessage(message, type="") {
 }
 function applyVoiceQuery(rawText) {
   const original = rawText.trim();
-  const normalized = original.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const normalized = original.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "");
   const brandNames = [
     ["nike", "Nike"], ["adidas", "Adidas"], ["puma", "Puma"],
     ["new balance", "New Balance"], ["balance", "New Balance"]
   ];
   const foundBrand = brandNames.find(([term]) => normalized.includes(term));
-  const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\s*(3[5-9]|4[0-6])\b/) || normalized.match(/\b(3[5-9]|4[0-6])\b/);
+  const sizeMatch = normalized.match(/(?:talla|numero|numero|del|en)\\s*(3[5-9]|4[0-6])\\b/) || normalized.match(/\\b(3[5-9]|4[0-6])\\b/);
   const size = sizeMatch ? sizeMatch[1] : "";
   const cleaned = normalized
-    .replace(/\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\b/g, " ")
-    .replace(/\b(3[5-9]|4[0-6])\b/g, " ")
-    .replace(/\b(nike|adidas|puma|new balance|balance)\b/g, " ")
-    .replace(/\s+/g, " ").trim();
+    .replace(/\\b(quiero|busco|buscar|buscame|mostrame|muestrame|mostrar|necesito|tenis|zapatillas|zapatos|talla|numero|del|de|la|el|en|marca|por|favor|que|tienen|tienes|hay|con|para|un|una)\\b/g, " ")
+    .replace(/\\b(3[5-9]|4[0-6])\\b/g, " ")
+    .replace(/\\b(nike|adidas|puma|new balance|balance)\\b/g, " ")
+    .replace(/\\s+/g, " ").trim();
   state.brand = foundBrand ? foundBrand[1] : "";
   state.size = size;
   state.search = cleaned;
@@ -362,159 +320,204 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
 const faqWhatsApp = document.getElementById('faqWhatsApp');
 if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
 
-// ============================================================
-// EFECTO MÁQUINA DE ESCRIBIR + SONIDO
-// Se ejecuta cada vez que el título entra en pantalla.
-// ============================================================
-(function initTypewriter() {
-  const heroTitle = document.getElementById('heroTitle');
-  const line1 = document.getElementById('typewriterLine1');
-  const line2 = document.getElementById('typewriterLine2');
-  const cursor = document.getElementById('typeCursor');
-  if (!heroTitle || !line1 || !line2) return;
+</script>
 
-  const text1 = 'Estilo que';
-  const text2 = 'te mueve.';
+<style id="urbanstep-typing-feature">
+/* La animación solo controla cuándo se ve cada carácter; conserva intacto el degradado del texto original. */
+#inicio .hero-copy h1 .us-type-char {
+  display: inline;
+  visibility: hidden;
+  white-space: pre;
+  font-style: normal;
+}
+#inicio .hero-copy h1 .us-type-char.us-type-shown { visibility: visible; }
+@media (prefers-reduced-motion: reduce) {
+  #inicio .hero-copy h1 .us-type-char { transition: none; }
+}
+</style>
+<script id="urbanstep-typing-feature-script">
+(function () {
+  'use strict';
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion) {
-    line1.textContent = text1;
-    line2.textContent = text2;
-    cursor.style.display = 'none';
-    return;
-  }
+  function installTypingFeature() {
+    const heading = document.querySelector('#inicio .hero-copy h1');
+    if (!heading || heading.dataset.usTypeInstalled === 'true') return;
+    heading.dataset.usTypeInstalled = 'true';
 
-  // ---- SONIDO sintetizado con Web Audio API (sin archivos externos) ----
-  let audioCtx = null;
+    const originalAccessibleText = heading.innerText.replace(/\s+/g, ' ').trim();
+    heading.setAttribute('aria-label', originalAccessibleText);
 
-  function getAudioCtx() {
-    if (!audioCtx) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      audioCtx = new AC();
-    }
-    if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-    return audioCtx;
-  }
+    let audioContext = null;
+    let masterGain = null;
+    let audioUnlocked = false;
+    let animationStarted = false;
+    let animationFinished = false;
+    let headingVisible = false;
+    let sequence = 0;
+    let timers = [];
+    let chars = [];
 
-  // Desbloquea el audio en la primera interacción del usuario
-  ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
-    window.addEventListener(evt, () => getAudioCtx(), { once: true, passive: true });
-  });
-
-  function playKeyClick(intensity = 1) {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-
-    const now = ctx.currentTime;
-
-    // 1) Clic metálico corto
-    const osc = ctx.createOscillator();
-    const oscGain = ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(1400 + Math.random() * 500, now);
-    osc.frequency.exponentialRampToValueAtTime(400, now + 0.03);
-    oscGain.gain.setValueAtTime(0.0001, now);
-    oscGain.gain.exponentialRampToValueAtTime(0.06 * intensity, now + 0.002);
-    oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-    osc.connect(oscGain).connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.06);
-
-    // 2) Ráfaga de ruido (golpe seco)
-    const bufferSize = Math.floor(ctx.sampleRate * 0.03);
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-    }
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.value = 2200;
-    noiseFilter.Q.value = 0.8;
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.09 * intensity, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
-    noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination);
-    noise.start(now);
-    noise.stop(now + 0.04);
-  }
-
-  // ---- Animación de escritura ----
-  let running = false;
-  let cancelled = false;
-
-  function typeText(el, text, speed, onChar) {
-    return new Promise(resolve => {
-      let i = 0;
-      el.textContent = '';
-      function step() {
-        if (cancelled) return resolve();
-        if (i < text.length) {
-          el.textContent += text.charAt(i);
-          i++;
-          if (onChar) onChar(i);
-          const delay = speed + (Math.random() * speed * 0.5);
-          setTimeout(step, delay);
-        } else {
-          resolve();
-        }
-      }
-      step();
-    });
-  }
-
-  async function startTyping() {
-    if (running) return;
-    running = true;
-    cancelled = false;
-    line1.textContent = '';
-    line2.textContent = '';
-    cursor.classList.add('visible');
-    await typeText(line1, text1, 80, playKeyClick);
-    await new Promise(r => setTimeout(r, 350));
-    if (cancelled) { running = false; return; }
-    await typeText(line2, text2, 85, playKeyClick);
-    setTimeout(() => cursor.classList.remove('visible'), 2200);
-    running = false;
-  }
-
-  function resetTyping() {
-    cancelled = true;
-    running = false;
-    cursor.classList.remove('visible');
-    setTimeout(() => {
-      line1.textContent = '';
-      line2.textContent = '';
-    }, 60);
-  }
-
-  let hasPlayedOnce = false;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        if (!running) {
-          if (hasPlayedOnce) {
-            setTimeout(() => { if (!running) startTyping(); }, 250);
-          } else {
-            hasPlayedOnce = true;
-            startTyping();
+    function wrapTextNodes(node) {
+      Array.from(node.childNodes).forEach(child => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const fragment = document.createDocumentFragment();
+          for (const character of Array.from(child.nodeValue)) {
+            const letter = document.createElement('i');
+            letter.className = 'us-type-char';
+            letter.setAttribute('aria-hidden', 'true');
+            letter.textContent = character;
+            fragment.appendChild(letter);
           }
+          child.replaceWith(fragment);
+        } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'BR') {
+          wrapTextNodes(child);
         }
-      } else {
-        resetTyping();
-      }
-    });
-  }, {
-    threshold: 0.4,
-    rootMargin: '0px 0px -10% 0px'
-  });
+      });
+    }
 
-  observer.observe(heroTitle);
+    function enableAudio() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return Promise.resolve(false);
+      try {
+        if (!audioContext) {
+          audioContext = new AudioContextClass();
+          masterGain = audioContext.createGain();
+          masterGain.gain.value = 0.7;
+          masterGain.connect(audioContext.destination);
+        }
+        return audioContext.resume().then(() => {
+          audioUnlocked = audioContext.state === 'running';
+          return audioUnlocked;
+        }).catch(() => false);
+      } catch (_) {
+        return Promise.resolve(false);
+      }
+    }
+
+    function playKeySound() {
+      if (!audioUnlocked || !audioContext || !masterGain || audioContext.state !== 'running') return;
+      const ctx = audioContext;
+      const now = ctx.currentTime;
+      try {
+        const duration = 0.010;
+        const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * duration)), ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2850 + Math.random() * 500, now);
+        filter.Q.setValueAtTime(1.15, now);
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.0001, now);
+        noiseGain.gain.linearRampToValueAtTime(0.10, now + 0.0012);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        source.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(masterGain);
+        source.start(now);
+        source.stop(now + duration);
+
+        const tone = ctx.createOscillator();
+        const toneGain = ctx.createGain();
+        tone.type = 'sine';
+        const frequency = 720 + Math.random() * 180;
+        tone.frequency.setValueAtTime(frequency, now);
+        tone.frequency.exponentialRampToValueAtTime(frequency * 0.72, now + 0.014);
+        toneGain.gain.setValueAtTime(0.0001, now);
+        toneGain.gain.linearRampToValueAtTime(0.018, now + 0.001);
+        toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+        tone.connect(toneGain);
+        toneGain.connect(masterGain);
+        tone.start(now);
+        tone.stop(now + 0.015);
+      } catch (_) {}
+    }
+
+    function clearSequenceTimers() {
+      timers.forEach(timer => clearTimeout(timer));
+      timers = [];
+    }
+
+    function delay(ms, currentSequence) {
+      return new Promise(resolve => {
+        const timer = setTimeout(() => {
+          timers = timers.filter(item => item !== timer);
+          resolve(currentSequence === sequence);
+        }, ms);
+        timers.push(timer);
+      });
+    }
+
+    async function runTyping(withSound) {
+      const thisSequence = ++sequence;
+      clearSequenceTimers();
+      animationStarted = true;
+      animationFinished = false;
+      chars.forEach(char => char.classList.remove('us-type-shown'));
+
+      if (!(await delay(120, thisSequence))) return;
+      for (const char of chars) {
+        if (thisSequence !== sequence) return;
+        char.classList.add('us-type-shown');
+        if (withSound && !/^\s+$/u.test(char.textContent)) playKeySound();
+        const character = char.textContent;
+        let pause = /^\s+$/u.test(character) ? 30 : 62 + Math.random() * 22;
+        if (/[.!?]/u.test(character)) pause += 150;
+        else if (/[,;:]/u.test(character)) pause += 80;
+        if (!(await delay(pause, thisSequence))) return;
+      }
+      if (thisSequence === sequence) animationFinished = true;
+    }
+
+    function startIfVisible() {
+      if (headingVisible && !animationStarted) runTyping(audioUnlocked);
+    }
+
+    wrapTextNodes(heading);
+    chars = Array.from(heading.querySelectorAll('.us-type-char'));
+    if (!chars.length) return;
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        headingVisible = entries.some(entry => entry.isIntersecting);
+        startIfVisible();
+      }, { threshold: 0.05 });
+      observer.observe(heading);
+    } else {
+      headingVisible = true;
+      startIfVisible();
+    }
+
+    let gestureHandled = false;
+    function onFirstGesture() {
+      if (gestureHandled) return;
+      gestureHandled = true;
+      enableAudio().then(ready => {
+        if (!ready) return;
+        // Si el texto ya apareció en silencio, se vuelve a escribir una sola vez con sonido.
+        if (headingVisible && (animationFinished || animationStarted)) {
+          runTyping(true);
+        }
+      });
+      document.removeEventListener('pointerdown', onFirstGesture, true);
+      document.removeEventListener('keydown', onFirstGesture, true);
+      document.removeEventListener('touchstart', onFirstGesture, true);
+    }
+    document.addEventListener('pointerdown', onFirstGesture, true);
+    document.addEventListener('keydown', onFirstGesture, true);
+    document.addEventListener('touchstart', onFirstGesture, true);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installTypingFeature, { once: true });
+  } else {
+    installTypingFeature();
+  }
 })();
 </script>
+
 </body>
 </html>
