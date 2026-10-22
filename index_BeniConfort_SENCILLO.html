@@ -6,11 +6,10 @@
 <meta name="theme-color" content="#080b12">
 <title>UrbanStep — Catálogo interactivo</title>
 
-<!-- Leaflet CSS (cargado una sola vez) -->
+<!-- ===== LEAFLET 1.9.4 (CDN, solo se carga una vez) ===== -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""/>
-
 <style>
 :root{--bg:#070a11;--panel:#0d1320;--panel2:#101a2a;--line:rgba(150,180,225,.16);--text:#f5f7fb;--muted:#8e9bb0;--cyan:#38e8ff;--blue:#4387ff;--purple:#a45bff;--green:#16d99a;--pink:#ff4b9a;--gold:#ffc857;--radius:22px;--shadow:0 24px 70px rgba(0,0,0,.38)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 75% -5%,rgba(60,89,180,.18),transparent 38%),radial-gradient(ellipse at 8% 30%,rgba(0,213,255,.07),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.wrap{width:min(1240px,calc(100% - 40px));margin:auto}
@@ -31,76 +30,42 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
 /* FAQ interactiva — función 4 */
 .faq-section{padding:28px 0 76px;scroll-margin-top:90px}.faq-shell{display:grid;grid-template-columns:.78fr 1.22fr;gap:30px;align-items:start;border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,42px);background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow)}.faq-intro h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.05;letter-spacing:-1.2px;margin:15px 0 12px}.faq-intro p{color:var(--muted);margin:0 0 20px}.faq-contact{display:inline-flex;align-items:center;gap:9px;padding:12px 16px;border-radius:14px;border:1px solid #16d99a55;background:#16d99a12;color:#9df4d5;font-weight:800}.faq-list{display:grid;gap:10px}.faq-item{border:1px solid var(--line);border-radius:16px;background:#ffffff04;overflow:hidden;transition:border-color .2s,background .2s}.faq-item.open{border-color:#38e8ff55;background:#38e8ff08}.faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;border:0;background:transparent;color:var(--text);padding:17px 18px;font-weight:800}.faq-question span:first-child{display:flex;align-items:center;gap:12px}.faq-number{display:grid;place-items:center;flex:0 0 29px;height:29px;border-radius:10px;color:var(--cyan);background:#38e8ff13;font-size:.75rem}.faq-plus{font-size:1.4rem;color:var(--cyan);transition:transform .25s}.faq-item.open .faq-plus{transform:rotate(45deg)}.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}.faq-item.open .faq-answer{grid-template-rows:1fr}.faq-answer-inner{overflow:hidden}.faq-answer p{margin:0;padding:0 18px 18px 59px;color:#aebbd0;font-size:.92rem}.faq-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.faq-quick button{border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:#ffffff06;color:#cbd8e9;font-size:.8rem}.faq-quick button:hover{border-color:var(--cyan);color:var(--cyan)}@media(max-width:760px){.faq-shell{grid-template-columns:1fr;gap:22px}.faq-intro h2{max-width:500px}.faq-answer p{padding-left:18px}.faq-section{padding-bottom:52px}}
 
-/* ───────────────────────────────────────────────
-   NUEVA FUNCIÓN: UBICACIÓN INTERACTIVA (Leaflet)
-   Clases específicas para no alterar estilos previos
-   ─────────────────────────────────────────────── */
-.location-section{padding:34px 0 70px;scroll-margin-top:90px}
-.location-shell{border:1px solid var(--line);border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow);display:grid;grid-template-columns:.82fr 1.18fr;gap:0;align-items:stretch}
-.location-info{padding:clamp(22px,3.4vw,38px);display:flex;flex-direction:column;justify-content:center;gap:16px}
-.location-info h2{font-size:clamp(1.7rem,2.6vw,2.3rem);line-height:1.06;letter-spacing:-1.1px;margin:14px 0 4px}
-.location-info .loc-address{display:flex;gap:11px;align-items:flex-start;color:#c4d2e5;font-size:.94rem;line-height:1.5;margin:0}
-.location-info .loc-address svg{flex:0 0 22px;width:22px;height:22px;color:var(--cyan);margin-top:2px}
-.location-note{color:var(--muted);font-size:.85rem;margin:0}
-.location-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
-.loc-btn{display:inline-flex;align-items:center;gap:9px;padding:13px 18px;border-radius:14px;font-weight:800;font-size:.86rem;border:1px solid transparent;transition:transform .2s,filter .2s,border-color .2s;white-space:nowrap}
-.loc-btn:hover{transform:translateY(-2px)}
-.loc-btn svg{width:18px;height:18px}
-.loc-btn-primary{background:linear-gradient(100deg,var(--cyan),#5b91ff 60%,#a45bff);color:#06101a;box-shadow:0 8px 26px #38e8ff20}
-.loc-btn-primary:hover{filter:brightness(1.08)}
-.loc-btn-wa{background:#16d99a14;border-color:#16d99a55;color:#9df4d5}
-.loc-btn-wa:hover{border-color:var(--green);filter:brightness(1.06)}
-.loc-map-wrap{position:relative;min-height:480px}
-#mapa{width:100%;height:100%;min-height:480px;border-radius:0;z-index:1;background:#0b111c}
-
-/* Tarjeta flotante sobre el mapa */
-.loc-map-card{position:absolute;z-index:500;top:18px;left:18px;width:min(310px,calc(100% - 36px));background:rgba(13,21,34,.94);border:1px solid #31415a;border-radius:18px;padding:16px 16px 15px;box-shadow:0 18px 50px #000b;backdrop-filter:blur(16px);animation:locCardIn .5s ease both}
-@keyframes locCardIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.loc-card-title{display:flex;align-items:center;gap:9px;font-weight:850;font-size:.95rem;margin-bottom:5px;color:#eafaff}
-.loc-card-title svg{width:19px;height:19px;color:var(--cyan);flex:0 0 19px}
-.loc-card-address{color:#a9b8cc;font-size:.82rem;line-height:1.45;margin:0 0 12px}
-.loc-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.loc-card-actions .loc-btn{padding:10px 8px;font-size:.74rem;border-radius:11px;justify-content:center}
-.loc-card-actions .loc-btn svg{width:15px;height:15px}
-
-/* Popup de Leaflet adaptado a la estética */
-.leaflet-popup-content-wrapper{background:#101a2a;color:var(--text);border-radius:16px;border:1px solid #31415a;box-shadow:0 18px 50px #000b;padding:2px}
-.leaflet-popup-content{margin:14px 16px;font-size:.85rem;line-height:1.45;min-width:180px}
-.leaflet-popup-content strong{display:block;font-size:.95rem;margin-bottom:3px;color:#fff}
-.leaflet-popup-content .popup-address{color:#9db0c6;font-size:.8rem;margin:0 0 10px}
-.leaflet-popup-content a.popup-directions{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(100deg,var(--cyan),#5b91ff);color:#06101a;font-weight:850;padding:9px 13px;border-radius:10px;font-size:.78rem;text-decoration:none}
-.leaflet-popup-tip{background:#101a2a;border:1px solid #31415a}
-.leaflet-container a{color:inherit}
-.leaflet-bar a{background:#101a2a;color:#e7f4ff;border-color:#31415a}
-.leaflet-bar a:hover{background:#16263b;color:#fff}
-
-/* Marcador personalizado */
-.urbanstep-pin{width:46px;height:46px;position:relative;display:grid;place-items:center}
-.urbanstep-pin .pin-body{width:38px;height:38px;border-radius:50% 50% 50% 0;background:linear-gradient(135deg,var(--cyan),var(--purple));border:3px solid #fff;box-shadow:0 8px 18px #0007,0 0 22px #38e8ff55;transform:rotate(-45deg);display:grid;place-items:center;animation:pinDrop .55s cubic-bezier(.2,.9,.3,1.3) both}
-.urbanstep-pin .pin-body span{transform:rotate(45deg);font-size:17px;line-height:1;filter:drop-shadow(0 1px 1px #0006)}
-@keyframes pinDrop{0%{transform:translateY(-18px) rotate(-45deg) scale(.6);opacity:0}100%{transform:translateY(0) rotate(-45deg) scale(1);opacity:1}}
-.urbanstep-pin .pin-shadow{position:absolute;bottom:-3px;width:20px;height:6px;border-radius:50%;background:#0008;filter:blur(3px)}
-
-/* Botón flotante de WhatsApp (se crea solo si no existía uno) */
-.wa-float{position:fixed;z-index:40;right:18px;bottom:96px;width:60px;height:60px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 12px 30px #0009,0 0 0 0 #25d36666;animation:waPulse 2.6s ease-in-out infinite;border:0}
-.wa-float svg{width:31px;height:31px}
-.wa-float:hover{filter:brightness(1.06);transform:translateY(-2px)}
-@keyframes waPulse{0%,100%{box-shadow:0 12px 30px #0009,0 0 0 0 #25d36655}55%{box-shadow:0 12px 30px #0009,0 0 0 14px #25d36600}}
-@media(max-width:760px){
-  .location-shell{grid-template-columns:1fr}
-  .loc-map-wrap{min-height:420px;order:2}
-  #mapa{min-height:420px}
-  .loc-map-card{position:relative;top:auto;left:auto;width:auto;margin:12px;animation:none}
-  .loc-map-wrap{display:flex;flex-direction:column}
-  .loc-map-card{order:-1}
-  .wa-float{bottom:88px;width:54px;height:54px;right:14px}
-  .wa-float svg{width:28px;height:28px}
-}
-@media(prefers-reduced-motion:reduce){
-  .wa-float{animation:none!important}
-  .urbanstep-pin .pin-body{animation:none!important}
-  .loc-map-card{animation:none!important}
-}
+/* ===== UBICACIÓN INTERACTIVA (nueva sección) ===== */
+.us-location{padding:0 0 76px;scroll-margin-top:90px}
+.us-location-shell{display:grid;grid-template-columns:1.25fr .9fr;gap:22px;align-items:stretch;border:1px solid var(--line);border-radius:28px;padding:clamp(16px,3vw,26px);background:linear-gradient(135deg,#0d1522,#0a0e18 65%,#111024);box-shadow:var(--shadow)}
+.us-map-frame{position:relative;border:1px solid #31415a;border-radius:22px;overflow:hidden;min-height:380px;background:#0a111c;box-shadow:0 18px 50px #0006}
+.us-map{position:absolute;inset:0;width:100%;height:100%}
+.us-map-frame .leaflet-container{border-radius:22px;font:inherit}
+.us-map-frame .leaflet-control-attribution{background:rgba(8,13,23,.82);color:#8e9bb0;border-radius:8px 0 0 0;font-size:.66rem}
+.us-map-frame .leaflet-control-attribution a{color:var(--cyan)}
+.us-map-frame .leaflet-popup-content-wrapper{background:#0d1522;color:var(--text);border:1px solid #38e8ff55;border-radius:14px;box-shadow:0 12px 40px #0009}
+.us-map-frame .leaflet-popup-tip{background:#0d1522;border:1px solid #38e8ff55}
+.us-map-frame .leaflet-popup-content{margin:12px 14px;font-size:.85rem;line-height:1.4}
+.us-map-frame .leaflet-popup-content strong{color:var(--cyan);display:block;margin-bottom:3px}
+.us-map-frame .leaflet-bar a{background:#0d1522;color:var(--cyan);border-color:#31415a}
+.us-map-frame .leaflet-bar a:hover{background:#111a2a;color:white}
+.us-map-toggle{position:absolute;z-index:600;top:12px;left:12px;border:1px solid #38e8ff55;background:rgba(8,13,23,.92);backdrop-filter:blur(10px);color:#eafaff;border-radius:12px;padding:9px 13px;font-size:.78rem;font-weight:800;display:inline-flex;align-items:center;gap:7px;box-shadow:0 8px 24px #0007;transition:.2s}
+.us-map-toggle:hover{border-color:var(--cyan);color:var(--cyan)}
+.us-map-toggle.is-active{border-color:var(--green);color:var(--green)}
+.us-map-toggle svg{width:15px;height:15px}
+.us-location-card{display:flex;flex-direction:column;gap:16px;border:1px solid var(--line);border-radius:22px;padding:clamp(18px,2.4vw,26px);background:linear-gradient(160deg,#0f1727,#0a111c);box-shadow:0 18px 50px #0006}
+.us-loc-badge{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#061018;box-shadow:0 0 28px #38e8ff33}
+.us-loc-badge svg{width:28px;height:28px}
+.us-location-card h2{font-size:clamp(1.4rem,2.2vw,1.75rem);letter-spacing:-.8px;line-height:1.1;margin:0}
+.us-location-card .us-loc-sub{color:var(--muted);font-size:.88rem;margin:0}
+.us-loc-address{display:flex;gap:10px;align-items:flex-start;border:1px dashed #2a3b53;border-radius:14px;padding:12px 14px;background:#ffffff04;color:#dce8f6;font-size:.9rem;line-height:1.45}
+.us-loc-address svg{flex:0 0 18px;width:18px;height:18px;color:var(--cyan);margin-top:2px}
+.us-loc-address strong{display:block;color:white;font-size:.82rem;letter-spacing:.2px;text-transform:uppercase;margin-bottom:3px}
+.us-loc-actions{display:grid;gap:9px;margin-top:auto}
+.us-loc-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:14px;padding:13px 16px;font-weight:850;font-size:.88rem;transition:transform .2s,filter .2s,border-color .2s;border:1px solid transparent}
+.us-loc-btn svg{width:18px;height:18px}
+.us-loc-btn-primary{background:linear-gradient(100deg,var(--cyan),#4e9dff 55%,#a45bff);color:#051018;box-shadow:0 8px 30px #38e8ff20}
+.us-loc-btn-primary:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.us-loc-btn-ghost{background:#16d99a12;border-color:#16d99a55;color:#9df4d5}
+.us-loc-btn-ghost:hover{border-color:var(--green);filter:brightness(1.05)}
+.us-loc-note{font-size:.72rem;color:#8e9bb0;margin:0;line-height:1.5}
+@media(max-width:860px){.us-location-shell{grid-template-columns:1fr;gap:16px}.us-map-frame{min-height:320px;order:1}.us-location-card{order:2}}
+@media(max-width:480px){.us-map-frame{min-height:280px}.us-map-toggle{top:9px;left:9px;padding:8px 11px;font-size:.72rem}.us-location{padding-bottom:52px}}
 </style>
 </head>
 <body>
@@ -110,7 +75,7 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
       <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16c4-1 6-4 8-8l3 3 6 2 1 4H3z"/><path d="M7 16h12M10 12l2 2M13 11l2 2"/></svg></span>
       <span>UrbanStep<small>Tu estilo, en cada paso</small></span>
     </a>
-    <nav class="navlinks"><a href="#inicio">Inicio</a><a class="active" href="#catalogo">Catálogo</a><a href="#beneficios">Experiencia</a><a href="#ubicacion">Ubicación</a><a href="#contacto">Contacto</a></nav>
+    <nav class="navlinks"><a href="#inicio">Inicio</a><a class="active" href="#catalogo">Catálogo</a><a href="#beneficios">Experiencia</a><a href="#contacto">Contacto</a></nav>
     <div class="navactions">
       <button class="iconbtn" id="focusSearch" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button>
       <button class="iconbtn" id="scrollCart" aria-label="Ver carrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.5 12.5a2 2 0 0 0 2 1.5h8a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><span class="cart-count" id="navCount">0</span></button>
@@ -148,54 +113,6 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   </div>
   <div class="product-grid" id="productGrid" aria-live="polite"></div>
 </section>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     NUEVA FUNCIÓN: UBICACIÓN INTERACTIVA (OpenStreetMap + Leaflet)
-     ═══════════════════════════════════════════════════════════════ -->
-<section class="wrap location-section" id="ubicacion">
-  <div class="location-shell">
-    <div class="location-info">
-      <span class="eyebrow"><span class="dot"></span> Visítanos</span>
-      <h2>Encuéntranos<br><span style="color:var(--cyan)">en el mapa.</span></h2>
-      <p class="loc-address">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-        <span id="locAddressText">Av. Principal #123, Zona Comercial, Ciudad</span>
-      </p>
-      <p class="location-note">Toca el mapa para moverte y ampliar. Usa los botones para obtener indicaciones paso a paso o consultar por WhatsApp.</p>
-      <div class="location-actions">
-        <a class="loc-btn loc-btn-primary" id="btnDirections" href="#" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-          Cómo llegar paso a paso
-        </a>
-        <a class="loc-btn loc-btn-wa" id="btnWhatsAppLoc" href="#" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.9 1.4 1.9 2.2 1.3 1.1 2.4 1.4 2.7 1.6.2.1.4.1.5 0l.7-.9c.2-.2.4-.1.5 0l2 1c.2.1.4.2.4.4 0 .1 0 .7-.1 1.2Z"/></svg>
-          WhatsApp
-        </a>
-      </div>
-    </div>
-    <div class="loc-map-wrap">
-      <div class="loc-map-card" id="locMapCard">
-        <div class="loc-card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-          Aquí es el local
-        </div>
-        <p class="loc-card-address" id="locCardAddress">Av. Principal #123, Zona Comercial, Ciudad</p>
-        <div class="loc-card-actions">
-          <a class="loc-btn loc-btn-primary" id="locCardDirections" href="#" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-            Cómo llegar
-          </a>
-          <a class="loc-btn loc-btn-wa" id="locCardWhatsApp" href="#" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.9 1.4 1.9 2.2 1.3 1.1 2.4 1.4 2.7 1.6.2.1.4.1.5 0l.7-.9c.2-.2.4-.1.5 0l2 1c.2.1.4.2.4.4 0 .1 0 .7-.1 1.2Z"/></svg>
-            WhatsApp
-          </a>
-        </div>
-      </div>
-      <div id="mapa" role="application" aria-label="Mapa de ubicación del local"></div>
-    </div>
-  </div>
-</section>
-
 <section class="wrap faq-section" id="preguntas">
  <div class="faq-shell">
   <div class="faq-intro">
@@ -215,14 +132,43 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   </div>
  </div>
 </section>
+
+<!-- ===== SECCIÓN UBICACIÓN (nueva) ===== -->
+<section class="wrap us-location" id="ubicacion">
+  <div class="us-location-shell">
+    <div class="us-map-frame">
+      <div id="usMap" class="us-map" aria-label="Mapa de ubicación de UrbanStep"></div>
+      <button type="button" class="us-map-toggle" id="usMapToggle" aria-pressed="false" aria-controls="usMap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
+        <span id="usMapToggleText">Explorar mapa</span>
+      </button>
+    </div>
+    <aside class="us-location-card">
+      <span class="us-loc-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>
+      </span>
+      <h2>Encuentra nuestra tienda</h2>
+      <p class="us-loc-sub">Visítanos y descubre tus próximos tenis en persona.</p>
+      <div class="us-loc-address">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <div><strong>Ubicación</strong>LAS MISIONES</div>
+      </div>
+      <div class="us-loc-actions">
+        <a class="us-loc-btn us-loc-btn-primary" id="usHowToGet" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 22l8-3 8 3z"/></svg>
+          Cómo llegar
+        </a>
+        <a class="us-loc-btn us-loc-btn-ghost" id="usWhatsApp" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.1-5.4A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.5 9.5c.4 3 2.5 5.1 5.5 5.5l1-1.5-2-1-1 .7c-1-.4-1.8-1.2-2.2-2.2l.7-1-1-2z" fill="currentColor" stroke="none"/></svg>
+          Escribir por WhatsApp
+        </a>
+      </div>
+      <p class="us-loc-note">Las indicaciones abren Google Maps con el destino exacto. Confirma disponibilidad y horarios por WhatsApp antes de visitarnos.</p>
+    </aside>
+  </div>
+</section>
 </main>
 <footer class="wrap footer" id="contacto"><span>© 2026 UrbanStep · Demo interactiva</span><span>Demo · Productos y precios ficticios · Configura tu WhatsApp antes de publicar</span></footer>
-
-<!-- Botón flotante de WhatsApp (solo se añade si no existe uno previamente) -->
-<button class="wa-float" id="waFloat" type="button" aria-label="Contactar por WhatsApp">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.9 1.4 1.9 2.2 1.3 1.1 2.4 1.4 2.7 1.6.2.1.4.1.5 0l.7-.9c.2-.2.4-.1.5 0l2 1c.2.1.4.2.4.4 0 .1 0 .7-.1 1.2Z"/></svg>
-</button>
-
 <div class="bottom-cart hidden" id="bottomCart">
   <div class="cart-summary"><span class="cart-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.5 12.5a2 2 0 0 0 2 1.5h8a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span><strong><span id="cartQty">0</span> productos seleccionados</strong><small>Tu selección está lista para revisar</small></span><span class="cart-total" id="cartTotal">$ 0.00</span></div>
   <button class="checkout" id="viewCart">Revisar selección <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
@@ -248,32 +194,11 @@ header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);back
   <div class="modal"><button class="modal-close" id="closeModal" aria-label="Cerrar">✕</button><div class="modal-image"><img id="modalImg" src="" alt=""></div><div class="modal-content"><span class="tag purple" id="modalTag">Destacado</span><h3 id="modalName">Producto</h3><div class="rating" id="modalRating"></div><p id="modalDescription"></p><div class="modal-price" id="modalPrice"></div><div class="sizes-label"><span>Selecciona tu talla</span><span>Guía de tallas</span></div><div class="modal-sizes" id="modalSizes"></div><button class="primary" id="modalAdd" style="width:100%">Agregar a mi selección</button></div></div>
 </div>
 
-<!-- Leaflet JS (cargado una sola vez, al final del body) -->
+<!-- ===== LEAFLET 1.9.4 JS (CDN, solo una vez) ===== -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
-
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   CONFIGURACIÓN CENTRALIZADA (reutilizada por catálogo y ubicación)
-   ═══════════════════════════════════════════════════════════════ */
-const URBANSTEP_CONFIG = {
-  nombreNegocio : "UrbanStep",
-  // ⚠️ EDITA AQUÍ: número de WhatsApp internacional, sin + ni espacios.
-  numeroWhatsApp: "591XXXXXXXXX",
-  // ⚠️ EDITA AQUÍ: dirección real del local.
-  direccion     : "Av. Principal #123, Zona Comercial, Ciudad",
-  // ⚠️ EDITA AQUÍ: coordenadas exactas (latitud y longitud numéricas).
-  latitud       : -17.7833,
-  longitud      : -63.1821,
-  zoom          : 16,
-  iconoNegocio  : "👟",
-  mensajeWhatsApp: "Hola, quiero consultar un producto de UrbanStep."
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   CATÁLOGO (código original intacto)
-   ═══════════════════════════════════════════════════════════════ */
 const products = [
  {id:1,brand:"Nike",name:"Air Force 1 Essential",category:"Urbano · Unisex",price:89.99,old:0,rating:4.8,reviews:124,tag:"Más vendido",tagClass:"",color:"#38a8ff",image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=85",colors:["#f4f6f8","#161b24","#d64b36"],sizes:[38,39,40,41,42,43],desc:"Un clásico urbano de líneas limpias, pensado para combinar con todo. Ideal para looks diarios y fines de semana."},
  {id:2,brand:"Adidas",name:"Ultraboost Street",category:"Running · Hombre",price:129.99,old:0,rating:4.9,reviews:98,tag:"En tendencia",tagClass:"purple",color:"#a45bff",image:"https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=700&q=85",colors:["#20232a","#858b95","#e5e5e5"],sizes:[39,40,41,42,43,44],desc:"Sensación ligera y estética deportiva. Un modelo pensado para quienes quieren comodidad con un perfil moderno."},
@@ -289,6 +214,18 @@ const $=id=>document.getElementById(id);
 const money=n=>"$ "+n.toFixed(2);
 const cartQuantity=()=>[...state.cart.values()].reduce((a,b)=>a+b.qty,0);
 const cartTotal=()=>[...state.cart.values()].reduce((a,b)=>a+b.qty*b.price,0);
+
+// ===== Número de WhatsApp real (configurado) =====
+const WHATSAPP_BUSINESS_NUMBER = "59173913409";
+
+// ===== Datos de ubicación exactos proporcionados por el cliente =====
+const US_LOCATION = {
+  name: "UrbanStep",
+  address: "LAS MISIONES",
+  lat: -14.807230428080661,
+  lng: -64.9181496203917
+};
+
 function productCard(p){
  const chosen=state.selectedSizes.get(p.id)||p.sizes[Math.min(3,p.sizes.length-1)];
  const qty=state.cart.get(p.id)?.qty||0;
@@ -362,8 +299,7 @@ $("closeCheckout").addEventListener("click",closeCheckout);
 $("checkoutBackdrop").addEventListener("click",e=>{if(e.target===$("checkoutBackdrop"))closeCheckout()});
 $("checkoutForm").addEventListener("submit",e=>{
  e.preventDefault();const items=[...state.cart.values()];if(!items.length){toast("Tu selección está vacía");closeCheckout();return}
- const WHATSAPP_BUSINESS_NUMBER = URBANSTEP_CONFIG.numeroWhatsApp;
- if(!/^\d{10,15}$/.test(WHATSAPP_BUSINESS_NUMBER)||WHATSAPP_BUSINESS_NUMBER.includes("X")){toast("Configura el número de WhatsApp del negocio en el código HTML");return}
+ if(!/^\d{10,15}$/.test(WHATSAPP_BUSINESS_NUMBER)){toast("Configura el número de WhatsApp del negocio en el código HTML");return}
  const name=$("customerName").value.trim();if(!name){$("customerName").focus();return}
  const phone=$("customerPhone").value.trim();const delivery=$("deliveryMethod").value;const payment=$("paymentMethod").value;const address=$("customerAddress").value.trim();const note=$("customerNote").value.trim();
  const lines=items.map((x,i)=>`${i+1}. ${x.name} | Talla ${x.size} | Cantidad: ${x.qty} | Subtotal: ${money(x.price*x.qty)}`);
@@ -371,7 +307,7 @@ $("checkoutForm").addEventListener("submit",e=>{
  const url=`https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent(message)}`;window.open(url,"_blank","noopener,noreferrer");
 });
 $("menuBtn").addEventListener("click",()=>toast("Demo: aquí se puede abrir un menú móvil con categorías y contacto."));
-// Buscador por voz
+// Buscador por voz: convierte frases en filtros de catálogo.
 const voiceButton = $("voiceSearchBtn");
 const voiceStatus = $("voiceStatus");
 const voiceBtnText = $("voiceBtnText");
@@ -437,7 +373,7 @@ if (!SpeechRecognition) {
     try { recognition.start(); } catch (_) { voiceMessage("El micrófono ya está activo. Termina de hablar o vuelve a intentarlo.", "listening"); }
   });
 }
-// Microinteracción premium 3D
+// Microinteracción premium: inclinación 3D muy sutil según la posición del puntero.
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 if (canHover) {
   $("productGrid").addEventListener("pointermove", e => {
@@ -455,7 +391,8 @@ if (canHover) {
     cards.forEach(card => card.style.transform = "");
   });
 }
-// Preguntas frecuentes interactivas
+
+// Preguntas frecuentes interactivas: acordeón accesible y accesos rápidos.
 const faqItems = [...document.querySelectorAll('.faq-item')];
 faqItems.forEach((item) => {
  const trigger = item.querySelector('.faq-question');
@@ -472,110 +409,120 @@ document.querySelectorAll('[data-faq-open]').forEach((button) => button.addEvent
  item.classList.add('open'); item.querySelector('.faq-question').setAttribute('aria-expanded','true');
  item.scrollIntoView({behavior:'smooth',block:'center'});
 }));
+const faqWhatsApp = document.getElementById('faqWhatsApp');
+if (faqWhatsApp) faqWhatsApp.href = 'https://wa.me/' + WHATSAPP_BUSINESS_NUMBER + '?text=' + encodeURIComponent('Hola, tengo una consulta sobre los tenis de UrbanStep.');
 
-/* ═══════════════════════════════════════════════════════════════
-   NUEVA FUNCIÓN: UBICACIÓN INTERACTIVA CON LEAFLET + OSM
-   ═══════════════════════════════════════════════════════════════ */
-(function initLocationFeature() {
-  const cfg = URBANSTEP_CONFIG;
-  const lat = Number(cfg.latitud);
-  const lng = Number(cfg.longitud);
+// ===== UBICACIÓN INTERACTIVA: mapa Leaflet + tarjeta + anti-bloqueo móvil =====
+(function initLocationSection(){
+  const mapEl = document.getElementById('usMap');
+  const toggleBtn = document.getElementById('usMapToggle');
+  const toggleText = document.getElementById('usMapToggleText');
+  const howToGet = document.getElementById('usHowToGet');
+  const waBtn = document.getElementById('usWhatsApp');
+  if (!mapEl || typeof L === 'undefined') return;
 
-  // Validación temprana: no inventar coordenadas.
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    const mapEl = document.getElementById('mapa');
-    if (mapEl) {
-      mapEl.innerHTML = '<div style="padding:24px;color:#ffb3b3;font-size:.9rem;line-height:1.5">Configura <strong>latitud</strong> y <strong>longitud</strong> reales en <code>URBANSTEP_CONFIG</code> para mostrar el mapa.</div>';
-    }
+  const { lat, lng, name, address } = US_LOCATION;
+  if (typeof lat !== 'number' || typeof lng !== 'number' || Number.isNaN(lat) || Number.isNaN(lng)) {
+    mapEl.innerHTML = '<div style="display:grid;place-items:center;height:100%;color:#8e9bb0;font-size:.85rem;padding:20px;text-align:center">Faltan coordenadas de ubicación. Configura latitud y longitud en el HTML.</div>';
     return;
   }
 
-  // Reutilizar / crear el botón flotante de WhatsApp (no duplicar).
-  let waFloat = document.getElementById('waFloat');
-  if (waFloat) {
-    waFloat.addEventListener('click', () => {
-      const waUrl = 'https://wa.me/' + encodeURIComponent(cfg.numeroWhatsApp) +
-                    '?text=' + encodeURIComponent(cfg.mensajeWhatsApp);
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
-    });
+  // Detección de dispositivo táctil / pantalla pequeña
+  const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches || window.innerWidth <= 860;
+
+  const map = L.map(mapEl, {
+    center: [lat, lng],
+    zoom: 16,
+    zoomControl: true,
+    // Por defecto: sin interacción que secuestre el scroll
+    dragging: !isTouch,
+    touchZoom: !isTouch,
+    scrollWheelZoom: false,
+    doubleClickZoom: !isTouch,
+    boxZoom: !isTouch,
+    tap: false,
+    keyboard: true,
+    attributionControl: true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+  }).addTo(map);
+
+  // Marcador personalizado (zapatilla en gradiente cian→violeta, coherente con la marca)
+  const markerHtml = `
+    <div style="position:relative;width:46px;height:56px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))">
+      <div style="position:absolute;inset:0;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(135deg,#38e8ff,#a45bff);box-shadow:0 0 22px rgba(56,232,255,.55);"></div>
+      <div style="position:absolute;inset:0;display:grid;place-items:center;color:#061018">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 16c4-1 6-4 8-8l3 3 6 2 1 4H3z"/>
+          <path d="M7 16h12M10 12l2 2M13 11l2 2"/>
+        </svg>
+      </div>
+    </div>`;
+  const icon = L.divIcon({
+    html: markerHtml,
+    className: 'us-marker',
+    iconSize: [46, 56],
+    iconAnchor: [23, 52],
+    popupAnchor: [0, -46]
+  });
+
+  const marker = L.marker([lat, lng], { icon, title: name, keyboard: true }).addTo(map);
+  marker.bindPopup(`<strong>${name}</strong>${address}`).openPopup();
+
+  // Enlace "Cómo llegar": destino por coordenadas exactas
+  const dest = `${lat},${lng}`;
+  if (howToGet) howToGet.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}&travelmode=driving`;
+  // Botón WhatsApp de la sección
+  if (waBtn) waBtn.href = `https://wa.me/${WHATSAPP_BUSINESS_NUMBER}?text=${encodeURIComponent('Hola UrbanStep, quiero consultar por la ubicación de la tienda (' + address + ').')}`;
+
+  // Toggle "Explorar mapa" / "Cerrar mapa interactivo"
+  let interactive = !isTouch;
+  function setInteractive(on){
+    interactive = on;
+    if (on) {
+      map.dragging.enable();
+      map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+      map.boxZoom.enable();
+    } else {
+      map.dragging.disable();
+      map.touchZoom.disable();
+      map.doubleClickZoom.disable();
+      map.boxZoom.disable();
+    }
+    toggleBtn.classList.toggle('is-active', on);
+    toggleBtn.setAttribute('aria-pressed', String(on));
+    toggleText.textContent = on ? 'Cerrar mapa interactivo' : 'Explorar mapa';
+  }
+  setInteractive(interactive);
+  // En escritorio dejamos el toggle visible por accesibilidad, aunque ya esté activo
+  toggleBtn.addEventListener('click', () => setInteractive(!interactive));
+
+  // Evitar que el mapa secuestre el scroll al pasar el dedo por encima (rueda de ratón)
+  mapEl.addEventListener('wheel', (e) => {
+    // Solo bloqueamos si el mapa NO está en modo interactivo
+    if (!interactive) e.stopPropagation();
+  }, { passive: true });
+
+  // Ajuste de tamaño cuando la sección entra en viewport (evita saltos de layout)
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { map.invalidateSize(); io.disconnect(); } });
+    }, { threshold: 0.15 });
+    io.observe(mapEl);
+  } else {
+    setTimeout(() => map.invalidateSize(), 400);
   }
 
-  // Direcciones para Google Maps
-  const directionsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' +
-                        encodeURIComponent(lat + ',' + lng);
-  const waLocUrl = 'https://wa.me/' + encodeURIComponent(cfg.numeroWhatsApp) +
-                   '?text=' + encodeURIComponent(cfg.mensajeWhatsApp);
-
-  // Rellenar textos y enlaces de la sección.
-  const addrText = document.getElementById('locAddressText');
-  const cardAddr = document.getElementById('locCardAddress');
-  if (addrText) addrText.textContent = cfg.direccion;
-  if (cardAddr) cardAddr.textContent = cfg.direccion;
-
-  const btnDirections = document.getElementById('btnDirections');
-  const locCardDirections = document.getElementById('locCardDirections');
-  const btnWhatsAppLoc = document.getElementById('btnWhatsAppLoc');
-  const locCardWhatsApp = document.getElementById('locCardWhatsApp');
-  const faqWhatsApp = document.getElementById('faqWhatsApp');
-
-  if (btnDirections) btnDirections.href = directionsUrl;
-  if (locCardDirections) locCardDirections.href = directionsUrl;
-  if (btnWhatsAppLoc) btnWhatsAppLoc.href = waLocUrl;
-  if (locCardWhatsApp) locCardWhatsApp.href = waLocUrl;
-  if (faqWhatsApp) faqWhatsApp.href = waLocUrl;
-
-  // Inicializar Leaflet una sola vez.
-  const mapEl = document.getElementById('mapa');
-  if (!mapEl || mapEl._leaflet_id) return;
-
-  const map = L.map('mapa', {
-    center: [lat, lng],
-    zoom: cfg.zoom || 16,
-    zoomControl: false,
-    scrollWheelZoom: true
+  // Reajustar en cambios de tamaño/orientación
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => map.invalidateSize(), 180);
   });
-
-  L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
-  }).addTo(map);
-
-  // Marcador personalizado con emoji del rubro.
-  const pinIcon = L.divIcon({
-    className: 'urbanstep-pin',
-    html: '<div class="pin-shadow"></div>' +
-          '<div class="pin-body"><span>' + (cfg.iconoNegocio || '📍') + '</span></div>',
-    iconSize: [46, 46],
-    iconAnchor: [23, 42],
-    popupAnchor: [0, -38]
-  });
-
-  const marker = L.marker([lat, lng], {
-    icon: pinIcon,
-    keyboard: true,
-    title: cfg.nombreNegocio
-  }).addTo(map);
-
-  // Popup seguro: textos escapados.
-  const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (s) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[s]));
-
-  const popupHtml =
-    '<strong>' + escapeHtml(cfg.nombreNegocio) + '</strong>' +
-    '<p class="popup-address">' + escapeHtml(cfg.direccion) + '</p>' +
-    '<a class="popup-directions" href="' + directionsUrl + '" target="_blank" rel="noopener noreferrer">Cómo llegar ↗</a>';
-
-  marker.bindPopup(popupHtml, { closeButton: true, autoClose: true });
-
-  // Abrir popup automáticamente al cargar.
-  marker.openPopup();
-
-  // Asegurar tamaño correcto del mapa en pantallas pequeñas.
-  setTimeout(() => map.invalidateSize(), 250);
-  window.addEventListener('resize', () => map.invalidateSize());
 })();
 </script>
 </body>
