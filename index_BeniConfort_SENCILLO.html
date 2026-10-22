@@ -170,13 +170,122 @@
 
     .info-card p { font-size: 0.95rem; color: #555; margin-bottom: 6px; }
 
-    /* ===== MAPA ===== */
+    /* ===== MEJORAS DEL MAPA ===== */
+    .mapa-contenedor {
+      position: relative;
+      margin-top: 30px;
+    }
+
     #mapa {
-      height: 450px;
+      height: 480px;
       width: 100%;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      margin-top: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: 4px solid white;
+    }
+
+    /* Botón "Cómo llegar" flotante sobre el mapa */
+    .btn-como-llegar-mapa {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 500;
+      background: #e67e22;
+      color: white;
+      padding: 16px 36px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 25px rgba(230, 126, 34, 0.5);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      border: 3px solid white;
+    }
+
+    .btn-como-llegar-mapa:hover {
+      background: #d35400;
+      transform: translateX(-50%) translateY(-4px);
+      box-shadow: 0 12px 30px rgba(230, 126, 34, 0.7);
+    }
+
+    .btn-como-llegar-mapa svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    /* Tarjeta de dirección con botón grande */
+    .btn-direccion {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+      padding: 14px 28px;
+      background: #e67e22;
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, background 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-direccion:hover {
+      background: #d35400;
+      transform: translateY(-3px);
+    }
+
+    .btn-direccion svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+      flex-shrink: 0;
+    }
+
+    /* Popup del mapa personalizado */
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      padding: 5px;
+    }
+
+    .leaflet-popup-content {
+      font-family: 'Poppins', sans-serif;
+      margin: 12px 15px;
+    }
+
+    .popup-titulo {
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .popup-direccion {
+      font-size: 0.88rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .popup-btn {
+      display: inline-block;
+      background: #e67e22;
+      color: white !important;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .popup-btn:hover {
+      background: #d35400;
     }
 
     /* ===== WHATSAPP FLOTANTE ===== */
@@ -223,7 +332,12 @@
       header p { font-size: 1rem; }
       section { padding: 50px 15px; }
       section h2 { font-size: 1.6rem; }
-      #mapa { height: 350px; }
+      #mapa { height: 380px; }
+      .btn-como-llegar-mapa {
+        padding: 13px 24px;
+        font-size: 0.95rem;
+        bottom: 15px;
+      }
     }
   </style>
 </head>
@@ -303,13 +417,27 @@
         <h3>📍 Dirección</h3>
         <p>Calle Bolívar #123, entre Sucre y La Paz</p>
         <p>Trinidad, Beni - Bolivia</p>
-        <p><a href="https://www.google.com/maps/dir/?api=1&destination=-14.807038152603536,-64.91825393391775" 
-              target="_blank" style="color:#e67e22; font-weight:600;">Cómo llegar →</a></p>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=-14.807038152603536,-64.91825393391775" 
+           target="_blank" class="btn-direccion">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+          </svg>
+          Cómo llegar paso a paso
+        </a>
       </div>
     </div>
 
-    <!-- MAPA INTERACTIVO -->
-    <div id="mapa"></div>
+    <!-- MAPA INTERACTIVO MEJORADO -->
+    <div class="mapa-contenedor">
+      <div id="mapa"></div>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=-14.807038152603536,-64.91825393391775" 
+         target="_blank" class="btn-como-llegar-mapa">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.71 11.29l-9-9a.996.996 0 0 0-1.41 0l-9 9a.996.996 0 0 0 0 1.41l9 9c.39.39 1.02.39 1.41 0l9-9a.996.996 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/>
+        </svg>
+        Cómo llegar a Sabores del Beni
+      </a>
+    </div>
   </section>
 
   <!-- ===== BOTÓN WHATSAPP FLOTANTE ===== -->
@@ -323,7 +451,7 @@
   <!-- ===== FOOTER ===== -->
   <footer>
     <p>© 2026 Sabores del Beni · Trinidad, Bolivia</p>
-    <p>Hecho con ❤️ · <a href="https://www.openstreetmap.org/copyright" target="_blank">Mapa por OpenStreetMap</a></p>
+    <p>Hecho con ❤️ · <a href="https://www.openstreetmap.org/copyright" target="_blank">Mapa por OpenStreetMap</a> &amp; <a href="https://carto.com/attributions" target="_blank">CARTO</a></p>
   </footer>
 
   <!-- ===== LEAFLET JS ===== -->
@@ -336,18 +464,38 @@
     var zoom = 16;
 
     // Crear el mapa
-    var mapa = L.map('mapa').setView([latitud, longitud], zoom);
+    var mapa = L.map('mapa', {
+      zoomControl: false // Quitamos el control de zoom por defecto
+    }).setView([latitud, longitud], zoom);
 
-    // Capa visual (calles)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 19
+    // Capa visual mejorada: CARTO Voyager (más limpia y moderna que OSM por defecto)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
     }).addTo(mapa);
 
-    // Marcador con mensaje
-    L.marker([latitud, longitud])
+    // Control de zoom en la esquina inferior derecha
+    L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+    // Marcador personalizado con icono de restaurante
+    var iconoPersonalizado = L.divIcon({
+      className: 'marcador-personalizado',
+      html: '<div style="background:#e67e22; width:48px; height:48px; border-radius:50% 50% 50% 0; transform: rotate(-45deg); border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;"><span style="transform: rotate(45deg); font-size:24px;">🍽️</span></div>',
+      iconSize: [48, 48],
+      iconAnchor: [24, 48],
+      popupAnchor: [0, -48]
+    });
+
+    // Marcador con mensaje mejorado
+    L.marker([latitud, longitud], { icon: iconoPersonalizado })
       .addTo(mapa)
-      .bindPopup('<b>Sabores del Beni</b><br>Calle Bolívar #123<br>Trinidad, Beni<br><a href="https://www.google.com/maps/dir/?api=1&destination=' + latitud + ',' + longitud + '" target="_blank">Cómo llegar →</a>')
+      .bindPopup(
+        '<div class="popup-titulo">Sabores del Beni</div>' +
+        '<div class="popup-direccion">Calle Bolívar #123<br>Trinidad, Beni - Bolivia</div>' +
+        '<a href="https://www.google.com/maps/dir/?api=1&destination=' + latitud + ',' + longitud + '" target="_blank" class="popup-btn">📍 Cómo llegar</a>',
+        { maxWidth: 220 }
+      )
       .openPopup();
   </script>
 
