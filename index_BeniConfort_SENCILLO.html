@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Letras que susurran — Tipografía con sonido suave</title>
+<title>Letras que suenan — v2 (sonido desde la letra)</title>
 <meta name="theme-color" content="#0a0806">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0a0806;
@@ -33,12 +33,12 @@
     transition:background-image .8s var(--ease);
   }
   .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400}
-  .serif{font-family:'Fraunces',Georgia,serif;font-weight:300;letter-spacing:-.02em;line-height:1.1}
 
-  .hdr{display:flex;align-items:center;justify-content:space-between;padding:20px;max-width:1100px;margin:0 auto}
+  /* Header */
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 20px;max-width:1100px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-family:'Fraunces',serif;font-size:1.1rem;letter-spacing:.28em;font-weight:500;padding-left:.28em}
-  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--grad);box-shadow:0 0 14px var(--gold);animation:breathe 4s ease-in-out infinite}
-  @keyframes breathe{50%{transform:scale(1.25);box-shadow:0 0 22px var(--gold)}}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--grad);box-shadow:0 0 14px var(--gold);animation:breathe 3s ease-in-out infinite}
+  @keyframes breathe{50%{transform:scale(1.3);box-shadow:0 0 22px var(--gold)}}
   .chip-btn{
     display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px;border-radius:999px;
     background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--dim);
@@ -48,31 +48,27 @@
   .chip-btn:hover{border-color:rgba(212,175,55,.5);color:var(--ink)}
   .chip-btn.on{background:var(--accent-soft);border-color:rgba(212,175,55,.5);color:var(--gold-l)}
 
-  .hero{max-width:1000px;margin:0 auto;padding:30px 22px 40px;text-align:center}
+  /* Hero */
+  .hero{max-width:1000px;margin:0 auto;padding:20px 22px 34px;text-align:center}
   .eyebrow{
-    display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;margin-bottom:22px;
+    display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;margin-bottom:18px;
     background:rgba(255,255,255,.04);border:1px solid var(--line);
     font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:#d8cdb4;
   }
   .eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold-l);box-shadow:0 0 12px var(--gold-l)}
   .hero h1{
-    font-family:'Fraunces',serif;font-weight:300;
-    font-size:clamp(2rem,7vw,3.6rem);line-height:1.06;letter-spacing:-.025em;margin-bottom:16px;
+    font-family:'Fraunces',serif;font-weight:400;
+    font-size:clamp(1.9rem,6.4vw,3.2rem);line-height:1.06;letter-spacing:-.025em;margin-bottom:14px;
   }
-  .hero h1 em{font-style:italic;font-weight:300}
+  .hero h1 em{font-style:italic}
+  .hero h1 em span{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
+  @keyframes flow{to{background-position:220% center}}
   .hero p{color:var(--dim);font-size:.94rem;max-width:52ch;margin:0 auto}
+  .hero p b{color:var(--gold-l);font-weight:400}
 
-  .tw-cursor{
-    display:inline-block;width:2px;height:1em;background:var(--accent);
-    vertical-align:-.12em;margin-left:2px;
-    animation:blink 1.2s steps(2) infinite;
-    box-shadow:0 0 10px var(--accent);
-  }
-  .tw-cursor.done{animation:blink 1.4s steps(2) infinite;opacity:.35}
-  @keyframes blink{50%{opacity:0}}
-
-  .stage-section{max-width:900px;margin:0 auto;padding:0 22px 60px}
-  .styles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:26px}
+  /* Estilos */
+  .stage-section{max-width:1000px;margin:0 auto;padding:0 22px 50px}
+  .styles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
   @media(min-width:680px){.styles{grid-template-columns:repeat(4,1fr);gap:12px}}
   .style-btn{
     position:relative;text-align:left;padding:14px 16px;border-radius:14px;cursor:pointer;
@@ -93,26 +89,73 @@
   .style-btn .name .dot{width:7px;height:7px;border-radius:50%;background:var(--btn-accent,var(--gold));box-shadow:0 0 10px var(--btn-accent,var(--gold));flex:none}
   .style-btn .desc{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.4}
 
+  /* Stage */
   .stage{
-    position:relative;padding:42px 32px;border-radius:20px;min-height:280px;
+    position:relative;padding:52px 28px;border-radius:20px;min-height:340px;
     background:
       linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008)),
-      radial-gradient(400px 200px at 50% 0%,var(--accent-soft),transparent 70%);
+      radial-gradient(500px 250px at 50% 0%,var(--accent-soft),transparent 70%);
     border:1px solid rgba(212,175,55,.2);
     display:flex;align-items:center;justify-content:center;
     transition:border-color .6s,background .6s;
     overflow:hidden;
   }
+  .stage::before{
+    content:'';position:absolute;inset:0;pointer-events:none;opacity:.4;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+  .stage-content{position:relative;z-index:1;width:100%;max-width:760px}
   .stage-display{
-    position:relative;z-index:1;
-    font-family:'Fraunces',serif;font-weight:300;font-style:normal;
-    font-size:clamp(1.15rem,3.4vw,1.7rem);line-height:1.5;letter-spacing:-.01em;
-    color:var(--ink);text-align:center;max-width:100%;word-break:break-word;
-    min-height:1.5em;
+    font-family:'Fraunces',serif;font-weight:400;
+    font-size:clamp(1.15rem,3.2vw,1.65rem);line-height:1.5;letter-spacing:-.01em;
+    color:var(--ink);text-align:left;min-height:3em;
     transition:font-family .5s;
   }
+  .stage-placeholder{
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--dim);text-align:center;padding:60px 0;
+  }
+  .stage-placeholder b{color:var(--gold-l);font-weight:400}
 
-  .controls{display:flex;align-items:center;gap:14px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  /* Letras con animación de aparición */
+  .tw-char{
+    display:inline-block;
+    animation:letterIn .55s cubic-bezier(.2,.8,.2,1) both;
+    will-change:transform,opacity,filter;
+  }
+  @keyframes letterIn{
+    0%{
+      transform:scale(.5) translateY(10px);
+      opacity:0;
+      filter:blur(6px);
+      text-shadow:0 0 0 transparent;
+    }
+    45%{
+      transform:scale(1.14) translateY(-2px);
+      opacity:1;
+      filter:blur(0);
+      text-shadow:0 0 22px var(--glow, currentColor), 0 0 44px var(--glow, currentColor);
+    }
+    100%{
+      transform:scale(1) translateY(0);
+      opacity:1;
+      filter:blur(0);
+      text-shadow:0 0 0 transparent;
+    }
+  }
+  .tw-space{display:inline-block;width:.28em}
+  .tw-cursor{
+    display:inline-block;width:2px;height:1.1em;background:var(--accent);
+    vertical-align:-.15em;margin-left:2px;
+    box-shadow:0 0 12px var(--accent);
+    animation:blink 1s steps(2) infinite;
+  }
+  .tw-cursor.done{opacity:.35;animation-duration:1.4s}
+  @keyframes blink{50%{opacity:0}}
+
+  /* Controles */
+  .controls{display:flex;align-items:center;gap:14px;margin-top:22px;flex-wrap:wrap;justify-content:center}
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:9px;
     min-height:46px;padding:0 22px;border-radius:999px;border:1px solid transparent;cursor:pointer;
@@ -129,7 +172,7 @@
   .volume-wrap{display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
   .volume-wrap svg{width:16px;height:16px;stroke:var(--dim);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
   .volume-wrap input[type=range]{
-    -webkit-appearance:none;appearance:none;width:110px;height:3px;border-radius:99px;
+    -webkit-appearance:none;appearance:none;width:100px;height:3px;border-radius:99px;
     background:rgba(212,175,55,.25);outline:none;
   }
   .volume-wrap input[type=range]::-webkit-slider-thumb{
@@ -138,11 +181,11 @@
   }
   .volume-wrap input[type=range]::-moz-range-thumb{
     width:14px;height:14px;border-radius:50%;background:var(--gold-l);cursor:pointer;border:0;
-    box-shadow:0 0 12px var(--gold);
   }
 
+  /* Explicación */
   .explainer{max-width:1100px;margin:0 auto;padding:20px 22px 80px}
-  .explainer-head{max-width:640px;margin-bottom:36px}
+  .explainer-head{max-width:640px;margin-bottom:34px}
   .kicker{
     display:inline-flex;align-items:center;gap:10px;
     font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
@@ -151,7 +194,7 @@
   .kicker::before{content:'';width:24px;height:1px;background:var(--gold);opacity:.6}
   .explainer h2{font-family:'Fraunces',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px}
   .explainer h2 em{font-style:italic}
-  .explainer-head p{color:var(--dim);font-size:.92rem;max-width:58ch}
+  .explainer-head p{color:var(--dim);font-size:.92rem;max-width:56ch}
   .cards{display:grid;gap:14px}
   @media(min-width:720px){.cards{grid-template-columns:repeat(2,1fr);gap:16px}}
   .card{
@@ -167,12 +210,14 @@
   .card p{color:var(--dim);font-size:.88rem;line-height:1.7}
   .card p b{color:var(--gold-l);font-weight:400}
 
+  /* Footer */
   .foot{text-align:center;padding:40px 22px 50px;border-top:1px solid var(--line);max-width:1100px;margin:0 auto}
   .foot p{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,185,150,.5);line-height:2}
   .foot .d{color:var(--gold);margin:0 8px}
 
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition-duration:.01ms!important}
+    .tw-char{opacity:1;filter:none;transform:none}
     .tw-cursor{animation:none;opacity:.5}
   }
 </style>
@@ -180,9 +225,9 @@
 <body>
 
 <header class="hdr">
-  <a href="#" class="brand"><span class="dot"></span>SERENA</a>
-  <div class="hdr-right">
-    <button class="chip-btn on" id="soundToggle" type="button" aria-label="Activar o desactivar sonido">
+  <a href="#" class="brand"><span class="dot"></span>SONOR</a>
+  <div>
+    <button class="chip-btn on" id="soundToggle" type="button">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9a5 5 0 0 1 0 6"/></svg>
       <span id="soundLabel">Sonido ON</span>
     </button>
@@ -190,16 +235,20 @@
 </header>
 
 <section class="hero">
-  <span class="eyebrow">Sonido pensado para oídos sensibles</span>
-  <h1 class="serif">Letras que <em>susurran</em></h1>
-  <p>Sin ruido. Sin ondas duras. Sin agudos que cortan. Solo tonos puros envueltos en una reverberación larga que se disuelve como una campana lejana.</p>
+  <span class="eyebrow">El sonido nace de la letra</span>
+  <h1>Tipografía que <em><span>se escucha</span></em></h1>
+  <p>Cada letra aparece en una <b>posición estéreo</b>, con una <b>nota musical</b> propia y un <b>brillo</b> que dura lo mismo que el sonido. Usa audífonos para el efecto completo.</p>
 </section>
 
 <main class="stage-section">
   <div class="styles" id="styles"></div>
 
   <div class="stage" id="stage">
-    <div class="stage-display" id="display"></div>
+    <div class="stage-content">
+      <div class="stage-display" id="display">
+        <div class="stage-placeholder">Toca un <b>estilo</b> arriba para empezar</div>
+      </div>
+    </div>
   </div>
 
   <div class="controls">
@@ -209,67 +258,144 @@
     </button>
     <div class="volume-wrap">
       <svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15 9a4 4 0 0 1 0 6"/></svg>
-      <input type="range" id="volume" min="0" max="100" value="55" aria-label="Volumen">
+      <input type="range" id="volume" min="0" max="100" value="70" aria-label="Volumen">
     </div>
   </div>
 </main>
 
 <section class="explainer">
   <div class="explainer-head">
-    <span class="kicker">Qué cambió</span>
-    <h2>Por qué estos sí se <em>sienten</em> bien</h2>
-    <p>Los sonidos anteriores tenían ruido blanco, ondas cuadradas y frecuencias altas. Estos están construidos con otra filosofía.</p>
+    <span class="kicker">Por qué ahora sí se siente</span>
+    <h2>El sonido salió de la <em>letra</em></h2>
+    <p>La diferencia no es "mejor sonido": es que el sonido está <em>anclado</em> al píxel donde la letra aparece. Cuatro mecanismos se combinan para crear esa ilusión.</p>
   </div>
 
   <div class="cards">
     <article class="card">
-      <span class="num">01 / ONDAS PURAS</span>
-      <h3>Solo senos suaves</h3>
-      <p>Nada de ruido ni ondas cuadradas. Solo <b>ondas senoidales</b>, que son la forma más natural y menos agresiva para el oído. Es el mismo tipo de onda que produce una flauta o una campana de cuenco.</p>
+      <span class="num">01 / ESPACIO</span>
+      <h3>Posición estéreo</h3>
+      <p>Cada letra se mide con <b>getBoundingClientRect()</b> en el momento exacto de aparecer. La distancia al centro de la pantalla se traduce en <b>paneo estéreo</b>: letras a la izquierda suenan a la izquierda, letras a la derecha suenan a la derecha. La línea se convierte en un escenario.</p>
     </article>
     <article class="card">
-      <span class="num">02 / ATAQUES LENTOS</span>
-      <h3>Sin "golpes"</h3>
-      <p>El ataque es <b>el primer instante del sonido</b>. Antes era instantáneo (0ms) y eso suena a latigazo. Ahora es de 8–20ms: el sonido <em>entra</em> en lugar de <em>irrumpir</em>.</p>
+      <span class="num">02 / TIEMPO</span>
+      <h3>Disparo en el mismo frame</h3>
+      <p>El sonido no espera un temporizador. Se dispara <b>en el mismo instante en que la letra se inserta en el DOM</b>. Ojo y oído van sincronizados al milisegundo. Eso es lo que el cerebro lee como "el sonido viene de aquí".</p>
     </article>
     <article class="card">
-      <span class="num">03 / FRECUENCIAS MEDIAS</span>
-      <h3>Todo entre 200 y 1400 Hz</h3>
-      <p>Los agudos (por encima de 3000 Hz) son los que causan fatiga auditiva. Aquí todo vive en la <b>zona cálida del oído</b>: la misma donde canta la voz humana hablando suave.</p>
+      <span class="num">03 / MÚSICA</span>
+      <h3>Pentatónica por carácter</h3>
+      <p>Cada letra tiene su nota fija en una <b>escala pentatónica</b> (Do, Re, Mi, Sol, La). La "a" siempre suena igual, la "e" siempre igual. Como la pentatónica no tiene intervalos disonantes, <b>cualquier frase es melodía</b>. No hay combinación que suene mal.</p>
     </article>
     <article class="card">
-      <span class="num">04 / REVERB LARGO</span>
-      <h3>Cada letra se disuelve</h3>
-      <p>Una reverberación de <b>2.2 segundos</b> hace que cada nota no termine de golpe sino que se desvanezca. Eso da sensación de espacio: como si las letras flotaran en una catedral.</p>
+      <span class="num">04 / LUZ</span>
+      <h3>Brillo a juego con la nota</h3>
+      <p>La letra aparece con un pulso de escala y un <b>glow de color derivado de su nota</b>: agudas brillan más claras, graves más cálidas. Ese glow dura lo mismo que la nota (~500ms). El ojo ve lo que el oído escucha.</p>
     </article>
     <article class="card">
-      <span class="num">05 / ARMÓNICOS CÁLIDOS</span>
-      <h3>Segundas y terceras, nunca quintas</h3>
-      <p>Los armónicos se eligen <b>por afinidad matemática</b> (2:3, 3:4). Son los que el oído percibe como "consonantes". Los disonantes (como una segunda menor) se sienten ásperos y quedan fuera.</p>
+      <span class="num">05 / REVERB</span>
+      <h3>Espacio acústico compartido</h3>
+      <p>Todas las notas pasan por un <b>reverb de convolución</b> con impulso generado en tiempo real. El sonido no está "pegado al oído": está en una sala. Eso crea profundidad, no solo posición.</p>
     </article>
     <article class="card">
-      <span class="num">06 / SILENCIO ENTRE NOTAS</span>
-      <h3>Menos es más</h3>
-      <p>Antes sonaba el 55–85% de las letras. Ahora suena el <b>25–35%</b>, con silencios largos entre ellas. El silencio es parte del sonido: el cerebro necesita descansar entre estímulos.</p>
+      <span class="num">06 / SILENCIO</span>
+      <h3>Los espacios también suenan</h3>
+      <p>El silencio entre palabras no es casual: es lo que separa una frase de otra. Tampoco suenan todos los caracteres: la probabilidad varía por estilo. Eso es lo que hace que <b>no suene mecánico</b>, aunque se genere con una máquina.</p>
     </article>
   </div>
 </section>
 
 <footer class="foot">
-  <p>Hecho a mano con HTML, CSS y JavaScript<span class="d">◆</span>Web Audio API<span class="d">◆</span>Diseñado para sensibilidad auditiva</p>
+  <p>HTML + CSS + JavaScript<span class="d">◆</span>Web Audio API + StereoPanner<span class="d">◆</span>Sin archivos de audio</p>
 </footer>
 
 <script>
 (function(){
   'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* =========================================================
-     AUDIO BASE: todo senoidal, todo suave, todo con reverb largo
+     ESCALA PENTATÓNICA (Do mayor)
+     Do4 Re4 Mi4 Sol4 La4 Do5 Re5 Mi5
      ========================================================= */
-  var actx = null, master = null, reverb = null, wetGain = null, dryGain = null;
+  var PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+
+  /* =========================================================
+     CONFIGURACIÓN POR ESTILO
+     ========================================================= */
+  var STYLES = {
+    soft: {
+      label: 'Suave',
+      desc: 'Cristal · femenino',
+      hue: 330,               // rosa
+      wave: 'sine',
+      pitchMult: 1,
+      attack: 0.015,
+      duration: 0.5,
+      volume: 0.09,
+      harmonic: 0.35,
+      panAmount: 0.85,
+      delay: 85,
+      probability: 0.55,      // no todas las letras suenan → respira
+      sample: 'Hay una belleza que solo aparece cuando bajas el volumen. Y se siente.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    mechanical: {
+      label: 'Mecánica',
+      desc: 'Editorial · clásica',
+      hue: 45,                // dorado
+      wave: 'sine',
+      pitchMult: 1,
+      attack: 0.005,
+      duration: 0.22,
+      volume: 0.12,
+      harmonic: 0.15,
+      panAmount: 0.7,
+      delay: 62,
+      probability: 0.85,
+      sample: 'Una marca clásica no grita. Deja huella con el peso exacto de cada letra.',
+      font: "'Fraunces', Georgia, serif"
+    },
+    digital: {
+      label: 'Digital',
+      desc: 'Terminal · tech',
+      hue: 190,               // cyan
+      wave: 'triangle',
+      pitchMult: 2,
+      attack: 0.003,
+      duration: 0.1,
+      volume: 0.08,
+      harmonic: 0,
+      panAmount: 0.9,
+      delay: 48,
+      probability: 0.9,
+      sample: 'System online. Cada tecla es una decisión. Cada decisión, un resultado.',
+      font: "'IBM Plex Mono', monospace"
+    },
+    paper: {
+      label: 'Papel',
+      desc: 'Lápiz · artesanal',
+      hue: 35,                // crema
+      wave: 'sine',
+      pitchMult: 1,
+      attack: 0.012,
+      duration: 0.4,
+      volume: 0.085,
+      harmonic: 0.45,
+      panAmount: 0.65,
+      delay: 74,
+      probability: 0.65,
+      sample: 'Escribo porque hay ideas que solo existen cuando las pongo en fila.',
+      font: "'Fraunces', Georgia, serif"
+    }
+  };
+
+  /* =========================================================
+     AUDIO
+     ========================================================= */
+  var actx = null, master = null, reverbNode = null;
   var soundOn = true;
-  var volume = 0.55;
-  var currentStyle = 'susurro';
+  var volume = 0.7;
+  var currentStyle = null;
 
   function ensureAudio(){
     if (actx){
@@ -279,237 +405,175 @@
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
     actx = new AC();
-
-    // Cadena: fuente → dryGain → master → destination
-    //         fuente → reverb → wetGain → master
     master = actx.createGain();
     master.gain.value = volume;
     master.connect(actx.destination);
 
-    dryGain = actx.createGain();
-    dryGain.gain.value = 0.55;   // un poco de señal directa
-    dryGain.connect(master);
-
-    // Reverb largo, generado con convolución de ruido decaído
-    var seconds = 2.2;
-    var len = Math.floor(actx.sampleRate * seconds);
+    // Reverb: impulso generado en tiempo real (sala pequeña)
+    var len = actx.sampleRate * 1.2;
     var impulse = actx.createBuffer(2, len, actx.sampleRate);
-    for (var ch = 0; ch < 2; ch++){
-      var data = impulse.getChannelData(ch);
+    for (var c = 0; c < 2; c++){
+      var d = impulse.getChannelData(c);
       for (var i = 0; i < len; i++){
-        // ruido con caída exponencial suave (filtrado después)
-        var env = Math.pow(1 - i / len, 3.2);
-        data[i] = (Math.random() * 2 - 1) * env * 0.4;
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.8);
       }
     }
-    reverb = actx.createConvolver();
-    reverb.buffer = impulse;
-    wetGain = actx.createGain();
-    wetGain.gain.value = 0.55;   // bastante wet para que "flote"
-
-    reverb.connect(wetGain);
-    wetGain.connect(master);
+    var verb = actx.createConvolver();
+    verb.buffer = impulse;
+    var wet = actx.createGain();
+    wet.gain.value = 0.18;
+    master.connect(verb);
+    verb.connect(wet);
+    wet.connect(actx.destination);
+    reverbNode = verb;
 
     return true;
   }
 
-  // Función maestra: un tono puro con envolvente suave
-  function tone(opts){
-    if (!soundOn || !actx) return;
-    var t = actx.currentTime + (opts.delay || 0);
-    var osc = actx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = opts.freq;
-
-    var g = actx.createGain();
-    var attack = opts.attack || 0.015;
-    var decay  = opts.decay  || 1.2;
-    var peak   = opts.gain   || 0.2;
-
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(peak, t + attack);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay);
-
-    osc.connect(g);
-    g.connect(dryGain);
-    g.connect(reverb);
-
-    osc.start(t);
-    osc.stop(t + attack + decay + 0.15);
-  }
-
-  // Acorde breve, varias notas suaves sumadas
-  function chord(freqs, base){
-    freqs.forEach(function(f, i){
-      tone({
-        freq: f,
-        gain: (base || 0.14) / (i + 1.4),
-        attack: 0.02 + i * 0.004,
-        decay: 1.0 + i * 0.15,
-        delay: i * 0.018
-      });
-    });
-  }
-
   /* =========================================================
-     LOS 4 ESTILOS SUAVES
+     SONIDO POR LETRA — el corazón del efecto
      ========================================================= */
-
-  // 1) SUSURRO: campana lejana, una nota por letra
-  //    Frecuencias en la zona media, alternando por letra
-  var susurroNotes = [392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
-  function playSusurro(){
-    var f = susurroNotes[Math.floor(Math.random() * susurroNotes.length)];
-    tone({
-      freq: f,
-      gain: 0.10,
-      attack: 0.02,
-      decay: 1.4
-    });
-  }
-
-  // 2) CRISTAL: dos notas consonantes (quinta suave, tercera)
-  //    Suena a copa de vino frotada, muy etérea
-  function playCristal(){
-    var base = [523.25, 587.33, 659.25, 783.99][Math.floor(Math.random() * 4)];
-    // quinta arriba (×1.5) — consonante y estable
-    tone({ freq: base,          gain: 0.06, attack: 0.03, decay: 1.5 });
-    tone({ freq: base * 1.5,    gain: 0.04, attack: 0.04, decay: 1.8, delay: 0.02 });
-  }
-
-  // 3) TIERRA: una nota cálida, más grave, casi como un cuenco
-  //    Zona 200–400 Hz, la más relajante para el oído
-  var tierraNotes = [220.00, 246.94, 261.63, 293.66, 329.63];
-  function playTierra(){
-    var f = tierraNotes[Math.floor(Math.random() * tierraNotes.length)];
-    tone({ freq: f,        gain: 0.11, attack: 0.03, decay: 1.6 });
-    tone({ freq: f * 2,    gain: 0.05, attack: 0.04, decay: 1.4, delay: 0.03 });
-  }
-
-  // 4) AIRE: tres armónicos muy suaves que se suman como un acorde suspendido
-  //    Frecuencias consonantes (1 : 1.25 : 1.5) — suena "flotando"
-  function playAire(){
-    var base = [349.23, 392.00, 440.00][Math.floor(Math.random() * 3)];
-    tone({ freq: base,        gain: 0.05, attack: 0.05, decay: 1.8 });
-    tone({ freq: base * 1.25, gain: 0.035, attack: 0.06, decay: 2.0, delay: 0.04 });
-    tone({ freq: base * 1.5,  gain: 0.025, attack: 0.07, decay: 2.2, delay: 0.08 });
-  }
-
-  // Campana muy suave al final de frase
-  function playEndBell(){
+  function playLetter(ch, rect, styleKey){
     if (!soundOn || !actx) return;
-    // acorde mayor suspendido, disuelto
-    chord([523.25, 659.25, 783.99], 0.10);
-  }
+    var cfg = STYLES[styleKey];
+    if (!cfg) return;
 
-  var players = {
-    susurro: playSusurro,
-    cristal: playCristal,
-    tierra:  playTierra,
-    aire:    playAire
-  };
+    var t = actx.currentTime;
+
+    // ---- 1. Pitch: nota pentatónica fija por carácter ----
+    var code = ch.charCodeAt(0);
+    var pitchIdx = code % PENTATONIC.length;
+    var freq = PENTATONIC[pitchIdx] * cfg.pitchMult;
+
+    // ---- 2. Paneo estéreo según la posición en pantalla ----
+    var cx = rect.left + rect.width / 2;
+    var vcx = window.innerWidth / 2;
+    var pan = Math.max(-1, Math.min(1, (cx - vcx) / (window.innerWidth * 0.5)));
+
+    // ---- 3. Duración extendida para puntuación ----
+    var isPunct = '.!?'.indexOf(ch) !== -1;
+    var dur = isPunct ? cfg.duration * 2.2 : cfg.duration;
+
+    // ---- 4. Oscilador principal ----
+    var osc = actx.createOscillator();
+    osc.type = cfg.wave;
+    osc.frequency.value = freq;
+
+    // ---- 5. Armónico sutil para "cuerpo" ----
+    var osc2 = actx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = freq * 2.005; // micro-detune
+
+    // ---- 6. Envolventes ----
+    var gain = actx.createGain();
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(cfg.volume, t + cfg.attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    var gain2 = actx.createGain();
+    gain2.gain.setValueAtTime(0, t);
+    gain2.gain.linearRampToValueAtTime(cfg.volume * cfg.harmonic, t + cfg.attack);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.75);
+
+    // ---- 7. Paneo estéreo ----
+    var panner = actx.createStereoPanner();
+    panner.pan.value = pan * cfg.panAmount;
+
+    // ---- 8. Conexión ----
+    osc.connect(gain);
+    osc2.connect(gain2);
+    gain.connect(panner);
+    gain2.connect(panner);
+    panner.connect(master);
+
+    // ---- 9. Arranque y parada ----
+    osc.start(t);  osc.stop(t + dur + 0.06);
+    osc2.start(t); osc2.stop(t + dur + 0.06);
+  }
 
   /* =========================================================
-     MÁQUINA DE ESCRIBIR (con silencios entre notas)
+     MÁQUINA DE ESCRIBIR
      ========================================================= */
   var typingTimer = null;
+  var typingToken = 0;
 
-  function typewrite(el, text, styleKey, onDone){
+  function typeText(container, text, styleKey){
+    typingToken++;
+    var myToken = typingToken;
+
     if (typingTimer){ clearTimeout(typingTimer); typingTimer = null; }
-    el.innerHTML = '';
 
-    var textNode = document.createTextNode('');
+    var cfg = STYLES[styleKey];
+    container.innerHTML = '';
+    container.style.fontFamily = cfg.font;
+
+    // Cursor al final
     var cursor = document.createElement('span');
     cursor.className = 'tw-cursor';
-    el.appendChild(textNode);
-    el.appendChild(cursor);
-
-    var play = players[styleKey] || playSusurro;
-
-    // Probabilidad baja: ahora suena MUCHO menos
-    var probability = {
-      susurro: 0.30,
-      cristal: 0.28,
-      tierra:  0.30,
-      aire:    0.26
-    }[styleKey] || 0.3;
+    container.appendChild(cursor);
 
     var i = 0;
-    function step(){
-      if (i >= text.length){
+    var total = text.length;
+
+    function typeNext(){
+      if (myToken !== typingToken) return; // cancelado por otro tipo
+      if (i >= total){
         cursor.classList.add('done');
-        if (onDone) onDone();
         return;
       }
-      var ch = text[i];
-      textNode.textContent += ch;
 
-      if (ch !== ' ' && ch !== '.' && ch !== ','){
-        if (Math.random() < probability) play();
+      var ch = text[i];
+
+      // Espacio: sin sonido, solo avanza
+      if (ch === ' '){
+        var sp = document.createElement('span');
+        sp.className = 'tw-space';
+        container.insertBefore(sp, cursor);
+        i++;
+        typingTimer = setTimeout(typeNext, cfg.delay * 0.5);
+        return;
       }
 
-      // Campana al cerrar frase
-      if (ch === '.' || ch === '!' || ch === '?'){
-        setTimeout(playEndBell, 200);
+      // Letra normal: span + animación + sonido
+      var span = document.createElement('span');
+      span.className = 'tw-char';
+      span.textContent = ch;
+
+      // Color del glow según nota (claro si agudo, cálido si grave)
+      var code = ch.charCodeAt(0);
+      var pitchIdx = code % PENTATONIC.length;
+      var light = 55 + (pitchIdx / (PENTATONIC.length - 1)) * 22; // 55% a 77%
+      span.style.setProperty('--glow', 'hsl(' + cfg.hue + ', 90%, ' + light + '%)');
+
+      container.insertBefore(span, cursor);
+
+      // ---- MEDICIÓN + SONIDO en el mismo frame ----
+      // getBoundingClientRect fuerza el layout ya mismo, así que la
+      // posición está disponible en este instante exacto.
+      var rect = span.getBoundingClientRect();
+
+      // Solo suena con cierta probabilidad → no es mecánico
+      if (Math.random() < cfg.probability){
+        playLetter(ch, rect, styleKey);
       }
 
       i++;
 
-      // Ritmo más lento y variable que antes
-      var base = {
-        susurro: 88,
-        cristal: 92,
-        tierra:  95,
-        aire:    90
-      }[styleKey] || 90;
-      var delay = base + (Math.random() - 0.5) * 50;
+      // Timing variable
+      var delay = cfg.delay + (Math.random() - 0.5) * 22;
       if ('.!?'.indexOf(ch) !== -1) delay += 320;
       else if (',;:'.indexOf(ch) !== -1) delay += 160;
-      else if (ch === ' ') delay += 40;
 
-      typingTimer = setTimeout(step, Math.max(20, delay));
+      typingTimer = setTimeout(typeNext, Math.max(18, delay));
     }
-    step();
+
+    // Pequeña pausa inicial
+    typingTimer = setTimeout(typeNext, 80);
   }
 
   /* =========================================================
-     ESTILOS
+     UI
      ========================================================= */
-  var STYLES = {
-    susurro: {
-      label: 'Susurro',
-      desc: 'Campana lejana',
-      accent: '#d4af37',
-      soft: 'rgba(212,175,55,.14)',
-      sample: 'Lo que se dice suave se recuerda más tiempo. Porque no se impone.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    cristal: {
-      label: 'Cristal',
-      desc: 'Copa frotada',
-      accent: '#f6a5c0',
-      soft: 'rgba(246,165,192,.14)',
-      sample: 'Hay una belleza que solo aparece cuando bajas el volumen. Y se siente.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    tierra: {
-      label: 'Tierra',
-      desc: 'Cuenco tibio',
-      accent: '#c69a6a',
-      soft: 'rgba(198,154,106,.14)',
-      sample: 'Lo profundo no necesita hacer ruido. Solo estar presente.',
-      font: "'Fraunces', Georgia, serif"
-    },
-    aire: {
-      label: 'Aire',
-      desc: 'Acorde suspendido',
-      accent: '#9dd6d0',
-      soft: 'rgba(157,214,208,.14)',
-      sample: 'Las ideas livianas flotan un rato antes de irse. Así, sin prisa.',
-      font: "'Fraunces', Georgia, serif"
-    }
-  };
-
   var stylesBox = document.getElementById('styles');
   var display = document.getElementById('display');
   var stage = document.getElementById('stage');
@@ -518,10 +582,10 @@
     var s = STYLES[key];
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'style-btn' + (key === currentStyle ? ' on' : '');
+    btn.className = 'style-btn';
     btn.dataset.style = key;
-    btn.style.setProperty('--btn-accent', s.accent);
-    btn.style.setProperty('--btn-accent-soft', s.soft);
+    btn.style.setProperty('--btn-accent', 'hsl(' + s.hue + ', 80%, 60%)');
+    btn.style.setProperty('--btn-accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
     btn.innerHTML =
       '<div class="name"><span class="dot"></span>' + s.label + '</div>' +
       '<div class="desc">' + s.desc + '</div>';
@@ -533,26 +597,28 @@
     currentStyle = key;
     var s = STYLES[key];
 
+    // Estado visual
     document.querySelectorAll('.style-btn').forEach(function(b){
       b.classList.toggle('on', b.dataset.style === key);
     });
-    document.documentElement.style.setProperty('--accent', s.accent);
-    document.documentElement.style.setProperty('--accent-soft', s.soft);
-    stage.style.borderColor = s.soft;
-    display.style.fontFamily = s.font;
+    document.documentElement.style.setProperty('--accent', 'hsl(' + s.hue + ', 80%, 60%)');
+    document.documentElement.style.setProperty('--accent-soft', 'hsla(' + s.hue + ', 80%, 60%, .14)');
+    stage.style.borderColor = 'hsla(' + s.hue + ', 80%, 60%, .3)';
 
+    // Audio (gesto del usuario)
     ensureAudio();
-    typewrite(display, s.sample, key);
+
+    // Escribir
+    typeText(display, s.sample, key);
   }
 
   /* =========================================================
      CONTROLES
      ========================================================= */
-  var replay = document.getElementById('replay');
-  replay.addEventListener('click', function(){
+  document.getElementById('replay').addEventListener('click', function(){
+    if (!currentStyle) return;
     ensureAudio();
-    var s = STYLES[currentStyle];
-    typewrite(display, s.sample, currentStyle);
+    typeText(display, STYLES[currentStyle].sample, currentStyle);
   });
 
   var soundToggle = document.getElementById('soundToggle');
@@ -567,22 +633,10 @@
   var volumeSlider = document.getElementById('volume');
   volumeSlider.addEventListener('input', function(){
     volume = volumeSlider.value / 100;
-    if (master) master.gain.value = volume;
+    if (master) master.gain.setTargetAtTime(volume, actx.currentTime, 0.02);
   });
-
-  // Primer gesto: activar audio y arrancar el primer estilo
-  var activated = false;
-  document.addEventListener('pointerdown', function once(){
-    if (activated) return;
-    activated = true;
-    ensureAudio();
-    // Elegimos "Susurro" por defecto, ya con audio activo
-    typewrite(display, STYLES.susurro.sample, 'susurro');
-  }, {once:true});
-
-  // Si por algún motivo hacen clic en un estilo antes del primer gesto
-  if (display.innerHTML === '') display.style.fontFamily = STYLES.susurro.font;
 
 })();
 </script>
 </body>
+</html>
